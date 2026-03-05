@@ -8,5 +8,17 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/GameStartLoading.unity
     guid: 2cda990e2423bbf4892e6590ba056729
+  - enabled: 1
+    path: Assets/Scenes/GameStartMenu.unity
+    guid: a49681de43d41c3408e57ed48211252a
+  - enabled: 1
+    path: Assets/Scenes/Game1.unity
+    guid: d2dae906c14fe2a4a9fb59cc2fbe60f9
+  - enabled: 1
+    path: Assets/Scenes/Game2.unity
+    guid: d289d6e6bdfb3ea4d8413986a60b0cce
+  - enabled: 1
+    path: Assets/Scenes/GameOver.unity
+    guid: 5f939b03988da274ca59fe4b8ea5db48
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: 2c72ef22c47fa1044b0ee15b0075197e, type: 2}

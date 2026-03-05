@@ -17,7 +17,7 @@ public class GameStratLoading_qidao : MonoBehaviour
     private readonly float _rStep = 1f / 255f;
     private readonly float _gStep = 1f / 255f;
     private readonly float _bStep = 1f / 255f;
-    private readonly float _aStep = 0.8f / 255f;
+    private readonly float _aStep = 1.5f / 255f;
 
     void Update()
     {
@@ -28,13 +28,12 @@ public class GameStratLoading_qidao : MonoBehaviour
     void UpdateTextColor()
     {
         Color color = T.color;
-
         // 调用通用方法处理每个通道，自动更新值和方向flag
-        color.r = CycleColorChannel(color.r, ref _rFlag, _rStep);
-        color.g = CycleColorChannel(color.g, ref _gFlag, _gStep);
-        color.b = CycleColorChannel(color.b, ref _bFlag, _bStep);
+        // 这边暂时不变更rgb了，彩不拉几的不好看
+        //color.r = CycleColorChannel(color.r, ref _rFlag, _rStep);
+        //color.g = CycleColorChannel(color.g, ref _gFlag, _gStep);
+        //color.b = CycleColorChannel(color.b, ref _bFlag, _bStep);
         color.a = CycleColorChannel(color.a, ref _aFlag, _aStep);
-
         T.color = color;
     }
 
