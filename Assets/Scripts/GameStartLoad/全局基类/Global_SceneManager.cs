@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -10,6 +9,8 @@ using UnityEngine.SceneManagement;
 /// 管理场景之间的切换，回退，加载与删除
 /// 以及切换场景的动画（如果有的话）
 /// </summary>
+/// 该类目前提供的对外函数有：
+/// IntoNextScene（进入下一个场景，函数内部会自动处理删除旧场景，重置数据等操作）
 public class Global_SceneManager : Singleton<Global_SceneManager>
 {
     private bool _isAllSceneLoaded = false;// 全部场景预加载完成的标志位
@@ -71,8 +72,7 @@ public class Global_SceneManager : Singleton<Global_SceneManager>
             }
             Debug.Log($"预加载场景 {sceneName} 完成：{asyncOp.progress * 100:F1}%");
 
-            // 关键：场景资源加载完成后，立即激活并禁用，不给渲染机会
-
+            // 关键：场景资源加载完成后，立即禁用，不给渲染机会
             asyncOp.allowSceneActivation = false;
             
             // 场景刚加载完成，立即禁用所有根物体（在同一帧内）
@@ -89,19 +89,12 @@ public class Global_SceneManager : Singleton<Global_SceneManager>
         // 直接跳转到下一场景，不过还有一点点动画和等待需要实现
         if (!string.IsNullOrEmpty(_menuSceneName))// 如果下一个场景的名字非空（主要看是否设置了预加载完毕后的下一场景）
         {
-            // 这里可以设置一个默认的最小加载时间，确保场景切换时有足够的过渡时间
-            IntoNextScene(_menuSceneName, false, 2f); // 2秒的最小加载时间
+            // 这里设置默认的最小加载时间，确保场景切换时有足够的过渡时间
+            IntoNextScene(_menuSceneName, false, 3f); // 3秒的最小加载时间
         }
     }
 
-    /// <summary>
-    /// 单独加载下一场景
-    /// </summary>
-    /// <param name="nextSceneName">需要加载的下一场景的名称</param>
-    /// <param name="isActiveNow">是否在加载后立刻激活，true为立刻激活选项</param>
-    /// <returns></returns>
-    /// <summary>
-    /// 加载下一个场景
+    /// 单独加载下一个场景
     /// </summary>
     /// <param name="nextSceneName">需要加载的下一场景的名称</param>
     /// <param name="isActiveNow">是否在加载后立刻激活，true为立刻激活选项</param>
@@ -140,8 +133,6 @@ public class Global_SceneManager : Singleton<Global_SceneManager>
             Debug.Log($"加载场景 {nextSceneName} 进度：{asyncOp.progress * 100:F1}%");
             yield return null;
         }
-
-
 
         // 将该场景记录入已加载场景列表
         if (!_LoadedSceneNames.Contains(nextSceneName))
@@ -252,6 +243,7 @@ public class Global_SceneManager : Singleton<Global_SceneManager>
         Scene scene = SceneManager.GetSceneByName(sceneName);
         if (!scene.IsValid()) return;
 
+        // 在写了JSON文件后，激活物体以及数据重置都应该参照JSON内容进行
         // 先激活场景中的所有根物体
         foreach (GameObject rootObj in scene.GetRootGameObjects())
         {
@@ -288,17 +280,7 @@ public class Global_SceneManager : Singleton<Global_SceneManager>
         Scene scene = SceneManager.GetSceneByName(sceneName);
         if (!scene.IsValid()) return;
 
-        // 优先禁用所有摄像机，确保即使场景被渲染一帧，玩家也看不到
-        Camera[] cameras = FindObjectsOfType<Camera>(true);
-        foreach (Camera cam in cameras)
-        {
-            if (cam.gameObject.scene.name == sceneName)
-            {
-                cam.enabled = false;
-            }
-        }
-
-        // 然后禁用所有根物体
+        // 禁用所有根物体
         foreach (GameObject rootObj in scene.GetRootGameObjects())
         {
             rootObj.SetActive(false);
