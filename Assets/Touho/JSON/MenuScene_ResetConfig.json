@@ -1,0 +1,60 @@
+{
+  "sceneName": "GameStartMenu",
+  "objectStates": [
+    {
+      "objectPath": "Main Camera",
+      "isActive": true
+    },
+    {
+      "objectPath": "游戏开始菜单",
+      "isActive": true
+    },
+    {
+      "objectPath": "游戏开始菜单/游戏开始菜单背景",
+      "isActive": true
+    },
+    {
+      "objectPath": "游戏开始菜单/按钮集合",
+      "isActive": true
+    },
+    {
+      "objectPath": "背景物体",
+      "isActive": true
+    },
+    {
+      "objectPath": "EventSystem",
+      "isActive": true
+    },
+    {
+      "objectPath": "难度选择",
+      "isActive": false
+    },
+    {
+      "objectPath": "角色选择",
+      "isActive": false
+    },
+    {
+      "objectPath": "历史战绩",
+      "isActive": false
+    },
+    {
+      "objectPath": "手册",
+      "isActive": false
+    },
+    {
+      "objectPath": "音乐室",
+      "isActive": false
+    },
+    {
+      "objectPath": "设置",
+      "isActive": false
+    },
+    {
+      "objectPath": "Button&Scene",
+      "isActive": true
+    }
+  ],
+  "resetData": {
+    "defaultSelectedButton": "游戏开始菜单/按钮集合/Start"
+  }
+}

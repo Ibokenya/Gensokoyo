@@ -2,14 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class circle_BySelf : MonoBehaviour
+public class Rotation : MonoBehaviour
 {
     public GameObject myself;
-    public float circleSpeed = 100f;
+    public float RotationSpeed = 100f;
 
     // Update is called once per frame
     void Update()
     {
-        myself.transform.Rotate(0, 0, circleSpeed * Time.deltaTime);
+        myself.transform.Rotate(0, 0, RotationSpeed * Time.deltaTime);
     }
 }
