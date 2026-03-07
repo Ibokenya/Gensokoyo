@@ -7,8 +7,13 @@ using UnityEngine.UI;
 public class ButtonAnime : MonoBehaviour
 {
     private TMP_Text text;
-    private Color NewColor = new Color(1f, 0.2f, 0.9f);
-    private Color OldColor = new Color(0.8f, 0.2f, 0.5f);
+    [Header("颜色差（选中时增加颜色差数值）")]
+    [SerializeField]
+    private Color color = new Color(0.2f, 0f, 0.4f,0f);
+    [Header("字体差（选中时增加字体差数值）")]
+    [SerializeField]
+    private int font=20;
+    
 
     // Start is called before the first frame update
     void Start()
@@ -30,8 +35,8 @@ public class ButtonAnime : MonoBehaviour
     {
         Debug.Log($"按钮{button.name}被选中");
         text=button.GetComponentInChildren<TMP_Text>();
-        text.fontSize += 20;
-        text.color = NewColor;
+        text.fontSize += font;
+        text.color += color;
     }
 
     /// <summary>
@@ -42,8 +47,8 @@ public class ButtonAnime : MonoBehaviour
     {
         Debug.Log($"按钮{button.name}被抛弃了");
         text = button.GetComponentInChildren<TMP_Text>();
-        text.fontSize -= 20;
-        text.color = OldColor;
+        text.fontSize -= font;
+        text.color -= color;
     }
 
     /// <summary>
@@ -52,6 +57,7 @@ public class ButtonAnime : MonoBehaviour
     /// <param name="button">被按下的按钮</param>
     public void ButtonBeClick(Button button)
     {
+        // 这里之后应该播放音效，支持不同小场景自定义不同音效（还是序列化拖入音效资源）
         Debug.Log($"按钮{button.name}被按下，biu~");
     }
 }

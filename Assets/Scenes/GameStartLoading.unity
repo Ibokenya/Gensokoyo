@@ -5503,8 +5503,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\u6771 \u65B9 \u5B87 \u5B99 \u8C08"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: e274734054067204780cc3822c1c3086, type: 2}
-  m_sharedMaterial: {fileID: -2413643172498810289, guid: e274734054067204780cc3822c1c3086, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: e73d0d39ed0fedc46b79d9628249fc9c, type: 2}
+  m_sharedMaterial: {fileID: -2413643172498810289, guid: e73d0d39ed0fedc46b79d9628249fc9c, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -5534,7 +5534,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 1
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 256
   m_textAlignment: 65535

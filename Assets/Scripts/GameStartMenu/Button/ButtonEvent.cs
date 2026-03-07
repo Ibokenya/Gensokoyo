@@ -22,6 +22,8 @@ public class ButtonEvent : MonoBehaviour
     [SerializeField]
     public List<GameObject> SceneObjects;
 
+    private bool IsStart = false;// 标志位，记录当前的选择角色界面是由Start引起的，还是ExStart
+
     // Start is called before the first frame update
     void Start()
     {
@@ -32,6 +34,7 @@ public class ButtonEvent : MonoBehaviour
     void Update()
     {
         if(Global_GameManager.Instance.state!=State.Menu)// 如果是菜单态则不监听输入,不是菜单态才监听输入
+            //为什么呢，因为只有菜单态时点击X键不是切换小场景而是选中该小场景下的最后一个按钮。其他情况下按X都是退出小场景
         {
             CheckUpDate();
         }
@@ -62,15 +65,17 @@ public class ButtonEvent : MonoBehaviour
         }
     }
 
-    public void Strat_Event()
+    public void Strat_Event()// 进入选择难度界面
     {
+        IsStart = true;
         SceneObjects[0].SetActive(false);
         SceneObjects[1].SetActive(true);
         Global_GameManager.Instance.state = State.ModeChoose;
     }
 
-    public void ExStart_Event()
+    public void ExStart_Event()// 进入选择人物界面
     {
+        IsStart = false;
         SceneObjects[0].SetActive(false);
         SceneObjects[2].SetActive(true);
         Global_GameManager.Instance.state = State.CharacterChoose;
@@ -110,13 +115,29 @@ public class ButtonEvent : MonoBehaviour
 
     }
 
+    public void StartPharse2()// 开始按钮的第二阶段————选择完难度后该选择人物了
+    {
+        SceneObjects[1].SetActive(false);
+        SceneObjects[2].SetActive(true);
+        Global_GameManager.Instance.state = State.CharacterChoose;
+    }
+
     private void CharacterChoose()
     {
         if (Input.GetKeyDown(KeyCode.X))
         {
-            SceneObjects[2].SetActive(false);
-            SceneObjects[0].SetActive(true);
-            Global_GameManager.Instance.state = State.Menu;
+            if(IsStart)// 是Start的二阶段
+            {
+                SceneObjects[2].SetActive(false);
+                SceneObjects[1].SetActive(true);
+                Global_GameManager.Instance.state = State.ModeChoose;
+            }
+            else
+            {
+                SceneObjects[2].SetActive(false);
+                SceneObjects[0].SetActive(true);
+                Global_GameManager.Instance.state = State.Menu;
+            }         
         }
     }
 
@@ -126,6 +147,7 @@ public class ButtonEvent : MonoBehaviour
         {
             SceneObjects[1].SetActive(false);
             SceneObjects[0].SetActive(true);
+            Global_GameManager.Instance.gameMode = GameMode.Easy;
             Global_GameManager.Instance.state = State.Menu;
         }
     }

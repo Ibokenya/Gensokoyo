@@ -1,5 +1,53 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!28 &-317310292192359411
+Texture2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: descrip Atlas
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_ForcedFallbackFormat: 4
+  m_DownscaleFallback: 0
+  m_IsAlphaChannelOptional: 0
+  serializedVersion: 2
+  m_Width: 0
+  m_Height: 0
+  m_CompleteImageSize: 0
+  m_MipsStripped: 0
+  m_TextureFormat: 1
+  m_MipCount: 1
+  m_IsReadable: 0
+  m_IsPreProcessed: 0
+  m_IgnoreMipmapLimit: 0
+  m_MipmapLimitGroupName: 
+  m_StreamingMipmaps: 0
+  m_StreamingMipmapsPriority: 0
+  m_VTOnly: 0
+  m_AlphaIsTransparency: 0
+  m_ImageCount: 1
+  m_TextureDimension: 2
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 1
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 0
+    m_WrapV: 0
+    m_WrapW: 0
+  m_LightmapFormat: 0
+  m_ColorSpace: 1
+  m_PlatformBlob: 
+  image data: 0
+  _typelessdata: 
+  m_StreamData:
+    serializedVersion: 2
+    offset: 0
+    size: 0
+    path: 
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10,42 +58,42 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 71c1514a6bd24e1e882cebbe1904ce04, type: 3}
-  m_Name: english
+  m_Name: 6
   m_EditorClassIdentifier: 
-  hashCode: 1250018322
-  material: {fileID: 397893793663830636}
-  materialHashCode: -1942654606
+  hashCode: 54
+  material: {fileID: 7202970623986868507}
+  materialHashCode: -1284156586
   m_Version: 1.1.0
-  m_SourceFontFileGUID: 17d2a9e950e3aba4aa7ebd51bea6895f
-  m_SourceFontFile_EditorRef: {fileID: 12800000, guid: 17d2a9e950e3aba4aa7ebd51bea6895f, type: 3}
-  m_SourceFontFile: {fileID: 12800000, guid: 17d2a9e950e3aba4aa7ebd51bea6895f, type: 3}
-  m_AtlasPopulationMode: 1
+  m_SourceFontFileGUID: 4afc906dc0ce0504f81e737037ae8120
+  m_SourceFontFile_EditorRef: {fileID: 12800000, guid: 4afc906dc0ce0504f81e737037ae8120, type: 3}
+  m_SourceFontFile: {fileID: 0}
+  m_AtlasPopulationMode: 0
   m_FaceInfo:
     m_FaceIndex: 0
-    m_FamilyName: EARGA
-    m_StyleName: Regular
+    m_FamilyName: Xiangjiao-kuanmaoshualinggan
+    m_StyleName: ??
     m_PointSize: 90
     m_Scale: 1
-    m_UnitsPerEM: 2048
-    m_LineHeight: 667.4414
-    m_AscentLine: 74.44336
-    m_CapLine: 63
+    m_UnitsPerEM: 1000
+    m_LineHeight: 100.26
+    m_AscentLine: 74.340004
+    m_CapLine: 54
     m_MeanLine: 45
     m_Baseline: 0
-    m_DescentLine: -19.467773
-    m_SuperscriptOffset: 74.44336
+    m_DescentLine: -16.92
+    m_SuperscriptOffset: 74.340004
     m_SuperscriptSize: 0.5
-    m_SubscriptOffset: -19.467773
+    m_SubscriptOffset: -16.92
     m_SubscriptSize: 0.5
-    m_UnderlineOffset: -12.832031
-    m_UnderlineThickness: 6.591797
+    m_UnderlineOffset: -11.25
+    m_UnderlineThickness: 4.5
     m_StrikethroughOffset: 18
-    m_StrikethroughThickness: 6.591797
-    m_TabWidth: 22
+    m_StrikethroughThickness: 4.5
+    m_TabWidth: 30
   m_GlyphTable: []
   m_CharacterTable: []
   m_AtlasTextures:
-  - {fileID: 7211721239869888786}
+  - {fileID: -317310292192359411}
   m_AtlasTextureIndex: 0
   m_IsMultiAtlasTexturesEnabled: 0
   m_ClearDynamicDataOnBuild: 0
@@ -89,10 +137,10 @@ MonoBehaviour:
     m_GlyphPairAdjustmentRecords: []
   fallbackFontAssets: []
   m_FallbackFontAssetTable:
-  - {fileID: 11400000, guid: 92a1c524fc6baba42b4c039ab505341c, type: 2}
+  - {fileID: 11400000, guid: 9b2f17487dc26c44fad7156dbd3856c6, type: 2}
   m_CreationSettings:
     sourceFontFileName: 
-    sourceFontFileGUID: 17d2a9e950e3aba4aa7ebd51bea6895f
+    sourceFontFileGUID: 4afc906dc0ce0504f81e737037ae8120
     pointSizeSamplingMode: 0
     pointSize: 90
     padding: 9
@@ -135,14 +183,14 @@ MonoBehaviour:
   boldSpacing: 7
   italicStyle: 35
   tabSize: 10
---- !u!21 &397893793663830636
+--- !u!21 &7202970623986868507
 Material:
   serializedVersion: 8
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: english Atlas Material
+  m_Name: descrip Atlas Material
   m_Shader: {fileID: 4800000, guid: 68e6db2ebdc24f95958faec2be5558d6, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -171,7 +219,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 7211721239869888786}
+        m_Texture: {fileID: -317310292192359411}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _OutlineTex:
@@ -180,18 +228,18 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Ambient: 0.5
-    - _Bevel: 0.5
-    - _BevelClamp: 0
-    - _BevelOffset: 0
-    - _BevelRoundness: 0
-    - _BevelWidth: 0
+    - _Ambient: 0
+    - _Bevel: 0.183
+    - _BevelClamp: 0.853
+    - _BevelOffset: -0.5
+    - _BevelRoundness: 1
+    - _BevelWidth: 0.5
     - _BumpFace: 0
     - _BumpOutline: 0
     - _ColorMask: 15
     - _CullMode: 0
-    - _Diffuse: 0.5
-    - _FaceDilate: 0
+    - _Diffuse: 0
+    - _FaceDilate: -0.064
     - _FaceUVSpeedX: 0
     - _FaceUVSpeedY: 0
     - _GlowInner: 0.05
@@ -199,23 +247,23 @@ Material:
     - _GlowOuter: 0.05
     - _GlowPower: 0.75
     - _GradientScale: 10
-    - _LightAngle: 3.1416
+    - _LightAngle: 5.5
     - _MaskSoftnessX: 0
     - _MaskSoftnessY: 0
     - _OutlineSoftness: 0
     - _OutlineUVSpeedX: 0
     - _OutlineUVSpeedY: 0
-    - _OutlineWidth: 0
+    - _OutlineWidth: 0.05
     - _PerspectiveFilter: 0.875
-    - _Reflectivity: 10
+    - _Reflectivity: 5
     - _ScaleRatioA: 0.9
-    - _ScaleRatioB: 0.73125
-    - _ScaleRatioC: 0.73125
+    - _ScaleRatioB: 0.78885
+    - _ScaleRatioC: 0.78885
     - _ScaleX: 1
     - _ScaleY: 1
     - _ShaderFlags: 0
     - _Sharpness: 0
-    - _SpecularPower: 2
+    - _SpecularPower: 0
     - _Stencil: 0
     - _StencilComp: 8
     - _StencilOp: 0
@@ -237,57 +285,9 @@ Material:
     - _FaceColor: {r: 1, g: 1, b: 1, a: 1}
     - _GlowColor: {r: 0, g: 1, b: 0, a: 0.5}
     - _MaskCoord: {r: 0, g: 0, b: 32767, a: 32767}
-    - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+    - _OutlineColor: {r: 0.68172646, g: 0.4903682, b: 0.9685534, a: 1}
     - _ReflectFaceColor: {r: 0, g: 0, b: 0, a: 1}
     - _ReflectOutlineColor: {r: 0, g: 0, b: 0, a: 1}
     - _SpecularColor: {r: 1, g: 1, b: 1, a: 1}
     - _UnderlayColor: {r: 0, g: 0, b: 0, a: 0.5}
   m_BuildTextureStacks: []
---- !u!28 &7211721239869888786
-Texture2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: english Atlas
-  m_ImageContentsHash:
-    serializedVersion: 2
-    Hash: 00000000000000000000000000000000
-  m_ForcedFallbackFormat: 4
-  m_DownscaleFallback: 0
-  m_IsAlphaChannelOptional: 0
-  serializedVersion: 2
-  m_Width: 0
-  m_Height: 0
-  m_CompleteImageSize: 0
-  m_MipsStripped: 0
-  m_TextureFormat: 1
-  m_MipCount: 1
-  m_IsReadable: 1
-  m_IsPreProcessed: 0
-  m_IgnoreMipmapLimit: 0
-  m_MipmapLimitGroupName: 
-  m_StreamingMipmaps: 0
-  m_StreamingMipmapsPriority: 0
-  m_VTOnly: 0
-  m_AlphaIsTransparency: 0
-  m_ImageCount: 1
-  m_TextureDimension: 2
-  m_TextureSettings:
-    serializedVersion: 2
-    m_FilterMode: 1
-    m_Aniso: 1
-    m_MipBias: 0
-    m_WrapU: 0
-    m_WrapV: 0
-    m_WrapW: 0
-  m_LightmapFormat: 0
-  m_ColorSpace: 1
-  m_PlatformBlob: 
-  image data: 0
-  _typelessdata: 
-  m_StreamData:
-    serializedVersion: 2
-    offset: 0
-    size: 0
-    path: 

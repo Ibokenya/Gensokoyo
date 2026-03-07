@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!28 &-4500545908031538025
+--- !u!28 &-317310292192359411
 Texture2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -61,7 +61,7 @@ MonoBehaviour:
   m_Name: descrip
   m_EditorClassIdentifier: 
   hashCode: 779953946
-  material: {fileID: 6621906641382491022}
+  material: {fileID: 7202970623986868507}
   materialHashCode: -687417478
   m_Version: 1.1.0
   m_SourceFontFileGUID: 4afc906dc0ce0504f81e737037ae8120
@@ -93,7 +93,7 @@ MonoBehaviour:
   m_GlyphTable: []
   m_CharacterTable: []
   m_AtlasTextures:
-  - {fileID: -4500545908031538025}
+  - {fileID: -317310292192359411}
   m_AtlasTextureIndex: 0
   m_IsMultiAtlasTexturesEnabled: 0
   m_ClearDynamicDataOnBuild: 0
@@ -183,7 +183,7 @@ MonoBehaviour:
   boldSpacing: 7
   italicStyle: 35
   tabSize: 10
---- !u!21 &6621906641382491022
+--- !u!21 &7202970623986868507
 Material:
   serializedVersion: 8
   m_ObjectHideFlags: 0
@@ -219,7 +219,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: -4500545908031538025}
+        m_Texture: {fileID: -317310292192359411}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _OutlineTex:
@@ -256,9 +256,9 @@ Material:
     - _OutlineWidth: 0
     - _PerspectiveFilter: 0.875
     - _Reflectivity: 10
-    - _ScaleRatioA: 0.9
-    - _ScaleRatioB: 0.73125
-    - _ScaleRatioC: 0.73125
+    - _ScaleRatioA: 1
+    - _ScaleRatioB: 1
+    - _ScaleRatioC: 1
     - _ScaleX: 1
     - _ScaleY: 1
     - _ShaderFlags: 0

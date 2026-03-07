@@ -66,8 +66,8 @@ MonoBehaviour:
   m_Version: 1.1.0
   m_SourceFontFileGUID: 6725890451cbde842b0b69b362baa5c5
   m_SourceFontFile_EditorRef: {fileID: 12800000, guid: 6725890451cbde842b0b69b362baa5c5, type: 3}
-  m_SourceFontFile: {fileID: 0}
-  m_AtlasPopulationMode: 0
+  m_SourceFontFile: {fileID: 12800000, guid: 6725890451cbde842b0b69b362baa5c5, type: 3}
+  m_AtlasPopulationMode: 1
   m_FaceInfo:
     m_FaceIndex: 0
     m_FamilyName: Aa???????

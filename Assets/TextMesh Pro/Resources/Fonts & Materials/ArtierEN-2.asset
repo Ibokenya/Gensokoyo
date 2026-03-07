@@ -126,8 +126,8 @@ MonoBehaviour:
   m_Version: 1.1.0
   m_SourceFontFileGUID: c3e8c5b9c360b034993db91ff6703d8a
   m_SourceFontFile_EditorRef: {fileID: 12800000, guid: c3e8c5b9c360b034993db91ff6703d8a, type: 3}
-  m_SourceFontFile: {fileID: 0}
-  m_AtlasPopulationMode: 0
+  m_SourceFontFile: {fileID: 12800000, guid: c3e8c5b9c360b034993db91ff6703d8a, type: 3}
+  m_AtlasPopulationMode: 1
   m_FaceInfo:
     m_FaceIndex: 0
     m_FamilyName: ArtierEN
@@ -263,7 +263,7 @@ Texture2D:
   m_MipsStripped: 0
   m_TextureFormat: 1
   m_MipCount: 1
-  m_IsReadable: 0
+  m_IsReadable: 1
   m_IsPreProcessed: 0
   m_IgnoreMipmapLimit: 0
   m_MipmapLimitGroupName: 

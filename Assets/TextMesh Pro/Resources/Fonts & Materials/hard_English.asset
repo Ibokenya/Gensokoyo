@@ -126,8 +126,8 @@ MonoBehaviour:
   m_Version: 1.1.0
   m_SourceFontFileGUID: 72f6610efa9ead644872ecf44656f498
   m_SourceFontFile_EditorRef: {fileID: 12800000, guid: 72f6610efa9ead644872ecf44656f498, type: 3}
-  m_SourceFontFile: {fileID: 0}
-  m_AtlasPopulationMode: 0
+  m_SourceFontFile: {fileID: 12800000, guid: 72f6610efa9ead644872ecf44656f498, type: 3}
+  m_AtlasPopulationMode: 1
   m_FaceInfo:
     m_FaceIndex: 0
     m_FamilyName: YEFONT Color Fonts0831
@@ -263,7 +263,7 @@ Texture2D:
   m_MipsStripped: 0
   m_TextureFormat: 1
   m_MipCount: 1
-  m_IsReadable: 0
+  m_IsReadable: 1
   m_IsPreProcessed: 0
   m_IgnoreMipmapLimit: 0
   m_MipmapLimitGroupName: 
