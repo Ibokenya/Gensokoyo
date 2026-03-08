@@ -5,14 +5,60 @@ using UnityEngine.UI;
 
 public class CharacterAnime : MonoBehaviour
 {
+    public GameObject Reimu;
+    public GameObject Marisa;
+
     public Animator reimuAnimator;
     public Animator marisaAnimator;
 
-    [Header("¶¯»­Ê±³¤£¨Ãë£©")]
+    private bool ismirror = false;
+    private bool isfirst = true;
+
+    [Header("¶¯»­²¥·Å¼ä¸ô")]
     public float animDuration = 0.5f;
 
-    // ½öÓÃÓÚ·ÀÖØ¸´´¥·¢
     private bool canClick = true;
+
+    public GameObject Logo;
+
+
+    void OnEnable()
+    {
+        ResetToDefault();
+    }
+
+    void ResetToDefault()
+    {
+        ismirror = false;
+        isfirst = true;
+        Global_GameManager.Instance.character = Character.Reimu;
+
+        // ÖØÖÃ¶¯»­×´Ì¬
+        if (reimuAnimator != null)
+        {
+            reimuAnimator.SetBool("IsFirst", true);
+            reimuAnimator.SetBool("IsMirror", false);
+        }
+        if (marisaAnimator != null)
+        {
+            marisaAnimator.SetBool("IsFirst", true);
+            marisaAnimator.SetBool("IsMirror", false);
+        }
+
+        // ÖØÖÃ×é¼þ
+        if (Reimu != null)
+        {
+            Reimu.transform.Find("Ä£ºý")?.gameObject.SetActive(false);
+            Reimu.transform.Find("ÁéÃÎ¼ò½é")?.gameObject.SetActive(true);
+        }
+        if (Marisa != null)
+        {
+            Marisa.transform.Find("Ä£ºý")?.gameObject.SetActive(true);
+            Marisa.transform.Find("ÁéÃÎ¼ò½é")?.gameObject.SetActive(false);
+        }
+        Logo.transform.position = new Vector3(1720, 980, 0);
+        canClick = true;
+    }
 
     void Update()
     {
@@ -20,14 +66,34 @@ public class CharacterAnime : MonoBehaviour
         if (!canClick) return;
 
         // ÓÒ¼ü£ºÇÐ¾µÏñÌ¬
-        if (Input.GetKeyDown(KeyCode.RightArrow))
+        if (Input.GetKeyDown(KeyCode.RightArrow)&&!ismirror)
         {
+            if (isfirst) 
+            { 
+                isfirst = false;
+                reimuAnimator.SetBool("IsFirst", false);
+                marisaAnimator.SetBool("IsFirst", false);
+            }
             SetMirrorState(true);
+            ismirror = true;
+            Reimu.transform.Find("Ä£ºý").gameObject.SetActive(true);
+            Reimu.transform.Find("ÁéÃÎ¼ò½é").gameObject.SetActive(false);
+            Marisa.transform.Find("Ä£ºý").gameObject.SetActive(false);
+            Marisa.transform.Find("Ä§ÀíÉ³¼ò½é").gameObject.SetActive(true);
+            Logo.transform.position = new Vector3(200, 980, 0);
+            Global_GameManager.Instance.character = Character.Marisa;
         }
         // ×ó¼ü£ºÇÐ³õÊ¼Ì¬
-        else if (Input.GetKeyDown(KeyCode.LeftArrow))
+        else if (Input.GetKeyDown(KeyCode.LeftArrow)&&ismirror)
         {
             SetMirrorState(false);
+            ismirror = false;
+            Reimu.transform.Find("Ä£ºý").gameObject.SetActive(false);
+            Reimu.transform.Find("ÁéÃÎ¼ò½é").gameObject.SetActive(true);
+            Marisa.transform.Find("Ä£ºý").gameObject.SetActive(true);
+            Marisa.transform.Find("Ä§ÀíÉ³¼ò½é").gameObject.SetActive(false);
+            Logo.transform.position = new Vector3(1720, 980, 0);
+            Global_GameManager.Instance.character = Character.Reimu;
         }
     }
 

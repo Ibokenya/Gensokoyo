@@ -58,11 +58,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 71c1514a6bd24e1e882cebbe1904ce04, type: 3}
-  m_Name: 6
+  m_Name: 7
   m_EditorClassIdentifier: 
-  hashCode: 54
+  hashCode: 55
   material: {fileID: 7202970623986868507}
-  materialHashCode: -1284156586
+  materialHashCode: -1093028169
   m_Version: 1.1.0
   m_SourceFontFileGUID: 4afc906dc0ce0504f81e737037ae8120
   m_SourceFontFile_EditorRef: {fileID: 12800000, guid: 4afc906dc0ce0504f81e737037ae8120, type: 3}
@@ -228,17 +228,17 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Ambient: 0
-    - _Bevel: 0.183
-    - _BevelClamp: 0.853
-    - _BevelOffset: -0.5
-    - _BevelRoundness: 1
-    - _BevelWidth: 0.5
+    - _Ambient: 0.5
+    - _Bevel: 0.5
+    - _BevelClamp: 0
+    - _BevelOffset: 0
+    - _BevelRoundness: 0
+    - _BevelWidth: 0
     - _BumpFace: 0
     - _BumpOutline: 0
     - _ColorMask: 15
     - _CullMode: 0
-    - _Diffuse: 0
+    - _Diffuse: 0.5
     - _FaceDilate: 0.167
     - _FaceUVSpeedX: 0
     - _FaceUVSpeedY: 0
@@ -247,7 +247,7 @@ Material:
     - _GlowOuter: 0.05
     - _GlowPower: 0.75
     - _GradientScale: 10
-    - _LightAngle: 5.5
+    - _LightAngle: 3.1416
     - _MaskSoftnessX: 0
     - _MaskSoftnessY: 0
     - _OutlineSoftness: 0
@@ -255,7 +255,7 @@ Material:
     - _OutlineUVSpeedY: 0
     - _OutlineWidth: 0.288
     - _PerspectiveFilter: 0.875
-    - _Reflectivity: 5
+    - _Reflectivity: 10
     - _ScaleRatioA: 0.9
     - _ScaleRatioB: 0.58094996
     - _ScaleRatioC: 0.58094996
@@ -263,7 +263,7 @@ Material:
     - _ScaleY: 1
     - _ShaderFlags: 0
     - _Sharpness: 0
-    - _SpecularPower: 0
+    - _SpecularPower: 2
     - _Stencil: 0
     - _StencilComp: 8
     - _StencilOp: 0

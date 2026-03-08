@@ -23,6 +23,8 @@ public class ButtonEvent : MonoBehaviour
     public List<GameObject> SceneObjects;
 
     private bool IsStart = false;// 标志位，记录当前的选择角色界面是由Start引起的，还是ExStart
+    
+    private float inputCooldown = 0f; // 输入冷却时间，防止同一帧内重复处理输入
 
     // Start is called before the first frame update
     void Start()
@@ -33,6 +35,12 @@ public class ButtonEvent : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // 更新输入冷却时间
+        if (inputCooldown > 0f)
+        {
+            inputCooldown -= Time.deltaTime;
+        }
+        
         if(Global_GameManager.Instance.state!=State.Menu)// 如果是菜单态则不监听输入,不是菜单态才监听输入
             //为什么呢，因为只有菜单态时点击X键不是切换小场景而是选中该小场景下的最后一个按钮。其他情况下按X都是退出小场景
         {
@@ -80,6 +88,9 @@ public class ButtonEvent : MonoBehaviour
         SceneObjects[2].SetActive(true);
         Global_GameManager.Instance.state = State.CharacterChoose;
         Global_GameManager.Instance.gameMode=GameMode.Extra;
+        
+        // 设置输入冷却时间，防止同一帧内重复处理 Z 键
+        inputCooldown = 0.2f; // 0.2秒冷却时间
     }
 
     public void Result_Event()
@@ -124,6 +135,12 @@ public class ButtonEvent : MonoBehaviour
 
     private void CharacterChoose()
     {
+        // 检查输入冷却，防止同一帧内重复处理
+        if (inputCooldown > 0f)
+        {
+            return;
+        }
+        
         if (Input.GetKeyDown(KeyCode.X))
         {
             if(IsStart)// 是Start的二阶段
@@ -138,6 +155,17 @@ public class ButtonEvent : MonoBehaviour
                 SceneObjects[0].SetActive(true);
                 Global_GameManager.Instance.state = State.Menu;
             }         
+        }
+        if(Input.GetKeyDown(KeyCode.Z))
+        {
+            if(Global_GameManager.Instance.gameMode==GameMode.Extra)
+            {
+                Debug.Log("暂未实装！");
+            }
+            else
+            {
+                Global_SceneManager.Instance.IntoNextScene("Game1", true, 0.2f);
+            }               
         }
     }
 

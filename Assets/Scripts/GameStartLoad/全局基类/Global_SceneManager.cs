@@ -38,7 +38,26 @@ public class Global_SceneManager : Singleton<Global_SceneManager>
     protected override void Awake()
     {
         base.Awake(); // 调用基类的Awake，保证单例生效
-        StartCoroutine(PreLoadAllScenes());
+
+        // 检测当前实际场景，更新 CurrentSceneName
+        Scene currentScene = SceneManager.GetActiveScene();
+        if (currentScene.IsValid())
+        {
+            CurrentSceneName = currentScene.name;
+            Debug.Log($"全局场景管理器初始化，当前场景：{CurrentSceneName}");
+        }
+        
+        // 只有当当前场景是 GameStartLoading 时才预加载场景
+        // 这样直接运行其他场景时不会重复预加载
+        if (CurrentSceneName == "GameStartLoading")
+        {
+            StartCoroutine(PreLoadAllScenes());
+        }
+        else
+        {
+            Debug.Log("非初始场景，跳过批量预加载");
+            _isAllSceneLoaded = true; // 标记为已加载，避免影响后续操作
+        }
     }
 
     /// <summary>
@@ -74,8 +93,12 @@ public class Global_SceneManager : Singleton<Global_SceneManager>
             }
             Debug.Log($"预加载场景 {sceneName} 完成：{asyncOp.progress * 100:F1}%");
 
-            // 关键：场景资源加载完成后，立即禁用，不给渲染机会
-            asyncOp.allowSceneActivation = false;
+            // 关键：允许场景激活并等待完全加载
+            asyncOp.allowSceneActivation = true;
+            while (!asyncOp.isDone)
+            {
+                yield return null;
+            }
             
             // 场景刚加载完成，立即禁用所有根物体（在同一帧内）
             DisableAllRootObjects(sceneName);
@@ -88,13 +111,14 @@ public class Global_SceneManager : Singleton<Global_SceneManager>
         _isAllSceneLoaded = true;
         Debug.Log($"所有场景均加载完毕，共{_LoadedSceneNames.Count}个");
 
-        // 直接跳转到下一场景，不过还有一点点动画和等待需要实现
-        if (!string.IsNullOrEmpty(_menuSceneName))// 如果下一个场景的名字非空（主要看是否设置了预加载完毕后的下一场景）
-        {
-            Global_GameManager.Instance.state = State.Menu;
-            // 这里设置默认的最小加载时间，确保场景切换时有足够的过渡时间
-            IntoNextScene(_menuSceneName, false, 3f); // 3秒的最小加载时间
-        }
+    // 只有当当前场景是 GameStartLoading 时才自动切换到 menu 场景
+    // 这样直接运行 menu 场景时就不会自动切换回 menu 场景
+    if (CurrentSceneName == "GameStartLoading" && !string.IsNullOrEmpty(_menuSceneName))
+    {
+        Global_GameManager.Instance.state = State.Menu;
+        // 这里设置默认的最小加载时间，确保场景切换时有足够的过渡时间
+        IntoNextScene(_menuSceneName, false, 3f); // 3秒的最小加载时间
+    }
     }
 
     /// 单独加载下一个场景
@@ -103,10 +127,11 @@ public class Global_SceneManager : Singleton<Global_SceneManager>
     /// <param name="isActiveNow">是否在加载后立刻激活，true为立刻激活选项</param>
     /// <param name="minLoadTime">最小加载时间（秒），确保加载过程至少持续指定时间</param>
     /// <returns></returns>
-    public IEnumerator LoadNextScene(string nextSceneName, bool isActiveNow, float minLoadTime = 0f)
+    public IEnumerator LoadNextScene(string nextSceneName, bool isActiveNow, float minLoadTime = 0.1f)
     {
         float startTime = Time.time;
-        
+        AsyncOperation asyncOp;
+
         if (SceneManager.GetSceneByName(nextSceneName).isLoaded)
         {
             Debug.Log($"场景{nextSceneName}已经加载过了呀！");
@@ -127,15 +152,29 @@ public class Global_SceneManager : Singleton<Global_SceneManager>
 
         // 异步加载单个场景
         Debug.Log($"开始加载单个场景{nextSceneName}");
-        AsyncOperation asyncOp = SceneManager.LoadSceneAsync(nextSceneName, LoadSceneMode.Additive);
+        asyncOp = SceneManager.LoadSceneAsync(nextSceneName, LoadSceneMode.Additive);
         asyncOp.allowSceneActivation = false; // 不激活场景
 
-        // 等待加载完成
-        while (!asyncOp.isDone)
+        // 等待加载完成 - 当allowSceneActivation=false时，isDone永远不会为true
+        // 所以改为检查进度是否达到0.9f（Unity中0.9表示资源加载完成）
+        while (asyncOp.progress < 0.9f)
         {
             Debug.Log($"加载场景 {nextSceneName} 进度：{asyncOp.progress * 100:F1}%");
             yield return null;
         }
+        
+        Debug.Log($"加载场景 {nextSceneName} 资源完成，进度：{asyncOp.progress * 100:F1}%");
+
+        // 关键：允许场景激活并等待完全加载
+        // 如果不这样做，SceneManager.SetActiveScene会失败，因为场景还没有完全加载
+        asyncOp.allowSceneActivation = true;
+        
+        // 等待场景完全加载
+        while (!asyncOp.isDone)
+        {
+            yield return null;
+        }
+        Debug.Log($"场景 {nextSceneName} 已完全加载");
 
         // 将该场景记录入已加载场景列表
         if (!_LoadedSceneNames.Contains(nextSceneName))
@@ -183,6 +222,11 @@ public class Global_SceneManager : Singleton<Global_SceneManager>
             _LoadedSceneNames.Remove(sceneName);
             Debug.Log($"已删除场景{sceneName}");
         }
+        else// isHide=true时，隐藏场景（禁用所有根物体）
+        {
+            DisableAllRootObjects(sceneName);
+            Debug.Log($"已隐藏场景{sceneName}");
+        }
     }
 
     /// <summary>
@@ -196,22 +240,19 @@ public class Global_SceneManager : Singleton<Global_SceneManager>
         StartCoroutine(IntoNextSceneCoroutine(NextSceneName, isHide, minLoadTime));
     }
 
-    private IEnumerator IntoNextSceneCoroutine(string NextSceneName, bool isHide, float minLoadTime = 0f)
+    private IEnumerator IntoNextSceneCoroutine(string NextSceneName, bool isHide, float minLoadTime = 0.1f)
     {
         float startTime = Time.time;
-        
+        Debug.Log($"【场景切换】开始：从{CurrentSceneName}到{NextSceneName}，isHide={isHide}");
+
         SimpleWaitingAnime(CurrentSceneName, NextSceneName);// 播放动画
 
-        // 当前场景非空则先处理当前场景
-        if (!string.IsNullOrEmpty(CurrentSceneName))
-        {
-            DeleteCurrentScene(CurrentSceneName, isHide);
-        }
-
-        // 检测下一场景是否已加载
+        // 先确保新场景已加载
+        Debug.Log($"【场景切换】检测新场景{NextSceneName}是否加载");
         if (!SceneManager.GetSceneByName(NextSceneName).isLoaded)// 未加载
         {
             yield return StartCoroutine(LoadNextScene(NextSceneName, false, minLoadTime));
+            Debug.Log($"【场景切换】新场景{NextSceneName}已加载");
         }
         else
         {
@@ -221,18 +262,27 @@ public class Global_SceneManager : Singleton<Global_SceneManager>
             {
                 yield return new WaitForSeconds(minLoadTime - elapsedTime);
             }
+            Debug.Log($"【场景切换】新场景{NextSceneName}已预加载，等待完成");
         }
 
-        foreach (GameObject rootOBJ in SceneManager.GetSceneByName(CurrentSceneName).GetRootGameObjects())
+        // 等待最小加载时间
+        float totalElapsedTime = Time.time - startTime;
+        if (totalElapsedTime < minLoadTime)
         {
-            rootOBJ.SetActive(false);// 将当前场景里的所有根物体全部禁用掉
+            yield return new WaitForSeconds(minLoadTime - totalElapsedTime);
         }
 
-        Debug.Log($"已隐藏场景{CurrentSceneName}");
+        // 处理旧场景（删除/隐藏）
+        if (!string.IsNullOrEmpty(CurrentSceneName))
+        {
+            Debug.Log($"【场景切换】处理旧场景：{CurrentSceneName}");
+            DeleteCurrentScene(CurrentSceneName, isHide);
+        }
 
         // 激活下一场景并重置状态
         ActivateSceneWithReset(NextSceneName);
 
+        // 更新当前场景名称
         CurrentSceneName = NextSceneName;
         Debug.Log($"已跳转到场景{CurrentSceneName}");
     }
@@ -383,7 +433,10 @@ public class Global_SceneManager : Singleton<Global_SceneManager>
         switch (currentSceneName)
         {
             case "GameStartLoading":// 进入游戏菜单，最初始的动画
-
+                Debug.Log("场景动画之。。当前位于" + currentSceneName);
+                break;
+            case "GameStartMenu":
+                Debug.Log("场景动画之。。当前位于"+currentSceneName);
                 break;
             case "Game1":
                 if (nextSceneName == "Game2")// 关卡跳转
