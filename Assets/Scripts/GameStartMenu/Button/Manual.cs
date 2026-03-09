@@ -13,6 +13,9 @@ public class Manual : MonoBehaviour
     [SerializeField]
     public List<TextMeshProUGUI> Panels = new List<TextMeshProUGUI>();
 
+    public GameObject Shadel;
+    public GameObject manual;
+
     private Color darkColor = new Color(0.5f, 0.5f, 0.5f);
     private Color lightColor = new Color(1f, 1f, 1f);
     private float PanelAlpha = 0.7f;
@@ -21,6 +24,14 @@ public class Manual : MonoBehaviour
     private int LastIndex;
 
     private bool IsIndex=true;// 是否是索引页
+
+    public ButtonEvent Event;
+
+    [Header("音效设置")]
+    [SerializeField] private AudioClip ZSound;   // Z音效
+    [SerializeField] private AudioClip XSound;   // X音效
+    [SerializeField] private AudioClip PageSound;// 翻页音效
+
     // Start is called before the first frame update
     void Start()
     {
@@ -30,8 +41,6 @@ public class Manual : MonoBehaviour
             enabled = false; // 禁用脚本，避免报错
             return;
         }
-
-        Index = 0;
         Index = 0;
         BeSelected(Index);
     }
@@ -46,13 +55,23 @@ public class Manual : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.UpArrow))
         {
-            LastIndex=Index;
+            // 播放翻页音效
+            if (XSound != null)
+            {
+                Global_AudioManager.Instance.PlaySFX(PageSound, false);
+            }
+            LastIndex =Index;
             Index = (Index - 1 + Texts.Count) % Texts.Count;
             UpdateMenu();
         }
 
         if (Input.GetKeyDown(KeyCode.DownArrow))
         {
+            // 播放翻页音效
+            if (XSound != null)
+            {
+                Global_AudioManager.Instance.PlaySFX(PageSound, false);
+            }
             LastIndex = Index;
             Index = (Index + 1) % Texts.Count;
             UpdateMenu();
@@ -60,7 +79,14 @@ public class Manual : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Z) && IsIndex)// 是索引态，进入页态
         {
+            // 播放Z音效
+            if (XSound != null)
+            {
+                Global_AudioManager.Instance.PlaySFX(ZSound, false);
+            }
             IsIndex = false;
+            Shadel.SetActive(true);
+            manual.SetActive(false);
             foreach(TextMeshProUGUI text in Texts)
             {
                 text.alpha=0;// 设置所有按钮为不可见
@@ -69,18 +95,26 @@ public class Manual : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.X))
         {
-            if(!IsIndex)// 是页态，回退到索引态
+            // 播放X音效
+            if (XSound != null)
+            {
+                Global_AudioManager.Instance.PlaySFX(XSound, false);
+            }
+            if (!IsIndex)// 是页态，回退到索引态
             {
                 IsIndex = true;
+                Shadel.SetActive(false);
+                manual.SetActive(true);
                 foreach (TextMeshProUGUI text in Texts)
                 {
                     text.color = darkColor;// 设置所有按钮为可见
                 }
+                BeCanceled(Index);
                 BeSelected(Index);
             }
             else// 是索引态，回退至Menu
             {
-
+                Event.Manual();
             }
         }
     }
@@ -113,11 +147,14 @@ public class Manual : MonoBehaviour
         Panels[index].alpha = PanelAlpha;
     }
 
+    private void BeCanceled(int index)
+    {
+        Panels[index].alpha = 0;
+    }
+
     private void PageTurn(int last,int now)
     {
         Panels[last].alpha=0;
         Panels[now].alpha = PanelAlpha;
     }
-
-
 }

@@ -73,6 +73,11 @@ public class ModeChooseButton : MonoBehaviour
             {
                 Global_GameManager.Instance.gameMode = (GameMode)currentButtonIndex;
                 buttonEvent.StartPharse2();
+                ButtonAnime.ButtonBeClick(buttons[currentButtonIndex]);
+            }
+            else
+            {
+                Debug.Log("为什么会在难度选择界面之后还是Ex难度啊？");
             }
         }
     }

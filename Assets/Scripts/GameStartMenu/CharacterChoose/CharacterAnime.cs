@@ -21,6 +21,9 @@ public class CharacterAnime : MonoBehaviour
 
     public GameObject Logo;
 
+    [Header("音效设置")]
+    [SerializeField] private AudioClip moveoffSound;   // 取消选中音效
+
 
     void OnEnable()
     {
@@ -82,6 +85,12 @@ public class CharacterAnime : MonoBehaviour
             Marisa.transform.Find("魔理沙简介").gameObject.SetActive(true);
             Logo.transform.position = new Vector3(200, 980, 0);
             Global_GameManager.Instance.character = Character.Marisa;
+
+            // 播放取消选中音效
+            if (moveoffSound != null)
+            {
+                Global_AudioManager.Instance.PlaySFX(moveoffSound, false);
+            }
         }
         // 左键：切初始态
         else if (Input.GetKeyDown(KeyCode.LeftArrow)&&ismirror)
@@ -94,6 +103,12 @@ public class CharacterAnime : MonoBehaviour
             Marisa.transform.Find("魔理沙简介").gameObject.SetActive(false);
             Logo.transform.position = new Vector3(1720, 980, 0);
             Global_GameManager.Instance.character = Character.Reimu;
+
+            // 播放取消选中音效
+            if (moveoffSound != null)
+            {
+                Global_AudioManager.Instance.PlaySFX(moveoffSound, false);
+            }
         }
     }
 

@@ -14,6 +14,9 @@ public class ButtonAnime : MonoBehaviour
     [SerializeField]
     private int font=20;
     
+    [Header("音效设置")]
+    [SerializeField] private AudioClip moveoffSound;   // 取消选中音效
+    [SerializeField] private AudioClip clickSound;      // 点击音效
 
     // Start is called before the first frame update
     void Start()
@@ -49,6 +52,12 @@ public class ButtonAnime : MonoBehaviour
         text = button.GetComponentInChildren<TMP_Text>();
         text.fontSize -= font;
         text.color -= color;
+
+        // 播放取消选中音效
+        if (moveoffSound != null)
+        {
+            Global_AudioManager.Instance.PlaySFX(moveoffSound, false);
+        }
     }
 
     /// <summary>
@@ -59,5 +68,11 @@ public class ButtonAnime : MonoBehaviour
     {
         // 这里之后应该播放音效，支持不同小场景自定义不同音效（还是序列化拖入音效资源）
         Debug.Log($"按钮{button.name}被按下，biu~");
+
+        // 播放点击音效
+        if (clickSound != null)
+        {
+            Global_AudioManager.Instance.PlaySFX(clickSound, false);
+        }
     }
 }

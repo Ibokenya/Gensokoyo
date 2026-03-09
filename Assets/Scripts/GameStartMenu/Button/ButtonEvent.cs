@@ -26,6 +26,12 @@ public class ButtonEvent : MonoBehaviour
     
     private float inputCooldown = 0f; // 输入冷却时间，防止同一帧内重复处理输入
 
+    [Header("音效设置")]
+    [SerializeField] private AudioClip ZSound;   // Z音效
+    [SerializeField] private AudioClip XSound;   // X音效
+    [SerializeField] private AudioClip ErrorSound;// 不可选音效
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -41,7 +47,8 @@ public class ButtonEvent : MonoBehaviour
             inputCooldown -= Time.deltaTime;
         }
         
-        if(Global_GameManager.Instance.state!=State.Menu)// 如果是菜单态则不监听输入,不是菜单态才监听输入
+        if(Global_GameManager.Instance.state!=State.Menu || Global_GameManager.Instance.state != State.Manual)
+            // 如果是菜单态则不监听输入,不是菜单态才监听输入(Manual态有内部退出情况)
             //为什么呢，因为只有菜单态时点击X键不是切换小场景而是选中该小场景下的最后一个按钮。其他情况下按X都是退出小场景
         {
             CheckUpDate();
@@ -66,9 +73,6 @@ public class ButtonEvent : MonoBehaviour
                 break;
             case State.MusicRoom:// 音乐室界面
                 MusicRoom();
-                break;
-            case State.Manual:// 手册界面
-                Manual();
                 break;
         }
     }
@@ -123,7 +127,12 @@ public class ButtonEvent : MonoBehaviour
 
     public void Quit_Event()
     {
-
+        // 播放X音效
+        if (XSound != null)
+        {
+            Global_AudioManager.Instance.PlaySFX(XSound, false);
+        }
+        Application.Quit();
     }
 
     public void StartPharse2()// 开始按钮的第二阶段————选择完难度后该选择人物了
@@ -143,7 +152,12 @@ public class ButtonEvent : MonoBehaviour
         
         if (Input.GetKeyDown(KeyCode.X))
         {
-            if(IsStart)// 是Start的二阶段
+            // 播放X音效
+            if (XSound != null)
+            {
+                Global_AudioManager.Instance.PlaySFX(XSound, false);
+            }
+            if (IsStart)// 是Start的二阶段
             {
                 SceneObjects[2].SetActive(false);
                 SceneObjects[1].SetActive(true);
@@ -160,10 +174,20 @@ public class ButtonEvent : MonoBehaviour
         {
             if(Global_GameManager.Instance.gameMode==GameMode.Extra)
             {
+                // 播放Z音效
+                if (ErrorSound != null)
+                {
+                    Global_AudioManager.Instance.PlaySFX(ErrorSound, false);
+                }
                 Debug.Log("暂未实装！");
             }
             else
             {
+                // 播放Z音效
+                if (XSound != null)
+                {
+                    Global_AudioManager.Instance.PlaySFX(ZSound, false);
+                }
                 Global_SceneManager.Instance.IntoNextScene("Game1", true, 0.2f);
             }               
         }
@@ -173,6 +197,11 @@ public class ButtonEvent : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.X))
         {
+            // 播放X音效
+            if (XSound != null)
+            {
+                Global_AudioManager.Instance.PlaySFX(XSound, false);
+            }
             SceneObjects[1].SetActive(false);
             SceneObjects[0].SetActive(true);
             Global_GameManager.Instance.gameMode = GameMode.Easy;
@@ -184,6 +213,11 @@ public class ButtonEvent : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.X))
         {
+            // 播放X音效
+            if (XSound != null)
+            {
+                Global_AudioManager.Instance.PlaySFX(XSound, false);
+            }
             SceneObjects[3].SetActive(false);
             SceneObjects[0].SetActive(true);
             Global_GameManager.Instance.state = State.Menu;
@@ -194,6 +228,11 @@ public class ButtonEvent : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.X))
         {
+            // 播放X音效
+            if (XSound != null)
+            {
+                Global_AudioManager.Instance.PlaySFX(XSound, false);
+            }
             SceneObjects[6].SetActive(false);
             SceneObjects[0].SetActive(true);
             Global_GameManager.Instance.state = State.Menu;
@@ -204,19 +243,21 @@ public class ButtonEvent : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.X))
         {
+            // 播放X音效
+            if (XSound != null)
+            {
+                Global_AudioManager.Instance.PlaySFX(XSound, false);
+            }
             SceneObjects[5].SetActive(false);
             SceneObjects[0].SetActive(true);
             Global_GameManager.Instance.state = State.Menu;
         }
     }
 
-    private void Manual()
+    public void Manual()
     {
-        if (Input.GetKeyDown(KeyCode.X))
-        {
             SceneObjects[4].SetActive(false);
             SceneObjects[0].SetActive(true);
             Global_GameManager.Instance.state = State.Menu;
-        }
     }
 }
