@@ -20,8 +20,8 @@ public class ModeChooseButton : MonoBehaviour
     public ButtonEvent buttonEvent;
 
     public TextMeshProUGUI text;
-    // Start is called before the first frame update
-    void Start()
+
+    private void OnEnable()
     {
         currentButtonIndex = defaultButtonIndex;
         ButtonAnime.ButtonBeChoose(buttons[currentButtonIndex]);
@@ -31,7 +31,11 @@ public class ModeChooseButton : MonoBehaviour
                     "然而也有过不去的\r\n那样可真没什么好说的了\r\n\r\n" +
                     "怎么办呢？\r\n那就只能多加练习好好努力了\r\n祝武运昌隆";
     }
-
+    private void OnDisable()
+    {
+        ButtonAnime.ButtonBeMoveoff(buttons[currentButtonIndex]);
+        currentButtonIndex = defaultButtonIndex;
+    }
     // Update is called once per frame
     void Update()
     {
@@ -94,7 +98,7 @@ public class ModeChooseButton : MonoBehaviour
             case 0:// Easy
                 text.text =
                     "Easy 难度\r\n也就是最简单，轻松无比的那种\r\n一般来讲适合想要完整通关的家伙们\r\n" +
-                    "然而也有过不去的\r\n那样可真没什么好说的了\r\n\r\n" +
+                    "然而也有过不去的\r\n这种可真没什么好说的了\r\n\r\n" +
                     "怎么办呢？\r\n那就只能多加练习好好努力了\r\n祝武运昌隆";
                 break;
             case 1:// Normal

@@ -19,7 +19,6 @@ public class ButtonEvent : MonoBehaviour
     /// </相关状态机>
     /// </summary>
     [Header("0-菜单,1-难度选择,2-人物选择,3-历史战绩,4-手册,5-音乐室,6-设置")]
-    [SerializeField]
     public List<GameObject> SceneObjects;
 
     private bool IsStart = false;// 标志位，记录当前的选择角色界面是由Start引起的，还是ExStart
@@ -31,13 +30,6 @@ public class ButtonEvent : MonoBehaviour
     [SerializeField] private AudioClip XSound;   // X音效
     [SerializeField] private AudioClip ErrorSound;// 不可选音效
 
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
     // Update is called once per frame
     void Update()
     {
@@ -47,8 +39,9 @@ public class ButtonEvent : MonoBehaviour
             inputCooldown -= Time.deltaTime;
         }
         
-        if(Global_GameManager.Instance.state!=State.Menu || Global_GameManager.Instance.state != State.Manual)
-            // 如果是菜单态则不监听输入,不是菜单态才监听输入(Manual态有内部退出情况)
+        if(Global_GameManager.Instance.state!=State.Menu || Global_GameManager.Instance.state != State.Manual
+        || Global_GameManager.Instance.state != State.Option)
+            // 如果是菜单态则不监听输入,不是菜单态才监听输入(Manual态，Option态有内部退出情况)
             //为什么呢，因为只有菜单态时点击X键不是切换小场景而是选中该小场景下的最后一个按钮。其他情况下按X都是退出小场景
         {
             CheckUpDate();
@@ -67,9 +60,6 @@ public class ButtonEvent : MonoBehaviour
                 break;
             case State.Replay:// 回放界面
                 Replay();
-                break;
-            case State.Option:// 设置界面
-                Option();
                 break;
             case State.MusicRoom:// 音乐室界面
                 MusicRoom();
@@ -224,19 +214,11 @@ public class ButtonEvent : MonoBehaviour
         }
     }
 
-    private void Option()
+    public void Option()
     {
-        if (Input.GetKeyDown(KeyCode.X))
-        {
-            // 播放X音效
-            if (XSound != null)
-            {
-                Global_AudioManager.Instance.PlaySFX(XSound, false);
-            }
             SceneObjects[6].SetActive(false);
             SceneObjects[0].SetActive(true);
             Global_GameManager.Instance.state = State.Menu;
-        }
     }
 
     private void MusicRoom()

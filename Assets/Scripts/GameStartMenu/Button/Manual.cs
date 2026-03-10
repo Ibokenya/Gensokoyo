@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -7,17 +8,15 @@ using UnityEngine.UI;
 public class Manual : MonoBehaviour
 {
     [Header("承载说明书目录")]
-    [SerializeField]
-    public List<TextMeshProUGUI> Texts = new List<TextMeshProUGUI>();
+    public List<TextMeshProUGUI> Texts = new();
     [Header("承载说明书页")]
-    [SerializeField]
-    public List<TextMeshProUGUI> Panels = new List<TextMeshProUGUI>();
+    public List<TextMeshProUGUI> Panels = new();
 
     public GameObject Shadel;
     public GameObject manual;
 
-    private Color darkColor = new Color(0.5f, 0.5f, 0.5f);
-    private Color lightColor = new Color(1f, 1f, 1f);
+    private Color darkColor = new (0.5f, 0.5f, 0.5f);
+    private Color lightColor = new (1f, 1f, 1f);
     private float PanelAlpha = 0.7f;
 
     private int Index;
@@ -41,6 +40,12 @@ public class Manual : MonoBehaviour
             enabled = false; // 禁用脚本，避免报错
             return;
         }
+        Index = 0;
+        BeSelected(Index);
+    }
+
+    private void OnEnable()
+    {
         Index = 0;
         BeSelected(Index);
     }
@@ -114,6 +119,7 @@ public class Manual : MonoBehaviour
             }
             else// 是索引态，回退至Menu
             {
+                BeRemove(Index);
                 Event.Manual();
             }
         }

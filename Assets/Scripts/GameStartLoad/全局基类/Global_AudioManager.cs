@@ -19,8 +19,8 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
 
     #region “Ù¡ø…Ë÷√
 
-    private float bgmVolume = 0.7f;     // ±≥æ∞“Ù¿÷“Ù¡ø
-    private float sfxVolume = 0.8f;     // “Ù–ß“Ù¡ø
+    private float bgmVolume = 0.70f;     // ±≥æ∞“Ù¿÷“Ù¡ø
+    private float sfxVolume = 0.80f;     // “Ù–ß“Ù¡ø
 
     #endregion
 
@@ -112,6 +112,16 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
         bgmSource = gameObject.AddComponent<AudioSource>();
         bgmSource.loop = true;
         bgmSource.volume = bgmVolume;
+    }
+
+    public float GetBGMVolume()
+    {
+        return bgmVolume;
+    }
+
+    public float GetSFXVolume()
+    {
+        return sfxVolume;
     }
 
     #region “Ù–ß≥ÿπ‹¿Ì
