@@ -44,11 +44,8 @@ public class Global_GameManager : Singleton<Global_GameManager>
     {
         gameMode = GameMode.Easy;
         character = Character.Reimu;
+        state = State.Loading;
+        HighestScore = PlayerPrefs.GetInt("HighestScore", 0);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

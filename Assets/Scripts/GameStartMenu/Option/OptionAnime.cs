@@ -21,10 +21,14 @@ public class OptionAnime : MonoBehaviour
     private int Index = 0;
     private int LastIndex = 0;
 
+    private int Hundred;// 百位
     private int ten;// 十位
     private int one;// 个位
     private float bgmVolume;// 音乐音量
     private float sfxVolume;// 音效音量
+
+    private Color NoneColor = new (1f,1f,1f,0f);
+    private Color FullColor = new (1f,1f,1f,1f);
 
     private bool IsOption = false;// 是否处于设置界面内部标志位
     public ButtonEvent Event;
@@ -53,6 +57,7 @@ public class OptionAnime : MonoBehaviour
 
     private void OnEnable()
     {
+        IsOption = false;
         Index = 0;
         LastIndex = 0;
         BeChoose(Index);
@@ -69,15 +74,29 @@ public class OptionAnime : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.UpArrow))
         {
-            ButtonUp();
-            if(Index!=3)
-                SetNumber();
+            if(IsOption)
+            {
+                ChangeVolume(0.1f);
+            }
+            else
+            {
+                ButtonUp();
+                if(Index!=3)
+                    SetNumber();
+            }
         }
         if(Input.GetKeyDown(KeyCode.DownArrow))
         {
-            ButtonDown();
-            if (Index != 3)
-                SetNumber();
+            if(IsOption)
+            {
+                ChangeVolume(-0.1f);
+            }
+            else
+            {
+                ButtonDown();
+                if (Index != 3)
+                    SetNumber();
+            }
         }
         if(Input.GetKeyDown(KeyCode.Z))
         {
@@ -168,9 +187,11 @@ public class OptionAnime : MonoBehaviour
                     SetNumber();
                     break;
                 case 3:// 恢复默认
-                    
+                    IsOption = false;
+                    ResetDefault();
                     break;
                 case 4:// 退出设置界面
+                    IsOption = false;
                     Quit();
                     break;
                 default:
@@ -200,37 +221,73 @@ public class OptionAnime : MonoBehaviour
         if(Index == 0)// 音乐音量
         {
             int percentage = Mathf.RoundToInt(bgmVolume * 100);
+            Hundred = percentage / 100;
             ten = percentage / 10;
+            if(ten == 10) ten =0;
             one = percentage % 10;
             if(IsOption)// 处于菜单态，高亮选中
             {
                 Numbers[0].sprite = LightNumbers[ten];
                 Numbers[1].sprite = LightNumbers[one];
                 Numbers[2].sprite = LightNumbers[10];
+                if(Hundred != 0)
+                {
+                    Numbers[3].sprite = LightNumbers[1];
+                }
             }
             else
             {
                 Numbers[0].sprite = DarkNumbers[ten];
                 Numbers[1].sprite = DarkNumbers[one];
                 Numbers[2].sprite = DarkNumbers[10];
+                if(Hundred != 0)
+                {
+                    Numbers[3].sprite = DarkNumbers[1];
+                }
+            }
+            if(Hundred == 0)
+            {
+                Numbers[3].color = NoneColor;
+            }
+            else
+            {
+                Numbers[3].color = FullColor;
             }
         }
         else if(Index == 1)// 音效音量
         {
             int percentage = Mathf.RoundToInt(sfxVolume * 100);
+            Hundred = percentage / 100;
             ten = percentage / 10;
+            if(ten == 10) ten =0;
             one = percentage % 10;
             if(IsOption)
             {
                 Numbers[0].sprite = LightNumbers[ten];
                 Numbers[1].sprite = LightNumbers[one];
                 Numbers[2].sprite = LightNumbers[10];
+                if(Hundred != 0)
+                {
+                    Numbers[3].sprite = LightNumbers[1];
+                }
             }
             else
             {
                 Numbers[0].sprite = DarkNumbers[ten];
                 Numbers[1].sprite = DarkNumbers[one];
                 Numbers[2].sprite = DarkNumbers[10];
+                if(Hundred != 0)
+                {
+                    Numbers[3].sprite = DarkNumbers[1];
+                }
+            }
+            if(Hundred == 0)
+            {
+                Numbers[3].color = NoneColor;
+            }
+            else
+            {
+                Numbers[3].color = FullColor;
             }
         }
         else
@@ -238,6 +295,48 @@ public class OptionAnime : MonoBehaviour
             Numbers[0].sprite = DarkNumbers[0];
             Numbers[1].sprite = DarkNumbers[0];
             Numbers[2].sprite = DarkNumbers[10];
+            Numbers[3].color = NoneColor;
         }
+    }
+
+    private void ChangeVolume(float volume)
+    {
+        if(Index == 0)// 音乐音量
+        {
+            bgmVolume += volume;
+            if(bgmVolume < 0)
+            {
+                bgmVolume = 0;
+            }
+            else if(bgmVolume > 1)
+            {
+                bgmVolume = 1;
+            }
+            Global_AudioManager.Instance.SetBGMVolume(bgmVolume);
+            SetNumber();
+        }
+        else if(Index == 1)// 音效音量
+        {
+            sfxVolume += volume;
+            if(sfxVolume < 0)
+            {
+                sfxVolume = 0;
+            }
+            else if(sfxVolume > 1)
+            {
+                sfxVolume = 1;
+            }
+            Global_AudioManager.Instance.SetSFXVolume(sfxVolume);
+            SetNumber();
+        }
+    } 
+
+    private void ResetDefault()
+    {
+        bgmVolume = 0.70f;
+        sfxVolume = 0.80f;
+        Global_AudioManager.Instance.SetBGMVolume(bgmVolume);
+        Global_AudioManager.Instance.SetSFXVolume(sfxVolume);
+        SetNumber();
     }
 }

@@ -165,7 +165,7 @@ MonoBehaviour:
   Score: 0
   HighestScore: 0
   SceneLevel: 0
-  state: 0
+  state: 5
 --- !u!114 &20293397
 MonoBehaviour:
   m_ObjectHideFlags: 0

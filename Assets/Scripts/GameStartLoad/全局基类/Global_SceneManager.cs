@@ -115,9 +115,8 @@ public class Global_SceneManager : Singleton<Global_SceneManager>
     // 这样直接运行 menu 场景时就不会自动切换回 menu 场景
     if (CurrentSceneName == "GameStartLoading" && !string.IsNullOrEmpty(_menuSceneName))
     {
-        Global_GameManager.Instance.state = State.Menu;
         // 这里设置默认的最小加载时间，确保场景切换时有足够的过渡时间
-        IntoNextScene(_menuSceneName, false, 3f); // 3秒的最小加载时间
+        IntoNextScene(_menuSceneName, false, 3f); // 3秒的最小加载时间       
     }
     }
 

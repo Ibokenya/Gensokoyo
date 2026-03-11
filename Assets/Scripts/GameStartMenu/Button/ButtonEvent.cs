@@ -30,6 +30,11 @@ public class ButtonEvent : MonoBehaviour
     [SerializeField] private AudioClip XSound;   // X音效
     [SerializeField] private AudioClip ErrorSound;// 不可选音效
 
+    void Awake()
+    {
+        Global_GameManager.Instance.state = State.Menu;
+    }
+
     // Update is called once per frame
     void Update()
     {
