@@ -183,6 +183,7 @@ public class ButtonEvent : MonoBehaviour
                 {
                     Global_AudioManager.Instance.PlaySFX(ZSound, false);
                 }
+                Global_GameManager.Instance.state = State.Gaming;
                 Global_SceneManager.Instance.IntoNextScene("Game1", true, 0.2f);
             }               
         }
