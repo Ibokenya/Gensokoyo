@@ -15,8 +15,8 @@ TagManager:
   - 
   - 
   - 
-  - Initil
-  - 
+  - Player
+  - PanDing
   - 
   - 
   - 
@@ -38,12 +38,24 @@ TagManager:
   - 
   - 
   m_SortingLayers:
-  - name: Particle
+  - name: 
     uniqueID: 408336855
     locked: 0
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: UI
+  - name: BG
     uniqueID: 888386881
+    locked: 0
+  - name: 
+    uniqueID: 2389902059
+    locked: 0
+  - name: Player
+    uniqueID: 1581323879
+    locked: 0
+  - name: PanDing
+    uniqueID: 2698055243
+    locked: 0
+  - name: 
+    uniqueID: 4288645667
     locked: 0
