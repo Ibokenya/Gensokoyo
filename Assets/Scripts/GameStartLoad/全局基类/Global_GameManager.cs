@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -25,7 +26,7 @@ public class Global_GameManager : Singleton<Global_GameManager>
     public Character character;  // 机体
     public int Hp;               // 残机数
     public int BombCount;        // 残B数
-    public int Power;            // 灵力（火力等级）
+    public int Power = 0;        // 灵力（火力等级）
     public int Grade;            // 得点
     public int Graze;            // 擦弹
     public int Score;            // 得分数
@@ -34,9 +35,15 @@ public class Global_GameManager : Singleton<Global_GameManager>
 
     public State state;          // 状态机
 
+/// <summary>
+/// 事件系统
+/// </summary>
+    public event Action<int> OnPowerChanged;
+
     protected override void Awake()
     {
         base.Awake(); // 调用基类的Awake，保证单例生效
+        Power = Mathf.Clamp(0,0,400);
     }
 
     // Start is called before the first frame update
@@ -46,6 +53,26 @@ public class Global_GameManager : Singleton<Global_GameManager>
         character = Character.Reimu;
         state = State.Loading;
         HighestScore = PlayerPrefs.GetInt("HighestScore", 0);
+    }
+
+    public void AddPower(int count=1)
+    {
+        if(Power<400)
+        {
+            Power += count;
+            Power = Mathf.Clamp(Power,0,400);
+            OnPowerChanged?.Invoke(Power);
+        }
+    }
+
+    public void SubPower(int count=1)
+    {
+        if(Power>0)
+        {
+            Power -= count;
+            Power = Mathf.Clamp(Power,0,400);
+            OnPowerChanged?.Invoke(Power);
+        }
     }
 
 }

@@ -10,6 +10,10 @@ using UnityEngine;
 /// </summary>
 public class Global_ObjectPool : Singleton<Global_ObjectPool>   
 {
+    private Dictionary<string, Queue<GameObject>> BulletPool = new();
+    [Header("预生成数量")]
+    public int BulletsInPool_Count = 40;
+
     protected override void Awake()
     {
         base.Awake(); // 调用基类的Awake，保证单例生效

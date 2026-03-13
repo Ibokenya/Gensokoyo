@@ -113,10 +113,10 @@ TextureImporter:
       name: marisa0
       rect:
         serializedVersion: 2
-        x: 3
-        y: 209
-        width: 26
-        height: 44
+        x: 0
+        y: 208
+        width: 32
+        height: 48
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -134,10 +134,10 @@ TextureImporter:
       name: marisa1
       rect:
         serializedVersion: 2
-        x: 35
-        y: 209
-        width: 27
-        height: 44
+        x: 32
+        y: 208
+        width: 32
+        height: 48
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -155,10 +155,10 @@ TextureImporter:
       name: marisa2
       rect:
         serializedVersion: 2
-        x: 66
-        y: 209
-        width: 28
-        height: 44
+        x: 64
+        y: 208
+        width: 32
+        height: 48
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -176,10 +176,10 @@ TextureImporter:
       name: marisa3
       rect:
         serializedVersion: 2
-        x: 98
-        y: 209
-        width: 28
-        height: 44
+        x: 96
+        y: 208
+        width: 32
+        height: 48
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -197,10 +197,10 @@ TextureImporter:
       name: marisa4
       rect:
         serializedVersion: 2
-        x: 130
-        y: 209
-        width: 28
-        height: 44
+        x: 128
+        y: 208
+        width: 32
+        height: 48
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -218,10 +218,10 @@ TextureImporter:
       name: marisa5
       rect:
         serializedVersion: 2
-        x: 163
-        y: 209
-        width: 28
-        height: 44
+        x: 160
+        y: 208
+        width: 32
+        height: 48
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -239,10 +239,10 @@ TextureImporter:
       name: marisa6
       rect:
         serializedVersion: 2
-        x: 195
-        y: 209
-        width: 28
-        height: 44
+        x: 192
+        y: 208
+        width: 32
+        height: 48
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -260,10 +260,10 @@ TextureImporter:
       name: marisa7
       rect:
         serializedVersion: 2
-        x: 227
-        y: 209
-        width: 27
-        height: 44
+        x: 224
+        y: 208
+        width: 32
+        height: 48
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -281,10 +281,10 @@ TextureImporter:
       name: ml0
       rect:
         serializedVersion: 2
-        x: 3
-        y: 161
-        width: 26
-        height: 44
+        x: 0
+        y: 160
+        width: 32
+        height: 48
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -302,10 +302,10 @@ TextureImporter:
       name: ml1
       rect:
         serializedVersion: 2
-        x: 35
-        y: 161
-        width: 26
-        height: 44
+        x: 32
+        y: 160
+        width: 32
+        height: 48
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -323,10 +323,10 @@ TextureImporter:
       name: ml2
       rect:
         serializedVersion: 2
-        x: 67
-        y: 162
-        width: 26
-        height: 43
+        x: 64
+        y: 160
+        width: 32
+        height: 48
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -344,10 +344,10 @@ TextureImporter:
       name: ml3
       rect:
         serializedVersion: 2
-        x: 100
-        y: 162
-        width: 27
-        height: 42
+        x: 96
+        y: 160
+        width: 32
+        height: 48
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -365,10 +365,10 @@ TextureImporter:
       name: ml4
       rect:
         serializedVersion: 2
-        x: 132
-        y: 162
-        width: 27
-        height: 42
+        x: 128
+        y: 160
+        width: 32
+        height: 48
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -386,10 +386,10 @@ TextureImporter:
       name: ml5
       rect:
         serializedVersion: 2
-        x: 164
-        y: 162
-        width: 27
-        height: 42
+        x: 160
+        y: 160
+        width: 32
+        height: 48
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -407,10 +407,10 @@ TextureImporter:
       name: ml6
       rect:
         serializedVersion: 2
-        x: 195
-        y: 162
-        width: 28
-        height: 42
+        x: 192
+        y: 160
+        width: 32
+        height: 48
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -428,10 +428,10 @@ TextureImporter:
       name: ml7
       rect:
         serializedVersion: 2
-        x: 227
-        y: 162
-        width: 28
-        height: 42
+        x: 224
+        y: 160
+        width: 32
+        height: 48
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -449,10 +449,10 @@ TextureImporter:
       name: mr0
       rect:
         serializedVersion: 2
-        x: 3
-        y: 113
-        width: 26
-        height: 44
+        x: 0
+        y: 112
+        width: 32
+        height: 48
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -470,10 +470,10 @@ TextureImporter:
       name: mr1
       rect:
         serializedVersion: 2
-        x: 35
-        y: 113
-        width: 25
-        height: 44
+        x: 32
+        y: 112
+        width: 32
+        height: 48
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -491,10 +491,10 @@ TextureImporter:
       name: mr2
       rect:
         serializedVersion: 2
-        x: 66
-        y: 114
-        width: 27
-        height: 43
+        x: 64
+        y: 112
+        width: 32
+        height: 48
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -512,10 +512,10 @@ TextureImporter:
       name: mr3
       rect:
         serializedVersion: 2
-        x: 97
-        y: 114
-        width: 27
-        height: 42
+        x: 96
+        y: 112
+        width: 32
+        height: 48
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -533,10 +533,10 @@ TextureImporter:
       name: mr4
       rect:
         serializedVersion: 2
-        x: 129
-        y: 114
-        width: 27
-        height: 42
+        x: 128
+        y: 112
+        width: 32
+        height: 48
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -554,10 +554,10 @@ TextureImporter:
       name: mr5
       rect:
         serializedVersion: 2
-        x: 161
-        y: 114
-        width: 27
-        height: 42
+        x: 160
+        y: 112
+        width: 32
+        height: 48
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -575,10 +575,10 @@ TextureImporter:
       name: mr6
       rect:
         serializedVersion: 2
-        x: 193
-        y: 114
-        width: 28
-        height: 42
+        x: 192
+        y: 112
+        width: 32
+        height: 48
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -596,10 +596,10 @@ TextureImporter:
       name: mr7
       rect:
         serializedVersion: 2
-        x: 225
-        y: 113
-        width: 28
-        height: 43
+        x: 224
+        y: 112
+        width: 32
+        height: 48
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -614,15 +614,15 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: pl01_24
+      name: Super0
       rect:
         serializedVersion: 2
         x: 0
-        y: 97
-        width: 31
-        height: 14
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        y: 96
+        width: 32
+        height: 16
+      alignment: 4
+      pivot: {x: 0, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -635,15 +635,15 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: pl01_25
+      name: Super1
       rect:
         serializedVersion: 2
         x: 32
         y: 96
-        width: 25
+        width: 32
         height: 16
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      alignment: 4
+      pivot: {x: 0, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -656,15 +656,15 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: pl01_26
+      name: Super2
       rect:
         serializedVersion: 2
         x: 64
-        y: 105
-        width: 15
-        height: 7
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        y: 96
+        width: 32
+        height: 16
+      alignment: 4
+      pivot: {x: 0, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -677,36 +677,15 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: pl01_27
-      rect:
-        serializedVersion: 2
-        x: 80
-        y: 107
-        width: 6
-        height: 4
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 458a78b57dd139c4286491bd6cdea242
-      internalID: 93991095
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: pl01_28
+      name: Super3
       rect:
         serializedVersion: 2
         x: 96
         y: 96
-        width: 14
-        height: 14
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        width: 32
+        height: 16
+      alignment: 4
+      pivot: {x: 0, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -719,12 +698,12 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: pl01_29
+      name: Gun0
       rect:
         serializedVersion: 2
-        x: 129
+        x: 128
         y: 96
-        width: 14
+        width: 16
         height: 16
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -740,13 +719,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: pl01_30
+      name: Qiyao6
       rect:
         serializedVersion: 2
-        x: 145
-        y: 97
-        width: 14
-        height: 14
+        x: 144
+        y: 96
+        width: 16
+        height: 16
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -761,13 +740,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: pl01_31
+      name: Qiyao7
       rect:
         serializedVersion: 2
-        x: 161
-        y: 97
-        width: 14
-        height: 14
+        x: 160
+        y: 96
+        width: 16
+        height: 16
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -782,13 +761,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: pl01_32
+      name: Qiyao8
       rect:
         serializedVersion: 2
-        x: 177
-        y: 97
-        width: 14
-        height: 14
+        x: 176
+        y: 96
+        width: 16
+        height: 16
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -803,13 +782,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: pl01_33
+      name: Gun1
       rect:
         serializedVersion: 2
-        x: 195
-        y: 81
-        width: 26
-        height: 29
+        x: 192
+        y: 80
+        width: 32
+        height: 32
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -824,11 +803,11 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: pl01_34
+      name: Flag
       rect:
         serializedVersion: 2
         x: 224
-        y: 79
+        y: 80
         width: 32
         height: 32
       alignment: 0
@@ -845,33 +824,12 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: pl01_35
-      rect:
-        serializedVersion: 2
-        x: 66
-        y: 96
-        width: 14
-        height: 8
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 42a7706d18b46454f84e9f199d4dc99c
-      internalID: -1032338913
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
       name: pl01_36
       rect:
         serializedVersion: 2
-        x: 4
+        x: 0
         y: 80
-        width: 8
+        width: 16
         height: 16
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -887,12 +845,12 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: pl01_37
+      name: SuperStar
       rect:
         serializedVersion: 2
-        x: 17
+        x: 16
         y: 80
-        width: 15
+        width: 16
         height: 16
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -912,9 +870,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 32
-        y: 89
-        width: 31
-        height: 6
+        y: 88
+        width: 32
+        height: 8
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -929,13 +887,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: pl01_39
+      name: Qiyao1
       rect:
         serializedVersion: 2
-        x: 65
-        y: 81
-        width: 14
-        height: 14
+        x: 64
+        y: 80
+        width: 16
+        height: 16
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -950,13 +908,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: pl01_40
+      name: Qiyao2
       rect:
         serializedVersion: 2
-        x: 81
-        y: 81
-        width: 14
-        height: 14
+        x: 80
+        y: 80
+        width: 16
+        height: 16
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -971,13 +929,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: pl01_41
+      name: Qiyao3
       rect:
         serializedVersion: 2
-        x: 97
-        y: 81
-        width: 14
-        height: 14
+        x: 96
+        y: 80
+        width: 16
+        height: 16
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -992,13 +950,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: pl01_42
+      name: Qiyao4
       rect:
         serializedVersion: 2
-        x: 113
-        y: 81
-        width: 14
-        height: 14
+        x: 112
+        y: 80
+        width: 16
+        height: 16
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1013,13 +971,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: pl01_43
+      name: Qiyao5
       rect:
         serializedVersion: 2
-        x: 129
-        y: 81
-        width: 14
-        height: 14
+        x: 128
+        y: 80
+        width: 16
+        height: 16
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1034,13 +992,139 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: pl01_44
+      name: Laser0
       rect:
         serializedVersion: 2
         x: 0
-        y: 33
-        width: 256
-        height: 46
+        y: 64
+        width: 64
+        height: 16
+      alignment: 4
+      pivot: {x: 0, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2606b71c8b151964fb4fb449740ebce3
+      internalID: 97477478
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Laser1
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 64
+        width: 64
+        height: 16
+      alignment: 4
+      pivot: {x: 0, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 888b2e5964a9cb1409a944be3dc97626
+      internalID: 573225821
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Laser2
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 64
+        width: 64
+        height: 16
+      alignment: 4
+      pivot: {x: 0, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1a8933cb547e9e043bf6551c10f8afd1
+      internalID: -530845762
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Laser3
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 64
+        width: 64
+        height: 16
+      alignment: 4
+      pivot: {x: 0, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2b38da6803f48e74db1026ea91b4a79c
+      internalID: -2097492582
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Normal1
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 48
+        width: 32
+        height: 16
+      alignment: 4
+      pivot: {x: 0, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 288be92b96a134e40841faa492f21284
+      internalID: 43623106
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Normal0
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 48
+        width: 32
+        height: 16
+      alignment: 4
+      pivot: {x: 0, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: eff0f339d30d17f44a468c12787a4858
+      internalID: -315269640
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Normal2
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 48
+        width: 16
+        height: 16
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1048,19 +1132,19 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 51527b19ec3a27b44b0eb3b8f791c69b
-      internalID: 1981396548
+      spriteID: c9c0929088320e941bb7c27a2a0fe50a
+      internalID: -1531154109
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: pl01_45
+      name: pl01_7
       rect:
         serializedVersion: 2
         x: 0
-        y: 0
-        width: 256
+        y: 32
+        width: 32
         height: 32
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -1069,8 +1153,197 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 2c15710fe488f99439a17ac45a9ffd75
-      internalID: 233263630
+      spriteID: 1db2d893a8b4abe478c5bdb6581acf38
+      internalID: 148255033
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pl01_8
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 32
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a8ec81d3dca6adb4bbbf9b2326a30d60
+      internalID: 1302125370
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pl01_9
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cd225848a0e34c942b395687afbb25a5
+      internalID: -425830058
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pl01_10
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 0
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4cc667ad26a106a4887de043f37dcd3c
+      internalID: -1356072159
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pl01_11
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 0
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f28eeb0de3b34f44181acd315f3763f8
+      internalID: 1628887341
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pl01_12
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 0
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e2001d96c25e03848b0d362adfc10eb7
+      internalID: -1411887617
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pl01_13
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 0
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d15b62315aa81154f8e00f6a41f12b6e
+      internalID: -2027889069
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pl01_14
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 0
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a1e9efb1872e3f44393d6a6be40933d7
+      internalID: 2043123763
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pl01_15
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 0
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0cb2a23341e5ce84aa155c2de7ca8d82
+      internalID: 2119002600
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pl01_16
+      rect:
+        serializedVersion: 2
+        x: 224
+        y: 0
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 86eb283cdacf5fa4da7a07904b6c7f2f
+      internalID: 319462568
       vertices: []
       indices: 
       edges: []
@@ -1086,6 +1359,29 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
+      Flag: 1747825502
+      Gun0: -533156413
+      Gun1: -201872483
+      Laser0: 97477478
+      Laser1: 573225821
+      Laser2: -530845762
+      Laser3: -2097492582
+      Normal0: -315269640
+      Normal1: 43623106
+      Normal2: -1531154109
+      Qiyao1: -1805560823
+      Qiyao2: -17866713
+      Qiyao3: 557335140
+      Qiyao4: 1705328840
+      Qiyao5: 702915472
+      Qiyao6: -43965988
+      Qiyao7: -639266993
+      Qiyao8: -981380233
+      Super0: 1889921947
+      Super1: -682491252
+      Super2: -786060968
+      Super3: -546032088
+      SuperStar: 538209356
       marisa0: 97760342
       marisa1: 1260450571
       marisa2: -154109688
@@ -1110,28 +1406,22 @@ TextureImporter:
       mr5: 1932942719
       mr6: -2015828173
       mr7: 1917593819
-      pl01_24: 1889921947
-      pl01_25: -682491252
-      pl01_26: -786060968
+      pl01_10: -1356072159
+      pl01_11: 1628887341
+      pl01_12: -1411887617
+      pl01_13: -2027889069
+      pl01_14: 2043123763
+      pl01_15: 2119002600
+      pl01_16: 319462568
       pl01_27: 93991095
-      pl01_28: -546032088
-      pl01_29: -533156413
-      pl01_30: -43965988
-      pl01_31: -639266993
-      pl01_32: -981380233
-      pl01_33: -201872483
-      pl01_34: 1747825502
       pl01_35: -1032338913
       pl01_36: 108086878
-      pl01_37: 538209356
       pl01_38: 1240006199
-      pl01_39: -1805560823
-      pl01_40: -17866713
-      pl01_41: 557335140
-      pl01_42: 1705328840
-      pl01_43: 702915472
       pl01_44: 1981396548
       pl01_45: 233263630
+      pl01_7: 148255033
+      pl01_8: 1302125370
+      pl01_9: -425830058
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

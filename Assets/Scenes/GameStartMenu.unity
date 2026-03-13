@@ -1901,7 +1901,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "3. \u89D2\u8272\u6027\u80FD\n\u3010\u535A\u4E3D\u7075\u68A6\u3011\n\u64C5\u957F\u8FFD\u8E2A\u5F39\u653B\u51FB\u4E0E\u901F\u5C04\n\u9634\u9633\u7389\u4F1A\u81EA\u52A8\u8FFD\u8E2A\u654C\u4EBA\uFF1A\u6700\u8FD1\u7684\u2192\u4F18\u5148\u6742\u9C7C\n\u5C01\u9B54\u9488\u4F1A\u7A7F\u900F\u654C\u4EBA\uFF0C\u9020\u6210\u5FEB\u901F\u4F24\u5BB3\n\n\u3010\u96FE\u96E8\u9B54\u7406\u6C99\u3011\n\u64C5\u957F\u5927\u8303\u56F4\u4F24\u5BB3\u8F93\u51FA\u4E0E\u84C4\u529B\u7279\u6B8A\u653B\u51FB\n\u6FC0\u5149\u70AE\u4F1A\u8D2F\u7A7F\u7EBF\u4E0A\u7684\u654C\u4EBA\u9020\u6210\u6301\u7EED\u5E27\u4F24\n\u201C\u54AA\u54AA\u53F7\u201D\u901A\u8FC7\u84C4\u529B\u53D1\u5C04\u5BFC\u5F39--\u5BFC\u5F39\u7684\u5927\u5C0F\uFF0C\u4F24\u5BB3\u968F\u84C4\u529B\u65F6\u95F4\u589E\u52A0\n\n\u603B\u7684\u6765\u8BF4\uFF0C\u7075\u68A6\u66F4\u9002\u5408\u57FA\u7840\u529F\u5DEE\u7684\u73A9\u5BB6\uFF08\u6BD5\u7ADF\u4E00\u8FB9\u7784\u51C6\u4E00\u8FB9\u8EB2\u907F\u5F88\u96BE\uFF09\uFF0C\u800C\u9B54\u7406\u6C99\u9002\u5408\u60F3\u8981\u5FEB\u901F\u901A\u5173\u7684\u8001\u624B"
+  m_text: "3. \u89D2\u8272\u6027\u80FD\n\u3010\u535A\u4E3D\u7075\u68A6\u3011\n\u64C5\u957F\u8FFD\u8E2A\u5F39\u653B\u51FB\u4E0E\u901F\u5C04\n\u9634\u9633\u7389\u4F1A\u81EA\u52A8\u8FFD\u8E2A\u654C\u4EBA\uFF1A\u6700\u8FD1\u7684\u2192\u4F18\u5148\u6742\u9C7C\n\u5C01\u9B54\u9488\u4F1A\u7A7F\u900F\u654C\u4EBA\uFF0C\u9020\u6210\u5FEB\u901F\u4F24\u5BB3\n\n\u3010\u96FE\u96E8\u9B54\u7406\u6C99\u3011\n\u64C5\u957F\u5927\u8303\u56F4\u4F24\u5BB3\u8F93\u51FA\u4E0E\u84C4\u529B\u7279\u6B8A\u653B\u51FB\n\u6FC0\u5149\u70AE\u4F1A\u8D2F\u7A7F\u7EBF\u4E0A\u7684\u654C\u4EBA\u9020\u6210\u6301\u7EED\u5E27\u4F24\n\u4E03\u66DC\u9B54\u6CD5\u5177\u6709\u6781\u5176\u70AB\u9177\u7684\u6548\u679C\u4E0E\u7279\u6B8A\u653B\u51FB\u65B9\u5F0F\n\n\u603B\u7684\u6765\u8BF4\uFF0C\u7075\u68A6\u66F4\u9002\u5408\u57FA\u7840\u529F\u5DEE\u7684\u73A9\u5BB6\uFF08\u6BD5\u7ADF\u4E00\u8FB9\u7784\u51C6\u4E00\u8FB9\u8EB2\u907F\u5F88\u96BE\uFF09\uFF0C\u800C\u9B54\u7406\u6C99\u9002\u5408\u60F3\u8981\u4F53\u9A8C\u53E6\u4E00\u79CD\u73A9\u6CD5\u7684\u4EBA"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9ba8b39bd05944f4886cc2634c4c43d0, type: 2}
   m_sharedMaterial: {fileID: 7202970623986868507, guid: 9ba8b39bd05944f4886cc2634c4c43d0, type: 2}
@@ -2687,7 +2687,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\u3010\u96FE\u96E8 \u9B54\u7406\u6C99\u3011\n\u4FEE\u4E60\u9B54\u6CD5\u7684\u666E\u901A\u4EBA\u7C7B\n\u867D\u8BF4\u9760\u7740\u626B\u5E1A\u80FD\u98DE\u8D77\u6765\uFF0C\u4F46\u6CA1\u6CD5\u89E3\u91CA\u4E3A\u4F55\u80FD\u5728\u5B87\u5B99\u4E2D\u81EA\u7531\u884C\u52A8\n\u4EBA\u7C7B\u6D3B\u7740\u9700\u8981\u6C27\u6C14\uFF0C\u4F46\u5728\u9B54\u6CD5\u4F7F\u7684\u7406\u8BBA\u91CC\u9B54\u529B\u5C31\u662F\u4E07\u80FD\u7684\n\u9B54\u529B\u6216\u8BB8\u4E5F\u53EF\u4EE5\u4EA7\u751FATP\u4E4B\u7C7B\u7684\n\n\u5982\u4ECA\u7684\u9B54\u6CD5\u4F7F\u554A\uFF0C\u90FD\u5F00\u59CB\u6D89\u8DB3\u79D1\u5B66\u9886\u57DF\u4E86\n\u4E0D\u8FC7\u9B54\u6CD5\u98DE\u5F39\u67D0\u79CD\u7A0B\u5EA6\u4E0A\u6765\u8BF4\u548C\u6B7C\u661F\u70AE\u6709\u76F8\u4F3C\u4E4B\u5904\u5462~\n\n\u4E0D\u4FD7\u7684\u706B\u529B\u914D\u7F6E\u2014\u2014\u706B\u529B\u81F3\u4E0A\u8BBA\n\n\u9AD8\u901F\uFF1A
     \u9B54\u6CD5\u4E0E\u79D1\u5B66\u7ED3\u5408\u7684\u6FC0\u5149\u70AE\n\u4F4E\u901F\uFF1A
-    \u201C\u54AA\u54AA\u53F7\u201D\n\n\u7B26\u5361\uFF1A  \u6E6E\u706D\xB7\u8D85\u65B0\u661F\u7206\u53D1\n\u51B3\u6B7B\uFF1A
+    \u4E0D\u53EF\u601D\u8BAE\u4E03\u66DC\u5149\n\n\u7B26\u5361\uFF1A  \u6E6E\u706D\xB7\u8D85\u65B0\u661F\u7206\u53D1\n\u51B3\u6B7B\uFF1A
     \u767D\u57A9\u7EAA\xB7\u5F57\u661F\u649E\u51FB\u5730\u7403"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: cb9b38b3b20961246834626dec8d88da, type: 2}
@@ -2754,7 +2754,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 1
+  m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!222 &771424434
@@ -5790,74 +5790,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!1 &1439556558
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1439556561}
-  - component: {fileID: 1439556560}
-  - component: {fileID: 1439556559}
-  m_Layer: 0
-  m_Name: EventSystem
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1439556559
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1439556558}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4f231c4fb786f3946a6b90b886c48677, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SendPointerHoverToParent: 1
-  m_HorizontalAxis: Horizontal
-  m_VerticalAxis: Vertical
-  m_SubmitButton: Submit
-  m_CancelButton: Cancel
-  m_InputActionsPerSecond: 10
-  m_RepeatDelay: 0.5
-  m_ForceModuleActive: 0
---- !u!114 &1439556560
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1439556558}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 76c392e42b5098c458856cdf6ecaaaa1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_FirstSelected: {fileID: 0}
-  m_sendNavigationEvents: 1
-  m_DragThreshold: 10
---- !u!4 &1439556561
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1439556558}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1455492539
 GameObject:
   m_ObjectHideFlags: 0
@@ -8483,7 +8415,6 @@ MonoBehaviour:
   Marisa: {fileID: 1004239938}
   reimuAnimator: {fileID: 696457289}
   marisaAnimator: {fileID: 1004239942}
-  animDuration: 0.5
   Logo: {fileID: 1540869818}
   moveoffSound: {fileID: 8300000, guid: 89a106215c4976840aa76444ea4374bb, type: 3}
 --- !u!1 &2087270312
@@ -9086,7 +9017,6 @@ SceneRoots:
   m_Roots:
   - {fileID: 1471257962}
   - {fileID: 1881064434}
-  - {fileID: 1439556561}
   - {fileID: 2087270316}
   - {fileID: 2039497806}
   - {fileID: 1987864441}
