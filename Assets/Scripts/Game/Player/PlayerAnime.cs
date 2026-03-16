@@ -56,6 +56,7 @@ public class PlayerAnime : MonoBehaviour
     [Header("组件")]
     private SpriteRenderer spriteRenderer;// 精灵渲染器组件
     private Rigidbody2D rb2D;// 刚体组件
+    [Header("判定点动画")]
     public GameObject Pandingdian;// 玩家判定点
     private Vector3 PandingdianRotation = Vector3.forward;// 玩家判定点旋转角度
     public float PandingdianSpeed = 360f;// 玩家判定点旋转速度

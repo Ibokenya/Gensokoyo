@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1131480059958540560}
   - component: {fileID: 2765385304405752860}
+  - component: {fileID: 4086987897152639506}
   m_Layer: 0
   m_Name: needle
   m_TagString: Untagged
@@ -84,3 +85,16 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &4086987897152639506
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2847599069593823545}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b8b9bb4508c4ce4cb83e73c3932eb6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 10

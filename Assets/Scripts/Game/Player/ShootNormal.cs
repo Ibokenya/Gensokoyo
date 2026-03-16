@@ -9,12 +9,13 @@ public class ShootNormal : MonoBehaviour
     private GameObject Normal;
 
     [Header("射击配置")]
-    [Tooltip("射击间隔（秒），0.1=每秒10发，0.2=每秒5发")]
-    public float shootInterval = 0.1f; // 射击间隔
+    [Tooltip("射击间隔（秒）")]
+    public float shootInterval = 0.12f; // 射击间隔
     private float shootTimer; // 射击冷却计时器
 
-    // Start is called before the first frame update
-    void Start()
+    private bool IsLimited = false; // 是否限制射击(七曜攻击期间停止)
+
+    void OnEnable()
     {
         // 初始化对应角色的弹幕预制体
         if (Global_GameManager.Instance.character == Character.Reimu)
@@ -28,6 +29,8 @@ public class ShootNormal : MonoBehaviour
 
         // 初始化计时器（确保游戏开始即可射击）
         shootTimer = shootInterval;
+        // 初始化弹幕池
+        Global_ObjectPool.Instance.InitPool(Normal);
     }
 
     // Update is called once per frame
@@ -35,16 +38,25 @@ public class ShootNormal : MonoBehaviour
     {
         // 计时器持续累加
         shootTimer += Time.deltaTime;
-        shoot();
+        if(IsLimited)
+            return;
+        Shoot();
     }
 
-    private void shoot()
+    private void Shoot()
     {
         // 只有按下Z键 + 计时器达到间隔时间，才允许射击
         if (Input.GetKey(KeyCode.Z) && shootTimer >= shootInterval)
         {
-            Instantiate(Normal, transform.position, Normal.transform.rotation);
+            // 从对象池获取弹幕
+            GameObject bullet = Global_ObjectPool.Instance.GetBullet
+            (Normal, transform.position, Normal.transform.rotation);
             shootTimer = 0; // 射击后重置计时器，开始冷却
         }
+    }
+
+    public void SetLimited(bool isLimited)
+    {
+        IsLimited = isLimited;
     }
 }

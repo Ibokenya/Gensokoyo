@@ -9,10 +9,10 @@ using UnityEngine;
 public class NormalFO : MonoBehaviour
 {
     public float speed;
-    private float minX = -8.4f;
-    private float maxX = 3f;
-    private float minY = -5.3f;
-    private float maxY = 4.5f;
+    private readonly float minX = -8.4f;
+    private readonly float maxX = 3f;
+    private readonly float minY = -5.3f;
+    private readonly float maxY = 4.5f;
     // Start is called before the first frame update
     void Start()
     {
@@ -32,14 +32,14 @@ public class NormalFO : MonoBehaviour
     /// <param name="speed">ÒÆ¶¯ËÙ¶È</param>
     public void Move(float speed)
     {
-        transform.Translate(Vector3.right * speed * Time.deltaTime);
+        transform.Translate(speed * Time.deltaTime * Vector3.right);
     }
 
     public void MoveCheck()
     {
         if(transform.position.x<minX || transform.position.x>maxX || transform.position.y<minY || transform.position.y>maxY)
         {
-            Destroy(this.gameObject);
+            Global_ObjectPool.Instance.RecycleBullet(this.gameObject);
         }
     }
 }

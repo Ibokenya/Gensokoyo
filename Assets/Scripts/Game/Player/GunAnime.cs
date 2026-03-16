@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class GunAnime : MonoBehaviour
 {
+    public List<GameObject> NormalGuns = new();// 普通常规机体
     public GameObject ReimuGun;// 灵梦子机
     public List<GameObject> ReimuGuns;// 灵梦子机们
     public GameObject MarisaGun;// 魔理沙子机
@@ -40,6 +41,7 @@ public class GunAnime : MonoBehaviour
     private int GunNumber = 0;// 子机数量
 
     private bool isShifted = false;// 是否按下Shift
+    public bool IsShiftedNow => isShifted;// 是否按下Shift
 
     void OnEnable()
     {
@@ -71,8 +73,8 @@ public class GunAnime : MonoBehaviour
     void Update()
     {
         CheckUpdate();
-        addPower();
-        subPower();
+        AddPower();
+        SubPower();
     }
 
     private void SwitchGun(int index)
@@ -85,12 +87,16 @@ public class GunAnime : MonoBehaviour
                 MagicGun.SetActive(false);
                 break;
             case 1:
+                NormalGuns[0].SetActive(true);
+                NormalGuns[1].SetActive(true);
                 ReimuGun.SetActive(false);
                 MarisaGun.SetActive(true);
                 MagicGun.SetActive(false);
                 UpdateGuns(MarisaGuns);
                 break;
             case 2:
+                NormalGuns[0].SetActive(false);
+                NormalGuns[1].SetActive(false);
                 ReimuGun.SetActive(false);
                 MarisaGun.SetActive(false);
                 MagicGun.SetActive(true);
@@ -253,7 +259,7 @@ public class GunAnime : MonoBehaviour
         }
     }
 
-    private void addPower()
+    private void AddPower()
     {
         if(Input.GetKeyDown(KeyCode.E))
         {
@@ -261,7 +267,7 @@ public class GunAnime : MonoBehaviour
             Global_GameManager.Instance.AddPower(50);
         }
     }
-    private void subPower()
+    private void SubPower()
     {
         if(Input.GetKeyDown(KeyCode.Q))
         {

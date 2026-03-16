@@ -14,7 +14,7 @@ TagManager:
   - 
   - 
   - 
-  - 
+  - Enemy
   - Player
   - PanDing
   - 
@@ -50,7 +50,7 @@ TagManager:
   - name: 
     uniqueID: 2389902059
     locked: 0
-  - name: Player
+  - name: Player&Enemy
     uniqueID: 1581323879
     locked: 0
   - name: Bullet
