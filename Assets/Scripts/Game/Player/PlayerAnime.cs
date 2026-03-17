@@ -275,21 +275,21 @@ public class PlayerAnime : MonoBehaviour
         // ”¶”√“∆∂Ø
         rb2D.velocity = moveDirection * speed;    
 
-        if(transform.position.x<-7.75)
+        if(transform.position.x<-8.9)
         {
-            transform.position = new Vector3(-7.75f, transform.position.y, 0);
+            transform.position = new Vector3(-8.9f, transform.position.y, 0);
         }
-        if(transform.position.x>2.55)
+        if(transform.position.x>2.9)
         {
-            transform.position = new Vector3(2.55f, transform.position.y, 0);
+            transform.position = new Vector3(2.9f, transform.position.y, 0);
         }
-        if(transform.position.y<-4.1)
+        if(transform.position.y<-4.7)
         {
-            transform.position = new Vector3(transform.position.x, -4.1f, 0);
+            transform.position = new Vector3(transform.position.x, -4.7f, 0);
         }
-        if(transform.position.y>3.95)
+        if(transform.position.y>4.5)
         {
-            transform.position = new Vector3(transform.position.x, 3.95f, 0);
+            transform.position = new Vector3(transform.position.x, 4.5f, 0);
         }
     }
 

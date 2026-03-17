@@ -18,11 +18,7 @@
       "isActive": true
     },
     {
-      "objectPath": "背景物体",
-      "isActive": true
-    },
-    {
-      "objectPath": "EventSystem",
+      "objectPath": "游戏开始菜单/背景物体",
       "isActive": true
     },
     {
