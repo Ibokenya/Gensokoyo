@@ -21,9 +21,17 @@ public class TrackedFO : MonoBehaviour
     private readonly float minY = -5.3f;
     private readonly float maxY = 4.5f;
     private GameObject target; // 目标.transform
+    private Rigidbody2D rb2D;
 
     void OnEnable()
     {
+        // 获取刚体组件
+        rb2D = GetComponent<Rigidbody2D>();
+        if (rb2D == null)
+        {
+            Debug.LogError("一个追踪飞行物未找到刚体");
+        }
+        
         FindTarget();
     }
 
@@ -57,14 +65,33 @@ public class TrackedFO : MonoBehaviour
     /// </summary>
     public void TrackedMove()
     {
-        transform.Translate(TrackSpeed * Time.deltaTime * Vector3.right);
+        if (rb2D != null)
+        {
+            // 如果有目标，朝向目标移动
+            if (target != null && target.activeSelf)
+            {
+                Vector2 direction = (target.transform.position - transform.position).normalized;
+                rb2D.velocity = direction * TrackSpeed;
+            }
+            else
+            {
+                // 没有目标时，默认向右移动
+                rb2D.velocity = TrackSpeed * Vector2.up;
+            }
+        }
     }
 
     public void MoveCheck()
     {
         if(transform.position.x<minX || transform.position.x>maxX || transform.position.y<minY || transform.position.y>maxY)
         {
-            Global_ObjectPool.Instance.RecycleBullet(this.gameObject);
+            Global_ObjectPool.Instance.Recycle(this.gameObject);
         }
+    }
+
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        Debug.Log(this.name + "触发: " + collision.gameObject.name);
+        Global_ObjectPool.Instance.Recycle(this.gameObject);
     }
 }

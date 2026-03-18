@@ -46,8 +46,6 @@ public class PlayerAnime : MonoBehaviour
     [Header("移动参数")]
     [Header("玩家移动速度")]
     public float MoveSpeed = 5f;// 玩家移动速度
-    private Vector2 moveDirection = Vector2.zero;// 移动方向
-    private bool isDiagonalMove = false;// 是否为斜向移动
 
     [Header("状态")]
     private AnimeType _currentAnimeType = AnimeType.Idle;// 当前动画类型
@@ -55,7 +53,6 @@ public class PlayerAnime : MonoBehaviour
 
     [Header("组件")]
     private SpriteRenderer spriteRenderer;// 精灵渲染器组件
-    private Rigidbody2D rb2D;// 刚体组件
     [Header("判定点动画")]
     public GameObject Pandingdian;// 玩家判定点
     private Vector3 PandingdianRotation = Vector3.forward;// 玩家判定点旋转角度
@@ -82,6 +79,9 @@ public class PlayerAnime : MonoBehaviour
     private bool upKeyPressed = false;// 上键是否按下
     private bool downKeyPressed = false;// 下键是否按下
 
+    // 引用碰撞脚本
+    public PlayerCollision playerCollision;
+
     void OnEnable()
     {
         // 初始化精灵列表
@@ -89,10 +89,15 @@ public class PlayerAnime : MonoBehaviour
         
         // 获取组件
         spriteRenderer = GetComponent<SpriteRenderer>();
-        rb2D = GetComponent<Rigidbody2D>();
         
         // 初始化显示第一帧
         spriteRenderer.sprite = IdleSprites[0];
+        
+        // 获取碰撞脚本引用
+        if (playerCollision == null)
+        {
+            playerCollision = GetComponent<PlayerCollision>();
+        }
     }
 
     /// <summary>
@@ -127,9 +132,6 @@ public class PlayerAnime : MonoBehaviour
     {
         // 检查输入
         CheckInput();
-        
-        // 处理移动
-        HandleMovement();
         
         // 处理动画
         HandleAnimation();
@@ -229,67 +231,11 @@ public class PlayerAnime : MonoBehaviour
             // 隐藏判定点并停止动画
             StopPandingAnime();
         }
-    }
-
-    /// <summary>
-    /// 处理移动
-    /// </summary>
-    private void HandleMovement()
-    {
-        // 计算水平移动方向
-        float horizontal = 0f;
-        if (leftKeyPressed)
+        
+        // 将移动状态传递给碰撞脚本
+        if (playerCollision != null)
         {
-            horizontal = -1f;
-        }
-        else if (rightKeyPressed)
-        {
-            horizontal = 1f;
-        }
-
-        // 计算垂直移动方向
-        float vertical = 0f;
-        if (upKeyPressed)
-        {
-            vertical = 1f;
-        }
-        else if (downKeyPressed)
-        {
-            vertical = -1f;
-        }
-
-        // 计算移动方向向量
-        moveDirection = new Vector2(horizontal, vertical);
-
-        // 检查是否为斜向移动
-        isDiagonalMove = (horizontal != 0f && vertical != 0f);
-
-        // 计算移动速度
-        float speed = MoveSpeed;
-        if (isDiagonalMove)
-        {
-            // 斜向移动时速度补正（乘以根号2的倒数）
-            speed = MoveSpeed * 0.7f;
-        }
-
-        // 应用移动
-        rb2D.velocity = moveDirection * speed;    
-
-        if(transform.position.x<-8.9)
-        {
-            transform.position = new Vector3(-8.9f, transform.position.y, 0);
-        }
-        if(transform.position.x>2.9)
-        {
-            transform.position = new Vector3(2.9f, transform.position.y, 0);
-        }
-        if(transform.position.y<-4.7)
-        {
-            transform.position = new Vector3(transform.position.x, -4.7f, 0);
-        }
-        if(transform.position.y>4.5)
-        {
-            transform.position = new Vector3(transform.position.x, 4.5f, 0);
+            playerCollision.UpdateMovement(leftKeyPressed, rightKeyPressed, upKeyPressed, downKeyPressed, MoveSpeed);
         }
     }
 

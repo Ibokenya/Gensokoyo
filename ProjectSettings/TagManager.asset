@@ -3,19 +3,21 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Enemy
+  - Item
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - Particle
+  - 
   - Water
   - UI
-  - 
-  - 
-  - 
-  - Enemy
-  - Player
+  - PlayerBullet
+  - EnemyBullet
+  - Item
+  - enemy
+  - player
   - PanDing
   - 
   - 
@@ -47,7 +49,7 @@ TagManager:
   - name: BG
     uniqueID: 888386881
     locked: 0
-  - name: 
+  - name: Items
     uniqueID: 2389902059
     locked: 0
   - name: Player&Enemy

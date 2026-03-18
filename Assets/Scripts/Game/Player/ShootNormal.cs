@@ -30,7 +30,7 @@ public class ShootNormal : MonoBehaviour
         // 初始化计时器（确保游戏开始即可射击）
         shootTimer = shootInterval;
         // 初始化弹幕池
-        Global_ObjectPool.Instance.InitPool(Normal);
+        Global_ObjectPool.Instance.InitPool(Normal,0);
     }
 
     // Update is called once per frame

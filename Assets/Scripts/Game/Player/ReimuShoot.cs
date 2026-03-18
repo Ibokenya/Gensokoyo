@@ -25,9 +25,9 @@ public class ReimuShoot : MonoBehaviour
     void OnEnable()
     {
         // ³õÊ¼»¯·âÄ§Õëµ¯Ä»³Ø
-        Global_ObjectPool.Instance.InitPool(NeedlePrefab);
+        Global_ObjectPool.Instance.InitPool(NeedlePrefab,30);
         // ³õÊ¼»¯×·×ÙÒõÑôÓñµ¯Ä»³Ø
-        Global_ObjectPool.Instance.InitPool(TrackedPrefab);
+        Global_ObjectPool.Instance.InitPool(TrackedPrefab,0);
     }
 
     // Update is called once per frame
