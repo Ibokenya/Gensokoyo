@@ -7,6 +7,11 @@ public class PlayerCollision : MonoBehaviour
     private Rigidbody2D rb2D;// 刚体组件
     private Vector2 moveDirection = Vector2.zero;// 移动方向
     private bool isDiagonalMove = false;// 是否为斜向移动
+    // 边界值
+    private readonly float minX = -8.9f;
+    private readonly float maxX = 2.95f;
+    private readonly float minY = -4.7f;
+    private readonly float maxY = 4.5f;
 
     void OnEnable()
     {
@@ -83,11 +88,7 @@ public class PlayerCollision : MonoBehaviour
     /// </summary>
     private void HandleBounds()
     {
-        // 边界值
-        float minX = -8.9f;
-        float maxX = 2.95f;
-        float minY = -4.7f;
-        float maxY = 4.5f;
+
 
         // 获取当前位置
         Vector3 position = transform.position;

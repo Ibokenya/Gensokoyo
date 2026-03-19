@@ -20,20 +20,20 @@ public class Global_SceneManager : Singleton<Global_SceneManager>
 
     public string CurrentSceneName = "GameStartLoading";// 当前场景名称(初始为首个场景)
 
-    private List<string> _LoadedSceneNames = new List<string>();// 存储已加载场景的名称用于检索以及回退
+    private List<string> _LoadedSceneNames = new ();// 存储已加载场景的名称用于检索以及回退
 
     [Header("下一场景配置")]// 游戏启动后默认跳转的菜单场景名称（Inspector面板可配置）
     [SerializeField] private string _menuSceneName = "GameStartMenu";
 
     [SerializeField]
-    private List<string> _sceneToPreload = new List<string>()// 所有需要预加载的场景名称
+    private List<string> _sceneToPreload = new ()// 所有需要预加载的场景名称
     {
         "GameStartMenu","Game1","Game2","GameOver"
     };
 
 
     [Header("需要重置数据，且不卸载的场景")]// 标记需要重置业务数据的场景（目前只有：菜单）
-    [SerializeField] private List<string> _needResetScenes = new List<string>() { "GameStartMenu" };
+    [SerializeField] private List<string> _needResetScenes = new () { "GameStartMenu" };
 
     protected override void Awake()
     {
@@ -283,6 +283,18 @@ public class Global_SceneManager : Singleton<Global_SceneManager>
 
         // 更新当前场景名称
         CurrentSceneName = NextSceneName;
+        switch(CurrentSceneName)
+        {
+            case "GameStartMenu":
+                Global_AudioManager.Instance.PlayBGM("Menu");
+                break;
+            case "Game1":
+                Global_AudioManager.Instance.PlayBGM("Game1");
+                break;
+            default:
+                Debug.LogWarning($"未配置场景{CurrentSceneName}的背景音乐");
+                break;
+        }
         Debug.Log($"已跳转到场景{CurrentSceneName}");
     }
 

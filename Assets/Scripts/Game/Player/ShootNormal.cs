@@ -49,7 +49,7 @@ public class ShootNormal : MonoBehaviour
         if (Input.GetKey(KeyCode.Z) && shootTimer >= shootInterval)
         {
             // 从对象池获取弹幕
-            GameObject bullet = Global_ObjectPool.Instance.GetBullet
+            Global_ObjectPool.Instance.GetObject
             (Normal, transform.position, Normal.transform.rotation);
             shootTimer = 0; // 射击后重置计时器，开始冷却
         }

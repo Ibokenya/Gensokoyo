@@ -11,13 +11,6 @@ enum AnimeType
     Right,
 }
 
-enum MoveDirection
-{
-    None,
-    Up,
-    Down,
-}
-
 public class PlayerAnime : MonoBehaviour
 {
     [Header("精灵列表")]
@@ -49,7 +42,6 @@ public class PlayerAnime : MonoBehaviour
 
     [Header("状态")]
     private AnimeType _currentAnimeType = AnimeType.Idle;// 当前动画类型
-    private MoveDirection _currentMoveDirection = MoveDirection.None;// 当前移动方向
 
     [Header("组件")]
     private SpriteRenderer spriteRenderer;// 精灵渲染器组件
@@ -190,30 +182,20 @@ public class PlayerAnime : MonoBehaviour
         if (Input.GetKey(KeyCode.UpArrow))
         {
             upKeyPressed = true;
-            _currentMoveDirection = MoveDirection.Up;
         }
         else if (!Input.GetKey(KeyCode.UpArrow))
         {
             upKeyPressed = false;
-            if (!downKeyPressed)
-            {
-                _currentMoveDirection = MoveDirection.None;
-            }
         }
 
         // 检测下键状态
         if (Input.GetKey(KeyCode.DownArrow))
         {
             downKeyPressed = true;
-            _currentMoveDirection = MoveDirection.Down;
         }
         else if (!Input.GetKey(KeyCode.DownArrow))
         {
             downKeyPressed = false;
-            if (!upKeyPressed)
-            {
-                _currentMoveDirection = MoveDirection.None;
-            }
         }
 
         // 检测shift键状态

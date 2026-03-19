@@ -17,6 +17,19 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
 
     #endregion
 
+    #region 背景音乐列表
+
+    [Header("背景音乐列表")]
+    public AudioClip menuBGM;      // 菜单音乐
+    public AudioClip game1BGM;     // 游戏音乐1
+    public AudioClip bossBGM;      // Boss音乐
+    public AudioClip overBGM;      // 结束音乐
+    public AudioClip endingBGM;    // 结局音乐
+
+    private Dictionary<string, AudioClip> bgmDictionary;  // 背景音乐字典
+
+    #endregion
+
     #region 音量设置
 
     private float bgmVolume = 0.70f;     // 背景音乐音量
@@ -36,6 +49,24 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
         
         // 加载保存的音量设置
         LoadVolumeSettings();
+        
+        // 初始化背景音乐字典
+        InitializeBGMDictionary();
+    }
+    
+    /// <summary>
+    /// 初始化背景音乐字典
+    /// </summary>
+    private void InitializeBGMDictionary()
+    {
+        bgmDictionary = new Dictionary<string, AudioClip>
+        {
+            { "Menu", menuBGM },
+            { "Game1", game1BGM },
+            { "Boss", bossBGM },
+            { "Over", overBGM },
+            { "Ending", endingBGM }
+        };
     }
     
     /// <summary>
@@ -207,21 +238,50 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
     #region 背景音乐方法
     
     /// <summary>
-    /// 播放背景音乐
+    /// 播放背景音乐（通过名称）
+    /// 同一时间内只能播放一首背景音乐，切换时必须停止正在进行的
     /// </summary>
-    /// <param name="clip">音乐剪辑</param>
+    /// <param name="bgmName">背景音乐名称（Menu, Game1, Boss, Over, Ending）</param>
     /// <param name="volume">音量（0-1）</param>
-    public void PlayBGM(AudioClip clip, float volume = 1.0f)
+    public void PlayBGM(string bgmName, float volume = 1.0f)
     {
-        if (bgmSource != null && clip != null)
+        if (bgmSource == null)
         {
+            Debug.LogWarning("背景音乐音频源未初始化");
+            return;
+        }
+        
+        // 从字典中获取对应的音乐剪辑
+        if (bgmDictionary.TryGetValue(bgmName, out AudioClip clip))
+        {
+            if (clip == null)
+            {
+                Debug.LogWarning($"背景音乐 '{bgmName}' 未分配音频剪辑");
+                return;
+            }
+            
+            // 如果正在播放同一首音乐，则不重复播放
+            if (bgmSource.clip == clip && bgmSource.isPlaying)
+            {
+                return;
+            }
+            
             // 停止当前背景音乐
             bgmSource.Stop();
+            
+            // 重置播放时间
+            bgmSource.time = 0f;
             
             // 播放新的背景音乐
             bgmSource.clip = clip;
             bgmSource.volume = Mathf.Clamp01(volume) * bgmVolume;
             bgmSource.Play();
+            
+            Debug.Log($"播放背景音乐: {bgmName}");
+        }
+        else
+        {
+            Debug.LogWarning($"未找到名为 '{bgmName}' 的背景音乐");
         }
     }
     
@@ -256,16 +316,6 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
         {
             bgmSource.Stop();
         }
-    }
-    
-    /// <summary>
-    /// 切换背景音乐
-    /// </summary>
-    /// <param name="clip">新的音乐剪辑</param>
-    /// <param name="volume">音量（0-1）</param>
-    public void SwitchBGM(AudioClip clip, float volume = 1.0f)
-    {
-        PlayBGM(clip, volume);
     }
     
     #endregion

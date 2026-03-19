@@ -199,6 +199,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a77e85c4c4cf3444bb5cecdb016f368, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ObjectsInPool_Count: 40
 --- !u!114 &20293399
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -211,6 +212,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 263da8a088de0c446a6969001f9649af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  menuBGM: {fileID: 8300000, guid: 04245860bb6111843a1d17f7d4a3107e, type: 3}
+  game1BGM: {fileID: 8300000, guid: ae1b5fafea1b96440a108f4b4cbb0469, type: 3}
+  bossBGM: {fileID: 8300000, guid: 4fd7c9a1eb89d95478d6b99e8ec59b78, type: 3}
+  overBGM: {fileID: 8300000, guid: d878a3bb385c79049b603ca61e03fbf1, type: 3}
+  endingBGM: {fileID: 8300000, guid: b796f6bfb975e5149b5af15cdf50a7aa, type: 3}
 --- !u!4 &20293400
 Transform:
   m_ObjectHideFlags: 0

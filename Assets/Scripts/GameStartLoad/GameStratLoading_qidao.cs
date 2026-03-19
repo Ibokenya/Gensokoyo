@@ -8,15 +8,15 @@ public class GameStratLoading_qidao : MonoBehaviour
     public TextMeshProUGUI T;
 
     // 各通道初始方向配置（0=减，1=增）
-    private int _rFlag = 0;
-    private int _gFlag = 0;
-    private int _bFlag = 0;
+    // private int _rFlag = 0;
+    // private int _gFlag = 0;
+    // private int _bFlag = 0;
     private int _aFlag = 0;
 
     // 步长配置（可独立调整每个通道的速度）
-    private readonly float _rStep = 1f / 255f;
-    private readonly float _gStep = 1f / 255f;
-    private readonly float _bStep = 1f / 255f;
+    // private readonly float _rStep = 1f / 255f;
+    // private readonly float _gStep = 1f / 255f;
+    // private readonly float _bStep = 1f / 255f;
     private readonly float _aStep = 1.5f / 255f;
 
     void Update()

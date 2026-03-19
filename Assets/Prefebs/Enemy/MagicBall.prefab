@@ -30,7 +30,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -4.15, y: -1.8199997, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.5, y: 1.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -112,8 +112,15 @@ MonoBehaviour:
   - {fileID: 1442295037, guid: 3eccac3f6716e854c8e840d8f45e982b, type: 3}
   - {fileID: 2048695440, guid: 3eccac3f6716e854c8e840d8f45e982b, type: 3}
   - {fileID: -1111978466, guid: 3eccac3f6716e854c8e840d8f45e982b, type: 3}
-  MoveSpeed: 5
-  RotateSpeed: 45
+  MoveSpeed: 3
+  RotateSpeed: 360
+  moveMode: 2
+  secondaryMoveMode: 3
+  ArrivalDistance: 0.1
+  player: {fileID: 0}
+  FlickerLifeTime: 8
+  useGravity: 0
+  gravityScale: 0.12
 --- !u!58 &2325816293141257093
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -157,14 +164,14 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8501377784257086046}
-  m_BodyType: 1
+  m_BodyType: 0
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
   m_LinearDrag: 0
-  m_AngularDrag: 0.05
-  m_GravityScale: 1
+  m_AngularDrag: 0
+  m_GravityScale: 0.12
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
