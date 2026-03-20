@@ -122,6 +122,7 @@ public class PlayerAnime : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(Global_GameManager.Instance.state != State.Gaming) return;
         // ºÏ≤È ‰»Î
         CheckInput();
         

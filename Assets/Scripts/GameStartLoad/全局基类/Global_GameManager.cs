@@ -33,7 +33,7 @@ public class Global_GameManager : Singleton<Global_GameManager>
     public int HighestScore;     // 最高得分数
     public int SceneLevel;       // 关卡等级
 
-    public State state;          // 状态机
+    public State state;      // 状态机
 
 /// <summary>
 /// 事件系统

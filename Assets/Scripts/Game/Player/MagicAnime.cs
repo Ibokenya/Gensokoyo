@@ -43,6 +43,7 @@ public class MagicAnime : MonoBehaviour
     
     void Update()
     {
+        if(Global_GameManager.Instance.state != State.Gaming) return;
         if (!isExiting && Input.GetKeyUp(KeyCode.LeftShift))
         {
             StartCoroutine(ExitMagic());

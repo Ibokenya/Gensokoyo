@@ -412,6 +412,50 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
         }
     }
     
+    /// <summary>
+    /// 获取当前播放的背景音乐名称
+    /// </summary>
+    /// <returns>当前背景音乐名称，如果没有播放则返回空字符串</returns>
+    public string GetCurrentBGMName()
+    {
+        if (bgmSource == null || bgmSource.clip == null)
+        {
+            return "";
+        }
+        
+        // 从字典中查找当前剪辑对应的名称
+        foreach (var kvp in bgmDictionary)
+        {
+            if (kvp.Value == bgmSource.clip)
+            {
+                return kvp.Key;
+            }
+        }
+        
+        return "";
+    }
+    
+    /// <summary>
+    /// 获取当前背景音乐的播放位置
+    /// </summary>
+    /// <returns>当前播放位置（秒）</returns>
+    public float GetCurrentBGMPosition()
+    {
+        return bgmSource != null ? bgmSource.time : 0f;
+    }
+    
+    /// <summary>
+    /// 设置背景音乐的播放位置
+    /// </summary>
+    /// <param name="position">播放位置（秒）</param>
+    public void SetBGMPosition(float position)
+    {
+        if (bgmSource != null)
+        {
+            bgmSource.time = position;
+        }
+    }
+    
     #endregion
 }
 

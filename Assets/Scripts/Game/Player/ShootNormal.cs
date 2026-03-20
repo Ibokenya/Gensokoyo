@@ -18,24 +18,33 @@ public class ShootNormal : MonoBehaviour
     void OnEnable()
     {
         // 初始化对应角色的弹幕预制体
-        if (Global_GameManager.Instance.character == Character.Reimu)
-        {
-            Normal = ReimuNormal;
-        }
-        else if (Global_GameManager.Instance.character == Character.Marisa)
-        {
-            Normal = MarisaNormal;
-        }
+        UpdateNormalPrefab();
 
         // 初始化计时器（确保游戏开始即可射击）
         shootTimer = shootInterval;
+        
         // 初始化弹幕池
-        Global_ObjectPool.Instance.InitPool(Normal,0);
+        if (Normal != null)
+        {
+            Global_ObjectPool.Instance.InitPool(Normal, 0);
+        }
+        else
+        {
+            Debug.LogWarning("Normal prefab is null, bullet pool not initialized");
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
+        if(Global_GameManager.Instance == null || Global_GameManager.Instance.state != State.Gaming) return;
+        
+        // 确保Normal预制体已初始化
+        if (Normal == null)
+        {
+            UpdateNormalPrefab();
+        }
+        
         // 计时器持续累加
         shootTimer += Time.deltaTime;
         if(IsLimited)
@@ -43,15 +52,40 @@ public class ShootNormal : MonoBehaviour
         Shoot();
     }
 
+    /// <summary>
+    /// 更新Normal预制体引用
+    /// </summary>
+    private void UpdateNormalPrefab()
+    {
+        if (Global_GameManager.Instance != null)
+        {
+            if (Global_GameManager.Instance.character == Character.Reimu)
+            {
+                Normal = ReimuNormal;
+            }
+            else if (Global_GameManager.Instance.character == Character.Marisa)
+            {
+                Normal = MarisaNormal;
+            }
+        }
+    }
+
     private void Shoot()
     {
-        // 只有按下Z键 + 计时器达到间隔时间，才允许射击
-        if (Input.GetKey(KeyCode.Z) && shootTimer >= shootInterval)
+        // 只有按下Z键 + 计时器达到间隔时间 + Normal预制体不为null，才允许射击
+        if (Input.GetKey(KeyCode.Z) && shootTimer >= shootInterval && Normal != null)
         {
-            // 从对象池获取弹幕
-            Global_ObjectPool.Instance.GetObject
-            (Normal, transform.position, Normal.transform.rotation);
-            shootTimer = 0; // 射击后重置计时器，开始冷却
+            try
+            {
+                // 从对象池获取弹幕
+                Global_ObjectPool.Instance.GetObject
+                (Normal, transform.position, Normal.transform.rotation);
+                shootTimer = 0; // 射击后重置计时器，开始冷却
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError("Error shooting bullet: " + e.Message);
+            }
         }
     }
 

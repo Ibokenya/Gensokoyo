@@ -64,19 +64,19 @@ public class Laser : MonoBehaviour
         transform.position = firePoint.position;
         
         // 射线检测方向为发射点的上方向（默认向上）
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, firePoint.up, MaxLength, HitLayer);
-        UpdateLaserEndPos(hit);
+        UpdateLaserEndPos();
         UpdateLaserVisual();
         UpdateLaserAnime();
-        UpdateLaserDamage(hit);
+        UpdateLaserDamage();
     }
     
     /// <summary>
     /// 更新激光射线检测确定终点
     /// </summary>
-    private void UpdateLaserEndPos(RaycastHit2D hit)
+    private void UpdateLaserEndPos()
     {
-        EndPos = hit ? hit.point : (Vector2)transform.position + (Vector2)firePoint.up * MaxLength;
+        // 激光终点始终设置为最大长度处
+        EndPos = (Vector2)transform.position + (Vector2)firePoint.up * MaxLength;
     }
 
     /// <summary>
@@ -105,11 +105,18 @@ public class Laser : MonoBehaviour
     /// <summary>
     /// 激光持续伤害判定
     /// </summary>
-    private void UpdateLaserDamage(RaycastHit2D hit)
+    private void UpdateLaserDamage()
     {
-        if (hit.collider != null)
+        // 使用RaycastAll检测路径上的所有物体
+        RaycastHit2D[] hits = Physics2D.RaycastAll(transform.position, firePoint.up, MaxLength, HitLayer);
+        
+        // 对所有命中的物体造成伤害
+        foreach (RaycastHit2D hit in hits)
         {
-            // 这里可以添加伤害逻辑
+            if (hit.collider != null)
+            {
+                // 这里可以添加伤害逻辑
+            }
         }
     }
 

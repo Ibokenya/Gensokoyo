@@ -73,6 +73,7 @@ public class GunAnime : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(Global_GameManager.Instance.state != State.Gaming) return;
         CheckUpdate();
         AddPower();
         SubPower();
@@ -265,9 +266,9 @@ public class GunAnime : MonoBehaviour
                     MarisaGuns[1].transform.localPosition = GunPos[11];
                     MarisaGuns[1].transform.eulerAngles = new Vector3(0,0,4);
                     MarisaGuns[2].transform.localPosition = GunPos[12];
-                    MarisaGuns[2].transform.eulerAngles = new Vector3(0,0,2);
+                    MarisaGuns[2].transform.eulerAngles = new Vector3(0,0,4);
                     MarisaGuns[3].transform.localPosition = GunPos[13];
-                    MarisaGuns[3].transform.eulerAngles = new Vector3(0,0,-2);
+                    MarisaGuns[3].transform.eulerAngles = new Vector3(0,0,-4);
                     break;
             }
         }

@@ -26,6 +26,7 @@ public class PlayerCollision : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(Global_GameManager.Instance.state != State.Gaming) return;
         // ¥¶¿Ì±ﬂΩÁºÏ≤‚
         HandleBounds();
     }

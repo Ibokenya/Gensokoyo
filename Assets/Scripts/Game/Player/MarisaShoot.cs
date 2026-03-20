@@ -24,6 +24,7 @@ public class MarisaShoot : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(Global_GameManager.Instance.state != State.Gaming) return;
         // ¼ì²â Z ¼ü°´ÏÂ
         if (Input.GetKeyDown(KeyCode.Z))
         {
