@@ -35,6 +35,16 @@ public class ButtonEvent : MonoBehaviour
         Global_GameManager.Instance.state = State.Menu;
     }
 
+    void OnEnable()
+    {
+        Time.timeScale = 1f;
+        Debug.LogWarning("ButtonEvent组件已启用");
+    }
+    void OnDisable()
+    {
+        Debug.LogWarning("ButtonEvent组件已禁用");
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -43,9 +53,8 @@ public class ButtonEvent : MonoBehaviour
         {
             inputCooldown -= Time.deltaTime;
         }
-        
-        if(Global_GameManager.Instance.state!=State.Menu || Global_GameManager.Instance.state != State.Manual
-        || Global_GameManager.Instance.state != State.Option)
+        if(Global_GameManager.Instance.state!=State.Menu && Global_GameManager.Instance.state != State.Manual
+        && Global_GameManager.Instance.state != State.Option)
             // 如果是菜单态则不监听输入,不是菜单态才监听输入(Manual态，Option态有内部退出情况)
             //为什么呢，因为只有菜单态时点击X键不是切换小场景而是选中该小场景下的最后一个按钮。其他情况下按X都是退出小场景
         {
@@ -147,6 +156,7 @@ public class ButtonEvent : MonoBehaviour
         
         if (Input.GetKeyDown(KeyCode.X))
         {
+            Debug.Log("选人界面点击了X键");
             // 播放X音效
             if (XSound != null)
             {
@@ -154,12 +164,14 @@ public class ButtonEvent : MonoBehaviour
             }
             if (IsStart)// 是Start的二阶段
             {
+                Debug.Log("是选难度的二阶段");
                 SceneObjects[2].SetActive(false);
                 SceneObjects[1].SetActive(true);
                 Global_GameManager.Instance.state = State.ModeChoose;
             }
             else
             {
+                Debug.Log("是ExStart");
                 SceneObjects[2].SetActive(false);
                 SceneObjects[0].SetActive(true);
                 Global_GameManager.Instance.state = State.Menu;
@@ -167,6 +179,7 @@ public class ButtonEvent : MonoBehaviour
         }
         if(Input.GetKeyDown(KeyCode.Z))
         {
+            Debug.Log("选人界面点击了Z键");
             if(Global_GameManager.Instance.gameMode==GameMode.Extra)
             {
                 // 播放Z音效

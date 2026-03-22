@@ -66,7 +66,7 @@ public class PauseEvent : MonoBehaviour
                             pauseUI.Resume();
                             break;
                         case 1:
-                            Global_SceneManager.Instance.IntoNextScene("GameStartMenu",false );
+                            Global_SceneManager.Instance.IntoNextScene("GameStartMenu",false);
                             // ∑µªÿ”Œœ∑≤Àµ•
                             break;
                         case 2:

@@ -27,16 +27,6 @@ public class ButtonManager : MonoBehaviour
         {
             Debug.Log("没有引用按钮动画组件（脚本）");
         }
-        if(buttonEvent == null)
-        {
-            Debug.Log("没有引用按钮事件组件（脚本），尝试自动查找...");
-            // 尝试在父物体或同层级查找ButtonEvent
-            buttonEvent = GetComponentInParent<ButtonEvent>();
-            if(buttonEvent == null)
-            {
-                buttonEvent = FindObjectOfType<ButtonEvent>();
-            }
-        }
         currentButtonIndex = defaultButtonIndex;
         // 令默认按钮被选中
         ButtonAnime.ButtonBeChoose(buttons[currentButtonIndex]);
@@ -87,13 +77,6 @@ public class ButtonManager : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.Z))
         {
             ButtonAnime.ButtonBeClick(buttons[currentButtonIndex]);
-            
-            // 检查buttonEvent是否为空
-            if(buttonEvent == null)
-            {
-                Debug.LogError("ButtonEvent未引用，无法执行按钮事件！");
-                return;
-            }
             
             switch(currentButtonIndex)
             {

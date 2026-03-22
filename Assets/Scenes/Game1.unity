@@ -215,7 +215,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 33992961}
-  - component: {fileID: 33992962}
   m_Layer: 10
   m_Name: NormalGunr
   m_TagString: Untagged
@@ -238,21 +237,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1651681772}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &33992962
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 33992960}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1b626120df715c6469999878e95698bd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ReimuNormal: {fileID: 3248475238070608754, guid: 3a3c9b2368457f445b64be52d708c557, type: 3}
-  MarisaNormal: {fileID: 1602635207288934513, guid: 7dc6f749f90888b469367e3fda831134, type: 3}
-  shootInterval: 0.12
 --- !u!1 &62132033
 GameObject:
   m_ObjectHideFlags: 0
@@ -3530,7 +3514,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 543953298}
-  - component: {fileID: 543953299}
   m_Layer: 10
   m_Name: NormalGunl
   m_TagString: Untagged
@@ -3553,21 +3536,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1651681772}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &543953299
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 543953297}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1b626120df715c6469999878e95698bd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ReimuNormal: {fileID: 3248475238070608754, guid: 3a3c9b2368457f445b64be52d708c557, type: 3}
-  MarisaNormal: {fileID: 1602635207288934513, guid: 7dc6f749f90888b469367e3fda831134, type: 3}
-  shootInterval: 0.12
 --- !u!1 &550619456
 GameObject:
   m_ObjectHideFlags: 0
@@ -12050,6 +12018,7 @@ GameObject:
   - component: {fileID: 1651681775}
   - component: {fileID: 1651681776}
   - component: {fileID: 1651681777}
+  - component: {fileID: 1651681778}
   m_Layer: 10
   m_Name: Player
   m_TagString: Player
@@ -12341,6 +12310,23 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.05
+--- !u!114 &1651681778
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1651681769}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b626120df715c6469999878e95698bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ReimuNormal: {fileID: 3248475238070608754, guid: 3a3c9b2368457f445b64be52d708c557, type: 3}
+  MarisaNormal: {fileID: 1602635207288934513, guid: 7dc6f749f90888b469367e3fda831134, type: 3}
+  GunLeft: {fileID: 543953298}
+  GunRight: {fileID: 33992961}
+  shootInterval: 0.12
 --- !u!1 &1663458095
 GameObject:
   m_ObjectHideFlags: 0

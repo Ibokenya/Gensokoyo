@@ -22,7 +22,7 @@ public class Global_SceneManager : Singleton<Global_SceneManager>
 
     private List<string> _LoadedSceneNames = new ();// 存储已加载场景的名称用于检索以及回退
 
-    [Header("下一场景配置")]// 游戏启动后默认跳转的菜单场景名称（Inspector面板可配置）
+    [Header("第二场景配置（Menu）")]// 游戏启动后默认跳转的菜单场景名称（Inspector面板可配置）
     [SerializeField] private string _menuSceneName = "GameStartMenu";
 
     [SerializeField]
