@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public enum Dir{// 标记妖精的左右移动方向
@@ -81,7 +82,6 @@ public class EnemyAnime : MonoBehaviour
 
     void OnEnable()
     {
-
         player = GameObject.FindGameObjectWithTag("Player");
         
         int randomIndex = Random.Range(0, 4);
@@ -267,7 +267,12 @@ public class EnemyAnime : MonoBehaviour
         if (transform.position.x < minX || transform.position.x > maxX || 
             transform.position.y < minY || transform.position.y > maxY)
         {
-            // 超出边界，回收敌人
+            // 从Global_GameManager的EnemyList中移除敌人
+            if (Global_GameManager.Instance != null)
+            {
+                Global_GameManager.Instance.RemoveEnemy(gameObject);
+            }
+            // 超出边界，直接回收到对象池
             Global_ObjectPool.Instance.Recycle(gameObject);
         }
     }
@@ -417,7 +422,12 @@ public class EnemyAnime : MonoBehaviour
         flickerTimer += Time.deltaTime;
         if (flickerTimer >= FlickerLifeTime)
         {
-            // 生存时间结束，回收
+            // 从Global_GameManager的EnemyList中移除敌人
+            if (Global_GameManager.Instance != null)
+            {
+                Global_GameManager.Instance.RemoveEnemy(gameObject);
+            }
+            // 时间到，直接回收到对象池
             Global_ObjectPool.Instance.Recycle(gameObject);
         }
     }

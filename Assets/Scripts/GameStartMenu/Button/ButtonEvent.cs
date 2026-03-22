@@ -38,11 +38,6 @@ public class ButtonEvent : MonoBehaviour
     void OnEnable()
     {
         Time.timeScale = 1f;
-        Debug.LogWarning("ButtonEvent组件已启用");
-    }
-    void OnDisable()
-    {
-        Debug.LogWarning("ButtonEvent组件已禁用");
     }
 
     // Update is called once per frame

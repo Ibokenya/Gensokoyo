@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
 /// <summary>
 /// 全局“池”型单例类
 /// 管理妖精池，弹幕池，得点道具池
@@ -11,7 +10,7 @@ using UnityEngine;
 public class Global_ObjectPool : Singleton<Global_ObjectPool>   
 {
     // 存储不同类型的物品池
-    private Dictionary<string, Queue<GameObject>> ObjectPool = new();
+    private readonly Dictionary<string, Queue<GameObject>> ObjectPool = new();
     [Header("预生成数量")]
     public int ObjectsInPool_Count = 40;
 

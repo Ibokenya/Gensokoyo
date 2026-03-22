@@ -278,6 +278,13 @@ public class Global_SceneManager : Singleton<Global_SceneManager>
             DeleteCurrentScene(CurrentSceneName, isHide);
         }
 
+        // 清除对象池中的所有元素
+        if (Global_ObjectPool.Instance != null)
+        {
+            Global_ObjectPool.Instance.ClearAllPools();
+            Debug.Log("【场景切换】已清除对象池中的所有元素");
+        }
+
         // 激活下一场景并重置状态
         ActivateSceneWithReset(NextSceneName);
 

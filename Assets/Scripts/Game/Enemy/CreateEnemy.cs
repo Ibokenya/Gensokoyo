@@ -198,6 +198,12 @@ public class CreateEnemy : MonoBehaviour
             // 激活敌人
             enemy.SetActive(true);
             
+            // 将敌人添加到Global_GameManager的EnemyList中
+            if (Global_GameManager.Instance != null)
+            {
+                Global_GameManager.Instance.AddEnemy(enemy);
+            }
+            
             // 根据敌人类型和移动模式设置参数
             switch (config.enemyType)
             {

@@ -66,6 +66,11 @@ public class PauseEvent : MonoBehaviour
                             pauseUI.Resume();
                             break;
                         case 1:
+                            // 回收所有敌人
+                            if (Global_GameManager.Instance != null)
+                            {
+                                Global_GameManager.Instance.RecycleAllEnemies();
+                            }
                             Global_SceneManager.Instance.IntoNextScene("GameStartMenu",false);
                             // 返回游戏菜单
                             break;

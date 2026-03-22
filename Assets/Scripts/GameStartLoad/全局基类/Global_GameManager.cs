@@ -35,6 +35,9 @@ public class Global_GameManager : Singleton<Global_GameManager>
 
     public State state;      // 状态机
 
+    [Header("敌人管理")]
+    public List<GameObject> EnemyList = new(); // 存储当前场景中的敌人
+
 /// <summary>
 /// 事件系统
 /// </summary>
@@ -75,4 +78,43 @@ public class Global_GameManager : Singleton<Global_GameManager>
         }
     }
 
-}
+    /// <summary>
+    /// 添加敌人到敌人列表
+    /// </summary>
+    /// <param name="enemy">敌人对象</param>
+    public void AddEnemy(GameObject enemy)
+    {
+        if (enemy != null && !EnemyList.Contains(enemy))
+        {
+            EnemyList.Add(enemy);
+        }
+    }
+
+    /// <summary>
+    /// 从敌人列表中移除敌人
+    /// </summary>
+    /// <param name="enemy">敌人对象</param>
+    public void RemoveEnemy(GameObject enemy)
+    {
+        if (enemy != null && EnemyList.Contains(enemy))
+        {
+            EnemyList.Remove(enemy);
+        }
+    }
+
+    /// <summary>
+    /// 回收所有敌人
+    /// </summary>
+    public void RecycleAllEnemies()
+    {
+        foreach (GameObject enemy in EnemyList)
+        {
+            if (enemy != null)
+            {
+                Global_ObjectPool.Instance.Recycle(enemy);
+            }
+        }
+        EnemyList.Clear();
+    }
+
+} 
