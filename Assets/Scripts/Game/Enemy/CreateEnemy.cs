@@ -2,6 +2,26 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// 移动模式枚举
+public enum MoveMode
+{
+    Path,       // 路径点移动
+    Track,      // 追踪式移动
+    Stationary, // 不移动
+    Flicker,    // 闪烁模式
+    Gravity     // 重力移动
+}
+
+// 二段移动模式枚举
+public enum SecondaryMode
+{
+    Track,      // 追踪式移动
+    FlickerOut, // 闪烁淡出模式
+    Stationary, // 不移动
+    Gravity,    // 重力移动
+    Disappear   // 直接回收自身
+}
+
 [System.Serializable]
 public class EnemySpawnConfig
 {
@@ -22,24 +42,23 @@ public class EnemySpawnConfig
     public EnemyType enemyType;
     
     // 移动模式
-    public enum MoveMode
-    {
-        Path,       // 路径点移动
-        Track,      // 追踪式移动
-        Stationary, // 不移动
-        Flicker,    // 闪烁模式（仅球体敌人）
-        Gravity     // 重力移动
-    }
     public MoveMode moveMode;
     
     // 二段移动模式
-    public MoveMode secondaryMoveMode = MoveMode.Stationary;// 二段移动模式
+    public SecondaryMode secondaryMoveMode = SecondaryMode.Stationary;// 二段移动模式
     
     [Header("路径点列表")]
     public List<GameObject> movePoints;// 移动点列表
     
+    [Header("移动参数")]
+    public float moveSpeed = 5f;// 移动速度
+    
     [Header("闪烁参数")]
     public float flickerLifeTime = 2f;// 闪烁模式下的生存时间
+    public float fadeTime = 1f;// 淡入时间
+    
+    [Header("重力参数")]
+    public float gravityScale = 1f;// 重力缩放
 }
 
 public class CreateEnemy : MonoBehaviour
@@ -61,20 +80,13 @@ public class CreateEnemy : MonoBehaviour
     private Global_AudioManager audioManager;// 音频管理单例
     
     [Header("生成状态")]
-    private List<bool> hasSpawned;// 记录每个配置是否已生成
     private float currentMusicTime = 0f;// 当前音乐播放时间
+    private int CurrentSpawn = 0;//第0波次
 
     void OnEnable()
     {
         // 初始化对象池
         InitializeObjectPools();
-        
-        // 初始化生成状态
-        hasSpawned = new List<bool>();
-        for (int i = 0; i < spawnConfigs.Count; i++)
-        {
-            hasSpawned.Add(false);
-        }
         
         // 获取音频管理单例
         audioManager = Global_AudioManager.Instance;
@@ -82,11 +94,12 @@ public class CreateEnemy : MonoBehaviour
 
     void Update()
     {
-        // 获取当前音乐播放时间
-        if (audioManager != null)
-        {
-            currentMusicTime = Global_AudioManager.Instance.CurrentBGMTime;
-        }
+        // // 获取当前音乐播放时间
+        // if (audioManager.CurrentBGMTime != 0)
+        // {
+        //     currentMusicTime = audioManager.CurrentBGMTime;
+        // }
+        currentMusicTime += Time.deltaTime;// 临时的
         
         // 检查是否需要生成敌人
         CheckSpawnEnemies();
@@ -127,13 +140,14 @@ public class CreateEnemy : MonoBehaviour
     /// </summary>
     private void CheckSpawnEnemies()
     {
-        for (int i = 0; i < spawnConfigs.Count; i++)
+        while(CurrentSpawn < spawnConfigs.Count && 
+        currentMusicTime >= spawnConfigs[CurrentSpawn].spawnTime)
         {
-            if (!hasSpawned[i] && currentMusicTime >= spawnConfigs[i].spawnTime)
+            if (currentMusicTime >= spawnConfigs[CurrentSpawn].spawnTime)
             {
-                SpawnEnemy(spawnConfigs[i]);
-                hasSpawned[i] = true;
+                SpawnEnemy(spawnConfigs[CurrentSpawn]);
             }
+            CurrentSpawn++;
         }
     }
     
@@ -143,6 +157,7 @@ public class CreateEnemy : MonoBehaviour
     /// <param name="config">生成配置</param>
     private void SpawnEnemy(EnemySpawnConfig config)
     {
+        Debug.Log($"生成敌人: {config.enemyType} {config.spawnCount} {config.moveMode} {config.secondaryMoveMode}");
         // 开始生成多个敌人
         StartCoroutine(SpawnEnemiesCoroutine(config));
     }
@@ -185,6 +200,9 @@ public class CreateEnemy : MonoBehaviour
                 enemy = Instantiate(enemyPrefab);
             }
             
+            // 检查路径点数量
+            CheckMovePointsCount(config);
+            
             // 设置敌人位置（使用第一个路径点或当前位置）
             if (config.movePoints != null && config.movePoints.Count > 0)
             {
@@ -194,16 +212,7 @@ public class CreateEnemy : MonoBehaviour
             {
                 enemy.transform.position = transform.position;
             }
-            
-            // 激活敌人
-            enemy.SetActive(true);
-            
-            // 将敌人添加到Global_GameManager的EnemyList中
-            if (Global_GameManager.Instance != null)
-            {
-                Global_GameManager.Instance.AddEnemy(enemy);
-            }
-            
+
             // 根据敌人类型和移动模式设置参数
             switch (config.enemyType)
             {
@@ -216,6 +225,15 @@ public class CreateEnemy : MonoBehaviour
                 case EnemySpawnConfig.EnemyType.Elite:
                     SetupEliteEnemy(enemy, config);
                     break;
+            }
+            
+            // 激活敌人
+            enemy.SetActive(true);
+            
+            // 将敌人添加到Global_GameManager的EnemyList中
+            if (Global_GameManager.Instance != null)
+            {
+                Global_GameManager.Instance.AddEnemy(enemy);
             }
             
             // 如果不是最后一个敌人，等待生成间隔
@@ -234,53 +252,65 @@ public class CreateEnemy : MonoBehaviour
         EnemyAnime enemyAnime = enemy.GetComponent<EnemyAnime>();
         if (enemyAnime != null)
         {
+            // 设置移动速度
+            enemyAnime.MoveSpeed = config.moveSpeed;
+            
+            // 设置闪烁参数
+            enemyAnime.FlickerLifeTime = config.flickerLifeTime;
+            enemyAnime.fadeTime = config.fadeTime;
+            
+            // 设置重力参数
+            enemyAnime.gravityScale = config.gravityScale;
+            
             // 设置移动模式
             switch (config.moveMode)
             {
-                case EnemySpawnConfig.MoveMode.Path:
-                    enemyAnime.moveMode = EnemyMoveMode.Path;
+                case MoveMode.Path:
+                    enemyAnime.moveMode = MoveMode.Path;
                     // 设置路径点
                     if (config.movePoints != null)
                     {
                         enemyAnime.SetMovePoints(config.movePoints);
                     }
                     break;
-                case EnemySpawnConfig.MoveMode.Track:
-                    enemyAnime.moveMode = EnemyMoveMode.Track;
+                case MoveMode.Track:
+                    enemyAnime.moveMode = MoveMode.Track;
                     break;
-                case EnemySpawnConfig.MoveMode.Stationary:
-                    enemyAnime.moveMode = EnemyMoveMode.Stationary;
+                case MoveMode.Stationary:
+                    enemyAnime.moveMode = MoveMode.Stationary;
                     break;
-                case EnemySpawnConfig.MoveMode.Flicker:
-                    enemyAnime.moveMode = EnemyMoveMode.Flicker;
+                case MoveMode.Flicker:
+                    enemyAnime.moveMode = MoveMode.Flicker;
                     // 设置路径点（闪烁模式需要一个路径点）
                     if (config.movePoints != null)
                     {
                         enemyAnime.SetMovePoints(config.movePoints);
                     }
                     break;
-                case EnemySpawnConfig.MoveMode.Gravity:
-                    enemyAnime.moveMode = EnemyMoveMode.Gravity;
+                case MoveMode.Gravity:
+                    enemyAnime.moveMode = MoveMode.Gravity;
+                    // 初始化重力模式
+                    enemyAnime.InitializeGravity();
                     break;
             }
             
             // 设置二段移动模式
             switch (config.secondaryMoveMode)
             {
-                case EnemySpawnConfig.MoveMode.Path:
-                    enemyAnime.secondaryMoveMode = EnemyMoveMode.Path;
+                case SecondaryMode.Track:
+                    enemyAnime.secondaryMoveMode = SecondaryMode.Track;
                     break;
-                case EnemySpawnConfig.MoveMode.Track:
-                    enemyAnime.secondaryMoveMode = EnemyMoveMode.Track;
+                case SecondaryMode.FlickerOut:
+                    enemyAnime.secondaryMoveMode = SecondaryMode.FlickerOut;
                     break;
-                case EnemySpawnConfig.MoveMode.Stationary:
-                    enemyAnime.secondaryMoveMode = EnemyMoveMode.Stationary;
+                case SecondaryMode.Stationary:
+                    enemyAnime.secondaryMoveMode = SecondaryMode.Stationary;
                     break;
-                case EnemySpawnConfig.MoveMode.Flicker:
-                    enemyAnime.secondaryMoveMode = EnemyMoveMode.Flicker;
+                case SecondaryMode.Gravity:
+                    enemyAnime.secondaryMoveMode = SecondaryMode.Gravity;
                     break;
-                case EnemySpawnConfig.MoveMode.Gravity:
-                    enemyAnime.secondaryMoveMode = EnemyMoveMode.Gravity;
+                case SecondaryMode.Disappear:
+                    enemyAnime.secondaryMoveMode = SecondaryMode.Disappear;
                     break;
             }
         }
@@ -294,53 +324,65 @@ public class CreateEnemy : MonoBehaviour
         BallsAnime ballsAnime = enemy.GetComponent<BallsAnime>();
         if (ballsAnime != null)
         {
+            // 设置移动速度
+            ballsAnime.MoveSpeed = config.moveSpeed;
+            
+            // 设置闪烁参数
+            ballsAnime.FlickerLifeTime = config.flickerLifeTime;
+            ballsAnime.fadeTime = config.fadeTime;
+            
+            // 设置重力参数
+            ballsAnime.gravityScale = config.gravityScale;
+            
             // 设置移动模式
             switch (config.moveMode)
             {
-                case EnemySpawnConfig.MoveMode.Path:
-                    ballsAnime.moveMode = BallsMoveMode.Path;
+                case MoveMode.Path:
+                    ballsAnime.moveMode = MoveMode.Path;
                     // 设置路径点
                     if (config.movePoints != null)
                     {
                         ballsAnime.SetMovePoints(config.movePoints);
                     }
                     break;
-                case EnemySpawnConfig.MoveMode.Track:
-                    ballsAnime.moveMode = BallsMoveMode.Track;
+                case MoveMode.Track:
+                    ballsAnime.moveMode = MoveMode.Track;
                     break;
-                case EnemySpawnConfig.MoveMode.Stationary:
-                    ballsAnime.moveMode = BallsMoveMode.Stationary;
+                case MoveMode.Stationary:
+                    ballsAnime.moveMode = MoveMode.Stationary;
                     break;
-                case EnemySpawnConfig.MoveMode.Flicker:
-                    ballsAnime.moveMode = BallsMoveMode.Flicker;
+                case MoveMode.Flicker:
+                    ballsAnime.moveMode = MoveMode.Flicker;
                     // 设置路径点（闪烁模式需要一个路径点）
                     if (config.movePoints != null)
                     {
                         ballsAnime.SetMovePoints(config.movePoints);
                     }
                     break;
-                case EnemySpawnConfig.MoveMode.Gravity:
-                    ballsAnime.moveMode = BallsMoveMode.Gravity;
+                case MoveMode.Gravity:
+                    ballsAnime.moveMode = MoveMode.Gravity;
+                    // 初始化重力模式
+                    ballsAnime.InitializeGravity();
                     break;
             }
             
             // 设置二段移动模式
             switch (config.secondaryMoveMode)
             {
-                case EnemySpawnConfig.MoveMode.Path:
-                    ballsAnime.secondaryMoveMode = BallsMoveMode.Path;
+                case SecondaryMode.Track:
+                    ballsAnime.secondaryMoveMode = SecondaryMode.Track;
                     break;
-                case EnemySpawnConfig.MoveMode.Track:
-                    ballsAnime.secondaryMoveMode = BallsMoveMode.Track;
+                case SecondaryMode.FlickerOut:
+                    ballsAnime.secondaryMoveMode = SecondaryMode.FlickerOut;
                     break;
-                case EnemySpawnConfig.MoveMode.Stationary:
-                    ballsAnime.secondaryMoveMode = BallsMoveMode.Stationary;
+                case SecondaryMode.Stationary:
+                    ballsAnime.secondaryMoveMode = SecondaryMode.Stationary;
                     break;
-                case EnemySpawnConfig.MoveMode.Flicker:
-                    ballsAnime.secondaryMoveMode = BallsMoveMode.Flicker;
+                case SecondaryMode.Gravity:
+                    ballsAnime.secondaryMoveMode = SecondaryMode.Gravity;
                     break;
-                case EnemySpawnConfig.MoveMode.Gravity:
-                    ballsAnime.secondaryMoveMode = BallsMoveMode.Gravity;
+                case SecondaryMode.Disappear:
+                    ballsAnime.secondaryMoveMode = SecondaryMode.Disappear;
                     break;
             }
         }
@@ -354,38 +396,84 @@ public class CreateEnemy : MonoBehaviour
         EliteAnime eliteAnime = enemy.GetComponent<EliteAnime>();
         if (eliteAnime != null)
         {
+            // 设置移动速度
+            eliteAnime.MoveSpeed = config.moveSpeed;
+            
+            // 设置重力参数
+            eliteAnime.gravityScale = config.gravityScale;
+            
+            // 设置渐入时间（精英敌人使用渐入，而不是闪烁）
+            eliteAnime.fadeTime = config.fadeTime;
+            
             // 设置移动模式
             switch (config.moveMode)
             {
-                case EnemySpawnConfig.MoveMode.Path:
-                    eliteAnime.moveMode = EliteMoveMode.Path;
+                case MoveMode.Path:
+                    eliteAnime.moveMode = MoveMode.Path;
                     // 设置路径点
                     if (config.movePoints != null)
                     {
                         eliteAnime.SetMovePoints(config.movePoints);
                     }
                     break;
-                case EnemySpawnConfig.MoveMode.Stationary:
-                    eliteAnime.moveMode = EliteMoveMode.Stationary;
+                case MoveMode.Stationary:
+                    eliteAnime.moveMode = MoveMode.Stationary;
                     break;
-                case EnemySpawnConfig.MoveMode.Gravity:
-                    eliteAnime.moveMode = EliteMoveMode.Gravity;
+                case MoveMode.Gravity:
+                    eliteAnime.moveMode = MoveMode.Gravity;
+                    break;
+                case MoveMode.Flicker:
+                    eliteAnime.moveMode = MoveMode.Flicker;
+                    break;
+                default:
+                    Debug.LogWarning($"大妖精不支持的移动模式: {config.moveMode}");
                     break;
             }
             
             // 设置二段移动模式
             switch (config.secondaryMoveMode)
             {
-                case EnemySpawnConfig.MoveMode.Path:
-                    eliteAnime.secondaryMoveMode = EliteMoveMode.Path;
+                case SecondaryMode.Stationary:
+                    eliteAnime.secondaryMoveMode = SecondaryMode.Stationary;
                     break;
-                case EnemySpawnConfig.MoveMode.Stationary:
-                    eliteAnime.secondaryMoveMode = EliteMoveMode.Stationary;
+                case SecondaryMode.Gravity:
+                    eliteAnime.secondaryMoveMode = SecondaryMode.Gravity;
                     break;
-                case EnemySpawnConfig.MoveMode.Gravity:
-                    eliteAnime.secondaryMoveMode = EliteMoveMode.Gravity;
+                case SecondaryMode.FlickerOut:
+                    eliteAnime.secondaryMoveMode = SecondaryMode.FlickerOut;
+                    break;
+                case SecondaryMode.Disappear:
+                    eliteAnime.secondaryMoveMode = SecondaryMode.Disappear;
                     break;
             }
+        }
+    }
+    
+    /// <summary>
+    /// 检查路径点数量是否正确
+    /// </summary>
+    /// <param name="config">生成配置</param>
+    private void CheckMovePointsCount(EnemySpawnConfig config)
+    {
+        int movePointsCount = config.movePoints != null ? config.movePoints.Count : 0;
+        
+        switch (config.moveMode)
+        {
+            case MoveMode.Path:
+                if (movePointsCount < 1)
+                {
+                    Debug.LogWarning($"路径点移动模式需要至少1个路径点，当前数量: {movePointsCount}");
+                }
+                break;
+            case MoveMode.Track:
+            case MoveMode.Flicker:
+            case MoveMode.Stationary:
+            case MoveMode.Gravity:
+                if (movePointsCount != 1)
+                {
+                    Debug.LogWarning($"{config.moveMode}模式需要有且仅有1个路径点，当前数量: {movePointsCount}");
+                }
+                break;
         }
     }
 }

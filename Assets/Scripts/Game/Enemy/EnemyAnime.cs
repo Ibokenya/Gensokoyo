@@ -10,16 +10,6 @@ public enum Dir{// 标记妖精的左右移动方向
     Right,
 }
 
-// 敌人移动模式枚举
-public enum EnemyMoveMode
-{
-    Path,       // 按照路径点移动
-    Track,      // 追踪式移动
-    Stationary, // 不移动
-    Flicker,    // 闪烁模式
-    Gravity     // 重力移动
-}
-
 public class EnemyAnime : MonoBehaviour
 {
     [Header("不同类型妖精的变体精灵")]
@@ -40,8 +30,8 @@ public class EnemyAnime : MonoBehaviour
     public float MoveSpeed = 5f;// 妖精移动速度
     [SerializeField]
     private Dir _currentDir = Dir.Idle;// 当前移动方向
-    public EnemyMoveMode moveMode = EnemyMoveMode.Path;// 敌人移动模式
-    public EnemyMoveMode secondaryMoveMode = EnemyMoveMode.Stationary;// 二段移动模式
+    public MoveMode moveMode = MoveMode.Path;// 敌人移动模式
+    public SecondaryMode secondaryMoveMode = SecondaryMode.Stationary;// 二段移动模式
     
     [Header("移动点参数")]
     private List<GameObject> MovePoints;// 移动点列表
@@ -58,11 +48,10 @@ public class EnemyAnime : MonoBehaviour
     [Header("闪烁参数")]
     public float FlickerLifeTime = 8f;// 闪烁模式下的生存时间
     private float flickerTimer = 0f;// 闪烁模式计时器
-    private readonly float fadeTime = 2f;// 淡入时间
+    public float fadeTime = 2f;// 淡入时间
     private float fadeTimer = 0f;// 淡入计时器
     
     [Header("重力参数")]
-    public bool useGravity = false;// 是否使用重力
     public float gravityScale = 1f;// 重力缩放
     
     [Header("追踪参数")]
@@ -75,10 +64,10 @@ public class EnemyAnime : MonoBehaviour
     private Rigidbody2D rb2D;// 刚体组件
 
     // 边界值
-    private readonly float minX = -10.5f;
-    private readonly float maxX = 4.5f;
-    private readonly float minY = -6.5f;
-    private readonly float maxY = 6.0f;
+    private readonly float minX = -11f;
+    private readonly float maxX = 5f;
+    private readonly float minY = -7.5f;
+    private readonly float maxY = 6.5f;
 
     void OnEnable()
     {
@@ -125,17 +114,17 @@ public class EnemyAnime : MonoBehaviour
         }
         
         // 初始化追踪模式
-        if (moveMode == EnemyMoveMode.Track)
+        if (moveMode == MoveMode.Track)
         {
             InitializeTracking();
         }
         // 初始化闪烁模式
-        else if (moveMode == EnemyMoveMode.Flicker)
+        else if (moveMode == MoveMode.Flicker)
         {
             InitializeFlicker();
         }
         // 初始化重力模式
-        else if (moveMode == EnemyMoveMode.Gravity)
+        else if (moveMode == MoveMode.Gravity)
         {
             InitializeGravity();
         }
@@ -158,25 +147,30 @@ public class EnemyAnime : MonoBehaviour
         // 根据移动模式执行不同的移动逻辑
         switch (moveMode)
         {
-            case EnemyMoveMode.Path:
+            case MoveMode.Path:
                 MoveToNextPoint();
                 break;
-            case EnemyMoveMode.Track:
+            case MoveMode.Track:
                 TrackMove();
                 break;
-            case EnemyMoveMode.Stationary:
+            case MoveMode.Stationary:
                 // 不移动
                 if (rb2D != null)
                 {
                     rb2D.velocity = Vector2.zero;
                 }
                 break;
-            case EnemyMoveMode.Flicker:
+            case MoveMode.Flicker:
                 FlickerUpdate();
                 break;
-            case EnemyMoveMode.Gravity:
-                GravityUpdate();
+            case MoveMode.Gravity:
                 break;
+        }
+        
+        // 处理FlickerOut模式
+        if (secondaryMoveMode == SecondaryMode.FlickerOut && moveMode != MoveMode.Flicker)
+        {
+            FlickerOutUpdate();
         }
     }
 
@@ -422,20 +416,15 @@ public class EnemyAnime : MonoBehaviour
         flickerTimer += Time.deltaTime;
         if (flickerTimer >= FlickerLifeTime)
         {
-            // 从Global_GameManager的EnemyList中移除敌人
-            if (Global_GameManager.Instance != null)
-            {
-                Global_GameManager.Instance.RemoveEnemy(gameObject);
-            }
-            // 时间到，直接回收到对象池
-            Global_ObjectPool.Instance.Recycle(gameObject);
+            // 生命周期结束，执行二段移动
+            SwitchToSecondaryMoveMode();
         }
     }
     
     /// <summary>
     /// 初始化重力模式
     /// </summary>
-    private void InitializeGravity()
+    public void InitializeGravity()
     {
         if (rb2D != null)
         {
@@ -447,37 +436,84 @@ public class EnemyAnime : MonoBehaviour
     }
     
     /// <summary>
-    /// 重力模式更新
-    /// </summary>
-    private void GravityUpdate()
-    {
-        // 重力模式下，物理引擎会自动处理移动
-        // 这里可以添加额外的逻辑，比如碰撞检测等
-    }
-    
-    /// <summary>
     /// 切换到二段移动模式
     /// </summary>
     private void SwitchToSecondaryMoveMode()
     {
         // 切换移动模式为二段移动模式
-        moveMode = secondaryMoveMode;
-        
-        // 根据新的移动模式进行初始化
-        switch (moveMode)
+        switch (secondaryMoveMode)
+            {
+                case SecondaryMode.Track:
+                    moveMode = MoveMode.Track;
+                    InitializeTracking();
+                    break;
+                case SecondaryMode.Stationary:
+                    moveMode = MoveMode.Stationary;
+                    // 不移动，保持当前状态
+                    break;
+                case SecondaryMode.FlickerOut:
+                    // 直接执行淡出回收
+                    InitializeFlickerOut();
+                    break;
+                case SecondaryMode.Gravity:
+                    moveMode = MoveMode.Gravity;
+                    InitializeGravity();
+                    break;
+                case SecondaryMode.Disappear:
+                    // 直接回收自身
+                    if (Global_GameManager.Instance != null)
+                    {
+                        Global_GameManager.Instance.RemoveEnemy(gameObject);
+                    }
+                    Global_ObjectPool.Instance.Recycle(gameObject);
+                    break;
+            }
+    }
+    
+    /// <summary>
+    /// 初始化闪烁淡出模式
+    /// </summary>
+    private void InitializeFlickerOut()
+    {
+        // 重置计时器
+        flickerTimer = 0f;
+        // 确保透明度为1
+        if (spriteRenderer != null)
         {
-            case EnemyMoveMode.Track:
-                InitializeTracking();
-                break;
-            case EnemyMoveMode.Stationary:
-                // 不移动，保持当前状态
-                break;
-            case EnemyMoveMode.Flicker:
-                InitializeFlicker();
-                break;
-            case EnemyMoveMode.Gravity:
-                InitializeGravity();
-                break;
+            spriteRenderer.color = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, 1f);
+        }
+        // 停止移动
+        if (rb2D != null)
+        {
+            rb2D.velocity = Vector2.zero;
+        }
+    }
+    
+    /// <summary>
+    /// 闪烁淡出模式更新
+    /// </summary>
+    private void FlickerOutUpdate()
+    {
+        // 倒计时
+        flickerTimer += Time.deltaTime;
+        
+        // 计算透明度（在fadeTime时间内从1降到0）
+        float alpha = Mathf.Clamp01(1f - (flickerTimer / fadeTime));
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.color = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, alpha);
+        }
+        
+        // 当透明度降为0时，回收自身
+        if (alpha <= 0f)
+        {
+            // 从Global_GameManager的EnemyList中移除敌人
+            if (Global_GameManager.Instance != null)
+            {
+                Global_GameManager.Instance.RemoveEnemy(gameObject);
+            }
+            // 回收敌人
+            Global_ObjectPool.Instance.Recycle(gameObject);
         }
     }
     

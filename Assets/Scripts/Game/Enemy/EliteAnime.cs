@@ -2,14 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// 敌人移动模式枚举
-public enum EliteMoveMode
-{
-    Path,       // 按照路径点移动
-    Stationary, // 不移动
-    Gravity     // 重力移动
-}
-
 public class EliteAnime : MonoBehaviour
 {
     public List<Sprite> EnemySprites;// 当前敌人精灵
@@ -22,8 +14,11 @@ public class EliteAnime : MonoBehaviour
     public int AnimeSpeed = 4;// 每隔多少帧切换一次动画
     [SerializeField]
     private Dir _currentDir = Dir.Idle;// 当前移动方向
-    public EliteMoveMode moveMode = EliteMoveMode.Path;// 敌人移动模式
-    public EliteMoveMode secondaryMoveMode = EliteMoveMode.Stationary;// 二段移动模式
+    public MoveMode moveMode = MoveMode.Path;// 敌人移动模式
+    public SecondaryMode secondaryMoveMode = SecondaryMode.Stationary;// 二段移动模式
+    
+    [Header("移动参数")]
+    public float MoveSpeed = 5f;// 精英敌人移动速度
     
     [Header("移动点参数")]
     private List<GameObject> MovePoints;// 移动点列表
@@ -31,29 +26,32 @@ public class EliteAnime : MonoBehaviour
     public float ArrivalDistance = 0.1f;// 到达移动点的判定距离
     private Vector2 moveDirection;// 移动方向向量
     private float t = 0f;// 贝塞尔曲线参数
-    private readonly float bezierSpeed = 0.5f;// 贝塞尔曲线移动速度
+    private float bezierSpeed = 0.5f;// 贝塞尔曲线移动速度
     private Vector2 startPoint;// 贝塞尔曲线起点
     private Vector2 controlPoint;// 贝塞尔曲线控制点
     private Vector2 endPoint;// 贝塞尔曲线终点
     private bool isMovingAlongBezier = false;// 是否正在沿贝塞尔曲线移动
     
     [Header("重力参数")]
-    public bool useGravity = false;// 是否使用重力
     public float gravityScale = 1f;// 重力缩放
     
     [Header("渐入参数")]
-    private float fadeTime = 3f;// 渐入时间
+    public float fadeTime = 3f;// 渐入时间
     private float fadeTimer = 0f;// 渐入计时器
+    
+    [Header("闪烁参数")]
+    public float FlickerLifeTime = 8f;// 闪烁模式下的生存时间
+    private float flickerTimer = 0f;// 闪烁模式计时器
 
     [Header("组件")]
     private SpriteRenderer spriteRenderer;// 精灵渲染器组件
     private Rigidbody2D rb2D;// 刚体组件
 
     // 边界值
-    private readonly float minX = -10.5f;
-    private readonly float maxX = 4.5f;
-    private readonly float minY = -6.5f;
-    private readonly float maxY = 6.0f;
+    private readonly float minX = -11f;
+    private readonly float maxX = 5f;
+    private readonly float minY = -7.5f;
+    private readonly float maxY = 6.5f;
 
     void OnEnable()
     {
@@ -78,7 +76,7 @@ public class EliteAnime : MonoBehaviour
         }
         
         // 初始化重力模式
-        if (moveMode == EliteMoveMode.Gravity)
+        if (moveMode == MoveMode.Gravity)
         {
             InitializeGravity();
         }
@@ -101,19 +99,27 @@ public class EliteAnime : MonoBehaviour
         // 根据移动模式执行不同的移动逻辑
         switch (moveMode)
         {
-            case EliteMoveMode.Path:
+            case MoveMode.Path:
                 MoveToNextPoint();
                 break;
-            case EliteMoveMode.Stationary:
+            case MoveMode.Stationary:
                 // 不移动
                 if (rb2D != null)
                 {
                     rb2D.velocity = Vector2.zero;
                 }
                 break;
-            case EliteMoveMode.Gravity:
-                GravityUpdate();
+            case MoveMode.Gravity:
                 break;
+            case MoveMode.Flicker:
+                FlickerUpdate();
+                break;
+        }
+        
+        // 处理FlickerOut模式
+        if (secondaryMoveMode == SecondaryMode.FlickerOut && moveMode != MoveMode.Flicker)
+        {
+            FlickerOutUpdate();
         }
     }
 
@@ -307,12 +313,48 @@ public class EliteAnime : MonoBehaviour
     }
     
     /// <summary>
-    /// 重力模式更新
+    /// 初始化闪烁模式
     /// </summary>
-    private void GravityUpdate()
+    private void InitializeFlicker()
     {
-        // 重力模式下，物理引擎会自动处理移动
-        // 这里可以添加额外的逻辑，比如碰撞检测等
+        // 重置计时器
+        flickerTimer = 0f;
+        fadeTimer = 0f;
+        // 初始化透明度为0（准备淡入）
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.color = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, 0f);
+        }
+        // 停止移动
+        if (rb2D != null)
+        {
+            rb2D.velocity = Vector2.zero;
+        }
+    }
+    
+    /// <summary>
+    /// 闪烁模式更新
+    /// </summary>
+    private void FlickerUpdate()
+    {
+        // 淡入效果
+        if (fadeTimer < fadeTime)
+        {
+            fadeTimer += Time.deltaTime;
+            float alpha = Mathf.Clamp01(fadeTimer / fadeTime);
+            if (spriteRenderer != null)
+            {
+                spriteRenderer.color = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, alpha);
+            }
+        }
+        
+        // 倒计时
+        flickerTimer += Time.deltaTime;
+        if (flickerTimer >= FlickerLifeTime)
+        {
+            // 生命周期结束，执行二段移动
+            SwitchToSecondaryMoveMode();
+        }
     }
     
     /// <summary>
@@ -321,17 +363,75 @@ public class EliteAnime : MonoBehaviour
     private void SwitchToSecondaryMoveMode()
     {
         // 切换移动模式为二段移动模式
-        moveMode = secondaryMoveMode;
-        
-        // 根据新的移动模式进行初始化
-        switch (moveMode)
+        switch (secondaryMoveMode)
+            {
+                case SecondaryMode.Stationary:
+                    moveMode = MoveMode.Stationary;
+                    // 不移动，保持当前状态
+                    break;
+                case SecondaryMode.Gravity:
+                    moveMode = MoveMode.Gravity;
+                    InitializeGravity();
+                    break;
+                case SecondaryMode.FlickerOut:
+                    // 直接执行淡出回收
+                    InitializeFlickerOut();
+                    break;
+                case SecondaryMode.Disappear:
+                    // 直接回收自身
+                    if (Global_GameManager.Instance != null)
+                    {
+                        Global_GameManager.Instance.RemoveEnemy(gameObject);
+                    }
+                    Global_ObjectPool.Instance.Recycle(gameObject);
+                    break;
+            }
+    }
+    
+    /// <summary>
+    /// 初始化闪烁淡出模式
+    /// </summary>
+    private void InitializeFlickerOut()
+    {
+        // 重置计时器
+        flickerTimer = 0f;
+        // 确保透明度为1
+        if (spriteRenderer != null)
         {
-            case EliteMoveMode.Stationary:
-                // 不移动，保持当前状态
-                break;
-            case EliteMoveMode.Gravity:
-                InitializeGravity();
-                break;
+            spriteRenderer.color = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, 1f);
+        }
+        // 停止移动
+        if (rb2D != null)
+        {
+            rb2D.velocity = Vector2.zero;
+        }
+    }
+    
+    /// <summary>
+    /// 闪烁淡出模式更新
+    /// </summary>
+    private void FlickerOutUpdate()
+    {
+        // 倒计时
+        flickerTimer += Time.deltaTime;
+        
+        // 计算透明度（在fadeTime时间内从1降到0）
+        float alpha = Mathf.Clamp01(1f - (flickerTimer / fadeTime));
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.color = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, alpha);
+        }
+        
+        // 当透明度降为0时，回收自身
+        if (alpha <= 0f)
+        {
+            // 从Global_GameManager的EnemyList中移除敌人
+            if (Global_GameManager.Instance != null)
+            {
+                Global_GameManager.Instance.RemoveEnemy(gameObject);
+            }
+            // 回收敌人
+            Global_ObjectPool.Instance.Recycle(gameObject);
         }
     }
     

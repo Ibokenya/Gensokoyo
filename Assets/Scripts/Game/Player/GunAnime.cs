@@ -10,6 +10,7 @@ public class GunAnime : MonoBehaviour
     public GameObject MarisaGun;// 魔理沙子机
     public List<GameObject> MarisaGuns;// 魔理沙子机们
     public GameObject MagicGun;// 七曜魔法子机
+    public ShootNormal ShootNormal;// 普通常规机体引用
 
     private readonly List<Vector2> GunPos = new()
     {
@@ -95,6 +96,7 @@ public class GunAnime : MonoBehaviour
                 MarisaGun.SetActive(true);
                 MagicGun.SetActive(false);
                 UpdateGuns(MarisaGuns);
+                ShootNormal.SetLimited(false);
                 break;
             case 2:
                 NormalGuns[0].SetActive(false);
@@ -102,6 +104,7 @@ public class GunAnime : MonoBehaviour
                 ReimuGun.SetActive(false);
                 MarisaGun.SetActive(false);
                 MagicGun.SetActive(true);
+                ShootNormal.SetLimited(true);
                 break;
         }
     }

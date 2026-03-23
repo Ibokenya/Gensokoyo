@@ -13,7 +13,7 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
 
     private AudioSource bgmSource;      // ±≥æ∞“Ù¿÷“Ù∆µ‘¥
     private List<AudioSource> sfxPool;  // “Ù–ß≥ÿ
-    private int maxSFXPoolSize = 10;    // “Ù–ß≥ÿ◊Ó¥Û»›¡ø
+    private readonly int maxSFXPoolSize = 10;    // “Ù–ß≥ÿ◊Ó¥Û»›¡ø
 
     #endregion
 
@@ -34,6 +34,7 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
 
     private float bgmVolume = 0.70f;     // ±≥æ∞“Ù¿÷“Ù¡ø
     private float sfxVolume = 0.80f;     // “Ù–ß“Ù¡ø
+    public float CurrentTime;
 
     #endregion
 
@@ -52,6 +53,11 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
         
         // ≥ı ºªØ±≥æ∞“Ù¿÷◊÷µ‰
         InitializeBGMDictionary();
+    }
+
+    void Update()
+    {
+        CurrentTime = bgmSource.time;
     }
     
     /// <summary>
@@ -308,7 +314,7 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
     }
     
     /// <summary>
-    /// Õ£÷π±≥æ∞“Ù¿÷
+    /// ??????????
     /// </summary>
     public void StopBGM()
     {

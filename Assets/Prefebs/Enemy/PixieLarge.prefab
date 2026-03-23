@@ -115,11 +115,12 @@ MonoBehaviour:
   _currentIndex: 0
   AnimeSpeed: 4
   _currentDir: 0
-  moveMode: 1
-  secondaryMoveMode: 1
+  moveMode: 2
+  secondaryMoveMode: 2
+  MoveSpeed: 5
   ArrivalDistance: 0.1
-  useGravity: 0
   gravityScale: 0.12
+  fadeTime: 3
 --- !u!60 &8529169561834577298
 PolygonCollider2D:
   m_ObjectHideFlags: 0

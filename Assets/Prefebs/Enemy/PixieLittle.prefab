@@ -160,9 +160,9 @@ MonoBehaviour:
   ArrivalDistance: 0.1
   bezierSpeed: 1
   FlickerLifeTime: 8
+  fadeTime: 2
   useGravity: 0
   gravityScale: 0.12
-  player: {fileID: 0}
 --- !u!60 &4412466162555672964
 PolygonCollider2D:
   m_ObjectHideFlags: 0
