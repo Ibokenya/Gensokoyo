@@ -71,8 +71,6 @@ public class EnemyAnime : MonoBehaviour
 
     void OnEnable()
     {
-        player = GameObject.FindGameObjectWithTag("Player");
-        
         int randomIndex = Random.Range(0, 4);
         switch (randomIndex)// 随机选择一个妖精的变体精灵
         {
@@ -101,7 +99,7 @@ public class EnemyAnime : MonoBehaviour
         
         // 初始化贝塞尔曲线参数
         t = 0f;
-        isMovingAlongBezier = false;
+        // 不要重置isMovingAlongBezier，因为SetMovePoints可能已经设置了它
         
         // 初始化闪烁模式参数
         flickerTimer = 0f;
@@ -131,6 +129,8 @@ public class EnemyAnime : MonoBehaviour
         
         // 初始化渐入效果
         InitializeFadeIn();
+        
+        Debug.Log("敌人的行为模式为：" + moveMode + "，二段移动模式为：" + secondaryMoveMode);
     }
 
     void Update()
@@ -174,8 +174,19 @@ public class EnemyAnime : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 设置玩家对象
+    /// </summary>
+    /// <param name="playerObj">玩家对象</param>
+    public void SetPlayer(GameObject playerObj)
+    {
+        player = playerObj;
+    }
+
     public void SetMovePoints(List<GameObject> movePoints)// 设置移动点列表
     {
+        Debug.Log("设置杂鱼移动点列表");
+
         MovePoints = movePoints;
         currentPointIndex = 0;
         // 初始化第一个移动方向
@@ -425,7 +436,7 @@ public class EnemyAnime : MonoBehaviour
     /// 初始化重力模式
     /// </summary>
     public void InitializeGravity()
-    {
+    { 
         if (rb2D != null)
         {
             // 启用重力

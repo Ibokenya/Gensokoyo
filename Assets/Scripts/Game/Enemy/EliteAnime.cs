@@ -67,7 +67,7 @@ public class EliteAnime : MonoBehaviour
         
         // 初始化贝塞尔曲线参数
         t = 0f;
-        isMovingAlongBezier = false;
+        // 不要重置isMovingAlongBezier，因为SetMovePoints可能已经设置了它
         
         // 初始化重力参数
         if (rb2D != null)
@@ -83,6 +83,8 @@ public class EliteAnime : MonoBehaviour
         
         // 初始化渐入效果
         InitializeFadeIn();
+        
+        Debug.Log("精英敌人的行为模式为：" + moveMode + "，二段移动模式为：" + secondaryMoveMode);
     }
 
     void Update()

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// 小球的路径点移动是无平滑的（两点之间直线移动）
 public class BallsAnime : MonoBehaviour
 {
     public List<Sprite> ballsSprites;// 球体精灵
@@ -45,9 +46,6 @@ public class BallsAnime : MonoBehaviour
 
     void OnEnable()
     {
-
-        player = GameObject.FindGameObjectWithTag("Player");
-
         int randomIndex = Random.Range(0, ballsSprites.Count);
         currentBallSprite = ballsSprites[randomIndex];// 随机选择一个球体精灵
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -67,8 +65,9 @@ public class BallsAnime : MonoBehaviour
         }
         
         // 初始化追踪模式
-        if (moveMode == MoveMode.Track)
+        if (moveMode == MoveMode.Track && player != null)
         {
+            Debug.Log("追踪模式初始化");
             InitializeTracking();
         }
         // 初始化闪烁模式
@@ -81,6 +80,16 @@ public class BallsAnime : MonoBehaviour
         {
             InitializeGravity();
         }
+        Debug.Log("小球的行为模式为：" + moveMode + "，二段移动模式为：" + secondaryMoveMode);
+    }
+    
+    /// <summary>
+    /// 设置玩家对象
+    /// </summary>
+    /// <param name="playerObj">玩家对象</param>
+    public void SetPlayer(GameObject playerObj)
+    {
+        player = playerObj;
     }
 
     void Update()

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static ShootMode;
 
 // 移动模式枚举
 public enum MoveMode
@@ -22,45 +23,6 @@ public enum SecondaryMode
     Disappear   // 直接回收自身
 }
 
-[System.Serializable]
-public class EnemySpawnConfig
-{
-    [Header("生成时间")]
-    public int spawnTime;// 基于音乐时间
-    
-    [Header("生成数量")]
-    public int spawnCount = 1;// 生成敌人的数量
-    public float spawnInterval = 0.5f;// 生成间隔（秒）
-    
-    // 敌人类型
-    public enum EnemyType
-    {
-        Normal,    // 普通敌人
-        Ball,      // 球体敌人
-        Elite      // 精英敌人
-    }
-    public EnemyType enemyType;
-    
-    // 移动模式
-    public MoveMode moveMode;
-    
-    // 二段移动模式
-    public SecondaryMode secondaryMoveMode = SecondaryMode.Stationary;// 二段移动模式
-    
-    [Header("路径点列表")]
-    public List<GameObject> movePoints;// 移动点列表
-    
-    [Header("移动参数")]
-    public float moveSpeed = 5f;// 移动速度
-    
-    [Header("闪烁参数")]
-    public float flickerLifeTime = 2f;// 闪烁模式下的生存时间
-    public float fadeTime = 1f;// 淡入时间
-    
-    [Header("重力参数")]
-    public float gravityScale = 1f;// 重力缩放
-}
-
 public class CreateEnemy : MonoBehaviour
 {
     [Header("敌人生成配置")]
@@ -80,8 +42,9 @@ public class CreateEnemy : MonoBehaviour
     private Global_AudioManager audioManager;// 音频管理单例
     
     [Header("生成状态")]
-    private float currentMusicTime = 0f;// 当前音乐播放时间
+    public float currentMusicTime = 0f;// 当前音乐播放时间
     private int CurrentSpawn = 0;//第0波次
+    public GameObject player;// 玩家对象引用
 
     void OnEnable()
     {
@@ -200,6 +163,9 @@ public class CreateEnemy : MonoBehaviour
                 enemy = Instantiate(enemyPrefab);
             }
             
+            // 确保敌人对象处于未激活状态，以便在设置参数后再触发OnEnable
+            enemy.SetActive(false);
+            
             // 检查路径点数量
             CheckMovePointsCount(config);
             
@@ -313,6 +279,19 @@ public class CreateEnemy : MonoBehaviour
                     enemyAnime.secondaryMoveMode = SecondaryMode.Disappear;
                     break;
             }
+            
+            // 设置射击配置
+            EnemyShoot enemyShoot = enemy.GetComponent<EnemyShoot>();
+            if (enemyShoot != null)
+            {
+                enemyShoot.SetShootConfig(config.shootConfig);
+            }
+            
+            // 设置玩家对象
+            if (player != null)
+            {
+                enemyAnime.SetPlayer(player);
+            }
         }
     }
     
@@ -385,6 +364,19 @@ public class CreateEnemy : MonoBehaviour
                     ballsAnime.secondaryMoveMode = SecondaryMode.Disappear;
                     break;
             }
+            
+            // 设置射击配置
+            EnemyShoot enemyShoot = enemy.GetComponent<EnemyShoot>();
+            if (enemyShoot != null)
+            {
+                enemyShoot.SetShootConfig(config.shootConfig);
+            }
+            
+            // 设置玩家对象
+            if (player != null)
+            {
+                ballsAnime.SetPlayer(player);
+            }
         }
     }
     
@@ -402,8 +394,11 @@ public class CreateEnemy : MonoBehaviour
             // 设置重力参数
             eliteAnime.gravityScale = config.gravityScale;
             
-            // 设置渐入时间（精英敌人使用渐入，而不是闪烁）
+            // 设置渐入时间
             eliteAnime.fadeTime = config.fadeTime;
+            
+            // 设置闪烁参数
+            eliteAnime.FlickerLifeTime = config.flickerLifeTime;
             
             // 设置移动模式
             switch (config.moveMode)
@@ -445,6 +440,13 @@ public class CreateEnemy : MonoBehaviour
                 case SecondaryMode.Disappear:
                     eliteAnime.secondaryMoveMode = SecondaryMode.Disappear;
                     break;
+            }
+            
+            // 设置射击配置
+            EnemyShoot enemyShoot = enemy.GetComponent<EnemyShoot>();
+            if (enemyShoot != null)
+            {
+                enemyShoot.SetShootConfig(config.shootConfig);
             }
         }
     }
