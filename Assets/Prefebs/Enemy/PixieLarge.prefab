@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 2558137532123596938}
   - component: {fileID: 8529169561834577298}
   - component: {fileID: 4627697394680479136}
+  - component: {fileID: -4443161721027342030}
   m_Layer: 9
   m_Name: PixieLarge
   m_TagString: Enemy
@@ -119,8 +120,10 @@ MonoBehaviour:
   secondaryMoveMode: 2
   MoveSpeed: 5
   ArrivalDistance: 0.1
+  bezierSpeed: 1
   gravityScale: 0.12
   fadeTime: 3
+  FlickerLifeTime: 8
 --- !u!60 &8529169561834577298
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -200,3 +203,40 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
+--- !u!114 &-4443161721027342030
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4357197549038363353}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26c1759b2c518e04cad579fc26ea4d10, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shootConfig:
+    shootMode: 4
+    shootInterval: 1
+    bulletCount: 1
+    bulletPrefab: {fileID: 0}
+    shootAngle: 0
+    angleRange: 360
+    trackBulletConfig:
+      Speed: 5
+    tailBulletConfig:
+      CanClone: 0
+      Speed: 5
+      CloneSpeed: 1
+      attenuation: 0.5
+      MinSpeed: 3
+    remainBulletConfig:
+      LifeTime: 5
+    normalBulletConfig:
+      Speed: 5
+    invisibleBulletConfig:
+      isVisible: 1
+      Speed: 5
+      player: {fileID: 0}
+      ShowDistance: 10
+      ShowTime: 1

@@ -3,10 +3,8 @@ using UnityEngine;
 public enum Shoot_Mode
 {
     diverge,// 发散圆
-    track,// 跟踪
-    remain,// 滞留
+    random,// 随机
     sprial,// 螺旋
-    bevel,// 固定斜角
     none// 无射击
 }
 
@@ -15,6 +13,8 @@ public class TrackBulletConfig
 {
     [Header("移动速度")]
     public float Speed = 5f;
+    [Header("前摇时间")]
+    public float WindUp = 0f;
 }
 
 [System.Serializable]
@@ -37,6 +37,10 @@ public class RemainBulletConfig
 {
     [Header("生存时间")]
     public float LifeTime = 5f;
+    [Header("移动速度")]
+    public float Speed = 0f;
+    [Header("前摇时间")]
+    public float WindUp = 0f;
 }
 
 [System.Serializable]
@@ -53,6 +57,9 @@ public class InvisibleBulletConfig
     public bool isVisible = true;
     [Header("移动速度")]
     public float Speed = 5f;
+    [Header("玩家")]
+    public GameObject player;
+
     [Header("靠近显形距离")]
     public float ShowDistance = 10f;
     [Header("淡入时间")]
@@ -62,11 +69,11 @@ public class InvisibleBulletConfig
 [System.Serializable]
 public class ShootMode
 {
+    [Header("持续时间")]
+    public float duration = 5f;
+    
     [Header("射击模式")]
     public Shoot_Mode shootMode = Shoot_Mode.none;
-    
-    [Header("射击速度")]
-    public float shootSpeed = 5f;
     
     [Header("射击间隔")]
     public float shootInterval = 1f;
@@ -83,18 +90,18 @@ public class ShootMode
     [Header("角度范围")]
     public float angleRange = 360f;
     
-    [Header("跟踪子弹参数")]
+    [Header("追踪子弹参数")]
     public TrackBulletConfig trackBulletConfig = new TrackBulletConfig();
     
     [Header("拖尾子弹参数")]
     public TailBulletConfig tailBulletConfig = new TailBulletConfig();
-    
-    [Header("滞留子弹参数")]
-    public RemainBulletConfig remainBulletConfig = new RemainBulletConfig();
     
     [Header("普通子弹参数")]
     public NormalBulletConfig normalBulletConfig = new NormalBulletConfig();
     
     [Header("不可见子弹参数")]
     public InvisibleBulletConfig invisibleBulletConfig = new InvisibleBulletConfig();
+    
+    [Header("滞留子弹参数")]
+    public RemainBulletConfig remainBulletConfig = new RemainBulletConfig();
 }

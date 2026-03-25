@@ -48,14 +48,23 @@ public class Global_ObjectPool : Singleton<Global_ObjectPool>
     /// <returns>获取到的对象</returns>
     public GameObject GetObject(GameObject itemPrefab, Vector3 position, Quaternion rotation)
     {
+        if (itemPrefab == null) {
+            Debug.LogError("GetObject: itemPrefab is null");
+            return null;
+        }
+        
         string poolKey = itemPrefab.name;
+        
         GameObject item;
         // 检查是否有初始化过该类型的池
         if (!ObjectPool.ContainsKey(poolKey))
         {
             InitPool(itemPrefab,10); // 未初始化则自动初始化
-            Debug.Log($"创建一个不在物品池的物品：{poolKey}");
         }
+        
+        // 检查池容量并动态扩容
+        CheckAndExpandPool(itemPrefab);
+        
         if(ObjectPool[poolKey].Count > 0)
         {
             item = ObjectPool[poolKey].Dequeue();
@@ -67,6 +76,36 @@ public class Global_ObjectPool : Singleton<Global_ObjectPool>
         item.transform.SetPositionAndRotation(position, rotation);
         item.SetActive(true);
         return item;
+    }
+    
+    /// <summary>
+    /// 检查并动态扩容对象池
+    /// </summary>
+    /// <param name="itemPrefab">对象预制体</param>
+    private void CheckAndExpandPool(GameObject itemPrefab)
+    {
+        string poolKey = itemPrefab.name;
+        if (!ObjectPool.ContainsKey(poolKey)) return;
+        
+        Queue<GameObject> pool = ObjectPool[poolKey];
+        int currentCount = pool.Count;
+        
+        // 计算初始容量（如果没有记录，使用当前池大小）
+        int initialCapacity = currentCount;
+        
+        // 检查剩余容量是否小于10%
+        if (currentCount < initialCapacity * 0.1f)
+        {
+            // 扩容20%
+            int expandCount = Mathf.CeilToInt(initialCapacity * 0.2f);
+            for (int i = 0; i < expandCount; i++)
+            {
+                GameObject item = Instantiate(itemPrefab, transform);
+                item.SetActive(false);
+                pool.Enqueue(item);
+            }
+            Debug.Log($"对象池 {poolKey} 已扩容，新增 {expandCount} 个对象，当前容量: {pool.Count}");
+        }
     }
 
     /// <summary>

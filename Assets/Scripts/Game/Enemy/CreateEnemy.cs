@@ -33,10 +33,37 @@ public class CreateEnemy : MonoBehaviour
     public GameObject ballEnemyPrefab;   // 球敌人预制体
     public GameObject eliteEnemyPrefab;  // 精英敌人预制体
     
+    [Header("子弹预制体")]
+    public GameObject LittleJade;// 小玉预制体
+    public GameObject MidJade;   // 中玉预制体
+    public GameObject LargeJade;    // 大玉预制体
+    public GameObject LittleRice;   // 小米预制体
+    public GameObject LargeRice;    // 大米预制体
+    public GameObject Dhratarastra;  // 持国天预制体
+    public GameObject talisman; // 符箓预制体
+    public GameObject arrow; // 箭头预制体
+    public GameObject dart; // 飞镖预制体
+    public GameObject LittleStar; // 小星预制体
+    public GameObject LargeStar; // 大星预制体
+    public GameObject TailBullet; // 拖尾子弹预制体
+    
     [Header("对象池设置")]
     public int normalEnemyPoolSize = 10;// 普通敌人对象池大小
     public int ballEnemyPoolSize = 10;  // 球敌人对象池大小
     public int eliteEnemyPoolSize = 5;  // 精英敌人对象池大小
+
+    public int LittleJadePoolSize = 30;   // 小玉对象池大小(常规)
+    public int MidJadePoolSize = 30;    // 中玉对象池大小(隐形)
+    public int LargeJadePoolSize = 20;    // 大玉对象池大小(隐形)
+    public int LittleRicePoolSize = 30;   // 小米对象池大小(常规)
+    public int LargeRicePoolSize = 30;    // 大米对象池大小(常规)
+    public int DhratarastraPoolSize = 30;    // 持国天对象池大小(常规)
+    public int talismanPoolSize = 20; // 符稿对象池大小(追踪)
+    public int arrowPoolSize = 20; // 箭头对象池大小(追踪)
+    public int dartPoolSize = 20; // 飞镖对象池大小(追踪)
+    public int LittleStarPoolSize = 20; // 小星对象池大小(滞留)
+    public int LargeStarPoolSize = 20; // 大星对象池大小(滞留)
+    public int TailBulletPoolSize = 50; // 拖尾子弹对象池大小(拖尾)
     
     [Header("音频管理")]
     private Global_AudioManager audioManager;// 音频管理单例
@@ -53,6 +80,7 @@ public class CreateEnemy : MonoBehaviour
         
         // 获取音频管理单例
         audioManager = Global_AudioManager.Instance;
+        
     }
 
     void Update()
@@ -96,6 +124,56 @@ public class CreateEnemy : MonoBehaviour
         {
             Global_ObjectPool.Instance.InitPool(eliteEnemyPrefab, eliteEnemyPoolSize);
         }
+        
+        // 初始化子弹对象池
+        if (LittleJade != null)
+        {
+            Global_ObjectPool.Instance.InitPool(LittleJade, LittleJadePoolSize);
+        }
+        if (MidJade != null)
+        {
+            Global_ObjectPool.Instance.InitPool(MidJade, MidJadePoolSize);
+        }
+        if (LargeJade != null)
+        {
+            Global_ObjectPool.Instance.InitPool(LargeJade, LargeJadePoolSize);
+        }
+        if (LittleRice != null)
+        {
+            Global_ObjectPool.Instance.InitPool(LittleRice, LittleRicePoolSize);
+        }
+        if (LargeRice != null)
+        {
+            Global_ObjectPool.Instance.InitPool(LargeRice, LargeRicePoolSize);
+        }
+        if (Dhratarastra != null)
+        {
+            Global_ObjectPool.Instance.InitPool(Dhratarastra, DhratarastraPoolSize);
+        }
+        if (talisman != null)
+        {
+            Global_ObjectPool.Instance.InitPool(talisman, talismanPoolSize);
+        }
+        if (arrow != null)
+        {
+            Global_ObjectPool.Instance.InitPool(arrow, arrowPoolSize);
+        }
+        if (dart != null)
+        {
+            Global_ObjectPool.Instance.InitPool(dart, dartPoolSize);
+        }
+        if (LittleStar != null)
+        {
+            Global_ObjectPool.Instance.InitPool(LittleStar, LittleStarPoolSize);
+        }
+        if (LargeStar != null)
+        {
+            Global_ObjectPool.Instance.InitPool(LargeStar, LargeStarPoolSize);
+        }
+        if (TailBullet != null)
+        {
+            Global_ObjectPool.Instance.InitPool(TailBullet, TailBulletPoolSize);
+        }
     }
     
     /// <summary>
@@ -120,7 +198,6 @@ public class CreateEnemy : MonoBehaviour
     /// <param name="config">生成配置</param>
     private void SpawnEnemy(EnemySpawnConfig config)
     {
-        Debug.Log($"生成敌人: {config.enemyType} {config.spawnCount} {config.moveMode} {config.secondaryMoveMode}");
         // 开始生成多个敌人
         StartCoroutine(SpawnEnemiesCoroutine(config));
     }
@@ -183,13 +260,13 @@ public class CreateEnemy : MonoBehaviour
             switch (config.enemyType)
             {
                 case EnemySpawnConfig.EnemyType.Normal:
-                    SetupNormalEnemy(enemy, config);
+                    SetupNormalEnemy(enemy, config, i);
                     break;
                 case EnemySpawnConfig.EnemyType.Ball:
-                    SetupBallEnemy(enemy, config);
+                    SetupBallEnemy(enemy, config, i);
                     break;
                 case EnemySpawnConfig.EnemyType.Elite:
-                    SetupEliteEnemy(enemy, config);
+                    SetupEliteEnemy(enemy, config, i);
                     break;
             }
             
@@ -213,7 +290,7 @@ public class CreateEnemy : MonoBehaviour
     /// <summary>
     /// 设置普通敌人
     /// </summary>
-    private void SetupNormalEnemy(GameObject enemy, EnemySpawnConfig config)
+    private void SetupNormalEnemy(GameObject enemy, EnemySpawnConfig config, int enemyIndex)
     {
         EnemyAnime enemyAnime = enemy.GetComponent<EnemyAnime>();
         if (enemyAnime != null)
@@ -284,7 +361,13 @@ public class CreateEnemy : MonoBehaviour
             EnemyShoot enemyShoot = enemy.GetComponent<EnemyShoot>();
             if (enemyShoot != null)
             {
-                enemyShoot.SetShootConfig(config.shootConfig);
+                enemyShoot.SetShootConfig(config.shootConfigs);
+                enemyShoot.SetEnemyIndex(enemyIndex);
+                // 设置玩家对象
+                if (player != null)
+                {
+                    enemyShoot.SetPlayer(player);
+                }
             }
             
             // 设置玩家对象
@@ -298,7 +381,7 @@ public class CreateEnemy : MonoBehaviour
     /// <summary>
     /// 设置球敌人
     /// </summary>
-    private void SetupBallEnemy(GameObject enemy, EnemySpawnConfig config)
+    private void SetupBallEnemy(GameObject enemy, EnemySpawnConfig config, int enemyIndex)
     {
         BallsAnime ballsAnime = enemy.GetComponent<BallsAnime>();
         if (ballsAnime != null)
@@ -369,7 +452,13 @@ public class CreateEnemy : MonoBehaviour
             EnemyShoot enemyShoot = enemy.GetComponent<EnemyShoot>();
             if (enemyShoot != null)
             {
-                enemyShoot.SetShootConfig(config.shootConfig);
+                enemyShoot.SetShootConfig(config.shootConfigs);
+                enemyShoot.SetEnemyIndex(enemyIndex);
+                // 设置玩家对象
+                if (player != null)
+                {
+                    enemyShoot.SetPlayer(player);
+                }
             }
             
             // 设置玩家对象
@@ -383,7 +472,7 @@ public class CreateEnemy : MonoBehaviour
     /// <summary>
     /// 设置精英敌人
     /// </summary>
-    private void SetupEliteEnemy(GameObject enemy, EnemySpawnConfig config)
+    private void SetupEliteEnemy(GameObject enemy, EnemySpawnConfig config, int enemyIndex)
     {
         EliteAnime eliteAnime = enemy.GetComponent<EliteAnime>();
         if (eliteAnime != null)
@@ -446,7 +535,13 @@ public class CreateEnemy : MonoBehaviour
             EnemyShoot enemyShoot = enemy.GetComponent<EnemyShoot>();
             if (enemyShoot != null)
             {
-                enemyShoot.SetShootConfig(config.shootConfig);
+                enemyShoot.SetShootConfig(config.shootConfigs);
+                enemyShoot.SetEnemyIndex(enemyIndex);
+                // 设置玩家对象
+                if (player != null)
+                {
+                    enemyShoot.SetPlayer(player);
+                }
             }
         }
     }

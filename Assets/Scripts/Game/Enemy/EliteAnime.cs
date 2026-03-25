@@ -26,7 +26,7 @@ public class EliteAnime : MonoBehaviour
     public float ArrivalDistance = 0.1f;// 到达移动点的判定距离
     private Vector2 moveDirection;// 移动方向向量
     private float t = 0f;// 贝塞尔曲线参数
-    private float bezierSpeed = 0.5f;// 贝塞尔曲线移动速度
+    public float bezierSpeed = 0.5f;// 贝塞尔曲线移动速度
     private Vector2 startPoint;// 贝塞尔曲线起点
     private Vector2 controlPoint;// 贝塞尔曲线控制点
     private Vector2 endPoint;// 贝塞尔曲线终点
@@ -55,6 +55,7 @@ public class EliteAnime : MonoBehaviour
 
     void OnEnable()
     {
+        bezierSpeed = MoveSpeed/10;
         spriteRenderer = GetComponent<SpriteRenderer>();
         rb2D = GetComponent<Rigidbody2D>();
         spriteRenderer.sprite = EnemySprites[_currentIndex];// 初始化精灵渲染器的精灵为当前敌人的变体精灵

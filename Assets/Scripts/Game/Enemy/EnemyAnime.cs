@@ -71,6 +71,7 @@ public class EnemyAnime : MonoBehaviour
 
     void OnEnable()
     {
+        bezierSpeed = MoveSpeed/10;
         int randomIndex = Random.Range(0, 4);
         switch (randomIndex)// 随机选择一个妖精的变体精灵
         {
