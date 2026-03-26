@@ -92,7 +92,6 @@ public class ShootNormal : MonoBehaviour
                     Global_ObjectPool.Instance.GetObject
                     (Normal, GunRight.position, Normal.transform.rotation);
                     shootTimer = 0; // 射击后重置计时器，开始冷却
-                    Debug.Log("发射两枚普通子弹");
                 }
                 else
                 {

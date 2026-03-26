@@ -49,17 +49,14 @@ public class NormalFO : MonoBehaviour
     {
         if(transform.position.x<minX || transform.position.x>maxX || transform.position.y<minY || transform.position.y>maxY)
         {
-            Debug.Log("普通飞行物因为超出边界被回收");
             Global_ObjectPool.Instance.Recycle(this.gameObject);
         }
     }
 
     void OnTriggerEnter2D(Collider2D collision)
     {
-        Debug.Log(this.name + "触发: " + collision.gameObject.name);
         if(!isNeedle)
         {
-            Debug.Log("普通飞行物因为碰撞被回收");
             Global_ObjectPool.Instance.Recycle(this.gameObject);
         }
     }

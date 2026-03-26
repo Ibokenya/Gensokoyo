@@ -91,7 +91,6 @@ public class TrackedFO : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D collision)
     {
-        Debug.Log(this.name + "´¥·¢: " + collision.gameObject.name);
         Global_ObjectPool.Instance.Recycle(this.gameObject);
     }
 }

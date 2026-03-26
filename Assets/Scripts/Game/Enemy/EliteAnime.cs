@@ -12,8 +12,6 @@ public class EliteAnime : MonoBehaviour
     private float TimeClock;// 时钟，用来记录过了多长时间
     [Header("动画速度（每隔多少帧切换一次动画）")]
     public int AnimeSpeed = 4;// 每隔多少帧切换一次动画
-    [SerializeField]
-    private Dir _currentDir = Dir.Idle;// 当前移动方向
     public MoveMode moveMode = MoveMode.Path;// 敌人移动模式
     public SecondaryMode secondaryMoveMode = SecondaryMode.Stationary;// 二段移动模式
     
@@ -46,6 +44,7 @@ public class EliteAnime : MonoBehaviour
     [Header("组件")]
     private SpriteRenderer spriteRenderer;// 精灵渲染器组件
     private Rigidbody2D rb2D;// 刚体组件
+    private bool isFirstMoveCompleted = false;// 是否第一段移动完成
 
     // 边界值
     private readonly float minX = -11f;
@@ -59,6 +58,7 @@ public class EliteAnime : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         rb2D = GetComponent<Rigidbody2D>();
         spriteRenderer.sprite = EnemySprites[_currentIndex];// 初始化精灵渲染器的精灵为当前敌人的变体精灵
+        spriteRenderer.color = new(1,1,1,1);
         
         // 重置移动点索引
         currentPointIndex = 0;
@@ -82,10 +82,12 @@ public class EliteAnime : MonoBehaviour
             InitializeGravity();
         }
         
-        // 初始化渐入效果
+        if(moveMode == MoveMode.Flicker)
+        {
+            InitializeFlicker();
+        }
+
         InitializeFadeIn();
-        
-        Debug.Log("精英敌人的行为模式为：" + moveMode + "，二段移动模式为：" + secondaryMoveMode);
     }
 
     void Update()
@@ -105,13 +107,6 @@ public class EliteAnime : MonoBehaviour
             case MoveMode.Path:
                 MoveToNextPoint();
                 break;
-            case MoveMode.Stationary:
-                // 不移动
-                if (rb2D != null)
-                {
-                    rb2D.velocity = Vector2.zero;
-                }
-                break;
             case MoveMode.Gravity:
                 break;
             case MoveMode.Flicker:
@@ -120,7 +115,7 @@ public class EliteAnime : MonoBehaviour
         }
         
         // 处理FlickerOut模式
-        if (secondaryMoveMode == SecondaryMode.FlickerOut && moveMode != MoveMode.Flicker)
+        if (secondaryMoveMode == SecondaryMode.FlickerOut && isFirstMoveCompleted)
         {
             FlickerOutUpdate();
         }
@@ -151,23 +146,6 @@ public class EliteAnime : MonoBehaviour
                 t = 0f;
                 isMovingAlongBezier = true;
             }
-        }
-    }
-    
-    /// <summary>
-    /// 设置敌人的移动方向
-    /// </summary>
-    /// <param name="newDir">新的方向</param>
-    public void SetDirection(Dir newDir)
-    {
-        if (_currentDir != newDir)
-        {
-            _currentDir = newDir;
-            // 重置动画索引
-            _currentIndex = 0;
-            TimeClock = 0f;
-            // 立即更新精灵
-            UpdateSprite();
         }
     }
     
@@ -295,6 +273,7 @@ public class EliteAnime : MonoBehaviour
                     }
                     // 切换到二段移动模式
                     SwitchToSecondaryMoveMode();
+                    isFirstMoveCompleted = true;
                 }
             }
         }
@@ -350,13 +329,16 @@ public class EliteAnime : MonoBehaviour
                 spriteRenderer.color = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, alpha);
             }
         }
-        
-        // 倒计时
-        flickerTimer += Time.deltaTime;
-        if (flickerTimer >= FlickerLifeTime)
+        else
         {
-            // 生命周期结束，执行二段移动
-            SwitchToSecondaryMoveMode();
+            // 淡入完成后开始倒计时
+            flickerTimer += Time.deltaTime;
+            if (flickerTimer >= FlickerLifeTime)
+            {
+                // 生命周期结束，执行二段移动
+                SwitchToSecondaryMoveMode();
+                isFirstMoveCompleted = true;
+            }
         }
     }
     
@@ -368,10 +350,6 @@ public class EliteAnime : MonoBehaviour
         // 切换移动模式为二段移动模式
         switch (secondaryMoveMode)
             {
-                case SecondaryMode.Stationary:
-                    moveMode = MoveMode.Stationary;
-                    // 不移动，保持当前状态
-                    break;
                 case SecondaryMode.Gravity:
                     moveMode = MoveMode.Gravity;
                     InitializeGravity();
@@ -380,13 +358,12 @@ public class EliteAnime : MonoBehaviour
                     // 直接执行淡出回收
                     InitializeFlickerOut();
                     break;
-                case SecondaryMode.Disappear:
-                    // 直接回收自身
-                    if (Global_GameManager.Instance != null)
+                case SecondaryMode.Stationary:
+                    // 不移动，保持当前状态
+                    if (rb2D != null)
                     {
-                        Global_GameManager.Instance.RemoveEnemy(gameObject);
+                        rb2D.velocity = Vector2.zero;
                     }
-                    Global_ObjectPool.Instance.Recycle(gameObject);
                     break;
             }
     }
@@ -418,8 +395,8 @@ public class EliteAnime : MonoBehaviour
         // 倒计时
         flickerTimer += Time.deltaTime;
         
-        // 计算透明度（在fadeTime时间内从1降到0）
-        float alpha = Mathf.Clamp01(1f - (flickerTimer / fadeTime));
+        // 计算透明度（在1秒内从1降到0）
+        float alpha = Mathf.Clamp01(1f - (flickerTimer / 1f));
         if (spriteRenderer != null)
         {
             spriteRenderer.color = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, alpha);
@@ -450,62 +427,15 @@ public class EliteAnime : MonoBehaviour
         int currentFrame = Mathf.FloorToInt(TimeClock * 60f);
 
         // 检查是否需要切换动画帧
-        if (currentFrame >= AnimeSpeed)
+        if (currentFrame >= AnimeSpeed && EnemySprites != null && EnemySprites.Count > 0)
         {
-            // 根据当前方向更新动画索引
-            switch (_currentDir)
-            {
-                case Dir.Idle:
-                    // Idle状态使用前5张精灵（0-4）
-                    _currentIndex = (_currentIndex + 1) % 5;
-                    break;
-                case Dir.Left:
-                case Dir.Right:
-                    // 左右移动状态使用后7张精灵
-                    _currentIndex = 5 + ((_currentIndex - 5 + 1) % 7);
-                    break;
-            }
+            _currentIndex = (_currentIndex + 1) % EnemySprites.Count;
             
             // 更新精灵
-            UpdateSprite();
+            spriteRenderer.sprite = EnemySprites[Mathf.Min(_currentIndex, EnemySprites.Count - 1)];
 
             // 重置时钟，保留余数以保持动画流畅
             TimeClock -= (float)AnimeSpeed / 60f;
-        }
-    }
-    
-    /// <summary>
-    /// 更新精灵
-    /// </summary>
-    private void UpdateSprite()
-    {
-        if (spriteRenderer != null && EnemySprites.Count > 0)
-        {
-            // 根据当前方向设置精灵和翻转
-            switch (_currentDir)
-            {
-                case Dir.Idle:
-                case Dir.Right:
-                    // Idle和Right状态不翻转
-                    spriteRenderer.flipX = false;
-                    // Idle状态使用前5张精灵
-                    if (_currentDir == Dir.Idle)
-                    {
-                        spriteRenderer.sprite = EnemySprites[Mathf.Min(_currentIndex, 4)];
-                    }
-                    // Right状态使用后7张精灵
-                    else
-                    {
-                        spriteRenderer.sprite = EnemySprites[Mathf.Min(5 + (_currentIndex % 7), EnemySprites.Count - 1)];
-                    }
-                    break;
-                case Dir.Left:
-                    // Left状态翻转精灵
-                    spriteRenderer.flipX = true;
-                    // 使用后7张精灵
-                    spriteRenderer.sprite = EnemySprites[Mathf.Min(5 + (_currentIndex % 7), EnemySprites.Count - 1)];
-                    break;
-            }
         }
     }
 }

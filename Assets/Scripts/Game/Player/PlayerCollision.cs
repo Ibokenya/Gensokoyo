@@ -122,7 +122,6 @@ public class PlayerCollision : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         // 处理触发器逻辑
-        Debug.Log("玩家触发: " + collision.gameObject.name);
         
     }
 }

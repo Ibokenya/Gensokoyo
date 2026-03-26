@@ -36,8 +36,8 @@ public class EnemyShoot : MonoBehaviour
         bulletColorIndex = Random.Range(0, 6); // 生成一个用于决定子弹变体的随机数
         // 基于enemyIndex计算随机偏移值
         Random.InitState(enemyIndex * 37); // 使用固定的种子确保相同索引的敌人有相同的偏移
-        angleOffset = Random.Range(-10f, 10f); // 角度偏移范围：-10度到10度
-        timeOffset = Random.Range(-0.2f, 0.2f); // 时间偏移范围：-0.2秒到0.2秒
+        angleOffset = Random.Range(-20f, 20f); // 角度偏移范围：-20度到20度
+        timeOffset = Random.Range(-0.1f, 0.1f); // 时间偏移范围：-0.1秒到0.1秒
         
         if(player == null)
         {
@@ -72,7 +72,6 @@ public class EnemyShoot : MonoBehaviour
                 modeDurationTimer = 0f;
                 shootTimer = 0f;
                 currentSprialAngle = 0f;
-                Debug.Log($"切换到射击模式 {currentShootConfigIndex}");
             }
         }
     }
@@ -83,7 +82,7 @@ public class EnemyShoot : MonoBehaviour
     private void FireBullet()
     {
         if (shootConfigs.Count == 0) {
-            Debug.Log("No shoot configs available");
+            Debug.LogWarning("No shoot configs available");
             return;
         }
         
@@ -105,6 +104,7 @@ public class EnemyShoot : MonoBehaviour
     
     /// <summary>
     /// 发射发散圆子弹
+    /// 需要的参数有：子弹数量、起始角度、角度范围、发射间隔
     /// </summary>
     private void FireDivergeBullets()
     {
@@ -141,6 +141,7 @@ public class EnemyShoot : MonoBehaviour
     
     /// <summary>
     /// 发射随机子弹
+    /// 需要的参数有：子弹数量、起始角度、角度范围（在范围内随机化）、发射间隔
     /// </summary>
     private void FireRandomBullets()
     {
@@ -166,14 +167,13 @@ public class EnemyShoot : MonoBehaviour
                 bullet.SetActive(true);
             }
         }
-        
-        Debug.Log($"Enemy shooting random bullets: {currentConfig.bulletCount} bullets");
     }
     
 
     
     /// <summary>
     /// 发射螺旋子弹
+    /// 需要的参数有：起始角度、角度范围（每次旋转的角度差）、发射间隔
     /// </summary>
     private void FireSprialBullets()
     {
@@ -198,8 +198,6 @@ public class EnemyShoot : MonoBehaviour
         
         // 更新螺旋角度
         currentSprialAngle += currentConfig.angleRange;
-        
-        Debug.Log($"Enemy shooting sprial bullet at angle: {angle}");
     }
     
 

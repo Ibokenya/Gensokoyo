@@ -6,7 +6,7 @@ using UnityEngine;
 public class EnemySpawnConfig
 {
     [Header("生成时间")]
-    public int spawnTime;// 基于音乐时间
+    public float spawnTime;// 基于音乐时间
     
     [Header("生成数量")]
     public int spawnCount = 1;// 生成敌人的数量

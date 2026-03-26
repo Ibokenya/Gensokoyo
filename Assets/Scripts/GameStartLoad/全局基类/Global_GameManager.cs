@@ -54,7 +54,7 @@ public class Global_GameManager : Singleton<Global_GameManager>
     {
         gameMode = GameMode.Easy;
         character = Character.Reimu;
-        state = State.Loading;
+        state = State.Gaming;
         HighestScore = PlayerPrefs.GetInt("HighestScore", 0);
     }
 

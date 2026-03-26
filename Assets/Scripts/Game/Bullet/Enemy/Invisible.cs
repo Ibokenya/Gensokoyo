@@ -75,7 +75,7 @@ public class Invisible : MonoBehaviour
         // 初始时不可见
         if (spriteRenderer != null)
         {
-            spriteRenderer.color = new Color(originalColor.r, originalColor.g, originalColor.b, 0f);
+            spriteRenderer.color = new Color(1, 1, 1, 0f);
         }
         
         // 设置刚体速度
@@ -96,7 +96,6 @@ public class Invisible : MonoBehaviour
             distance = Vector2.Distance(transform.position, player.transform.position);
             if (distance <= ShowDistance)
             {
-                Debug.Log("隐形弹靠近玩家机，开始显现");
                 // 开始显现
                 isShowing = true;
                 showTimer = 0f;
@@ -111,7 +110,7 @@ public class Invisible : MonoBehaviour
             
             if (spriteRenderer != null)
             {
-                spriteRenderer.color = new Color(originalColor.r, originalColor.g, originalColor.b, alpha);
+                spriteRenderer.color = new Color(1, 1, 1, alpha);
             }
             
             // 淡入完成

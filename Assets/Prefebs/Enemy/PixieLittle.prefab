@@ -106,57 +106,29 @@ MonoBehaviour:
   - {fileID: -1911378475, guid: 304a01e02c3d522449a2258535534366, type: 3}
   - {fileID: 1085029436, guid: 304a01e02c3d522449a2258535534366, type: 3}
   - {fileID: -1701055193, guid: 304a01e02c3d522449a2258535534366, type: 3}
-  - {fileID: 1523069123, guid: 304a01e02c3d522449a2258535534366, type: 3}
-  - {fileID: 1682987215, guid: 304a01e02c3d522449a2258535534366, type: 3}
-  - {fileID: -1744348624, guid: 304a01e02c3d522449a2258535534366, type: 3}
-  - {fileID: -2018452952, guid: 304a01e02c3d522449a2258535534366, type: 3}
-  - {fileID: 1114529044, guid: 304a01e02c3d522449a2258535534366, type: 3}
-  - {fileID: 555749492, guid: 304a01e02c3d522449a2258535534366, type: 3}
-  - {fileID: 1437588618, guid: 304a01e02c3d522449a2258535534366, type: 3}
   enemySprites2:
   - {fileID: 1227183448, guid: 304a01e02c3d522449a2258535534366, type: 3}
   - {fileID: 1911319636, guid: 304a01e02c3d522449a2258535534366, type: 3}
   - {fileID: 277765005, guid: 304a01e02c3d522449a2258535534366, type: 3}
   - {fileID: -1811661132, guid: 304a01e02c3d522449a2258535534366, type: 3}
   - {fileID: -88604484, guid: 304a01e02c3d522449a2258535534366, type: 3}
-  - {fileID: -915860818, guid: 304a01e02c3d522449a2258535534366, type: 3}
-  - {fileID: 377879225, guid: 304a01e02c3d522449a2258535534366, type: 3}
-  - {fileID: 1769142816, guid: 304a01e02c3d522449a2258535534366, type: 3}
-  - {fileID: -76410653, guid: 304a01e02c3d522449a2258535534366, type: 3}
-  - {fileID: 1605513137, guid: 304a01e02c3d522449a2258535534366, type: 3}
-  - {fileID: 1382190241, guid: 304a01e02c3d522449a2258535534366, type: 3}
-  - {fileID: -1615957069, guid: 304a01e02c3d522449a2258535534366, type: 3}
   enemySprites3:
   - {fileID: -1910037700, guid: 304a01e02c3d522449a2258535534366, type: 3}
   - {fileID: 349351708, guid: 304a01e02c3d522449a2258535534366, type: 3}
   - {fileID: -2329926, guid: 304a01e02c3d522449a2258535534366, type: 3}
   - {fileID: -1652116639, guid: 304a01e02c3d522449a2258535534366, type: 3}
   - {fileID: 32057717, guid: 304a01e02c3d522449a2258535534366, type: 3}
-  - {fileID: 165778019, guid: 304a01e02c3d522449a2258535534366, type: 3}
-  - {fileID: 2138569212, guid: 304a01e02c3d522449a2258535534366, type: 3}
-  - {fileID: 116572724, guid: 304a01e02c3d522449a2258535534366, type: 3}
-  - {fileID: 244596120, guid: 304a01e02c3d522449a2258535534366, type: 3}
-  - {fileID: -66280552, guid: 304a01e02c3d522449a2258535534366, type: 3}
-  - {fileID: 212621023, guid: 304a01e02c3d522449a2258535534366, type: 3}
-  - {fileID: 592947940, guid: 304a01e02c3d522449a2258535534366, type: 3}
   enemySprites4:
   - {fileID: 1663963577, guid: 304a01e02c3d522449a2258535534366, type: 3}
   - {fileID: -1640917427, guid: 304a01e02c3d522449a2258535534366, type: 3}
   - {fileID: 1807361183, guid: 304a01e02c3d522449a2258535534366, type: 3}
   - {fileID: -1244854502, guid: 304a01e02c3d522449a2258535534366, type: 3}
   - {fileID: 1513415090, guid: 304a01e02c3d522449a2258535534366, type: 3}
-  - {fileID: -1533179013, guid: 304a01e02c3d522449a2258535534366, type: 3}
-  - {fileID: -1102796923, guid: 304a01e02c3d522449a2258535534366, type: 3}
-  - {fileID: -635964229, guid: 304a01e02c3d522449a2258535534366, type: 3}
-  - {fileID: -380445910, guid: 304a01e02c3d522449a2258535534366, type: 3}
-  - {fileID: -427340321, guid: 304a01e02c3d522449a2258535534366, type: 3}
-  - {fileID: 970359998, guid: 304a01e02c3d522449a2258535534366, type: 3}
-  - {fileID: -1559929095, guid: 304a01e02c3d522449a2258535534366, type: 3}
   _currentIndex: 0
   AnimeSpeed: 4
   MoveSpeed: 2
   _currentDir: 0
-  moveMode: 2
+  moveMode: 3
   secondaryMoveMode: 2
   ArrivalDistance: 0.1
   bezierSpeed: 1
@@ -256,28 +228,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26c1759b2c518e04cad579fc26ea4d10, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shootConfig:
-    shootMode: 4
-    shootInterval: 1
-    bulletCount: 1
-    bulletPrefab: {fileID: 0}
-    shootAngle: 0
-    angleRange: 360
-    trackBulletConfig:
-      Speed: 5
-    tailBulletConfig:
-      CanClone: 0
-      Speed: 5
-      CloneSpeed: 1
-      attenuation: 0.5
-      MinSpeed: 3
-    remainBulletConfig:
-      LifeTime: 5
-    normalBulletConfig:
-      Speed: 5
-    invisibleBulletConfig:
-      isVisible: 1
-      Speed: 5
-      player: {fileID: 0}
-      ShowDistance: 10
-      ShowTime: 1
+  shootConfigs: []

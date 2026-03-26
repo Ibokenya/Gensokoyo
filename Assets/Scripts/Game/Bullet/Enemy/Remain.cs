@@ -45,19 +45,15 @@ public class Remain : MonoBehaviour
     
     void OnEnable()
     {
-        Debug.Log($"Remain bullet enabled: {gameObject.name}, Speed={Speed}, WindUp={WindUp}, LifeTime={LifeTime}");
-        
         // 确保组件存在
         if (rb2D == null)
         {
             rb2D = GetComponent<Rigidbody2D>();
-            Debug.Log($"Got Rigidbody2D: {rb2D != null}");
         }
         
         if (spriteRenderer == null)
         {
             spriteRenderer = GetComponent<SpriteRenderer>();
-            Debug.Log($"Got SpriteRenderer: {spriteRenderer != null}");
         }
         
         // 初始化前摇状态
@@ -72,7 +68,6 @@ public class Remain : MonoBehaviour
         {
             int randomIndex = Random.Range(0, spriteVariants.Count);
             spriteRenderer.sprite = spriteVariants[randomIndex];
-            Debug.Log($"Set sprite variant: {randomIndex}");
         }
         
         // 重置颜色

@@ -214,9 +214,6 @@ public class PlayerAnime : MonoBehaviour
             // 隐藏判定点并停止动画
             StopPandingAnime();
         }
-        else if(Input.GetKeyUp(KeyCode.X))
-        {Debug.Log("游戏内点击了X键");}
-        
         // 将移动状态传递给碰撞脚本
         if (playerCollision != null)
         {

@@ -21,11 +21,11 @@ public class ButtonManager : MonoBehaviour
     {
         if(buttons.Count == 0)
         {
-            Debug.Log("按钮列表为空！");
+            Debug.LogWarning("按钮列表为空！");
         }
         if(ButtonAnime == null)
         {
-            Debug.Log("没有引用按钮动画组件（脚本）");
+            Debug.LogWarning("没有引用按钮动画组件（脚本）");
         }
         currentButtonIndex = defaultButtonIndex;
         // 令默认按钮被选中

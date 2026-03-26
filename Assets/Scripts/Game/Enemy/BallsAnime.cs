@@ -37,6 +37,7 @@ public class BallsAnime : MonoBehaviour
     [Header("组件")]
     private SpriteRenderer spriteRenderer;// 精灵渲染器组件
     private Rigidbody2D rb2D;// 刚体组件
+    private bool isFirstMoveCompleted = false;// 是否第一段移动完成
 
     // 边界值
     private readonly float minX = -11f;
@@ -51,6 +52,7 @@ public class BallsAnime : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         rb2D = GetComponent<Rigidbody2D>();
         spriteRenderer.sprite = currentBallSprite;// 初始化精灵渲染器的精灵为当前球体精灵
+        spriteRenderer.color = new(1,1,1,1);
         
         // 重置移动点索引
         currentPointIndex = 0;
@@ -67,7 +69,6 @@ public class BallsAnime : MonoBehaviour
         // 初始化追踪模式
         if (moveMode == MoveMode.Track && player != null)
         {
-            Debug.Log("追踪模式初始化");
             InitializeTracking();
         }
         // 初始化闪烁模式
@@ -80,7 +81,6 @@ public class BallsAnime : MonoBehaviour
         {
             InitializeGravity();
         }
-        Debug.Log("小球的行为模式为：" + moveMode + "，二段移动模式为：" + secondaryMoveMode);
     }
     
     /// <summary>
@@ -109,13 +109,6 @@ public class BallsAnime : MonoBehaviour
             case MoveMode.Track:
                 TrackMove();
                 break;
-            case MoveMode.Stationary:
-                // 不移动
-                if (rb2D != null)
-                {
-                    rb2D.velocity = Vector2.zero;
-                }
-                break;
             case MoveMode.Flicker:
                 FlickerUpdate();
                 break;
@@ -124,7 +117,7 @@ public class BallsAnime : MonoBehaviour
         }
         
         // 处理FlickerOut模式
-        if (secondaryMoveMode == SecondaryMode.FlickerOut && moveMode != MoveMode.Flicker)
+        if (secondaryMoveMode == SecondaryMode.FlickerOut && isFirstMoveCompleted)
         {
             FlickerOutUpdate();
         }
@@ -255,6 +248,7 @@ public class BallsAnime : MonoBehaviour
                     }
                     // 切换到二段移动模式
                     SwitchToSecondaryMoveMode();
+                    isFirstMoveCompleted = true;
                 }
             }
     }
@@ -288,13 +282,16 @@ public class BallsAnime : MonoBehaviour
             float alpha = Mathf.Clamp01(fadeTimer / fadeTime);
             spriteRenderer.color = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, alpha);
         }
-        
-        // 倒计时
-        flickerTimer += Time.deltaTime;
-        if (flickerTimer >= FlickerLifeTime)
+        else
         {
-            // 生命周期结束，执行二段移动
-            SwitchToSecondaryMoveMode();
+            // 淡入完成后开始倒计时
+            flickerTimer += Time.deltaTime;
+            if (flickerTimer >= FlickerLifeTime)
+            {
+                // 生命周期结束，执行二段移动
+                SwitchToSecondaryMoveMode();
+                isFirstMoveCompleted = true;
+            }
         }
     }
     
@@ -324,10 +321,6 @@ public class BallsAnime : MonoBehaviour
                     moveMode = MoveMode.Track;
                     InitializeTracking();
                     break;
-                case SecondaryMode.Stationary:
-                    moveMode = MoveMode.Stationary;
-                    // 不移动，保持当前状态
-                    break;
                 case SecondaryMode.FlickerOut:
                     // 直接执行淡出回收
                     InitializeFlickerOut();
@@ -336,13 +329,12 @@ public class BallsAnime : MonoBehaviour
                     moveMode = MoveMode.Gravity;
                     InitializeGravity();
                     break;
-                case SecondaryMode.Disappear:
-                    // 直接回收自身
-                    if (Global_GameManager.Instance != null)
+                case SecondaryMode.Stationary:
+                    // 不移动，保持当前状态
+                    if (rb2D != null)
                     {
-                        Global_GameManager.Instance.RemoveEnemy(gameObject);
+                        rb2D.velocity = Vector2.zero;
                     }
-                    Global_ObjectPool.Instance.Recycle(gameObject);
                     break;
             }
     }
@@ -374,8 +366,8 @@ public class BallsAnime : MonoBehaviour
         // 倒计时
         flickerTimer += Time.deltaTime;
         
-        // 计算透明度（在fadeTime时间内从1降到0）
-        float alpha = Mathf.Clamp01(1f - (flickerTimer / fadeTime));
+        // 计算透明度（在1秒内从1降到0）
+        float alpha = Mathf.Clamp01(1f - (flickerTimer / 1f));
         if (spriteRenderer != null)
         {
             spriteRenderer.color = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, alpha);

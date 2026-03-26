@@ -9236,6 +9236,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1283300304}
   - component: {fileID: 1283300305}
+  - component: {fileID: 1283300306}
   m_Layer: 0
   m_Name: "\u751F\u6210\u7269\u76F8\u5173"
   m_TagString: Untagged
@@ -9281,6 +9282,22 @@ MonoBehaviour:
   - {fileID: 6520310059965168247, guid: 765994ca429aa18409f7585991b86e31, type: 3}
   - {fileID: 3835769484777451053, guid: e3d07efbde3cb4c449c201ce4a8f9153, type: 3}
   ItemCount: 0100000003000000010000001400000002000000030000001e0000000000000000000000
+--- !u!114 &1283300306
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1283300303}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1080a35ee3a04254eb64a3941b85c960, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  clearTimes:
+  - 47.5
+  - 83
+  clearClip: {fileID: 8300000, guid: 5a3587dd7eeb1da46add9bd4fbc97fba, type: 3}
 --- !u!1 &1291750583
 GameObject:
   m_ObjectHideFlags: 0
@@ -10258,12 +10275,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spawnConfigs:
-  - spawnTime: 0
+  - spawnTime: 0.5
     spawnCount: 5
     spawnInterval: 0.5
     enemyType: 0
     moveMode: 0
-    secondaryMoveMode: 4
+    secondaryMoveMode: 1
     movePoints:
     - {fileID: 1190732088}
     - {fileID: 985927792}
@@ -10306,12 +10323,12 @@ MonoBehaviour:
         LifeTime: 0
         Speed: 0
         WindUp: 0
-  - spawnTime: 0
+  - spawnTime: 0.5
     spawnCount: 5
     spawnInterval: 0.5
     enemyType: 0
     moveMode: 0
-    secondaryMoveMode: 4
+    secondaryMoveMode: 1
     movePoints:
     - {fileID: 1220782349}
     - {fileID: 869724196}
@@ -10358,8 +10375,8 @@ MonoBehaviour:
     spawnCount: 10
     spawnInterval: 0.5
     enemyType: 1
-    moveMode: 4
-    secondaryMoveMode: 4
+    moveMode: 3
+    secondaryMoveMode: 2
     movePoints:
     - {fileID: 240272949}
     moveSpeed: 10
@@ -10399,8 +10416,8 @@ MonoBehaviour:
     spawnCount: 10
     spawnInterval: 0.5
     enemyType: 1
-    moveMode: 4
-    secondaryMoveMode: 4
+    moveMode: 3
+    secondaryMoveMode: 2
     movePoints:
     - {fileID: 1422552910}
     moveSpeed: 10
@@ -10440,41 +10457,654 @@ MonoBehaviour:
     spawnCount: 1
     spawnInterval: 1
     enemyType: 2
-    moveMode: 3
-    secondaryMoveMode: 3
+    moveMode: 2
+    secondaryMoveMode: 2
     movePoints:
     - {fileID: 441340322}
     moveSpeed: 10
-    flickerLifeTime: 6
+    flickerLifeTime: 12
     fadeTime: 1
     gravityScale: 1
-    shootConfigs: []
+    shootConfigs:
+    - duration: 6
+      shootMode: 2
+      shootInterval: 0.1
+      bulletCount: 1
+      bulletPrefab: {fileID: 7048679070695557769, guid: f69a6fa9249421140af29f90415de8e4, type: 3}
+      shootAngle: 0
+      angleRange: 20
+      trackBulletConfig:
+        Speed: 0
+        WindUp: 0
+      tailBulletConfig:
+        CanClone: 0
+        Speed: 0
+        CloneSpeed: 0
+        attenuation: 0
+        MinSpeed: 0
+      normalBulletConfig:
+        Speed: 3
+      invisibleBulletConfig:
+        isVisible: 0
+        Speed: 2
+        player: {fileID: 0}
+        ShowDistance: 2
+        ShowTime: 0.5
+      remainBulletConfig:
+        LifeTime: 0
+        Speed: 0
+        WindUp: 0
+    - duration: 6
+      shootMode: 2
+      shootInterval: 0.2
+      bulletCount: 1
+      bulletPrefab: {fileID: 1235706551019932271, guid: 2dce46620b43d264986603e3e508752d, type: 3}
+      shootAngle: 0
+      angleRange: -20
+      trackBulletConfig:
+        Speed: 0
+        WindUp: 0
+      tailBulletConfig:
+        CanClone: 0
+        Speed: 0
+        CloneSpeed: 0
+        attenuation: 0
+        MinSpeed: 0
+      normalBulletConfig:
+        Speed: 0
+      invisibleBulletConfig:
+        isVisible: 0
+        Speed: 2
+        player: {fileID: 0}
+        ShowDistance: 2
+        ShowTime: 1
+      remainBulletConfig:
+        LifeTime: 0
+        Speed: 0
+        WindUp: 0
+    - duration: 10
+      shootMode: 3
+      shootInterval: 0.2
+      bulletCount: 1
+      bulletPrefab: {fileID: 1235706551019932271, guid: 2dce46620b43d264986603e3e508752d, type: 3}
+      shootAngle: 0
+      angleRange: -20
+      trackBulletConfig:
+        Speed: 0
+        WindUp: 0
+      tailBulletConfig:
+        CanClone: 0
+        Speed: 0
+        CloneSpeed: 0
+        attenuation: 0
+        MinSpeed: 0
+      normalBulletConfig:
+        Speed: 0
+      invisibleBulletConfig:
+        isVisible: 0
+        Speed: 2
+        player: {fileID: 0}
+        ShowDistance: 2
+        ShowTime: 1
+      remainBulletConfig:
+        LifeTime: 0
+        Speed: 0
+        WindUp: 0
   - spawnTime: 18
-    spawnCount: 3
+    spawnCount: 6
     spawnInterval: 1
     enemyType: 1
     moveMode: 1
-    secondaryMoveMode: 4
-    movePoints:
-    - {fileID: 1438590136}
-    moveSpeed: 10
-    flickerLifeTime: 5
-    fadeTime: 1
-    gravityScale: 1
-    shootConfigs: []
-  - spawnTime: 19
-    spawnCount: 3
-    spawnInterval: 1
-    enemyType: 1
-    moveMode: 1
-    secondaryMoveMode: 4
+    secondaryMoveMode: 1
     movePoints:
     - {fileID: 489407905}
-    moveSpeed: 10
+    moveSpeed: 3
     flickerLifeTime: 5
     fadeTime: 1
     gravityScale: 1
     shootConfigs: []
+  - spawnTime: 18.5
+    spawnCount: 6
+    spawnInterval: 1
+    enemyType: 1
+    moveMode: 1
+    secondaryMoveMode: 1
+    movePoints:
+    - {fileID: 1438590136}
+    moveSpeed: 3
+    flickerLifeTime: 5
+    fadeTime: 1
+    gravityScale: 1
+    shootConfigs: []
+  - spawnTime: 24
+    spawnCount: 1
+    spawnInterval: 1
+    enemyType: 1
+    moveMode: 0
+    secondaryMoveMode: 0
+    movePoints:
+    - {fileID: 1291750583}
+    - {fileID: 284345936}
+    moveSpeed: 5
+    flickerLifeTime: 5
+    fadeTime: 1
+    gravityScale: 1
+    shootConfigs:
+    - duration: 3
+      shootMode: 1
+      shootInterval: 1
+      bulletCount: 3
+      bulletPrefab: {fileID: 4810881779179525194, guid: f0e18f63ea99c3f48a40e82fb67ab8d9, type: 3}
+      shootAngle: 0
+      angleRange: 360
+      trackBulletConfig:
+        Speed: 0
+        WindUp: 0
+      tailBulletConfig:
+        CanClone: 0
+        Speed: 0
+        CloneSpeed: 0
+        attenuation: 0
+        MinSpeed: 0
+      normalBulletConfig:
+        Speed: 3
+      invisibleBulletConfig:
+        isVisible: 0
+        Speed: 0
+        player: {fileID: 0}
+        ShowDistance: 0
+        ShowTime: 0
+      remainBulletConfig:
+        LifeTime: 0
+        Speed: 0
+        WindUp: 0
+  - spawnTime: 24
+    spawnCount: 1
+    spawnInterval: 1
+    enemyType: 1
+    moveMode: 0
+    secondaryMoveMode: 0
+    movePoints:
+    - {fileID: 1291750583}
+    - {fileID: 2105805838}
+    moveSpeed: 5
+    flickerLifeTime: 5
+    fadeTime: 1
+    gravityScale: 1
+    shootConfigs:
+    - duration: 3
+      shootMode: 1
+      shootInterval: 1
+      bulletCount: 3
+      bulletPrefab: {fileID: 4810881779179525194, guid: f0e18f63ea99c3f48a40e82fb67ab8d9, type: 3}
+      shootAngle: 0
+      angleRange: 360
+      trackBulletConfig:
+        Speed: 0
+        WindUp: 0
+      tailBulletConfig:
+        CanClone: 0
+        Speed: 0
+        CloneSpeed: 0
+        attenuation: 0
+        MinSpeed: 0
+      normalBulletConfig:
+        Speed: 3
+      invisibleBulletConfig:
+        isVisible: 0
+        Speed: 0
+        player: {fileID: 0}
+        ShowDistance: 0
+        ShowTime: 0
+      remainBulletConfig:
+        LifeTime: 0
+        Speed: 0
+        WindUp: 0
+  - spawnTime: 30
+    spawnCount: 1
+    spawnInterval: 1
+    enemyType: 1
+    moveMode: 0
+    secondaryMoveMode: 0
+    movePoints:
+    - {fileID: 170171634}
+    - {fileID: 2105805838}
+    moveSpeed: 5
+    flickerLifeTime: 5
+    fadeTime: 1
+    gravityScale: 1
+    shootConfigs:
+    - duration: 3
+      shootMode: 1
+      shootInterval: 1
+      bulletCount: 6
+      bulletPrefab: {fileID: 4810881779179525194, guid: f0e18f63ea99c3f48a40e82fb67ab8d9, type: 3}
+      shootAngle: 0
+      angleRange: 360
+      trackBulletConfig:
+        Speed: 0
+        WindUp: 0
+      tailBulletConfig:
+        CanClone: 0
+        Speed: 0
+        CloneSpeed: 0
+        attenuation: 0
+        MinSpeed: 0
+      normalBulletConfig:
+        Speed: 3
+      invisibleBulletConfig:
+        isVisible: 0
+        Speed: 0
+        player: {fileID: 0}
+        ShowDistance: 0
+        ShowTime: 0
+      remainBulletConfig:
+        LifeTime: 0
+        Speed: 0
+        WindUp: 0
+  - spawnTime: 30
+    spawnCount: 1
+    spawnInterval: 1
+    enemyType: 1
+    moveMode: 0
+    secondaryMoveMode: 0
+    movePoints:
+    - {fileID: 170171634}
+    - {fileID: 284345936}
+    moveSpeed: 5
+    flickerLifeTime: 5
+    fadeTime: 1
+    gravityScale: 1
+    shootConfigs:
+    - duration: 3
+      shootMode: 1
+      shootInterval: 1
+      bulletCount: 6
+      bulletPrefab: {fileID: 4810881779179525194, guid: f0e18f63ea99c3f48a40e82fb67ab8d9, type: 3}
+      shootAngle: 0
+      angleRange: 360
+      trackBulletConfig:
+        Speed: 0
+        WindUp: 0
+      tailBulletConfig:
+        CanClone: 0
+        Speed: 0
+        CloneSpeed: 0
+        attenuation: 0
+        MinSpeed: 0
+      normalBulletConfig:
+        Speed: 3
+      invisibleBulletConfig:
+        isVisible: 0
+        Speed: 0
+        player: {fileID: 0}
+        ShowDistance: 0
+        ShowTime: 0
+      remainBulletConfig:
+        LifeTime: 0
+        Speed: 0
+        WindUp: 0
+  - spawnTime: 36
+    spawnCount: 4
+    spawnInterval: 0
+    enemyType: 0
+    moveMode: 2
+    secondaryMoveMode: 1
+    movePoints:
+    - {fileID: 1069997036}
+    - {fileID: 1690545350}
+    - {fileID: 1138777811}
+    - {fileID: 89078542}
+    moveSpeed: 5
+    flickerLifeTime: 10
+    fadeTime: 1
+    gravityScale: 1
+    shootConfigs:
+    - duration: 0
+      shootMode: 0
+      shootInterval: 1
+      bulletCount: 12
+      bulletPrefab: {fileID: 4810881779179525194, guid: f0e18f63ea99c3f48a40e82fb67ab8d9, type: 3}
+      shootAngle: 0
+      angleRange: 360
+      trackBulletConfig:
+        Speed: 0
+        WindUp: 0
+      tailBulletConfig:
+        CanClone: 0
+        Speed: 0
+        CloneSpeed: 0
+        attenuation: 0
+        MinSpeed: 0
+      normalBulletConfig:
+        Speed: 2
+      invisibleBulletConfig:
+        isVisible: 0
+        Speed: 0
+        player: {fileID: 0}
+        ShowDistance: 0
+        ShowTime: 0
+      remainBulletConfig:
+        LifeTime: 0
+        Speed: 0
+        WindUp: 0
+  - spawnTime: 49
+    spawnCount: 1
+    spawnInterval: 0
+    enemyType: 2
+    moveMode: 0
+    secondaryMoveMode: 2
+    movePoints:
+    - {fileID: 1291750583}
+    - {fileID: 1165707737}
+    moveSpeed: 2
+    flickerLifeTime: 10
+    fadeTime: 1
+    gravityScale: 1
+    shootConfigs:
+    - duration: 3
+      shootMode: 1
+      shootInterval: 0.2
+      bulletCount: 12
+      bulletPrefab: {fileID: 5408001984874862187, guid: 360cf45991080134d9a0caa39b62e84f, type: 3}
+      shootAngle: 90
+      angleRange: 180
+      trackBulletConfig:
+        Speed: 0
+        WindUp: 0
+      tailBulletConfig:
+        CanClone: 1
+        Speed: 3
+        CloneSpeed: 0.3
+        attenuation: 0.4
+        MinSpeed: 1
+      normalBulletConfig:
+        Speed: 2
+      invisibleBulletConfig:
+        isVisible: 0
+        Speed: 0
+        player: {fileID: 0}
+        ShowDistance: 0
+        ShowTime: 0
+      remainBulletConfig:
+        LifeTime: 0
+        Speed: 0
+        WindUp: 0
+    - duration: 3
+      shootMode: 0
+      shootInterval: 0.5
+      bulletCount: 4
+      bulletPrefab: {fileID: 3601174039928057024, guid: 484664adadfc2874b9c85c156b122c84, type: 3}
+      shootAngle: 60
+      angleRange: 180
+      trackBulletConfig:
+        Speed: 3
+        WindUp: 1.5
+      tailBulletConfig:
+        CanClone: 1
+        Speed: 5
+        CloneSpeed: 0.3
+        attenuation: 0.4
+        MinSpeed: 3
+      normalBulletConfig:
+        Speed: 2
+      invisibleBulletConfig:
+        isVisible: 0
+        Speed: 0
+        player: {fileID: 0}
+        ShowDistance: 0
+        ShowTime: 0
+      remainBulletConfig:
+        LifeTime: 0
+        Speed: 0
+        WindUp: 0
+    - duration: 3
+      shootMode: 2
+      shootInterval: 0.1
+      bulletCount: 1
+      bulletPrefab: {fileID: 8046050217831900520, guid: 4afed94314f00ab4ca544819d387524c, type: 3}
+      shootAngle: 0
+      angleRange: 20
+      trackBulletConfig:
+        Speed: 3
+        WindUp: 2
+      tailBulletConfig:
+        CanClone: 1
+        Speed: 5
+        CloneSpeed: 0.3
+        attenuation: 0.4
+        MinSpeed: 3
+      normalBulletConfig:
+        Speed: 3
+      invisibleBulletConfig:
+        isVisible: 0
+        Speed: 0
+        player: {fileID: 0}
+        ShowDistance: 0
+        ShowTime: 0
+      remainBulletConfig:
+        LifeTime: 0
+        Speed: 0
+        WindUp: 0
+    - duration: 3
+      shootMode: 2
+      shootInterval: 0.05
+      bulletCount: 1
+      bulletPrefab: {fileID: 7048679070695557769, guid: f69a6fa9249421140af29f90415de8e4, type: 3}
+      shootAngle: 0
+      angleRange: -20
+      trackBulletConfig:
+        Speed: 3
+        WindUp: 2
+      tailBulletConfig:
+        CanClone: 1
+        Speed: 5
+        CloneSpeed: 0.3
+        attenuation: 0.4
+        MinSpeed: 3
+      normalBulletConfig:
+        Speed: 10
+      invisibleBulletConfig:
+        isVisible: 0
+        Speed: 0
+        player: {fileID: 0}
+        ShowDistance: 0
+        ShowTime: 0
+      remainBulletConfig:
+        LifeTime: 0
+        Speed: 0
+        WindUp: 0
+  - spawnTime: 60
+    spawnCount: 6
+    spawnInterval: 1
+    enemyType: 1
+    moveMode: 0
+    secondaryMoveMode: 1
+    movePoints:
+    - {fileID: 1291750583}
+    - {fileID: 284345936}
+    - {fileID: 170171634}
+    - {fileID: 2105805838}
+    - {fileID: 1291750583}
+    - {fileID: 839950620}
+    - {fileID: 137423523}
+    - {fileID: 244760398}
+    - {fileID: 586022248}
+    - {fileID: 1588569723}
+    - {fileID: 2032800519}
+    moveSpeed: 4
+    flickerLifeTime: 10
+    fadeTime: 1
+    gravityScale: 1
+    shootConfigs:
+    - duration: 0
+      shootMode: 1
+      shootInterval: 1
+      bulletCount: 6
+      bulletPrefab: {fileID: 8437388500519131184, guid: 13ef4a6eab612214682a187956ba459c, type: 3}
+      shootAngle: 0
+      angleRange: 360
+      trackBulletConfig:
+        Speed: 0
+        WindUp: 0
+      tailBulletConfig:
+        CanClone: 0
+        Speed: 0
+        CloneSpeed: 0
+        attenuation: 0
+        MinSpeed: 0
+      normalBulletConfig:
+        Speed: 0
+      invisibleBulletConfig:
+        isVisible: 0
+        Speed: 0
+        player: {fileID: 0}
+        ShowDistance: 0
+        ShowTime: 0
+      remainBulletConfig:
+        LifeTime: 5
+        Speed: 2
+        WindUp: 1
+  - spawnTime: 60
+    spawnCount: 6
+    spawnInterval: 1
+    enemyType: 1
+    moveMode: 0
+    secondaryMoveMode: 1
+    movePoints:
+    - {fileID: 170171634}
+    - {fileID: 2105805838}
+    - {fileID: 1291750583}
+    - {fileID: 284345936}
+    - {fileID: 170171634}
+    - {fileID: 778327541}
+    - {fileID: 281578718}
+    - {fileID: 1682845100}
+    - {fileID: 768663168}
+    - {fileID: 357741930}
+    - {fileID: 2032800519}
+    moveSpeed: 4
+    flickerLifeTime: 10
+    fadeTime: 1
+    gravityScale: 1
+    shootConfigs:
+    - duration: 0
+      shootMode: 1
+      shootInterval: 1
+      bulletCount: 4
+      bulletPrefab: {fileID: 3591078686618102303, guid: e2cef74acf546054ca1d37dcf301e1f9, type: 3}
+      shootAngle: 0
+      angleRange: 360
+      trackBulletConfig:
+        Speed: 0
+        WindUp: 0
+      tailBulletConfig:
+        CanClone: 0
+        Speed: 0
+        CloneSpeed: 0
+        attenuation: 0
+        MinSpeed: 0
+      normalBulletConfig:
+        Speed: 3
+      invisibleBulletConfig:
+        isVisible: 0
+        Speed: 0
+        player: {fileID: 0}
+        ShowDistance: 0
+        ShowTime: 0
+      remainBulletConfig:
+        LifeTime: 6
+        Speed: 2
+        WindUp: 1
+  - spawnTime: 84
+    spawnCount: 5
+    spawnInterval: 1
+    enemyType: 1
+    moveMode: 2
+    secondaryMoveMode: 2
+    movePoints:
+    - {fileID: 869724196}
+    - {fileID: 1880199749}
+    - {fileID: 960623135}
+    - {fileID: 442809374}
+    - {fileID: 229299908}
+    moveSpeed: 4
+    flickerLifeTime: 1
+    fadeTime: 1
+    gravityScale: 1
+    shootConfigs:
+    - duration: 0
+      shootMode: 0
+      shootInterval: 0.5
+      bulletCount: 2
+      bulletPrefab: {fileID: 5408001984874862187, guid: 360cf45991080134d9a0caa39b62e84f, type: 3}
+      shootAngle: 150
+      angleRange: 60
+      trackBulletConfig:
+        Speed: 0
+        WindUp: 0
+      tailBulletConfig:
+        CanClone: 1
+        Speed: 3
+        CloneSpeed: 0.3
+        attenuation: 0.2
+        MinSpeed: 2
+      normalBulletConfig:
+        Speed: 3
+      invisibleBulletConfig:
+        isVisible: 0
+        Speed: 0
+        player: {fileID: 0}
+        ShowDistance: 0
+        ShowTime: 0
+      remainBulletConfig:
+        LifeTime: 6
+        Speed: 2
+        WindUp: 1
+  - spawnTime: 84
+    spawnCount: 4
+    spawnInterval: 1
+    enemyType: 1
+    moveMode: 2
+    secondaryMoveMode: 2
+    movePoints:
+    - {fileID: 985927792}
+    - {fileID: 922819356}
+    - {fileID: 950311263}
+    - {fileID: 983441570}
+    moveSpeed: 4
+    flickerLifeTime: 1
+    fadeTime: 1
+    gravityScale: 1
+    shootConfigs:
+    - duration: 0
+      shootMode: 0
+      shootInterval: 0.5
+      bulletCount: 2
+      bulletPrefab: {fileID: 5408001984874862187, guid: 360cf45991080134d9a0caa39b62e84f, type: 3}
+      shootAngle: 150
+      angleRange: 60
+      trackBulletConfig:
+        Speed: 0
+        WindUp: 0
+      tailBulletConfig:
+        CanClone: 1
+        Speed: 3
+        CloneSpeed: 0.3
+        attenuation: 0.2
+        MinSpeed: 2
+      normalBulletConfig:
+        Speed: 3
+      invisibleBulletConfig:
+        isVisible: 0
+        Speed: 0
+        player: {fileID: 0}
+        ShowDistance: 0
+        ShowTime: 0
+      remainBulletConfig:
+        LifeTime: 6
+        Speed: 2
+        WindUp: 1
   normalEnemyPrefab: {fileID: 2035442439257488790, guid: c2f39c33b723dce49b11da09ac23cdb7, type: 3}
   ballEnemyPrefab: {fileID: 8501377784257086046, guid: cd41a67c3b171e74a816cee65bd21018, type: 3}
   eliteEnemyPrefab: {fileID: 4357197549038363353, guid: 7de7f19b3106c0d4c968d9b9b5077efc, type: 3}

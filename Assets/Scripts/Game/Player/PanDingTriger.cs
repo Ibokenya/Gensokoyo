@@ -19,7 +19,6 @@ public class PanDingTriger : MonoBehaviour
     void OnTriggerEnter2D(Collider2D collision)
     {
         // 处理触发器逻辑
-        // 例如：进入区域、收集道具等
-        Debug.Log("判定点触发: " + collision.gameObject.name);
+        
     }
 }

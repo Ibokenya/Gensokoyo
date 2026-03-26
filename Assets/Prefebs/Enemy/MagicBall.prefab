@@ -115,8 +115,8 @@ MonoBehaviour:
   - {fileID: -1111978466, guid: 3eccac3f6716e854c8e840d8f45e982b, type: 3}
   MoveSpeed: 3
   RotateSpeed: 360
-  moveMode: 2
-  secondaryMoveMode: 2
+  moveMode: 3
+  secondaryMoveMode: 3
   ArrivalDistance: 0.1
   FlickerLifeTime: 8
   fadeTime: 2
@@ -195,28 +195,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26c1759b2c518e04cad579fc26ea4d10, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shootConfig:
-    shootMode: 4
-    shootInterval: 1
-    bulletCount: 1
-    bulletPrefab: {fileID: 0}
-    shootAngle: 0
-    angleRange: 360
-    trackBulletConfig:
-      Speed: 5
-    tailBulletConfig:
-      CanClone: 0
-      Speed: 5
-      CloneSpeed: 1
-      attenuation: 0.5
-      MinSpeed: 3
-    remainBulletConfig:
-      LifeTime: 5
-    normalBulletConfig:
-      Speed: 5
-    invisibleBulletConfig:
-      isVisible: 1
-      Speed: 5
-      player: {fileID: 0}
-      ShowDistance: 10
-      ShowTime: 1
+  shootConfigs: []

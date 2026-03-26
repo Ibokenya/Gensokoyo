@@ -44,12 +44,12 @@ public class OptionAnime : MonoBehaviour
     {
         if(DarkImages.Count == 0|| LightImages.Count == 0|| DarkImages.Count != LightImages.Count)
         {
-            Debug.Log("设置界面的图片不能为空或不相等");
+            Debug.LogWarning("设置界面的图片不能为空或不相等");
             enabled = false;
         }
         if(DarkNumbers.Count == 0|| LightNumbers.Count == 0|| DarkNumbers.Count != LightNumbers.Count)
         {
-            Debug.Log("设置界面的数字不能为空或不相等");
+            Debug.LogWarning("设置界面的数字不能为空或不相等");
             enabled = false;
         }
         BeChoose(Index);
@@ -195,7 +195,7 @@ public class OptionAnime : MonoBehaviour
                     Quit();
                     break;
                 default:
-                    Debug.Log("选项索引错误");
+                    Debug.LogWarning("选项索引错误");
                     break;
             }
         }

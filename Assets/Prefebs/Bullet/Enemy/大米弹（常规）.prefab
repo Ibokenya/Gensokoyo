@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 5215382219696864221}
   m_Layer: 0
   m_Name: "\u5927\u7C73\u5F39\uFF08\u5E38\u89C4\uFF09"
-  m_TagString: Untagged
+  m_TagString: EnemyBullet
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

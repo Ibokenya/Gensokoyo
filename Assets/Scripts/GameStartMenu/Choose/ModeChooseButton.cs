@@ -81,7 +81,7 @@ public class ModeChooseButton : MonoBehaviour
             }
             else
             {
-                Debug.Log("为什么会在难度选择界面之后还是Ex难度啊？");
+                Debug.LogWarning("为什么会在难度选择界面之后还是Ex难度啊？");
             }
         }
     }
@@ -117,7 +117,7 @@ public class ModeChooseButton : MonoBehaviour
                     "这巨大的变化\r\n足以彻底地击溃了你\r\n你死在了虚无与错乱中\r\n这就是，“月狂”。";
                 break;
             default:// 按理不该有这选项的
-                Debug.Log("在选难度界面出现了意料之外的选项索引");
+                Debug.LogWarning("在选难度界面出现了意料之外的选项索引");
                 break;
         }
     }

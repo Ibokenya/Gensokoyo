@@ -8,7 +8,6 @@ public enum MoveMode
 {
     Path,       // 路径点移动
     Track,      // 追踪式移动
-    Stationary, // 不移动
     Flicker,    // 闪烁模式
     Gravity     // 重力移动
 }
@@ -18,9 +17,8 @@ public enum SecondaryMode
 {
     Track,      // 追踪式移动
     FlickerOut, // 闪烁淡出模式
-    Stationary, // 不移动
     Gravity,    // 重力移动
-    Disappear   // 直接回收自身
+    Stationary  // 不移动
 }
 
 public class CreateEnemy : MonoBehaviour
@@ -85,11 +83,13 @@ public class CreateEnemy : MonoBehaviour
 
     void Update()
     {
+
         // // 获取当前音乐播放时间
         // if (audioManager.CurrentBGMTime != 0)
         // {
         //     currentMusicTime = audioManager.CurrentBGMTime;
         // }
+
         currentMusicTime += Time.deltaTime;// 临时的
         
         // 检查是否需要生成敌人
@@ -246,10 +246,27 @@ public class CreateEnemy : MonoBehaviour
             // 检查路径点数量
             CheckMovePointsCount(config);
             
-            // 设置敌人位置（使用第一个路径点或当前位置）
+            // 设置敌人位置
             if (config.movePoints != null && config.movePoints.Count > 0)
             {
-                enemy.transform.position = config.movePoints[0].transform.position;
+                int movePointsCount = config.movePoints.Count;
+                int spawnCount = config.spawnCount;
+                
+                if (movePointsCount == 1)
+                {
+                    // 所有敌人从同一个路径点生成
+                    enemy.transform.position = config.movePoints[0].transform.position;
+                }
+                else if (movePointsCount == spawnCount)
+                {
+                    // 每个敌人从不同的路径点生成
+                    enemy.transform.position = config.movePoints[i].transform.position;
+                }
+                else
+                {
+                    // 默认使用第一个路径点
+                    enemy.transform.position = config.movePoints[0].transform.position;
+                }
             }
             else
             {
@@ -319,9 +336,6 @@ public class CreateEnemy : MonoBehaviour
                 case MoveMode.Track:
                     enemyAnime.moveMode = MoveMode.Track;
                     break;
-                case MoveMode.Stationary:
-                    enemyAnime.moveMode = MoveMode.Stationary;
-                    break;
                 case MoveMode.Flicker:
                     enemyAnime.moveMode = MoveMode.Flicker;
                     // 设置路径点（闪烁模式需要一个路径点）
@@ -351,9 +365,6 @@ public class CreateEnemy : MonoBehaviour
                     break;
                 case SecondaryMode.Gravity:
                     enemyAnime.secondaryMoveMode = SecondaryMode.Gravity;
-                    break;
-                case SecondaryMode.Disappear:
-                    enemyAnime.secondaryMoveMode = SecondaryMode.Disappear;
                     break;
             }
             
@@ -410,9 +421,6 @@ public class CreateEnemy : MonoBehaviour
                 case MoveMode.Track:
                     ballsAnime.moveMode = MoveMode.Track;
                     break;
-                case MoveMode.Stationary:
-                    ballsAnime.moveMode = MoveMode.Stationary;
-                    break;
                 case MoveMode.Flicker:
                     ballsAnime.moveMode = MoveMode.Flicker;
                     // 设置路径点（闪烁模式需要一个路径点）
@@ -442,9 +450,6 @@ public class CreateEnemy : MonoBehaviour
                     break;
                 case SecondaryMode.Gravity:
                     ballsAnime.secondaryMoveMode = SecondaryMode.Gravity;
-                    break;
-                case SecondaryMode.Disappear:
-                    ballsAnime.secondaryMoveMode = SecondaryMode.Disappear;
                     break;
             }
             
@@ -500,14 +505,14 @@ public class CreateEnemy : MonoBehaviour
                         eliteAnime.SetMovePoints(config.movePoints);
                     }
                     break;
-                case MoveMode.Stationary:
-                    eliteAnime.moveMode = MoveMode.Stationary;
-                    break;
                 case MoveMode.Gravity:
                     eliteAnime.moveMode = MoveMode.Gravity;
                     break;
                 case MoveMode.Flicker:
                     eliteAnime.moveMode = MoveMode.Flicker;
+                    break;
+                case MoveMode.Track:
+                    eliteAnime.moveMode = MoveMode.Track;
                     break;
                 default:
                     Debug.LogWarning($"大妖精不支持的移动模式: {config.moveMode}");
@@ -526,8 +531,8 @@ public class CreateEnemy : MonoBehaviour
                 case SecondaryMode.FlickerOut:
                     eliteAnime.secondaryMoveMode = SecondaryMode.FlickerOut;
                     break;
-                case SecondaryMode.Disappear:
-                    eliteAnime.secondaryMoveMode = SecondaryMode.Disappear;
+                case SecondaryMode.Track:
+                    eliteAnime.secondaryMoveMode = SecondaryMode.Track;
                     break;
             }
             
@@ -563,12 +568,16 @@ public class CreateEnemy : MonoBehaviour
                 }
                 break;
             case MoveMode.Track:
-            case MoveMode.Flicker:
-            case MoveMode.Stationary:
-            case MoveMode.Gravity:
                 if (movePointsCount != 1)
                 {
                     Debug.LogWarning($"{config.moveMode}模式需要有且仅有1个路径点，当前数量: {movePointsCount}");
+                }
+                break;
+            case MoveMode.Flicker:
+            case MoveMode.Gravity:
+                if (movePointsCount != 1 && movePointsCount != config.spawnCount)
+                {
+                    Debug.LogWarning($"{config.moveMode}模式需要有且仅有1个路径点，或与敌人数量相同的路径点，当前数量: {movePointsCount}");
                 }
                 break;
         }

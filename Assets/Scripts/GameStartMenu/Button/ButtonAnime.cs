@@ -36,7 +36,6 @@ public class ButtonAnime : MonoBehaviour
     /// <param name="button">将被选中的按钮传递进来</param>
     public void ButtonBeChoose(Button button)
     {
-        Debug.Log($"按钮{button.name}被选中");
         text=button.GetComponentInChildren<TMP_Text>();
         text.fontSize += font;
         text.color += color;
@@ -48,7 +47,6 @@ public class ButtonAnime : MonoBehaviour
     /// <param name="button">被移除选中状态的按钮</param>
     public void ButtonBeMoveoff(Button button)
     {
-        Debug.Log($"按钮{button.name}被抛弃了");
         text = button.GetComponentInChildren<TMP_Text>();
         text.fontSize -= font;
         text.color -= color;
@@ -66,9 +64,6 @@ public class ButtonAnime : MonoBehaviour
     /// <param name="button">被按下的按钮</param>
     public void ButtonBeClick(Button button)
     {
-        // 这里之后应该播放音效，支持不同小场景自定义不同音效（还是序列化拖入音效资源）
-        Debug.Log($"按钮{button.name}被按下，biu~");
-
         // 播放点击音效
         if (clickSound != null)
         {

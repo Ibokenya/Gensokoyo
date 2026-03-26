@@ -151,7 +151,6 @@ public class ButtonEvent : MonoBehaviour
         
         if (Input.GetKeyDown(KeyCode.X))
         {
-            Debug.Log("选人界面点击了X键");
             // 播放X音效
             if (XSound != null)
             {
@@ -159,14 +158,12 @@ public class ButtonEvent : MonoBehaviour
             }
             if (IsStart)// 是Start的二阶段
             {
-                Debug.Log("是选难度的二阶段");
                 SceneObjects[2].SetActive(false);
                 SceneObjects[1].SetActive(true);
                 Global_GameManager.Instance.state = State.ModeChoose;
             }
             else
             {
-                Debug.Log("是ExStart");
                 SceneObjects[2].SetActive(false);
                 SceneObjects[0].SetActive(true);
                 Global_GameManager.Instance.state = State.Menu;
@@ -174,7 +171,6 @@ public class ButtonEvent : MonoBehaviour
         }
         if(Input.GetKeyDown(KeyCode.Z))
         {
-            Debug.Log("选人界面点击了Z键");
             if(Global_GameManager.Instance.gameMode==GameMode.Extra)
             {
                 // 播放Z音效
