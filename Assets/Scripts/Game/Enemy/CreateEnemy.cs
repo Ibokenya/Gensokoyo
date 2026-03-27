@@ -46,8 +46,8 @@ public class CreateEnemy : MonoBehaviour
     public GameObject TailBullet; // 拖尾子弹预制体
     
     [Header("对象池设置")]
-    public int normalEnemyPoolSize = 10;// 普通敌人对象池大小
-    public int ballEnemyPoolSize = 10;  // 球敌人对象池大小
+    public int normalEnemyPoolSize = 30;// 普通敌人对象池大小
+    public int ballEnemyPoolSize = 30;  // 球敌人对象池大小
     public int eliteEnemyPoolSize = 5;  // 精英敌人对象池大小
 
     public int LittleJadePoolSize = 30;   // 小玉对象池大小(常规)
@@ -71,6 +71,7 @@ public class CreateEnemy : MonoBehaviour
     private int CurrentSpawn = 0;//第0波次
     public GameObject player;// 玩家对象引用
 
+
     void OnEnable()
     {
         // 初始化对象池
@@ -84,14 +85,13 @@ public class CreateEnemy : MonoBehaviour
     void Update()
     {
 
-        // // 获取当前音乐播放时间
+        // 获取当前音乐播放时间
         // if (audioManager.CurrentBGMTime != 0)
         // {
         //     currentMusicTime = audioManager.CurrentBGMTime;
         // }
 
-        currentMusicTime += Time.deltaTime;// 临时的
-        
+        currentMusicTime += Time.deltaTime;// 临时的   
         // 检查是否需要生成敌人
         CheckSpawnEnemies();
     }
@@ -568,11 +568,6 @@ public class CreateEnemy : MonoBehaviour
                 }
                 break;
             case MoveMode.Track:
-                if (movePointsCount != 1)
-                {
-                    Debug.LogWarning($"{config.moveMode}模式需要有且仅有1个路径点，当前数量: {movePointsCount}");
-                }
-                break;
             case MoveMode.Flicker:
             case MoveMode.Gravity:
                 if (movePointsCount != 1 && movePointsCount != config.spawnCount)

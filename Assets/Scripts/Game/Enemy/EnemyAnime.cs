@@ -73,6 +73,7 @@ public class EnemyAnime : MonoBehaviour
 
     void OnEnable()
     {
+        isFirstMoveCompleted = false;
         bezierSpeed = MoveSpeed/10;
         int randomIndex = Random.Range(0, 4);
         switch (randomIndex)// 随机选择一个妖精的变体精灵
@@ -389,14 +390,6 @@ public class EnemyAnime : MonoBehaviour
     /// </summary>
     private void InitializeFlicker()
     {
-        // 检查路径点列表是否有且仅有一个元素
-        if (MovePoints != null && MovePoints.Count == 1)
-        {
-            // 移动到指定位置
-            transform.position = MovePoints[0].transform.position;
-        }
-        // 如果路径点数量大于1，不移动位置（已经在生成时设置）
-        
         // 初始化透明度为0
         spriteRenderer.color = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, 0f);
         

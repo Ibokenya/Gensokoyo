@@ -54,6 +54,7 @@ public class EliteAnime : MonoBehaviour
 
     void OnEnable()
     {
+        isFirstMoveCompleted = false;
         bezierSpeed = MoveSpeed/10;
         spriteRenderer = GetComponent<SpriteRenderer>();
         rb2D = GetComponent<Rigidbody2D>();

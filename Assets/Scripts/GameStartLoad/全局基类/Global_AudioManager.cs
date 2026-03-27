@@ -314,7 +314,7 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
     }
     
     /// <summary>
-    /// ??????????
+    /// 停止当前播放的背景音乐
     /// </summary>
     public void StopBGM()
     {
@@ -460,6 +460,49 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
         {
             bgmSource.time = position;
         }
+    }
+
+    /// <summary>
+    /// 音乐淡出
+    /// 在指定时间内将当前播放的背景音乐音量均匀降低到0
+    /// </summary>
+    /// <param name="fadeOutTime">淡出时间（秒）</param>
+    public void FadeOutMusic(float fadeOutTime)
+    {
+        if (bgmSource != null && bgmSource.isPlaying)
+        {
+            StartCoroutine(FadeOutMusicCoroutine(fadeOutTime));
+        }
+    }
+    
+    /// <summary>
+    /// 音乐淡出协程
+    /// </summary>
+    /// <param name="fadeOutTime">淡出时间（秒）</param>
+    private IEnumerator FadeOutMusicCoroutine(float fadeOutTime)
+    {
+        if (fadeOutTime <= 0f)
+        {
+            // 如果淡出时间小于等于0，直接停止音乐
+            bgmSource.Stop();
+            yield break;
+        }
+        
+        float startVolume = bgmSource.volume;
+        float elapsedTime = 0f;
+        
+        while (elapsedTime < fadeOutTime)
+        {
+            elapsedTime += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsedTime / fadeOutTime);
+            bgmSource.volume = Mathf.Lerp(startVolume, 0f, t);
+            yield return null;
+        }
+        
+        // 淡出完成后停止音乐
+        bgmSource.Stop();
+        // 重置音量，以便下次播放
+        bgmSource.volume = startVolume;
     }
     
     #endregion

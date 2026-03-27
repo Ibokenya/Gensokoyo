@@ -47,6 +47,7 @@ public class BallsAnime : MonoBehaviour
 
     void OnEnable()
     {
+        isFirstMoveCompleted = false;
         int randomIndex = Random.Range(0, ballsSprites.Count);
         currentBallSprite = ballsSprites[randomIndex];// 随机选择一个球体精灵
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -153,13 +154,6 @@ public class BallsAnime : MonoBehaviour
     /// </summary>
     private void InitializeFlicker()
     {
-        // 检查路径点列表是否有且仅有一个元素
-        if (MovePoints != null && MovePoints.Count == 1)
-        {
-            // 移动到指定位置
-            transform.position = MovePoints[0].transform.position;
-        }
-        
         // 初始化透明度为0
         spriteRenderer.color = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, 0f);
         
