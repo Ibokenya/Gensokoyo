@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class AboutItem : MonoBehaviour
 {
-    [Header("道具种类:0:HP+,1:HP,2:Power+,3:Power,4:Bomb+,5:Bomb,6:Grade,7:Grade:,8:Grade--")]
+    [Header("道具种类:0:HP+,1:HP,2:Power+,3:Power,4:Bomb+,5:Bomb,6:Grade,7:Grade-,8:Grade--")]
     [SerializeField]
     private int itemType;
     
@@ -41,6 +41,7 @@ public class AboutItem : MonoBehaviour
     /// </summary>
     void OnTriggerEnter2D(Collider2D collision)
     {
+        Debug.Log(transform.name +"碰撞到"+collision.name);
         if (!isCollecting)
         {
             FlyToPlayer(collision.transform);
@@ -93,31 +94,31 @@ public class AboutItem : MonoBehaviour
         switch(itemType)
         {
             case 0:// 道具类型为HP+
-                
+                Global_GameManager.Instance.AddLeftLife(1,0);
                 break;
             case 1:// 道具类型为HP
-
+                Global_GameManager.Instance.AddLeftLife(0,1);
                 break;
             case 2:// 道具类型为Power+
-
+                Global_GameManager.Instance.AddPower(100);
                 break;
             case 3:// 道具类型为Power
-
+                Global_GameManager.Instance.AddPower(1);
                 break;
             case 4:// 道具类型为Bomb+
-
+                Global_GameManager.Instance.AddBomb(1,0);
                 break;
             case 5:// 道具类型为Bomb
-
+                Global_GameManager.Instance.AddBomb(0,1);
                 break;
             case 6:// 道具类型为Grade
-                
+                Global_GameManager.Instance.AddGrade(1);
                 break;
-            case 7:// 道具类型为Grade+
-                
+            case 7:// 道具类型为Grade-
+                Global_GameManager.Instance.AddScore(100);
                 break;
             case 8:// 道具类型为Grade--
-                
+                Global_GameManager.Instance.AddScore(10);
                 break;
         }
     }

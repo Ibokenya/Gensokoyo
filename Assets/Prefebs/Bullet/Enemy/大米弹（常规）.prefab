@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2875836482420065832}
   - component: {fileID: 5713638062721084374}
   - component: {fileID: 5215382219696864221}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: "\u5927\u7C73\u5F39\uFF08\u5E38\u89C4\uFF09"
   m_TagString: EnemyBullet
   m_Icon: {fileID: 0}
@@ -167,6 +167,6 @@ CapsuleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.01495108, y: -0.003796021}
-  m_Size: {x: 0.22715916, y: 0.45444885}
+  m_Offset: {x: 0.017886769, y: -0.00044107437}
+  m_Size: {x: 0.19612433, y: 0.41251022}
   m_Direction: 0

@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 655933569165080582}
   m_Layer: 8
   m_Name: Grade-
-  m_TagString: Untagged
+  m_TagString: Item
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -162,3 +162,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemType: 7
+  collectSpeed: 10

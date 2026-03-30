@@ -4,8 +4,6 @@ public class Game1 : MonoBehaviour
 {
     [Header("BGM设置")]
     public AudioClip bgmClip; // 指定要播放的BGM文件
-
-    private bool BGMFlag =true;
     
     void OnEnable()
     {
@@ -16,14 +14,12 @@ public class Game1 : MonoBehaviour
         {
             Global_AudioManager.Instance.PlaySFX(bgmClip);
         }
+
+        Invoke(nameof(FadeOutMusic), 118f);// 118秒后淡出BGM
     }
 
-    void Update()
+    void FadeOutMusic()
     {
-        if (Global_AudioManager.Instance.CurrentTime >=118f && BGMFlag)
-        {
-            Global_AudioManager.Instance.FadeOutMusic(2f);
-            BGMFlag = false;
-        }
+        Global_AudioManager.Instance.FadeOutMusic(2f);
     }
 }

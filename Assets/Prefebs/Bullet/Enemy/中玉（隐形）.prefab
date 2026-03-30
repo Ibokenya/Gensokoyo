@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5787737340889345937}
   - component: {fileID: 6828485048818397648}
   - component: {fileID: 6430331592432408678}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: "\u4E2D\u7389\uFF08\u9690\u5F62\uFF09"
   m_TagString: EnemyBullet
   m_Icon: {fileID: 0}
@@ -172,4 +172,4 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.2
+  m_Radius: 0.18

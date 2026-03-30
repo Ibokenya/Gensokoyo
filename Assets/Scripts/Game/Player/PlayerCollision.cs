@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 玩家碰撞触发器
+/// </summary>
 public class PlayerCollision : MonoBehaviour
 {
     private Rigidbody2D rb2D;// 刚体组件
@@ -12,6 +15,8 @@ public class PlayerCollision : MonoBehaviour
     private readonly float maxX = 2.95f;
     private readonly float minY = -4.7f;
     private readonly float maxY = 4.5f;
+
+    public ClearAllBullet clearAllBullet;// 清除所有子弹组件
 
     void OnEnable()
     {
@@ -26,9 +31,19 @@ public class PlayerCollision : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Global_GameManager.Instance.state != State.Gaming) return;
-        // 处理边界检测
-        HandleBounds();
+        if(Global_GameManager.Instance.state == State.Gaming)
+        {
+            // 处理边界检测
+            HandleBounds();
+        }
+        else if(Global_GameManager.Instance.state == State.Reincarnation)
+        {
+            // 重生状态时，设置速度为0
+            if (rb2D != null)
+            {
+                rb2D.velocity = Vector2.zero;
+            }
+        }
     }
 
     /// <summary>
@@ -41,6 +56,9 @@ public class PlayerCollision : MonoBehaviour
     /// <param name="moveSpeed">移动速度</param>
     public void UpdateMovement(bool leftPressed, bool rightPressed, bool upPressed, bool downPressed, float moveSpeed)
     {
+        // 只有在游戏状态时才处理移动
+        if(Global_GameManager.Instance.state != State.Gaming) return;
+        
         // 计算水平移动方向
         float horizontal = 0f;
         if (leftPressed)
@@ -89,8 +107,9 @@ public class PlayerCollision : MonoBehaviour
     /// </summary>
     private void HandleBounds()
     {
-
-
+        // 只有在游戏状态时才处理边界检测
+        if(Global_GameManager.Instance.state != State.Gaming) return;
+        
         // 获取当前位置
         Vector3 position = transform.position;
 
@@ -114,14 +133,5 @@ public class PlayerCollision : MonoBehaviour
 
         // 更新位置
         transform.position = position;
-    }
-
-    /// <summary>
-    /// 触发器检测
-    /// </summary>
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        // 处理触发器逻辑
-        
     }
 }

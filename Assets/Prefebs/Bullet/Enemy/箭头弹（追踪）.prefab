@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2561077671384689112}
   - component: {fileID: 6286933784667563331}
   - component: {fileID: 8387981269749024833}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: "\u7BAD\u5934\u5F39\uFF08\u8FFD\u8E2A\uFF09"
   m_TagString: EnemyBullet
   m_Icon: {fileID: 0}
@@ -180,9 +180,9 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: 0.075031176, y: 0.07824062}
-      - {x: -0.003396213, y: 0.11667457}
-      - {x: -0.08146357, y: 0.069848284}
+    - - {x: 0.061964653, y: 0.045857817}
+      - {x: 0.0011484418, y: 0.11099306}
+      - {x: -0.071805626, y: 0.04939595}
       - {x: -0.12399487, y: -0.1099248}
       - {x: 0.11896999, y: -0.11193546}
   m_UseDelaunayMesh: 0
