@@ -16,8 +16,6 @@ public class PlayerCollision : MonoBehaviour
     private readonly float minY = -4.7f;
     private readonly float maxY = 4.5f;
 
-    public ClearAllBullet clearAllBullet;// 清除所有子弹组件
-
     void OnEnable()
     {
         // 获取刚体组件
@@ -31,7 +29,20 @@ public class PlayerCollision : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Global_GameManager.Instance.state == State.Gaming)
+        // 确保rb2D已获取
+        if (rb2D == null)
+        {
+            rb2D = GetComponent<Rigidbody2D>();
+            if (rb2D == null)
+            {
+                Debug.LogError("PlayerCollision: 找不到刚体组件！");
+                return;
+            }
+        }
+        
+        // 处理不同状态
+        if(Global_GameManager.Instance.state == State.Gaming || 
+           Global_GameManager.Instance.state == State.NoDead)
         {
             // 处理边界检测
             HandleBounds();
@@ -39,10 +50,7 @@ public class PlayerCollision : MonoBehaviour
         else if(Global_GameManager.Instance.state == State.Reincarnation)
         {
             // 重生状态时，设置速度为0
-            if (rb2D != null)
-            {
-                rb2D.velocity = Vector2.zero;
-            }
+            rb2D.velocity = Vector2.zero;
         }
     }
 
@@ -56,8 +64,20 @@ public class PlayerCollision : MonoBehaviour
     /// <param name="moveSpeed">移动速度</param>
     public void UpdateMovement(bool leftPressed, bool rightPressed, bool upPressed, bool downPressed, float moveSpeed)
     {
-        // 只有在游戏状态时才处理移动
-        if(Global_GameManager.Instance.state != State.Gaming) return;
+        // 只有在游戏状态和无敌状态时才处理移动
+        if(Global_GameManager.Instance.state != State.Gaming && 
+           Global_GameManager.Instance.state != State.NoDead) return;
+        
+        // 确保rb2D已获取
+        if (rb2D == null)
+        {
+            rb2D = GetComponent<Rigidbody2D>();
+            if (rb2D == null)
+            {
+                Debug.LogError("PlayerCollision: 找不到刚体组件，无法应用移动！");
+                return;
+            }
+        }
         
         // 计算水平移动方向
         float horizontal = 0f;
@@ -96,10 +116,7 @@ public class PlayerCollision : MonoBehaviour
         }
 
         // 应用移动
-        if (rb2D != null)
-        {
-            rb2D.velocity = moveDirection * speed;
-        }
+        rb2D.velocity = moveDirection * speed;
     }
 
     /// <summary>
@@ -107,8 +124,9 @@ public class PlayerCollision : MonoBehaviour
     /// </summary>
     private void HandleBounds()
     {
-        // 只有在游戏状态时才处理边界检测
-        if(Global_GameManager.Instance.state != State.Gaming) return;
+        // 只有在游戏状态和无敌状态时才处理边界检测
+        if(Global_GameManager.Instance.state != State.Gaming && 
+           Global_GameManager.Instance.state != State.NoDead) return;
         
         // 获取当前位置
         Vector3 position = transform.position;

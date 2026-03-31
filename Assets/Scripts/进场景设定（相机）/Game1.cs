@@ -4,6 +4,8 @@ public class Game1 : MonoBehaviour
 {
     [Header("BGM设置")]
     public AudioClip bgmClip; // 指定要播放的BGM文件
+
+    public ClearAllBullet clearAllBullet;// 清除所有子弹组件
     
     void OnEnable()
     {
@@ -16,6 +18,11 @@ public class Game1 : MonoBehaviour
         }
 
         Invoke(nameof(FadeOutMusic), 118f);// 118秒后淡出BGM
+    }
+
+    void OnDisable()
+    {
+        clearAllBullet.ClearScreenBullet();
     }
 
     void FadeOutMusic()

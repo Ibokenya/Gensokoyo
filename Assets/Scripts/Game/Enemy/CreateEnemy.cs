@@ -273,19 +273,8 @@ public class CreateEnemy : MonoBehaviour
                 enemy.transform.position = transform.position;
             }
 
-            // 根据敌人类型和移动模式设置参数
-            switch (config.enemyType)
-            {
-                case EnemySpawnConfig.EnemyType.Normal:
-                    SetupNormalEnemy(enemy, config, i);
-                    break;
-                case EnemySpawnConfig.EnemyType.Ball:
-                    SetupBallEnemy(enemy, config, i);
-                    break;
-                case EnemySpawnConfig.EnemyType.Elite:
-                    SetupEliteEnemy(enemy, config, i);
-                    break;
-            }
+            // 设置敌人参数（使用基类Enemy统一设置）
+            SetupEnemy(enemy, config, i);
             
             // 激活敌人
             enemy.SetActive(true);
@@ -305,244 +294,50 @@ public class CreateEnemy : MonoBehaviour
     }
     
     /// <summary>
-    /// 设置普通敌人
+    /// 设置敌人参数（使用基类Enemy统一设置）
     /// </summary>
-    private void SetupNormalEnemy(GameObject enemy, EnemySpawnConfig config, int enemyIndex)
+    private void SetupEnemy(GameObject enemy, EnemySpawnConfig config, int enemyIndex)
     {
-        EnemyAnime enemyAnime = enemy.GetComponent<EnemyAnime>();
-        if (enemyAnime != null)
+        Enemy enemyComponent = enemy.GetComponent<Enemy>();
+        if (enemyComponent != null)
         {
-            // 设置移动速度
-            enemyAnime.MoveSpeed = config.moveSpeed;
-            
-            // 设置闪烁参数
-            enemyAnime.FlickerLifeTime = config.flickerLifeTime;
-            enemyAnime.fadeTime = config.fadeTime;
-            
-            // 设置重力参数
-            enemyAnime.gravityScale = config.gravityScale;
-            
+            // 设置基础属性
+            enemyComponent.Hp = config.hp;
+            enemyComponent.MoveSpeed = config.moveSpeed;
+            enemyComponent.gravityScale = config.gravityScale;
+            enemyComponent.FlickerLifeTime = config.flickerLifeTime;
+            enemyComponent.fadeTime = config.fadeTime;
+
             // 设置移动模式
-            switch (config.moveMode)
-            {
-                case MoveMode.Path:
-                    enemyAnime.moveMode = MoveMode.Path;
-                    // 设置路径点
-                    if (config.movePoints != null)
-                    {
-                        enemyAnime.SetMovePoints(config.movePoints);
-                    }
-                    break;
-                case MoveMode.Track:
-                    enemyAnime.moveMode = MoveMode.Track;
-                    break;
-                case MoveMode.Flicker:
-                    enemyAnime.moveMode = MoveMode.Flicker;
-                    // 设置路径点（闪烁模式需要一个路径点）
-                    if (config.movePoints != null)
-                    {
-                        enemyAnime.SetMovePoints(config.movePoints);
-                    }
-                    break;
-                case MoveMode.Gravity:
-                    enemyAnime.moveMode = MoveMode.Gravity;
-                    // 初始化重力模式
-                    enemyAnime.InitializeGravity();
-                    break;
-            }
-            
+            enemyComponent.moveMode = config.moveMode;
+
             // 设置二段移动模式
-            switch (config.secondaryMoveMode)
+            enemyComponent.secondaryMoveMode = config.secondaryMoveMode;
+
+            // 设置路径点
+            if (config.movePoints != null && config.movePoints.Count > 0)
             {
-                case SecondaryMode.Track:
-                    enemyAnime.secondaryMoveMode = SecondaryMode.Track;
-                    break;
-                case SecondaryMode.FlickerOut:
-                    enemyAnime.secondaryMoveMode = SecondaryMode.FlickerOut;
-                    break;
-                case SecondaryMode.Stationary:
-                    enemyAnime.secondaryMoveMode = SecondaryMode.Stationary;
-                    break;
-                case SecondaryMode.Gravity:
-                    enemyAnime.secondaryMoveMode = SecondaryMode.Gravity;
-                    break;
+                enemyComponent.SetMovePoints(config.movePoints);
             }
-            
-            // 设置射击配置
-            EnemyShoot enemyShoot = enemy.GetComponent<EnemyShoot>();
-            if (enemyShoot != null)
-            {
-                enemyShoot.SetShootConfig(config.shootConfigs);
-                enemyShoot.SetEnemyIndex(enemyIndex);
-                // 设置玩家对象
-                if (player != null)
-                {
-                    enemyShoot.SetPlayer(player);
-                }
-            }
-            
+
             // 设置玩家对象
             if (player != null)
             {
-                enemyAnime.SetPlayer(player);
+                enemyComponent.SetPlayer(player);
             }
-        }
-    }
-    
-    /// <summary>
-    /// 设置球敌人
-    /// </summary>
-    private void SetupBallEnemy(GameObject enemy, EnemySpawnConfig config, int enemyIndex)
-    {
-        BallsAnime ballsAnime = enemy.GetComponent<BallsAnime>();
-        if (ballsAnime != null)
-        {
-            // 设置移动速度
-            ballsAnime.MoveSpeed = config.moveSpeed;
-            
-            // 设置闪烁参数
-            ballsAnime.FlickerLifeTime = config.flickerLifeTime;
-            ballsAnime.fadeTime = config.fadeTime;
-            
-            // 设置重力参数
-            ballsAnime.gravityScale = config.gravityScale;
-            
-            // 设置移动模式
-            switch (config.moveMode)
+
+            // 设置掉落物配置
+            if (config.itemDrops != null)
             {
-                case MoveMode.Path:
-                    ballsAnime.moveMode = MoveMode.Path;
-                    // 设置路径点
-                    if (config.movePoints != null)
-                    {
-                        ballsAnime.SetMovePoints(config.movePoints);
-                    }
-                    break;
-                case MoveMode.Track:
-                    ballsAnime.moveMode = MoveMode.Track;
-                    break;
-                case MoveMode.Flicker:
-                    ballsAnime.moveMode = MoveMode.Flicker;
-                    // 设置路径点（闪烁模式需要一个路径点）
-                    if (config.movePoints != null)
-                    {
-                        ballsAnime.SetMovePoints(config.movePoints);
-                    }
-                    break;
-                case MoveMode.Gravity:
-                    ballsAnime.moveMode = MoveMode.Gravity;
-                    // 初始化重力模式
-                    ballsAnime.InitializeGravity();
-                    break;
+                enemyComponent.SetItemDrops(config.itemDrops);
             }
-            
-            // 设置二段移动模式
-            switch (config.secondaryMoveMode)
-            {
-                case SecondaryMode.Track:
-                    ballsAnime.secondaryMoveMode = SecondaryMode.Track;
-                    break;
-                case SecondaryMode.FlickerOut:
-                    ballsAnime.secondaryMoveMode = SecondaryMode.FlickerOut;
-                    break;
-                case SecondaryMode.Stationary:
-                    ballsAnime.secondaryMoveMode = SecondaryMode.Stationary;
-                    break;
-                case SecondaryMode.Gravity:
-                    ballsAnime.secondaryMoveMode = SecondaryMode.Gravity;
-                    break;
-            }
-            
+
             // 设置射击配置
             EnemyShoot enemyShoot = enemy.GetComponent<EnemyShoot>();
             if (enemyShoot != null)
             {
                 enemyShoot.SetShootConfig(config.shootConfigs);
                 enemyShoot.SetEnemyIndex(enemyIndex);
-                // 设置玩家对象
-                if (player != null)
-                {
-                    enemyShoot.SetPlayer(player);
-                }
-            }
-            
-            // 设置玩家对象
-            if (player != null)
-            {
-                ballsAnime.SetPlayer(player);
-            }
-        }
-    }
-    
-    /// <summary>
-    /// 设置精英敌人
-    /// </summary>
-    private void SetupEliteEnemy(GameObject enemy, EnemySpawnConfig config, int enemyIndex)
-    {
-        EliteAnime eliteAnime = enemy.GetComponent<EliteAnime>();
-        if (eliteAnime != null)
-        {
-            // 设置移动速度
-            eliteAnime.MoveSpeed = config.moveSpeed;
-            
-            // 设置重力参数
-            eliteAnime.gravityScale = config.gravityScale;
-            
-            // 设置渐入时间
-            eliteAnime.fadeTime = config.fadeTime;
-            
-            // 设置闪烁参数
-            eliteAnime.FlickerLifeTime = config.flickerLifeTime;
-            
-            // 设置移动模式
-            switch (config.moveMode)
-            {
-                case MoveMode.Path:
-                    eliteAnime.moveMode = MoveMode.Path;
-                    // 设置路径点
-                    if (config.movePoints != null)
-                    {
-                        eliteAnime.SetMovePoints(config.movePoints);
-                    }
-                    break;
-                case MoveMode.Gravity:
-                    eliteAnime.moveMode = MoveMode.Gravity;
-                    break;
-                case MoveMode.Flicker:
-                    eliteAnime.moveMode = MoveMode.Flicker;
-                    break;
-                case MoveMode.Track:
-                    eliteAnime.moveMode = MoveMode.Track;
-                    break;
-                default:
-                    Debug.LogWarning($"大妖精不支持的移动模式: {config.moveMode}");
-                    break;
-            }
-            
-            // 设置二段移动模式
-            switch (config.secondaryMoveMode)
-            {
-                case SecondaryMode.Stationary:
-                    eliteAnime.secondaryMoveMode = SecondaryMode.Stationary;
-                    break;
-                case SecondaryMode.Gravity:
-                    eliteAnime.secondaryMoveMode = SecondaryMode.Gravity;
-                    break;
-                case SecondaryMode.FlickerOut:
-                    eliteAnime.secondaryMoveMode = SecondaryMode.FlickerOut;
-                    break;
-                case SecondaryMode.Track:
-                    eliteAnime.secondaryMoveMode = SecondaryMode.Track;
-                    break;
-            }
-            
-            // 设置射击配置
-            EnemyShoot enemyShoot = enemy.GetComponent<EnemyShoot>();
-            if (enemyShoot != null)
-            {
-                enemyShoot.SetShootConfig(config.shootConfigs);
-                enemyShoot.SetEnemyIndex(enemyIndex);
-                // 设置玩家对象
                 if (player != null)
                 {
                     enemyShoot.SetPlayer(player);

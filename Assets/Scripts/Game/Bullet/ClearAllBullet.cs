@@ -32,7 +32,7 @@ public class ClearAllBullet : MonoBehaviour
             if (currentMusicTime >= targetTime - 0.01f && currentMusicTime <= targetTime + 1f)
             {
                 // 执行清屏操作
-                ClearScreenBullet();
+                ClearEnemyBullet();
                 // 移除已执行的时间点，避免重复执行
                 clearTimes.RemoveAt(i);
             }
@@ -40,7 +40,7 @@ public class ClearAllBullet : MonoBehaviour
     }
 
     /// <summary>
-    /// 清空屏幕中的所有敌人子弹
+    /// 清空屏幕中的所有子弹
     /// </summary>
     public void ClearScreenBullet()
     {
@@ -48,7 +48,32 @@ public class ClearAllBullet : MonoBehaviour
         Global_AudioManager.Instance.PlaySFX(clearClip);
         // 找到所有敌人子弹
         GameObject[] enemyBullets = GameObject.FindGameObjectsWithTag("EnemyBullet");
+        GameObject[] playerBullets = GameObject.FindGameObjectsWithTag("PlayerBullet");
 
+        // 回收所有敌人子弹
+        foreach (GameObject bullet in enemyBullets)
+        {
+            if (bullet != null)
+            {
+                Global_ObjectPool.Instance.Recycle(bullet);
+            }
+        }
+        // 回收所有玩家子弹
+        foreach (GameObject bullet in playerBullets)
+        {
+            if (bullet != null)
+            {
+                Global_ObjectPool.Instance.Recycle(bullet);
+            }
+        }
+    }
+
+    public void ClearEnemyBullet()
+    {
+         // 播放清屏音效
+        Global_AudioManager.Instance.PlaySFX(clearClip);
+        // 找到所有敌人子弹
+        GameObject[] enemyBullets = GameObject.FindGameObjectsWithTag("EnemyBullet");
         // 回收所有敌人子弹
         foreach (GameObject bullet in enemyBullets)
         {

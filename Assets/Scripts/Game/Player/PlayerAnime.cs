@@ -90,6 +90,12 @@ public class PlayerAnime : MonoBehaviour
         {
             playerCollision = GetComponent<PlayerCollision>();
         }
+        Global_GameManager.Instance.OnReincarnation += ReincarnationAnime;
+    }
+
+    void OnDisable()
+    {
+        Global_GameManager.Instance.OnReincarnation -= ReincarnationAnime;
     }
 
     /// <summary>
@@ -122,12 +128,16 @@ public class PlayerAnime : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Global_GameManager.Instance.state != State.Gaming) return;
-        // 检查输入
-        CheckInput();
-        
         // 处理动画
         HandleAnimation();
+        
+        // 只有在游戏状态和无敌状态时才处理输入
+        if(Global_GameManager.Instance.state == State.Gaming || 
+           Global_GameManager.Instance.state == State.NoDead)
+        {
+            // 检查输入
+            CheckInput();
+        }
     }
 
     /// <summary>
@@ -446,5 +456,84 @@ public class PlayerAnime : MonoBehaviour
     private void CircleAnime()
     {
         CircleAnimator.SetBool("IsShift", isCircleAnimePlaying);
+    }
+
+    private void ReincarnationAnime(State state)
+    {
+        StopPandingAnime();
+        SetIdleAnime();
+        
+        // 立刻将玩家坐标设置为(-3,-6)，透明度设为0
+        this.transform.position = new Vector3(-3f, -6f, 0f);
+        if (spriteRenderer != null)
+        {
+            Color color = spriteRenderer.color;
+            color.a = 0f;
+            spriteRenderer.color = color;
+        }
+        
+        // 开始重生动画协程
+        StartCoroutine(ReincarnationAnimation());
+    }
+    
+    /// <summary>
+    /// 重生动画协程
+    /// </summary>
+    private IEnumerator ReincarnationAnimation()
+    {
+        float elapsedTime = 0f;
+        float duration = 1f;
+        Vector3 startPosition = new Vector3(-3f, -6f, 0f);
+        Vector3 endPosition = new Vector3(-3f, -4f, 0f);
+        float startAlpha = 0f;
+        float endAlpha = 1f;
+        
+        while (elapsedTime < duration)
+        {
+            float t = elapsedTime / duration;
+            // 移动位置
+            transform.position = Vector3.Lerp(startPosition, endPosition, t);
+            // 渐变透明度
+            if (spriteRenderer != null)
+            {
+                Color color = spriteRenderer.color;
+                color.a = Mathf.Lerp(startAlpha, endAlpha, t);
+                spriteRenderer.color = color;
+            }
+            
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        
+        // 确保最终位置和透明度正确
+        transform.position = endPosition;
+        if (spriteRenderer != null)
+        {
+            Color color = spriteRenderer.color;
+            color.a = endAlpha;
+            spriteRenderer.color = color;
+        }
+        
+        // 1秒后切换到无敌状态
+        ReincarnationEnd();
+    }
+
+    private void ReincarnationEnd()
+    {
+        Global_GameManager.Instance.state = State.NoDead;
+        if(Input.GetKey(KeyCode.LeftShift))
+        {
+            MoveSpeed = 2.5f;
+        }
+        else
+        {
+            MoveSpeed = 5f;
+        }
+        Invoke(nameof(NoDeadEnd),1f);
+    }
+
+    private void NoDeadEnd()
+    {
+        Global_GameManager.Instance.state = State.Gaming;
     }
 }

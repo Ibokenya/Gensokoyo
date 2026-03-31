@@ -25,9 +25,9 @@ public class MagicAnime : MonoBehaviour
     // 连线宽度
     public float lineWidth = 0.1f;
     // 存储连线组和对应的球体索引对
-    private Dictionary<LineRenderer, (int startIdx, int endIdx)> linePairs = new();
+    private readonly Dictionary<LineRenderer, (int startIdx, int endIdx)> linePairs = new();
     // 定义需要连线的球体索引组合
-    private (int, int)[] connectPairs = new (int, int)[]
+    private readonly (int, int)[] connectPairs = new (int, int)[]
     {
         (0,2), (2,4), (4,6), (6,0),
         (1,3), (3,5), (5,7), (7,1)
@@ -39,17 +39,29 @@ public class MagicAnime : MonoBehaviour
         isExiting = false;
         // 初始化所有连线
         InitLines();
+        Global_GameManager.Instance.OnReincarnation += CancelMagic;
+    }
+    void OnDisable()
+    {
+        Global_GameManager.Instance.OnReincarnation -= CancelMagic;
     }
     
     void Update()
     {
-        if(Global_GameManager.Instance.state != State.Gaming) return;
+        if(Global_GameManager.Instance.state != State.Gaming && 
+        Global_GameManager.Instance.state != State.NoDead) return;
         if (!isExiting && Input.GetKeyUp(KeyCode.LeftShift))
         {
-            StartCoroutine(ExitMagic());
+            CancelMagic(Global_GameManager.Instance.state);
         }
         // 实时更新所有连线位置
         UpdateLinePositions();
+    }
+
+    private void CancelMagic(State state)
+    {
+        ClearLines();
+        StartCoroutine(ExitMagic());
     }
     
     private IEnumerator ExitMagic()

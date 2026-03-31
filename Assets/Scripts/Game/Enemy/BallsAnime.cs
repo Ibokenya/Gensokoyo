@@ -2,386 +2,46 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// 小球的路径点移动是无平滑的（两点之间直线移动）
-public class BallsAnime : MonoBehaviour
+// 小球沿着路径移动，平滑移动，点之间直接移动
+public class BallsAnime : Enemy
 {
-    public List<Sprite> ballsSprites;// 球体精灵
-    private Sprite currentBallSprite;// 当前球体
+    public List<Sprite> ballsSprites;// 小球精灵
+    private Sprite currentBallSprite;// 当前小球
 
-    [Header("移动参数")]
-    public float MoveSpeed = 5f;// 球体移动速度
     [SerializeField]
-    private float RotateSpeed = 360f;// 球体旋转速度
-    public MoveMode moveMode = MoveMode.Path;// 球体移动模式
-    public SecondaryMode secondaryMoveMode = SecondaryMode.Stationary;// 二段移动模式
-    
-    [Header("移动点参数")]
-    private List<GameObject> MovePoints;// 移动点列表
-    private int currentPointIndex = 0;// 当前目标移动点索引
-    public float ArrivalDistance = 0.1f;// 到达移动点的判定距离
-    private Vector2 moveDirection;// 移动方向向量
-    
-    [Header("追踪参数")]
-    private Vector2 trackDirection;// 追踪方向向量
-    private GameObject player;// 玩家对象
-    
-    [Header("闪烁参数")]
-    public float FlickerLifeTime = 8f;// 闪烁模式下的生存时间
-    private float flickerTimer = 0f;// 闪烁模式计时器
-    public float fadeTime = 2f;// 淡入时间
-    private float fadeTimer = 0f;// 淡入计时器
-    
-    [Header("重力参数")]
-    public float gravityScale = 1f;// 重力缩放
-    
-    [Header("组件")]
-    private SpriteRenderer spriteRenderer;// 精灵渲染器组件
-    private Rigidbody2D rb2D;// 刚体组件
-    private bool isFirstMoveCompleted = false;// 是否第一段移动完成
+    private float RotateSpeed = 360f;// 小球旋转速度
 
-    // 边界值
-    private readonly float minX = -11f;
-    private readonly float maxX = 5f;
-    private readonly float minY = -7.5f;
-    private readonly float maxY = 6.5f;
-
-    void OnEnable()
+    protected override void OnEnable()
     {
-        isFirstMoveCompleted = false;
+        base.OnEnable();
+
         int randomIndex = Random.Range(0, ballsSprites.Count);
-        currentBallSprite = ballsSprites[randomIndex];// 随机选择一个球体精灵
-        spriteRenderer = GetComponent<SpriteRenderer>();
-        rb2D = GetComponent<Rigidbody2D>();
-        spriteRenderer.sprite = currentBallSprite;// 初始化精灵渲染器的精灵为当前球体精灵
-        spriteRenderer.color = new(1,1,1,1);
-        
-        // 重置移动点索引
-        currentPointIndex = 0;
-        
-        // 初始化移动方向
-        moveDirection = Vector2.zero;
-        
-        // 初始化重力参数
-        if (rb2D != null)
+        currentBallSprite = ballsSprites[randomIndex];
+
+        if (spriteRenderer != null)
         {
-            rb2D.gravityScale = 0f; // 默认禁用重力
+            spriteRenderer.sprite = currentBallSprite;
+            spriteRenderer.color = new Color(1, 1, 1, 1);
         }
-        
-        // 初始化追踪模式
-        if (moveMode == MoveMode.Track && player != null)
+
+        // 闪烁模式下需要设置路径点
+        if (moveMode == MoveMode.Flicker && MovePoints != null)
         {
-            InitializeTracking();
+            // 路径点已在基类SetMovePoints中设置
         }
-        // 初始化闪烁模式
-        else if (moveMode == MoveMode.Flicker)
-        {
-            InitializeFlicker();
-        }
-        // 初始化重力模式
-        else if (moveMode == MoveMode.Gravity)
-        {
-            InitializeGravity();
-        }
-    }
-    
-    /// <summary>
-    /// 设置玩家对象
-    /// </summary>
-    /// <param name="playerObj">玩家对象</param>
-    public void SetPlayer(GameObject playerObj)
-    {
-        player = playerObj;
     }
 
-    void Update()
+    protected override void Update()
     {
-        // 旋转球体
+        // 旋转小球
         RotateBall();
-        
-        // 检查边界
-        CheckBounds();
-        
-        // 根据移动模式执行不同的移动逻辑
-        switch (moveMode)
-        {
-            case MoveMode.Path:
-                MoveToNextPoint();
-                break;
-            case MoveMode.Track:
-                TrackMove();
-                break;
-            case MoveMode.Flicker:
-                FlickerUpdate();
-                break;
-            case MoveMode.Gravity:
-                break;
-        }
-        
-        // 处理FlickerOut模式
-        if (secondaryMoveMode == SecondaryMode.FlickerOut && isFirstMoveCompleted)
-        {
-            FlickerOutUpdate();
-        }
+
+        // 调用基类的Update处理移动逻辑
+        base.Update();
     }
 
-    public void SetMovePoints(List<GameObject> movePoints)// 设置移动点列表
-    {
-        MovePoints = movePoints;
-        currentPointIndex = 0;
-        // 初始化第一个移动方向
-        if (MovePoints != null && MovePoints.Count > 0)
-        {
-            UpdateMoveDirection();
-        }
-    }
-    
     /// <summary>
-    /// 初始化追踪模式
-    /// </summary>
-    private void InitializeTracking()
-    {
-        if (player != null)
-        {
-            // 获取玩家当前位置作为追踪目标
-            Vector3 trackTargetPosition = player.transform.position;
-            // 计算追踪方向（只计算一次）
-            trackDirection = (trackTargetPosition - transform.position).normalized;
-        }
-    }
-    
-    /// <summary>
-    /// 初始化闪烁模式
-    /// </summary>
-    private void InitializeFlicker()
-    {
-        // 初始化透明度为0
-        spriteRenderer.color = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, 0f);
-        
-        // 重置计时器
-        flickerTimer = 0f;
-        fadeTimer = 0f;
-    }
-    
-    /// <summary>
-    /// 检查边界
-    /// </summary>
-    private void CheckBounds()
-    {
-        if (transform.position.x < minX || transform.position.x > maxX || 
-            transform.position.y < minY || transform.position.y > maxY)
-        {
-            // 超出边界，回收敌人
-            Global_ObjectPool.Instance.Recycle(gameObject);
-        }
-    }
-    
-    /// <summary>
-    /// 更新移动方向
-    /// </summary>
-    private void UpdateMoveDirection()
-    {
-        if (MovePoints == null || MovePoints.Count == 0 || currentPointIndex >= MovePoints.Count)
-        {
-            moveDirection = Vector2.zero;
-            return;
-        }
-        
-        // 获取当前目标点
-        GameObject targetPoint = MovePoints[currentPointIndex];
-        if (targetPoint != null)
-        {
-            // 计算移动方向
-            moveDirection = (targetPoint.transform.position - transform.position).normalized;
-        }
-    }
-    
-    /// <summary>
-    /// 移动到下一个点
-    /// </summary>
-    private void MoveToNextPoint()
-    {
-        if (MovePoints == null || MovePoints.Count == 0 || currentPointIndex >= MovePoints.Count)
-        {
-            return;
-        }
-        
-        // 获取当前目标点
-        GameObject targetPoint = MovePoints[currentPointIndex];
-        if (targetPoint == null)
-        {
-            // 目标点不存在，移动到下一个点
-            currentPointIndex++;
-            UpdateMoveDirection();
-            return;
-        }
-        
-        // 直接计算目标方向（无平滑）
-        Vector2 targetDirection = (targetPoint.transform.position - transform.position).normalized;
-        moveDirection = targetDirection;
-        
-        // 移动敌人
-        if (rb2D != null)
-        {
-            rb2D.velocity = moveDirection * MoveSpeed;
-        }
-        
-        // 检查是否到达目标点
-            if (Vector2.Distance(transform.position, targetPoint.transform.position) < ArrivalDistance)
-            {
-                // 到达目标点，移动到下一个点
-                currentPointIndex++;
-                UpdateMoveDirection();
-                
-                // 如果所有点都已到达
-                if (currentPointIndex >= MovePoints.Count)
-                {
-                    // 所有移动点都已到达
-                    if (rb2D != null)
-                    {
-                        rb2D.velocity = Vector2.zero;
-                    }
-                    // 切换到二段移动模式
-                    SwitchToSecondaryMoveMode();
-                    isFirstMoveCompleted = true;
-                }
-            }
-    }
-    
-    /// <summary>
-    /// 追踪式移动
-    /// </summary>
-    private void TrackMove()
-    {
-        if (rb2D == null)
-        {
-            return;
-        }
-        
-        // 一直向初始化时计算的方向移动
-        if (trackDirection != Vector2.zero)
-        {
-            rb2D.velocity = trackDirection * MoveSpeed;
-        }
-    }
-    
-    /// <summary>
-    /// 闪烁模式更新
-    /// </summary>
-    private void FlickerUpdate()
-    {
-        // 淡入效果
-        if (fadeTimer < fadeTime)
-        {
-            fadeTimer += Time.deltaTime;
-            float alpha = Mathf.Clamp01(fadeTimer / fadeTime);
-            spriteRenderer.color = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, alpha);
-        }
-        else
-        {
-            // 淡入完成后开始倒计时
-            flickerTimer += Time.deltaTime;
-            if (flickerTimer >= FlickerLifeTime)
-            {
-                // 生命周期结束，执行二段移动
-                SwitchToSecondaryMoveMode();
-                isFirstMoveCompleted = true;
-            }
-        }
-    }
-    
-    /// <summary>
-    /// 初始化重力模式
-    /// </summary>
-    public void InitializeGravity()
-    {
-        if (rb2D != null)
-        {
-            // 启用重力
-            rb2D.gravityScale = gravityScale;
-            // 禁用速度，开始自由落体
-            rb2D.velocity = Vector2.zero;
-        }
-    }
-    
-    /// <summary>
-    /// 切换到二段移动模式
-    /// </summary>
-    private void SwitchToSecondaryMoveMode()
-    {
-        // 切换移动模式为二段移动模式
-        switch (secondaryMoveMode)
-            {
-                case SecondaryMode.Track:
-                    moveMode = MoveMode.Track;
-                    InitializeTracking();
-                    break;
-                case SecondaryMode.FlickerOut:
-                    // 直接执行淡出回收
-                    InitializeFlickerOut();
-                    break;
-                case SecondaryMode.Gravity:
-                    moveMode = MoveMode.Gravity;
-                    InitializeGravity();
-                    break;
-                case SecondaryMode.Stationary:
-                    // 不移动，保持当前状态
-                    if (rb2D != null)
-                    {
-                        rb2D.velocity = Vector2.zero;
-                    }
-                    break;
-            }
-    }
-    
-    /// <summary>
-    /// 初始化闪烁淡出模式
-    /// </summary>
-    private void InitializeFlickerOut()
-    {
-        // 重置计时器
-        flickerTimer = 0f;
-        // 确保透明度为1
-        if (spriteRenderer != null)
-        {
-            spriteRenderer.color = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, 1f);
-        }
-        // 停止移动
-        if (rb2D != null)
-        {
-            rb2D.velocity = Vector2.zero;
-        }
-    }
-    
-    /// <summary>
-    /// 闪烁淡出模式更新
-    /// </summary>
-    private void FlickerOutUpdate()
-    {
-        // 倒计时
-        flickerTimer += Time.deltaTime;
-        
-        // 计算透明度（在1秒内从1降到0）
-        float alpha = Mathf.Clamp01(1f - (flickerTimer / 1f));
-        if (spriteRenderer != null)
-        {
-            spriteRenderer.color = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, alpha);
-        }
-        
-        // 当透明度降为0时，回收自身
-        if (alpha <= 0f)
-        {
-            // 从Global_GameManager的EnemyList中移除敌人
-            if (Global_GameManager.Instance != null)
-            {
-                Global_GameManager.Instance.RemoveEnemy(gameObject);
-            }
-            // 回收敌人
-            Global_ObjectPool.Instance.Recycle(gameObject);
-        }
-    }
-    
-    /// <summary>
-    /// 旋转球体
+    /// 旋转小球
     /// </summary>
     private void RotateBall()
     {

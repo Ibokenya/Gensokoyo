@@ -11340,7 +11340,8 @@ MonoBehaviour:
   - {fileID: 9082491396592662665, guid: 70db0c3d51a5c794a876cb6f8fa5e449, type: 3}
   - {fileID: 6520310059965168247, guid: 765994ca429aa18409f7585991b86e31, type: 3}
   - {fileID: 3835769484777451053, guid: e3d07efbde3cb4c449c201ce4a8f9153, type: 3}
-  ItemCount: 0100000003000000010000001400000002000000030000001e0000000000000000000000
+  ItemCount: 0100000003000000010000001400000002000000030000001e0000003c0000003c000000
+  spawnOffset: 0.5
 --- !u!114 &1283300306
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12570,6 +12571,7 @@ MonoBehaviour:
     flickerLifeTime: 1
     fadeTime: 1
     gravityScale: 1
+    hp: 400
     shootConfigs:
     - duration: 0
       shootMode: 0
@@ -12599,6 +12601,7 @@ MonoBehaviour:
         LifeTime: 0
         Speed: 0
         WindUp: 0
+    itemDrops: []
   - spawnTime: 0.5
     spawnCount: 5
     spawnInterval: 0.5
@@ -12618,6 +12621,7 @@ MonoBehaviour:
     flickerLifeTime: 1
     fadeTime: 1
     gravityScale: 1
+    hp: 400
     shootConfigs:
     - duration: 0
       shootMode: 0
@@ -12647,6 +12651,7 @@ MonoBehaviour:
         LifeTime: 0
         Speed: 0
         WindUp: 0
+    itemDrops: []
   - spawnTime: 6
     spawnCount: 10
     spawnInterval: 0.5
@@ -12659,6 +12664,7 @@ MonoBehaviour:
     flickerLifeTime: 1
     fadeTime: 1
     gravityScale: 0.3
+    hp: 250
     shootConfigs:
     - duration: 0
       shootMode: 0
@@ -12688,6 +12694,7 @@ MonoBehaviour:
         LifeTime: 5
         Speed: 3
         WindUp: 2
+    itemDrops: []
   - spawnTime: 6
     spawnCount: 10
     spawnInterval: 0.5
@@ -12700,6 +12707,7 @@ MonoBehaviour:
     flickerLifeTime: 1
     fadeTime: 1
     gravityScale: 0.3
+    hp: 250
     shootConfigs:
     - duration: 0
       shootMode: 0
@@ -12729,6 +12737,7 @@ MonoBehaviour:
         LifeTime: 5
         Speed: 3
         WindUp: 2
+    itemDrops: []
   - spawnTime: 12
     spawnCount: 1
     spawnInterval: 1
@@ -12741,6 +12750,7 @@ MonoBehaviour:
     flickerLifeTime: 12
     fadeTime: 1
     gravityScale: 1
+    hp: 1000
     shootConfigs:
     - duration: 6
       shootMode: 2
@@ -12826,6 +12836,17 @@ MonoBehaviour:
         LifeTime: 0
         Speed: 0
         WindUp: 0
+    itemDrops:
+    - itemType: 0
+      count: 1
+    - itemType: 8
+      count: 14
+    - itemType: 8
+      count: 26
+    - itemType: 6
+      count: 7
+    - itemType: 3
+      count: 5
   - spawnTime: 18
     spawnCount: 6
     spawnInterval: 1
@@ -12838,7 +12859,9 @@ MonoBehaviour:
     flickerLifeTime: 5
     fadeTime: 1
     gravityScale: 1
+    hp: 300
     shootConfigs: []
+    itemDrops: []
   - spawnTime: 18.5
     spawnCount: 6
     spawnInterval: 1
@@ -12851,7 +12874,9 @@ MonoBehaviour:
     flickerLifeTime: 5
     fadeTime: 1
     gravityScale: 1
+    hp: 300
     shootConfigs: []
+    itemDrops: []
   - spawnTime: 24
     spawnCount: 1
     spawnInterval: 1
@@ -12865,6 +12890,7 @@ MonoBehaviour:
     flickerLifeTime: 5
     fadeTime: 1
     gravityScale: 1
+    hp: 500
     shootConfigs:
     - duration: 3
       shootMode: 1
@@ -12894,6 +12920,7 @@ MonoBehaviour:
         LifeTime: 0
         Speed: 0
         WindUp: 0
+    itemDrops: []
   - spawnTime: 24
     spawnCount: 1
     spawnInterval: 1
@@ -12907,6 +12934,7 @@ MonoBehaviour:
     flickerLifeTime: 5
     fadeTime: 1
     gravityScale: 1
+    hp: 500
     shootConfigs:
     - duration: 3
       shootMode: 1
@@ -12936,6 +12964,7 @@ MonoBehaviour:
         LifeTime: 0
         Speed: 0
         WindUp: 0
+    itemDrops: []
   - spawnTime: 30
     spawnCount: 1
     spawnInterval: 1
@@ -12949,6 +12978,7 @@ MonoBehaviour:
     flickerLifeTime: 5
     fadeTime: 1
     gravityScale: 1
+    hp: 500
     shootConfigs:
     - duration: 3
       shootMode: 1
@@ -12978,6 +13008,7 @@ MonoBehaviour:
         LifeTime: 0
         Speed: 0
         WindUp: 0
+    itemDrops: []
   - spawnTime: 30
     spawnCount: 1
     spawnInterval: 1
@@ -12991,6 +13022,7 @@ MonoBehaviour:
     flickerLifeTime: 5
     fadeTime: 1
     gravityScale: 1
+    hp: 500
     shootConfigs:
     - duration: 3
       shootMode: 1
@@ -13020,6 +13052,7 @@ MonoBehaviour:
         LifeTime: 0
         Speed: 0
         WindUp: 0
+    itemDrops: []
   - spawnTime: 36
     spawnCount: 4
     spawnInterval: 0
@@ -13035,6 +13068,7 @@ MonoBehaviour:
     flickerLifeTime: 10
     fadeTime: 1
     gravityScale: 1
+    hp: 700
     shootConfigs:
     - duration: 0
       shootMode: 0
@@ -13064,6 +13098,7 @@ MonoBehaviour:
         LifeTime: 0
         Speed: 0
         WindUp: 0
+    itemDrops: []
   - spawnTime: 49
     spawnCount: 1
     spawnInterval: 0
@@ -13077,6 +13112,7 @@ MonoBehaviour:
     flickerLifeTime: 10
     fadeTime: 1
     gravityScale: 1
+    hp: 1300
     shootConfigs:
     - duration: 3
       shootMode: 1
@@ -13190,6 +13226,7 @@ MonoBehaviour:
         LifeTime: 0
         Speed: 0
         WindUp: 0
+    itemDrops: []
   - spawnTime: 60
     spawnCount: 6
     spawnInterval: 1
@@ -13212,6 +13249,7 @@ MonoBehaviour:
     flickerLifeTime: 10
     fadeTime: 1
     gravityScale: 1
+    hp: 600
     shootConfigs:
     - duration: 0
       shootMode: 1
@@ -13241,6 +13279,7 @@ MonoBehaviour:
         LifeTime: 5
         Speed: 2
         WindUp: 1
+    itemDrops: []
   - spawnTime: 60
     spawnCount: 6
     spawnInterval: 1
@@ -13263,6 +13302,7 @@ MonoBehaviour:
     flickerLifeTime: 10
     fadeTime: 1
     gravityScale: 1
+    hp: 700
     shootConfigs:
     - duration: 0
       shootMode: 1
@@ -13292,6 +13332,7 @@ MonoBehaviour:
         LifeTime: 6
         Speed: 2
         WindUp: 1
+    itemDrops: []
   - spawnTime: 84
     spawnCount: 5
     spawnInterval: 1
@@ -13308,6 +13349,7 @@ MonoBehaviour:
     flickerLifeTime: 1
     fadeTime: 1
     gravityScale: 1
+    hp: 700
     shootConfigs:
     - duration: 0
       shootMode: 0
@@ -13337,6 +13379,7 @@ MonoBehaviour:
         LifeTime: 6
         Speed: 2
         WindUp: 1
+    itemDrops: []
   - spawnTime: 84
     spawnCount: 4
     spawnInterval: 1
@@ -13352,6 +13395,7 @@ MonoBehaviour:
     flickerLifeTime: 1
     fadeTime: 1
     gravityScale: 1
+    hp: 700
     shootConfigs:
     - duration: 0
       shootMode: 0
@@ -13381,6 +13425,7 @@ MonoBehaviour:
         LifeTime: 6
         Speed: 2
         WindUp: 1
+    itemDrops: []
   - spawnTime: 95
     spawnCount: 9
     spawnInterval: 0.5
@@ -13401,6 +13446,7 @@ MonoBehaviour:
     flickerLifeTime: 1
     fadeTime: 1
     gravityScale: 0.8
+    hp: 600
     shootConfigs:
     - duration: 0
       shootMode: 1
@@ -13430,6 +13476,7 @@ MonoBehaviour:
         LifeTime: 12
         Speed: 1
         WindUp: 0.5
+    itemDrops: []
   - spawnTime: 102
     spawnCount: 21
     spawnInterval: 0.5
@@ -13462,6 +13509,7 @@ MonoBehaviour:
     flickerLifeTime: 1
     fadeTime: 1
     gravityScale: 0.8
+    hp: 500
     shootConfigs:
     - duration: 0
       shootMode: 0
@@ -13491,6 +13539,7 @@ MonoBehaviour:
         LifeTime: 0
         Speed: 0
         WindUp: 0
+    itemDrops: []
   normalEnemyPrefab: {fileID: 2035442439257488790, guid: c2f39c33b723dce49b11da09ac23cdb7, type: 3}
   ballEnemyPrefab: {fileID: 8501377784257086046, guid: cd41a67c3b171e74a816cee65bd21018, type: 3}
   eliteEnemyPrefab: {fileID: 4357197549038363353, guid: 7de7f19b3106c0d4c968d9b9b5077efc, type: 3}
@@ -15824,7 +15873,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9abac536dbeb79d4d8a4aa8e23bb50a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  clearAllBullet: {fileID: 1283300306}
 --- !u!58 &1651681777
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -19863,6 +19911,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bgmClip: {fileID: 8300000, guid: ae1b5fafea1b96440a108f4b4cbb0469, type: 3}
+  clearAllBullet: {fileID: 1283300306}
 --- !u!1 &2085216620
 GameObject:
   m_ObjectHideFlags: 0

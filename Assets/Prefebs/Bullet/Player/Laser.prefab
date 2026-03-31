@@ -99,7 +99,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d55f70f1311b9ea4b9b27780515ad37d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MaxLength: 15
+  MaxLength: 18
   LaserWidth: 1
   Damage: 1
   HitLayer:

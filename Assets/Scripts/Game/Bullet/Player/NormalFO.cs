@@ -9,6 +9,7 @@ using UnityEngine;
 public class NormalFO : MonoBehaviour
 {
     public float speed;
+    public int damage = 10;// …À∫¶÷µ
     private readonly float minX = -9f;
     private readonly float maxX = 3.2f;
     private readonly float minY = -5.3f;
@@ -55,9 +56,18 @@ public class NormalFO : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D collision)
     {
-        if(!isNeedle)
+        if(collision.CompareTag("Enemy"))
         {
-            Global_ObjectPool.Instance.Recycle(this.gameObject);
-        }
+            if(!isNeedle)
+            {
+                Global_ObjectPool.Instance.Recycle(this.gameObject);
+            }
+            // …À∫¶µ–»À
+            Enemy enemy = collision.GetComponent<Enemy>();
+            if (enemy != null)
+            {
+                enemy.Damage(damage);
+            }
+        }  
     }
 }

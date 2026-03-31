@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 4794441177323280825}
   m_Layer: 6
   m_Name: ReimuTracked
-  m_TagString: Untagged
+  m_TagString: PlayerBullet
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -100,6 +100,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TrackSpeed: 8
+  TurnSpeed: 10
+  damage: 4
 --- !u!50 &1136223370996281244
 Rigidbody2D:
   serializedVersion: 4

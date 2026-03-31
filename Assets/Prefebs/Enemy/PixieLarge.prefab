@@ -100,6 +100,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b703dd142487e642810507d508655cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Hp: 1500
+  MoveSpeed: 5
+  moveMode: 3
+  secondaryMoveMode: 2
+  ArrivalDistance: 0.1
+  FlickerLifeTime: 8
+  fadeTime: 3
+  gravityScale: 0.12
   EnemySprites:
   - {fileID: -2098667174, guid: 304a01e02c3d522449a2258535534366, type: 3}
   - {fileID: 1082429417, guid: 304a01e02c3d522449a2258535534366, type: 3}
@@ -108,14 +116,7 @@ MonoBehaviour:
   - {fileID: 610018286, guid: 304a01e02c3d522449a2258535534366, type: 3}
   _currentIndex: 0
   AnimeSpeed: 4
-  moveMode: 3
-  secondaryMoveMode: 2
-  MoveSpeed: 5
-  ArrivalDistance: 0.1
   bezierSpeed: 1
-  gravityScale: 0.12
-  fadeTime: 3
-  FlickerLifeTime: 8
 --- !u!60 &8529169561834577298
 PolygonCollider2D:
   m_ObjectHideFlags: 0

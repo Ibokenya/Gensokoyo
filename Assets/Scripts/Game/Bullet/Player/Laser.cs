@@ -16,7 +16,7 @@ public class Laser : MonoBehaviour
     [Header("激光配置")]
     public float MaxLength = 20f; // 激光最大长度
     public float LaserWidth = 0.3f; // 激光宽度
-    public float Damage = 1f; // 激光伤害(每帧)
+    public int damage = 1; // 激光伤害(每帧)
     public LayerMask HitLayer;// 激光可攻击目标层
 
     public List<Sprite> LaserSprites = new();// 激光精灵列表
@@ -161,6 +161,19 @@ public class Laser : MonoBehaviour
                 CurrentIndex = 0;
                 
             spriteRenderer.sprite = LaserSprites[CurrentIndex];
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if(collision.CompareTag("Enemy"))
+        {
+            // 伤害敌人
+            Enemy enemy = collision.GetComponent<Enemy>();
+            if (enemy != null)
+            {
+                enemy.Damage(damage);
+            }
         }
     }
 }

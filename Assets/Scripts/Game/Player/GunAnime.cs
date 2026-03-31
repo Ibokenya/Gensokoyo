@@ -55,7 +55,7 @@ public class GunAnime : MonoBehaviour
         {
             Index = 1;
         }
-        SwitchGun(Index);
+        SwitchGun();
         GunNumber = Global_GameManager.Instance.Power/100;
         // 同步子机激活状态
         if (Index == 0) UpdateGuns(ReimuGuns);
@@ -64,30 +64,36 @@ public class GunAnime : MonoBehaviour
 
         // 订阅灵力变更事件
         Global_GameManager.Instance.OnPowerChanged += UpdateGunNumber;
+        Global_GameManager.Instance.OnReincarnation += CancelGun;
     }
 
     void OnDisable()
     {
         Global_GameManager.Instance.OnPowerChanged -= UpdateGunNumber;
+        Global_GameManager.Instance.OnReincarnation -= CancelGun;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(Global_GameManager.Instance.state != State.Gaming) return;
+        if(Global_GameManager.Instance.state == State.Stop) return;
         CheckUpdate();
         AddPower();
         SubPower();
     }
 
-    private void SwitchGun(int index)
+    private void SwitchGun()
     {
-        switch (index)
+        switch (Index)
         {
             case 0:
+                NormalGuns[0].SetActive(true);
+                NormalGuns[1].SetActive(true);
                 ReimuGun.SetActive(true);
                 MarisaGun.SetActive(false);
                 MagicGun.SetActive(false);
+                ShootNormal.SetLimited(false);
+                UpdateGuns(ReimuGuns);
                 break;
             case 1:
                 NormalGuns[0].SetActive(true);
@@ -121,7 +127,7 @@ public class GunAnime : MonoBehaviour
             if(Index==1 && !isExitingMagic)// 如果是魔理沙常态按下Shift进入七曜态
             {
                 Index = 2;
-                SwitchGun(Index);
+                SwitchGun();
                 UpdateGunPos();
             }
         }
@@ -141,7 +147,7 @@ public class GunAnime : MonoBehaviour
     public void SwitchToMarisaNormal()
     {
         Index = 1;
-        SwitchGun(Index);
+        SwitchGun();
         UpdateGunPos();
         isExitingMagic = false;
     }
@@ -292,5 +298,15 @@ public class GunAnime : MonoBehaviour
             Debug.Log("测试，Power-50");
             Global_GameManager.Instance.SubPower(50);
         }
+    }
+
+    private void CancelGun(State state)
+    {
+        NormalGuns[0].SetActive(false);
+        NormalGuns[1].SetActive(false);
+        ReimuGun.SetActive(false);
+        MarisaGun.SetActive(false);
+        ShootNormal.SetLimited(true);
+        Invoke(nameof(SwitchGun), 1f);
     }
 }

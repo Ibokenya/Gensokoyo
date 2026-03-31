@@ -40,6 +40,12 @@ public class EnemySpawnConfig
     [Header("重力参数")]
     public float gravityScale = 1f;// 重力缩放
     
+    [Header("基础属性")]
+    public int hp = 100;// 敌人生命值
+    
     [Header("射击配置列表")]
     public List<ShootMode> shootConfigs = new List<ShootMode>();
+    
+    [Header("掉落物配置")]
+    public List<ItemDropConfig> itemDrops = new List<ItemDropConfig>();
 }

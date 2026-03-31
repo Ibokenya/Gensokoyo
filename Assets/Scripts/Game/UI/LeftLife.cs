@@ -31,10 +31,6 @@ public class LeftLife : MonoBehaviour
         {
             LifeHearts[i].GetComponent<Image>().sprite = LifeHeartSprites[0];
         }
-        else
-        {
-            Debug.LogWarning("生命值图标索引越界");
-        }
     }
     private void UpdateLifeText(int lifePiece)
     {

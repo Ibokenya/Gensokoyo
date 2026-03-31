@@ -43,7 +43,9 @@ public class ShootNormal : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Global_GameManager.Instance == null || Global_GameManager.Instance.state != State.Gaming) return;
+        if(Global_GameManager.Instance == null || 
+        Global_GameManager.Instance.state != State.Gaming && 
+        Global_GameManager.Instance.state != State.NoDead) return;
         
         // 确保Normal预制体已初始化
         if (Normal == null)

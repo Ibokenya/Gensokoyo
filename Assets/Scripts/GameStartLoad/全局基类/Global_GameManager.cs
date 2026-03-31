@@ -13,7 +13,8 @@ public enum Character
 }
 public enum State
 {
-    Menu,CharacterChoose,ModeChoose,Gaming,Stop,Loading,Over,Replay,Option,MusicRoom,Manual,Reincarnation
+    Menu,CharacterChoose,ModeChoose,Gaming,Stop,Loading,Over,
+    Replay,Option,MusicRoom,Manual,Reincarnation,NoDead
 }
 /// <summary>
 /// 全局游戏管理单例
@@ -51,6 +52,7 @@ public class Global_GameManager : Singleton<Global_GameManager>
     public event Action<int,int> OnLeftLifeChanged; // 残机改变事件
     public event Action<int,int> OnBombChanged;     // 符卡碎片改变事件
     public event Action<int> OnGrazeChanged;        // 擦弹数改变事件
+    public event Action<State> OnReincarnation;     // 重生事件
 #endregion
 
     protected override void Awake()
@@ -131,7 +133,8 @@ public class Global_GameManager : Singleton<Global_GameManager>
         {
             Hp--;
             state = State.Reincarnation;
-            Invoke(nameof(Reincarnation),3f);
+            SubPower(80);
+            OnReincarnation?.Invoke(state);
             OnLeftLifeChanged?.Invoke(Hp,HpPiece);
             if(BombCount < ResetBomb)
             {
@@ -226,10 +229,5 @@ public class Global_GameManager : Singleton<Global_GameManager>
             }
         }
         EnemyList.Clear();
-    }
-
-    private void Reincarnation()
-    {
-        state = State.Gaming;
     }
 } 
