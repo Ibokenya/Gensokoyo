@@ -101,7 +101,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MaxLength: 18
   LaserWidth: 1
-  Damage: 1
+  damage: 2
   HitLayer:
     serializedVersion: 2
     m_Bits: 512

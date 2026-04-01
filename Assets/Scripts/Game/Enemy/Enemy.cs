@@ -149,16 +149,19 @@ public class Enemy : MonoBehaviour
     /// </summary>
     public virtual void Die()
     {
-        transform.parent = null;
         // 生成掉落物
         SpawnItemDrops();
+        Delete();
+    }
 
+    public virtual void Delete()
+    {
+        transform.parent = null;
         // 从游戏管理器中移除
         if (Global_GameManager.Instance != null)
         {
             Global_GameManager.Instance.RemoveEnemy(gameObject);
         }
-
         // 回收敌人
         Global_ObjectPool.Instance.Recycle(gameObject);
     }
@@ -378,7 +381,7 @@ public class Enemy : MonoBehaviour
 
         if (alpha <= 0f)
         {
-            Die();
+            Delete();
         }
     }
 
@@ -390,7 +393,7 @@ public class Enemy : MonoBehaviour
         if (transform.position.x < minX || transform.position.x > maxX ||
             transform.position.y < minY || transform.position.y > maxY)
         {
-            Die();
+            Delete();
         }
     }
 }

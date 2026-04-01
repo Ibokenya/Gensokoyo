@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -11,6 +12,8 @@ public class AboutItem : MonoBehaviour
     public float collectSpeed = 10f;
     
     private Rigidbody2D rb2D;
+    public GameObject player;
+    private int CheckInterval = 10;
     private bool isCollecting = false;
 
     void OnEnable()
@@ -21,11 +24,26 @@ public class AboutItem : MonoBehaviour
         {
             Debug.LogError("Rigidbody2D component not found on Item object!");
         }
+        else
+        {
+            // 重置重力为默认值，确保道具能正常下落
+            rb2D.gravityScale = 0.12f;
+            rb2D.velocity = Vector2.zero;
+        }
+        
+        // 重置收集状态
+        isCollecting = false;
     }
 
     void Update()
     {
-        CheckPos();
+        CheckInterval--;
+        if(CheckInterval <= 0)
+        {
+            CheckInterval = 10;
+            CheckPos();
+            CheckRecycleLine();
+        }
     }
     private void CheckPos()
     {
@@ -50,16 +68,18 @@ public class AboutItem : MonoBehaviour
     /// <summary>
     /// 道具自动被玩家收取
     /// </summary>
-    private void FlyToPlayer(Transform playerTransform)
+    /// <param name="playerTransform">玩家transform</param>
+    /// <param name="isRecycleLineTriggered">是否由回收线触发</param>
+    private void FlyToPlayer(Transform playerTransform, bool isRecycleLineTriggered = false)
     {
         isCollecting = true;
-        StartCoroutine(CollectItem(playerTransform));
+        StartCoroutine(CollectItem(playerTransform, isRecycleLineTriggered));
     }
     
     /// <summary>
     /// 收集道具的协程
     /// </summary>
-    private IEnumerator CollectItem(Transform playerTransform)
+    private IEnumerator CollectItem(Transform playerTransform, bool isRecycleLineTriggered)
     {
         // 禁用重力，使道具不受重力影响
         if (rb2D != null)
@@ -68,12 +88,48 @@ public class AboutItem : MonoBehaviour
             rb2D.velocity = Vector2.zero;
         }
         
-        // 目标位置为玩家当前位置
-        Vector3 targetPosition = playerTransform.position;
+        int updateCounter = 0;
+        const int updateInterval = 10;
         
-        // 持续移动直到到达玩家位置
-        while (Vector3.Distance(transform.position, targetPosition) > 0.1f)
+        // 触发器触发时，只获取一次玩家坐标
+        Vector3 initialTargetPosition = playerTransform.position;
+        
+        // 回收线触发时的目标位置
+        Vector3 recycleLineTargetPosition = playerTransform.position;
+        
+        // 持续移动
+        while (true)
         {
+            // 计算目标位置
+            Vector3 targetPosition;
+            if (isRecycleLineTriggered)
+            {
+                // 回收线触发时，每10帧更新一次目标位置
+                if (updateCounter % updateInterval == 0)
+                {
+                    recycleLineTargetPosition = playerTransform.position;
+                }
+                targetPosition = recycleLineTargetPosition;
+                updateCounter++;
+                
+                // 检查是否到达当前目标位置
+                if (Vector3.Distance(transform.position, targetPosition) <= 0.1f)
+                {
+                    break;
+                }
+            }
+            else
+            {
+                // 触发器触发时，使用初始目标位置
+                targetPosition = initialTargetPosition;
+                
+                // 检查是否到达初始目标位置
+                if (Vector3.Distance(transform.position, initialTargetPosition) <= 0.1f)
+                {
+                    break;
+                }
+            }
+            
             // 计算移动方向
             Vector3 direction = (targetPosition - transform.position).normalized;
             
@@ -120,6 +176,26 @@ public class AboutItem : MonoBehaviour
             case 8:// 道具类型为Grade--
                 Global_GameManager.Instance.AddScore(10);
                 break;
+        }
+    }
+
+    /// <summary>
+    /// 检查回收线逻辑
+    /// </summary>
+    private void CheckRecycleLine()
+    {
+        // 回收线高度（与PlayerCollision中的BorderGetLine保持一致）
+        const float borderGetLine = 1.27f;
+        
+        // 检查玩家是否在回收线之上
+        if (player != null)
+        {
+            Transform playerTransform = player.transform;
+            if (playerTransform.position.y >= borderGetLine && !isCollecting)
+            {
+                // 玩家在回收线之上，自动收集道具
+                FlyToPlayer(playerTransform, true);
+            }
         }
     }
 }

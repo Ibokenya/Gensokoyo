@@ -22,15 +22,14 @@ public class SpeelCard : MonoBehaviour
             BombHearts[i].GetComponent<Image>().sprite = BombHeartSprites[3]; // 1状态的碎片图标
             i++;
         }
-        BombHearts[i].GetComponent<Image>().sprite = BombHeartSprites[cardPiece];
+        if(i < BombHearts.Count)
+        {
+            BombHearts[i].GetComponent<Image>().sprite = BombHeartSprites[cardPiece];
+        }   
         i++;
         if(i < BombHearts.Count)
         {
             BombHearts[i].GetComponent<Image>().sprite = BombHeartSprites[0];
-        }
-        else
-        {
-            Debug.LogWarning("符卡图标索引越界");
         }
     }
     private void UpdateBombText(int cardPiece)
