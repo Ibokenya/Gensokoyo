@@ -63,3 +63,6 @@ TagManager:
   - name: PanDing
     uniqueID: 2698055243
     locked: 0
+  - name: Effect
+    uniqueID: 1817709973
+    locked: 0

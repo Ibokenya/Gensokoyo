@@ -45,6 +45,10 @@ public class Enemy : MonoBehaviour
     // 掉落物配置
     public List<ItemDropConfig> itemDrops = new List<ItemDropConfig>();
 
+    // 瞄准标记
+    public GameObject aimMarker; // 瞄准标记对象
+    public bool isMarked = false; // 是否已被标记
+
     protected virtual void OnEnable()
     {
         isFirstMoveCompleted = false;
@@ -54,6 +58,7 @@ public class Enemy : MonoBehaviour
         moveDirection = Vector2.zero;
         flickerTimer = 0f;
         fadeTimer = 0f;
+        isMarked = false; // 重置标记状态
 
         if (rb2D != null)
         {
@@ -156,6 +161,20 @@ public class Enemy : MonoBehaviour
 
     public virtual void Delete()
     {
+        // 解除标记与敌人的父子关系，防止对象池复用时出现异常
+        if (aimMarker != null)
+        {
+            aimMarker.transform.parent = null;
+            // 查找MagicAttack实例并回收标记
+            MagicAttack magicAttack = FindObjectOfType<MagicAttack>();
+            if (magicAttack != null)
+            {
+                magicAttack.RecycleMarker(aimMarker);
+            }
+            aimMarker = null;
+        }
+        isMarked = false;
+        
         transform.parent = null;
         // 从游戏管理器中移除
         if (Global_GameManager.Instance != null)
