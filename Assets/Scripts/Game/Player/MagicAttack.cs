@@ -11,41 +11,86 @@ public class MagicAttack : MonoBehaviour
     [Header("标记预制体")]
     public GameObject markerPrefab; // 瞄准标记预制体
     
-    [Header("标记参数")]
-    public float fadeInDuration = 1f; // 标记淡入时间
+    [Header("剑预制体")]
+    public GameObject swordPrefab; // 剑预制体
+    
+    [Header("生成参数")]
+    public float spawnDelayMin = 1f; // 生成瞄准点的最小延迟时间
+    public float spawnDelayMax = 2f; // 生成瞄准点的最大延迟时间
+    public float markerSpawnChance = 0.4f; // 为敌人添加瞄准点的概率（40%）
+    
+    private readonly float fadeInDuration = 1f; // 标记淡入时间
     
     private bool isMagicActive = false; // 魔法态是否激活
-    private bool hasMarkedEnemies = false; // 是否已经标记过敌人
-    private List<GameObject> activeMarkers = new List<GameObject>(); // 当前活跃的标记列表
-    private Queue<GameObject> markerPool = new Queue<GameObject>(); // 标记对象池
-    private bool isPoolInitialized = false; // 对象池是否已初始化
+    private List<GameObject> activeMarkers = new (); // 当前活跃的标记列表
+    private int frameCounter = 0; // 帧计数器，用于每10帧扫描一次敌人
 
     void Awake()
     {
-        // 初始化标记对象池（仅调用一次）
-        if (!isPoolInitialized)
-        {
-            InitializeMarkerPool();
-            isPoolInitialized = true;
-        }
+        InitPool();
     }
-    
+
     void OnEnable()
     {
         isMagicActive = false;
-        hasMarkedEnemies = false;
+        frameCounter = 0;
         
         // 2秒后进入魔法态
         Invoke(nameof(EnterMagicState), 2f);
     }
+
+    void OnDisable()
+    {
+        Time.timeScale = 1f;
+        // 取消Invoke调用
+        CancelInvoke(nameof(EnterMagicState));
+        
+        // 清理所有活跃的标记
+        ClearAllMarkers();
+    }
     
     void Update()
     {
-        // 当魔法态激活且尚未标记敌人时，执行标记逻辑
-        if (isMagicActive && !hasMarkedEnemies)
+        // 当魔法态激活时，每10帧扫描一次敌人
+        if (isMagicActive && Input.GetKey(KeyCode.Z))
         {
-            MarkAllEnemies();
-            hasMarkedEnemies = true;
+            frameCounter++;
+            if (frameCounter >= 10)
+            {
+                MarkAllEnemies();
+                frameCounter = 0;
+            }
+        }
+    }
+
+    private void InitPool()
+    {
+        // 初始化标记对象池和剑对象池
+        if (Global_ObjectPool.Instance != null)
+        {
+            // 初始化标记对象池
+            if (markerPrefab != null)
+            {
+                Global_ObjectPool.Instance.InitPool(markerPrefab, 10);
+            }
+            else
+            {
+                Debug.LogError("MagicAttack: markerPrefab 未设置，无法初始化标记对象池！");
+            }
+            
+            // 初始化剑对象池，数量与标记对象池相同
+            if (swordPrefab != null)
+            {
+                Global_ObjectPool.Instance.InitPool(swordPrefab, 10);
+            }
+            else
+            {
+                Debug.LogError("MagicAttack: swordPrefab 未设置，无法初始化剑对象池！");
+            }
+        }
+        else
+        {
+            Debug.LogError("MagicAttack: Global_ObjectPool 实例未找到，无法初始化对象池！");
         }
     }
     
@@ -54,29 +99,8 @@ public class MagicAttack : MonoBehaviour
     /// </summary>
     private void EnterMagicState()
     {
+        Time.timeScale = 0.5f;
         isMagicActive = true;
-    }
-    
-    /// <summary>
-    /// 初始化标记对象池
-    /// </summary>
-    private void InitializeMarkerPool()
-    {
-        if (markerPrefab == null)
-        {
-            Debug.LogError("MagicAttack: markerPrefab 未设置，无法初始化对象池！");
-            return;
-        }
-        
-        // 生成10个标记对象到对象池
-        for (int i = 0; i < 10; i++)
-        {
-            GameObject marker = Instantiate(markerPrefab);
-            marker.SetActive(false);
-            markerPool.Enqueue(marker);
-        }
-        
-        Debug.Log("MagicAttack: 标记对象池初始化完成，数量: " + markerPool.Count);
     }
     
     /// <summary>
@@ -84,24 +108,14 @@ public class MagicAttack : MonoBehaviour
     /// </summary>
     private GameObject GetMarkerFromPool()
     {
-        if (markerPool.Count > 0)
+        if (Global_ObjectPool.Instance != null && markerPrefab != null)
         {
-            GameObject marker = markerPool.Dequeue();
-            marker.SetActive(true);
-            return marker;
+            return Global_ObjectPool.Instance.GetObject(markerPrefab, Vector3.zero, Quaternion.identity);
         }
         else
         {
-            // 对象池不足时，创建新的标记
-            if (markerPrefab == null)
-            {
-                Debug.LogError("MagicAttack: markerPrefab 未设置，无法创建新标记！");
-                return null;
-            }
-            
-            GameObject marker = Instantiate(markerPrefab);
-            marker.SetActive(true);
-            return marker;
+            Debug.LogError("MagicAttack: 无法从对象池获取标记，Global_ObjectPool 实例或 markerPrefab 未设置！");
+            return null;
         }
     }
     
@@ -110,11 +124,22 @@ public class MagicAttack : MonoBehaviour
     /// </summary>
     public void RecycleMarker(GameObject marker)
     {
-        if (marker != null)
+        if (marker != null && Global_ObjectPool.Instance != null)
         {
-            marker.SetActive(false);
-            marker.transform.parent = null;
-            markerPool.Enqueue(marker);
+            // 解除父子关系
+            if (marker.transform.parent != null)
+            {
+                marker.transform.parent = null;
+            }
+            
+            // 重置标记状态
+            if (marker.TryGetComponent<SpriteRenderer>(out var spriteRenderer))
+            {
+                spriteRenderer.color = new Color(1, 1, 1, 0f);
+            }
+            
+            // 回收标记到对象池
+            Global_ObjectPool.Instance.Recycle(marker);
         }
     }
     
@@ -123,9 +148,10 @@ public class MagicAttack : MonoBehaviour
     /// </summary>
     private void MarkAllEnemies()
     {
+        
         if (Global_GameManager.Instance == null)
         {
-            Debug.LogWarning("MagicAttack: Global_GameManager 实例未找到！");
+            Debug.LogWarning("[MagicAttack] Global_GameManager 实例未找到！");
             return;
         }
         
@@ -134,17 +160,25 @@ public class MagicAttack : MonoBehaviour
         
         if (enemies == null || enemies.Count == 0)
         {
-            Debug.Log("MagicAttack: 当前场景中没有敌人！");
             return;
         }
         
         // 遍历所有敌人，标记未被标记的
+        int markedCount = 0;
         foreach (GameObject enemyObj in enemies)
         {
             Enemy enemy = enemyObj.GetComponent<Enemy>();
-            if (enemy != null && !enemy.isMarked)
+            if (enemy != null)
             {
-                CreateMarkerForEnemy(enemy);
+                if (!enemy.isMarked)
+                {
+                    CreateMarkerForEnemy(enemy);
+                    markedCount++;
+                }
+            }
+            else
+            {
+                Debug.LogWarning($"[MagicAttack] 敌人对象 {enemyObj.name} 没有Enemy组件");
             }
         }
     }
@@ -154,10 +188,17 @@ public class MagicAttack : MonoBehaviour
     /// </summary>
     private void CreateMarkerForEnemy(Enemy enemy)
     {
+        // 60%的概率不为敌人添加瞄准点
+        if (Random.value > markerSpawnChance)
+        {
+            return;
+        }
+        
         // 从对象池获取标记
         GameObject marker = GetMarkerFromPool();
         if (marker == null)
         {
+            Debug.LogError("[MagicAttack] 无法从对象池获取标记！");
             return;
         }
         
@@ -166,11 +207,22 @@ public class MagicAttack : MonoBehaviour
         marker.transform.SetParent(enemy.transform);
         
         // 重置标记状态
-        SpriteRenderer spriteRenderer = marker.GetComponent<SpriteRenderer>();
-        if (spriteRenderer != null)
+        if (marker.TryGetComponent<SpriteRenderer>(out var spriteRenderer))
         {
-            Color color = spriteRenderer.color;
-            spriteRenderer.color = new Color(color.r, color.g, color.b, 0f);
+            spriteRenderer.color = new Color(1, 1, 1, 0f);
+        }
+        
+        // 将剑预制件传递给AimPointAttack脚本
+        if (swordPrefab != null)
+        {
+            if (marker.TryGetComponent<AimPointAttack>(out var aimPointAttack))
+            {
+                aimPointAttack.SetSwordPrefab(swordPrefab);
+            }
+            else
+            {
+                Debug.LogWarning("[MagicAttack] 标记预制体没有AimPointAttack组件！");
+            }
         }
         
         // 标记敌人
@@ -180,7 +232,19 @@ public class MagicAttack : MonoBehaviour
         // 添加到活跃标记列表
         activeMarkers.Add(marker);
         
-        // 开始淡入动画
+        // 随机延迟开始淡入动画
+        float randomDelay = Random.Range(spawnDelayMin, spawnDelayMax);
+        StartCoroutine(DelayedFadeIn(marker, randomDelay));
+    }
+    
+    /// <summary>
+    /// 延迟淡入协程
+    /// </summary>
+    /// <param name="marker">标记对象</param>
+    /// <param name="delay">延迟时间</param>
+    private IEnumerator DelayedFadeIn(GameObject marker, float delay)
+    {
+        yield return new WaitForSeconds(delay);
         StartCoroutine(FadeInMarker(marker));
     }
     
@@ -189,36 +253,25 @@ public class MagicAttack : MonoBehaviour
     /// </summary>
     private IEnumerator FadeInMarker(GameObject marker)
     {
-        SpriteRenderer spriteRenderer = marker.GetComponent<SpriteRenderer>();
-        if (spriteRenderer == null)
+        if (!marker.TryGetComponent<SpriteRenderer>(out var spriteRenderer))
         {
             Debug.LogWarning("MagicAttack: 标记预制体没有SpriteRenderer组件！");
             yield break;
         }
         
         float elapsedTime = 0f;
-        Color originalColor = spriteRenderer.color;
         
         // 从透明度0渐入到1
         while (elapsedTime < fadeInDuration)
         {
             elapsedTime += Time.deltaTime;
             float alpha = Mathf.Clamp01(elapsedTime / fadeInDuration);
-            spriteRenderer.color = new Color(originalColor.r, originalColor.g, originalColor.b, alpha);
+            spriteRenderer.color = new Color(1, 1, 1, alpha);
             yield return null;
         }
         
         // 确保最终透明度为1
-        spriteRenderer.color = new Color(originalColor.r, originalColor.g, originalColor.b, 1f);
-    }
-    
-    void OnDisable()
-    {
-        // 取消Invoke调用
-        CancelInvoke(nameof(EnterMagicState));
-        
-        // 清理所有活跃的标记
-        ClearAllMarkers();
+        spriteRenderer.color = new Color(1, 1, 1, 1f);
     }
     
     /// <summary>
@@ -230,12 +283,6 @@ public class MagicAttack : MonoBehaviour
         {
             if (marker != null)
             {
-                // 解除父子关系
-                if (marker.transform.parent != null)
-                {
-                    marker.transform.parent = null;
-                }
-                
                 // 回收标记到对象池
                 RecycleMarker(marker);
             }

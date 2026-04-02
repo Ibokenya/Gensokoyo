@@ -25,7 +25,6 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
                 {
                     GameObject singletonObj = new GameObject(typeof(T).Name);
                     _instance = singletonObj.AddComponent<T>();
-                    Debug.Log($"自动创建单例对象：{typeof(T).Name}");
                 }
             }
             return _instance;
@@ -41,12 +40,10 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
             _instance = this as T;
             // 标记为跨场景不销毁（核心！）
             DontDestroyOnLoad(gameObject);
-            Debug.Log($"初始化单例：{typeof(T).Name}");
         }
         else if (_instance != this)
         {
             Destroy(gameObject);
-            Debug.LogWarning($"发现重复的单例 {typeof(T).Name}，已自动销毁");
         }
     }
 }

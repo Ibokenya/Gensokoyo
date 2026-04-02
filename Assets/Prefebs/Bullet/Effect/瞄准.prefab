@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3753602523080488731}
   - component: {fileID: 6365944891813899664}
+  - component: {fileID: 4859982460162643079}
   m_Layer: 0
   m_Name: "\u7784\u51C6"
   m_TagString: Untagged
@@ -27,7 +28,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 36.140003, y: -31.269999, z: 0}
-  m_LocalScale: {x: 0.5416993, y: 0.5416993, z: 1}
+  m_LocalScale: {x: 0.6, y: 0.6, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -74,7 +75,7 @@ SpriteRenderer:
   m_SortingLayer: 6
   m_SortingOrder: 10
   m_Sprite: {fileID: -1760825267, guid: 88065cca751ad0c40bb829049ef5f26a, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.8}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -84,3 +85,35 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &4859982460162643079
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6795863547296598173}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 74f3e1a056c06794898be561bd39cedb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rotationSpeed: 180
+  SwordPrefab: {fileID: 0}
+  xMin: 20
+  xMax: 30
+  yMin: 21.8
+  yMax: 32.7
+  zMin: 34.4
+  zMax: 51.6
+  SwordSpeed: 25
+  spawnDelayMin: 1
+  spawnDelayMax: 2
+  reuseDelayMin: 0.1
+  reuseDelayMax: 0.5
+  markerSprites:
+  - {fileID: -1760825267, guid: 88065cca751ad0c40bb829049ef5f26a, type: 3}
+  - {fileID: 329367379, guid: f3c518721be299f4b951945e409193d9, type: 3}
+  - {fileID: -994780330, guid: f3c518721be299f4b951945e409193d9, type: 3}
+  - {fileID: 1620580076, guid: f3c518721be299f4b951945e409193d9, type: 3}
+  explosionFrameInterval: 10
+  Sword: {fileID: 0}

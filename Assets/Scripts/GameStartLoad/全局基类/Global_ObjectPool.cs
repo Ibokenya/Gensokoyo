@@ -113,7 +113,7 @@ public class Global_ObjectPool : Singleton<Global_ObjectPool>
             // 更新总容量
             PoolInitialCapacities[poolKey] = newTotalCapacity;
             
-            // Debug.Log($"对象池 {poolKey} 已扩容，新增 {expandCount} 个对象，总容量: {newTotalCapacity}，当前空闲: {pool.Count}");
+            //Debug.Log($"对象池 {poolKey} 已扩容，新增 {expandCount} 个对象，总容量: {newTotalCapacity}，当前空闲: {pool.Count}");
         }
     }
 
@@ -123,9 +123,51 @@ public class Global_ObjectPool : Singleton<Global_ObjectPool>
     /// <param name="item">要回收的物品</param>
     public void Recycle(GameObject item)
     {
+        if (item == null || !item) return; // 安全检查：确保物品存在
+        
         string poolKey = item.name.Replace("(Clone)", ""); // 移除克隆后缀，匹配预制体名
-        item.SetActive(false);
-        item.transform.SetParent(transform); // 归位到对象池父物体
+        
+        // 先保存当前状态
+        bool wasActive = item.activeSelf;
+        
+        // 禁用物品
+        if (wasActive)
+        {
+            item.SetActive(false);
+        }
+        
+        // 先解除当前父物体关系
+        try
+        {
+            if (item.transform.parent != null)
+            {
+                item.transform.SetParent(null);
+            }
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogWarning($"回收物品时解除父物体关系失败：{e.Message}");
+        }
+        
+        // 再设置为对象池的子物体
+        try
+        {
+            // 直接设置父物体，不使用延迟调用
+            // 确保对象池游戏对象是活跃的
+            if (gameObject.activeInHierarchy)
+            {
+                item.transform.SetParent(transform); // 归位到对象池父物体
+            }
+            else
+            {
+                // 如果对象池不活跃，暂时不设置父物体
+                Debug.LogWarning($"对象池游戏对象不活跃，暂时不设置父物体");
+            }
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogWarning($"回收物品时设置父物体失败：{e.Message}");
+        }
 
         // 确保池存在，再放回
         if (ObjectPool.ContainsKey(poolKey))
@@ -136,7 +178,7 @@ public class Global_ObjectPool : Singleton<Global_ObjectPool>
         {
             // 未初始化的池：直接销毁
             Destroy(item);
-            Debug.Log($"回收一个不在物品池的物品：{poolKey}");
+            //  Debug.LogWarning($"回收一个不在物品池的物品：{poolKey}");
         }
     }
 
