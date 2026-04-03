@@ -7,28 +7,28 @@ public class AimPointAttack : MonoBehaviour
     [Header("旋转参数")]
     public float rotationSpeed = 180f; // 旋转速度，单位：度/秒
     
-    [Header("剑参数")]
-    public GameObject SwordPrefab; // 剑预制体
+    [Header("魔法珠参数")]
+    public GameObject SwordPrefab; // 魔法珠预制体
     public float xMin = 20f; // x轴最小值
     public float xMax = 30f; // x轴最大值
     public float yMin = 21.8f; // y轴最小值
     public float yMax = 32.7f; // y轴最大值
     public float zMin = 34.4f; // z轴最小值
     public float zMax = 51.6f; // z轴最大值
-    public float SwordSpeed = 20f; // 剑飞行速度
-    public float spawnDelayMin = 1f; // 生成剑的最小延迟时间
-    public float spawnDelayMax = 2f; // 生成剑的最大延迟时间
-    public float reuseDelayMin = 0.1f; // 再次召唤剑刃的最小延迟时间
-    public float reuseDelayMax = 0.5f; // 再次召唤剑刃的最大延迟时间
+    public float SwordSpeed = 20f; // 魔法珠飞行速度
+    public float spawnDelayMin = 1f; // 生成魔法珠的最小延迟时间
+    public float spawnDelayMax = 2f; // 生成魔法珠的最大延迟时间
+    public float reuseDelayMin = 0.1f; // 再次召唤魔法珠的最小延迟时间
+    public float reuseDelayMax = 0.5f; // 再次召唤魔法珠的最大延迟时间
     
     [Header("爆炸动画")]
     public Sprite[] markerSprites; // 瞄准点精灵数组（4张：1张瞄准点 + 3张爆炸动画）
     public float explosionFrameInterval = 10f; // 爆炸动画帧间隔
     
-    public GameObject Sword; // 当前剑
+    public GameObject Sword; // 当前魔法珠
     private int frameCounter = 0; // 帧计数器
     private readonly Vector3 CAMERA_POSITION = new (0, 0, -10f); // 摄像头位置（常量）
-    private readonly float fadeInDuration = 0.5f; // 剑的淡入时间
+    private readonly float fadeInDuration = 0.5f; // 魔法珠的淡入时间
     private SpriteRenderer spriteRenderer; // 瞄准点的SpriteRenderer组件
     
     void OnDisable()
@@ -36,7 +36,7 @@ public class AimPointAttack : MonoBehaviour
         // 取消所有Invoke调用
         CancelInvoke();
         
-        // 当瞄准点被回收时，回收剑到对象池
+        // 当瞄准点被回收时，回收神秘珠到对象池
         if (Sword != null && Global_ObjectPool.Instance != null)
         {
             Global_ObjectPool.Instance.Recycle(Sword);
@@ -56,14 +56,14 @@ public class AimPointAttack : MonoBehaviour
     }
     
     /// <summary>
-    /// 从对象池获取剑
+    /// 从对象池获取魔法珠
     /// </summary>
     private void SpawnSword()
     {
         // 检查游戏对象是否激活
         if (!gameObject.activeInHierarchy)
         {
-            Debug.LogWarning($"[AimPointAttack] 游戏对象未激活，跳过生成剑");
+            // Debug.LogWarning($"[AimPointAttack] 游戏对象未激活，跳过生成魔法珠");
             return;
         }
         
@@ -80,7 +80,7 @@ public class AimPointAttack : MonoBehaviour
             }
             else
             {
-                Debug.LogWarning("[AimPointAttack] 无法从对象池获取剑！");
+                Debug.LogWarning("[AimPointAttack] 无法从对象池获取魔法珠！");
             }
         }
         else
@@ -118,9 +118,9 @@ public class AimPointAttack : MonoBehaviour
     }
     
     /// <summary>
-    /// 剑的淡入协程
+    /// 魔法珠的淡入协程
     /// </summary>
-    /// <param name="sword">剑对象</param>
+    /// <param name="sword">魔法珠对象</param>
     private IEnumerator FadeInSword(GameObject sword)
     {
         if (sword == null) yield break;
@@ -150,7 +150,7 @@ public class AimPointAttack : MonoBehaviour
         // 持续旋转瞄准点
         transform.Rotate(0f, 0f, rotationSpeed * Time.deltaTime);
         
-        // 每6帧更新一次剑状态
+        // 每6帧更新一次神秘珠状态
         frameCounter++;
         if (frameCounter >= 6)
         {
@@ -160,21 +160,21 @@ public class AimPointAttack : MonoBehaviour
     }
     
     /// <summary>
-    /// 更新剑状态
+    /// 更新魔法珠状态
     /// </summary>
     private void UpdateSword()
     {
         if (Sword == null)
         {
-            // 剑为空时不输出警告，避免日志刷屏
+            // 魔法珠为空时不输出警告，避免日志刷屏
             return;
         }
         
-        // 计算剑到瞄准点的方向和距离
+        // 计算魔法珠到瞄准点的方向和距离
         Vector3 direction = (transform.position - Sword.transform.position).normalized;
         float distance = Vector3.Distance(Sword.transform.position, transform.position);
         
-        // 检查剑是否到达目的地
+        // 检查魔法珠是否到达目的地
         if (distance < 0.5f) // 到达阈值
         {
             // 计算伤害
@@ -183,7 +183,7 @@ public class AimPointAttack : MonoBehaviour
             // 对敌人造成伤害
             DealDamageToEnemy(damage);
             
-            // 回收剑到对象池
+            // 回收魔法珠到对象池
             if (Global_ObjectPool.Instance != null)
             {
                 Global_ObjectPool.Instance.Recycle(Sword);
@@ -199,11 +199,10 @@ public class AimPointAttack : MonoBehaviour
             return;
         }
         
-        // 调整剑的朝向，使剑尖朝向敌人（敌人在瞄准点位置）
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        Sword.transform.rotation = Quaternion.Euler(0, 0, angle);
+        // 魔法珠旋转
+        Sword.transform.Rotate(0f, 0f, 360f * Time.deltaTime); // 每秒旋转360度
         
-        // 剑向瞄准点飞行
+        // 魔法珠向瞄准点飞行
         Vector3 moveAmount = direction * SwordSpeed * Time.deltaTime * 10f; // 乘以10以补偿每10帧更新一次
         Sword.transform.position += moveAmount;
     }
@@ -250,40 +249,35 @@ public class AimPointAttack : MonoBehaviour
     /// </summary>
     private IEnumerator PlayExplosionAnimation()
     {
+        // 确保 spriteRenderer 已初始化
+        if (spriteRenderer == null)
+        {
+            spriteRenderer = GetComponent<SpriteRenderer>();
+        }
+        
         // 检查精灵数组和SpriteRenderer是否有效
-        if (spriteRenderer == null || markerSprites == null || markerSprites.Length < 4)
+        if (spriteRenderer != null && markerSprites != null && markerSprites.Length >= 4)
         {
-            // 延迟一段时间后再次召唤剑刃
-            float reuseDelay = Random.Range(reuseDelayMin, reuseDelayMax);
-            yield return new WaitForSeconds(reuseDelay);
+            // 播放爆炸动画（第2、3、4帧）
+            for (int i = 1; i < 4; i++)
+            {
+                spriteRenderer.sprite = markerSprites[i];
+                // 等待指定的帧间隔
+                for (int j = 0; j < explosionFrameInterval; j++)
+                {
+                    yield return null;
+                }
+            }
             
-            // 再次召唤剑刃
-            if (gameObject.activeInHierarchy)
-            {
-                SpawnSword();
-            }
-            yield break;
+            // 切回第1帧（瞄准点）
+            spriteRenderer.sprite = markerSprites[0];
         }
         
-        // 播放爆炸动画（第2、3、4帧）
-        for (int i = 1; i < 4; i++)
-        {
-            spriteRenderer.sprite = markerSprites[i];
-            // 等待指定的帧间隔
-            for (int j = 0; j < explosionFrameInterval; j++)
-            {
-                yield return null;
-            }
-        }
-        
-        // 切回第1帧（瞄准点）
-        spriteRenderer.sprite = markerSprites[0];
-        
-        // 延迟一段时间后再次召唤剑刃
+        // 延迟一段时间后再次召唤魔法珠
         float randomDelay = Random.Range(reuseDelayMin, reuseDelayMax);
         yield return new WaitForSeconds(randomDelay);
         
-        // 再次召唤剑刃
+        // 再次召唤魔法珠
         if (gameObject.activeInHierarchy)
         {
             SpawnSword();
@@ -291,16 +285,19 @@ public class AimPointAttack : MonoBehaviour
     }
 
     /// <summary>
-    /// 设置剑预制件
+    /// 设置魔法珠预制件
     /// </summary>
-    /// <param name="prefab">剑预制件</param>
+    /// <param name="prefab">魔法珠预制件</param>
     public void SetSwordPrefab(GameObject prefab)
     {
-        // 取消之前的Invoke调用，避免重复生成剑
+        // 取消之前的Invoke调用，避免重复生成魔法珠
         CancelInvoke(nameof(SpawnSword));
         
+        // 确保 spriteRenderer 已初始化
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        
         SwordPrefab = prefab;
-        // 如果剑还未生成，立即生成
+        // 如果魔法珠还未生成，立即生成
         if (Sword == null)
         {
             SpawnSword();

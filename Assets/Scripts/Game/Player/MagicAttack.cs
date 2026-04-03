@@ -11,17 +11,26 @@ public class MagicAttack : MonoBehaviour
     [Header("标记预制体")]
     public GameObject markerPrefab; // 瞄准标记预制体
     
-    [Header("剑预制体")]
-    public GameObject swordPrefab; // 剑预制体
+    [Header("神秘珠预制体")]
+    public GameObject swordPrefab; // 神秘珠预制体
+    
+    [Header("场景对象")]
+    public GameObject evilEye; // 场景中的恶魔之眼对象
+    public GameObject evilShadow; // 场景中的 EvilShadow 对象
     
     [Header("生成参数")]
     public float spawnDelayMin = 1f; // 生成瞄准点的最小延迟时间
     public float spawnDelayMax = 2f; // 生成瞄准点的最大延迟时间
     public float markerSpawnChance = 0.4f; // 为敌人添加瞄准点的概率（40%）
+    public float switchToEvilEyeTime = 13f; // 切换到恶魔之眼攻击的时间（秒）
+    public float evilEyeFadeDuration = 1f; // 恶魔之眼淡入淡出时间
+    public float evilShadowFadeOutDuration = 3f; // EvilShadow 淡出时间
     
     private readonly float fadeInDuration = 1f; // 标记淡入时间
     
     private bool isMagicActive = false; // 魔法态是否激活
+    private bool isEvilEyeActive = false; // 恶魔之眼是否激活
+    private float magicTimer = 0f; // 魔法态计时器
     private List<GameObject> activeMarkers = new (); // 当前活跃的标记列表
     private int frameCounter = 0; // 帧计数器，用于每10帧扫描一次敌人
 
@@ -33,7 +42,33 @@ public class MagicAttack : MonoBehaviour
     void OnEnable()
     {
         isMagicActive = false;
+        isEvilEyeActive = false;
+        magicTimer = 0f;
         frameCounter = 0;
+        
+        // 确保恶魔之眼和 EvilShadow 初始状态为禁用
+        if (evilEye != null)
+        {
+            evilEye.SetActive(false);
+            // 确保初始透明度为0
+            if (evilEye.TryGetComponent<SpriteRenderer>(out var evilEyeRenderer))
+            {
+                Color color = evilEyeRenderer.color;
+                color.a = 0f;
+                evilEyeRenderer.color = color;
+            }
+        }
+        if (evilShadow != null)
+        {
+            evilShadow.SetActive(false);
+            // 确保初始透明度为0
+            if (evilShadow.TryGetComponent<SpriteRenderer>(out var evilShadowRenderer))
+            {
+                Color color = evilShadowRenderer.color;
+                color.a = 0f;
+                evilShadowRenderer.color = color;
+            }
+        }
         
         // 2秒后进入魔法态
         Invoke(nameof(EnterMagicState), 2f);
@@ -47,25 +82,57 @@ public class MagicAttack : MonoBehaviour
         
         // 清理所有活跃的标记
         ClearAllMarkers();
+        
+        // 调用恶魔之眼的淡出方法
+        if (evilEye != null && evilEye.activeInHierarchy)
+        {
+            EvilEyeAttack evilEyeAttack = evilEye.GetComponent<EvilEyeAttack>();
+            if (evilEyeAttack != null)
+            {
+                evilEyeAttack.StartFadeOut();
+            }
+        }
+        
+        // 调用 EvilShadow 的淡出方法
+        if (evilShadow != null && evilShadow.activeInHierarchy)
+        {
+            EvilShadow evilShadowScript = evilShadow.GetComponent<EvilShadow>();
+            if (evilShadowScript != null)
+            {
+                evilShadowScript.StartFadeOut();
+            }
+        }
     }
     
     void Update()
     {
-        // 当魔法态激活时，每10帧扫描一次敌人
-        if (isMagicActive && Input.GetKey(KeyCode.Z))
+        // 当魔法态激活且未切换到恶魔之眼时，更新计时器
+        if (isMagicActive && !isEvilEyeActive)
         {
-            frameCounter++;
-            if (frameCounter >= 10)
+            magicTimer += Time.deltaTime;
+            
+            // 检查是否达到切换时间
+            if (magicTimer >= switchToEvilEyeTime)
             {
-                MarkAllEnemies();
-                frameCounter = 0;
+                SwitchToEvilEyeAttack();
+            }
+            
+            // 每10帧扫描一次敌人
+            if (Input.GetKey(KeyCode.Z))
+            {
+                frameCounter++;
+                if (frameCounter >= 10)
+                {
+                    MarkAllEnemies();
+                    frameCounter = 0;
+                }
             }
         }
     }
 
     private void InitPool()
     {
-        // 初始化标记对象池和剑对象池
+        // 初始化标记对象池和神秘珠对象池
         if (Global_ObjectPool.Instance != null)
         {
             // 初始化标记对象池
@@ -78,14 +145,14 @@ public class MagicAttack : MonoBehaviour
                 Debug.LogError("MagicAttack: markerPrefab 未设置，无法初始化标记对象池！");
             }
             
-            // 初始化剑对象池，数量与标记对象池相同
+            // 初始化神秘珠对象池，数量与标记对象池相同
             if (swordPrefab != null)
             {
                 Global_ObjectPool.Instance.InitPool(swordPrefab, 10);
             }
             else
             {
-                Debug.LogError("MagicAttack: swordPrefab 未设置，无法初始化剑对象池！");
+                Debug.LogError("MagicAttack: swordPrefab 未设置，无法初始化神秘珠对象池！");
             }
         }
         else
@@ -99,7 +166,7 @@ public class MagicAttack : MonoBehaviour
     /// </summary>
     private void EnterMagicState()
     {
-        Time.timeScale = 0.5f;
+        Time.timeScale = 0.9f;
         isMagicActive = true;
     }
     
@@ -212,7 +279,30 @@ public class MagicAttack : MonoBehaviour
             spriteRenderer.color = new Color(1, 1, 1, 0f);
         }
         
-        // 将剑预制件传递给AimPointAttack脚本
+        // 标记敌人
+        enemy.aimMarker = marker;
+        enemy.isMarked = true;
+        
+        // 添加到活跃标记列表
+        activeMarkers.Add(marker);
+        
+        // 随机延迟开始淡入动画
+        float randomDelay = Random.Range(spawnDelayMin, spawnDelayMax);
+        StartCoroutine(DelayedFadeIn(marker, randomDelay, swordPrefab));
+    }
+    
+    /// <summary>
+    /// 延迟淡入协程
+    /// </summary>
+    /// <param name="marker">标记对象</param>
+    /// <param name="delay">延迟时间</param>
+    /// <param name="swordPrefab">神秘珠预制件</param>
+    private IEnumerator DelayedFadeIn(GameObject marker, float delay, GameObject swordPrefab)
+    {
+        yield return new WaitForSeconds(delay);
+        yield return StartCoroutine(FadeInMarker(marker));
+        
+        // 淡入完成后设置神秘珠预制件并生成神秘珠
         if (swordPrefab != null)
         {
             if (marker.TryGetComponent<AimPointAttack>(out var aimPointAttack))
@@ -224,28 +314,6 @@ public class MagicAttack : MonoBehaviour
                 Debug.LogWarning("[MagicAttack] 标记预制体没有AimPointAttack组件！");
             }
         }
-        
-        // 标记敌人
-        enemy.aimMarker = marker;
-        enemy.isMarked = true;
-        
-        // 添加到活跃标记列表
-        activeMarkers.Add(marker);
-        
-        // 随机延迟开始淡入动画
-        float randomDelay = Random.Range(spawnDelayMin, spawnDelayMax);
-        StartCoroutine(DelayedFadeIn(marker, randomDelay));
-    }
-    
-    /// <summary>
-    /// 延迟淡入协程
-    /// </summary>
-    /// <param name="marker">标记对象</param>
-    /// <param name="delay">延迟时间</param>
-    private IEnumerator DelayedFadeIn(GameObject marker, float delay)
-    {
-        yield return new WaitForSeconds(delay);
-        StartCoroutine(FadeInMarker(marker));
     }
     
     /// <summary>
@@ -288,5 +356,41 @@ public class MagicAttack : MonoBehaviour
             }
         }
         activeMarkers.Clear();
+    }
+    
+    /// <summary>
+    /// 切换到恶魔之眼攻击方式
+    /// </summary>
+    private void SwitchToEvilEyeAttack()
+    {
+        // 清理所有活跃的标记
+        ClearAllMarkers();
+        
+        // 激活并淡入恶魔之眼
+        if (evilEye != null)
+        {
+            evilEye.SetActive(true);
+            if (evilEye.TryGetComponent<EvilEyeAttack>(out var evilEyeAttack))
+            {
+                evilEyeAttack.StartFadeIn();
+            }
+        }
+        else{
+            Debug.LogWarning($"[MagicAttack] 恶魔之眼对象 {evilEye.name} 没有EvilEyeAttack组件");
+        }
+        
+        // 激活 EvilShadow
+        if (evilShadow != null)
+        {
+            evilShadow.SetActive(true);
+            EvilShadow evilShadowScript = evilShadow.GetComponent<EvilShadow>();
+            if (evilShadowScript != null)
+            {
+                evilShadowScript.StartFadeIn();
+            }
+        }
+        
+        // 切换状态
+        isEvilEyeActive = true;
     }
 }

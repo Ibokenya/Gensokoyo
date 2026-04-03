@@ -107,7 +107,7 @@ MonoBehaviour:
   zMax: 51.6
   SwordSpeed: 25
   spawnDelayMin: 1
-  spawnDelayMax: 2
+  spawnDelayMax: 1.6
   reuseDelayMin: 0.1
   reuseDelayMax: 0.5
   markerSprites:
@@ -115,5 +115,5 @@ MonoBehaviour:
   - {fileID: 329367379, guid: f3c518721be299f4b951945e409193d9, type: 3}
   - {fileID: -994780330, guid: f3c518721be299f4b951945e409193d9, type: 3}
   - {fileID: 1620580076, guid: f3c518721be299f4b951945e409193d9, type: 3}
-  explosionFrameInterval: 10
+  explosionFrameInterval: 20
   Sword: {fileID: 0}
