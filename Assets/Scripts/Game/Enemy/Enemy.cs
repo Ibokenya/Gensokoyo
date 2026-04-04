@@ -6,6 +6,7 @@ public class Enemy : MonoBehaviour
 {
     [Header("基础属性")]
     public int Hp = 100;// 敌人生命值
+    public int maxHp = 100;// 敌人最大生命值
 
     [Header("移动参数")]
     public float MoveSpeed = 5f;// 敌人移动速度
@@ -49,6 +50,10 @@ public class Enemy : MonoBehaviour
     public GameObject aimMarker; // 瞄准标记对象
     public bool isMarked = false; // 是否已被标记
 
+    // 颜色控制
+    private Color originalColor; // 原始颜色
+    private float redIntensity = 0f; // 红色强度
+
     protected virtual void OnEnable()
     {
         isFirstMoveCompleted = false;
@@ -59,6 +64,7 @@ public class Enemy : MonoBehaviour
         flickerTimer = 0f;
         fadeTimer = 0f;
         isMarked = false; // 重置标记状态
+        maxHp = Hp;
 
         if (rb2D != null)
         {
@@ -66,7 +72,12 @@ public class Enemy : MonoBehaviour
         }
 
         // 初始化各种移动模式
-        if (moveMode == MoveMode.Track)
+        if (moveMode == MoveMode.Path)
+        {
+            Debug.Log(transform.name + "初始化路径移动模式");
+            InitializePath();
+        }
+        else if (moveMode == MoveMode.Track)
         {
             InitializeTracking();
         }
@@ -78,6 +89,9 @@ public class Enemy : MonoBehaviour
         {
             InitializeGravity();
         }
+
+        // 重置颜色
+        ResetColor();
     }
 
     protected virtual void Update()
@@ -239,13 +253,21 @@ public class Enemy : MonoBehaviour
             return;
         }
 
-        // 直接计算目标方向并平滑移动
-        Vector2 targetDirection = (targetPoint.transform.position - transform.position).normalized;
-        moveDirection = targetDirection;
-
-        if (rb2D != null)
+        // 检查是否为两个点的简单路径，如果是则直接直线移动
+        if (MovePoints.Count == 2)
         {
-            rb2D.velocity = moveDirection * MoveSpeed;
+            MoveToNextPointLinear(targetPoint);
+        }
+        else
+        {
+            // 多点路径使用平滑移动
+            Vector2 targetDirection = (targetPoint.transform.position - transform.position).normalized;
+            moveDirection = targetDirection;
+
+            if (rb2D != null)
+            {
+                rb2D.velocity = moveDirection * MoveSpeed;
+            }
         }
 
         if (Vector2.Distance(transform.position, targetPoint.transform.position) < ArrivalDistance)
@@ -263,6 +285,32 @@ public class Enemy : MonoBehaviour
                 isFirstMoveCompleted = true;
             }
         }
+    }
+
+    /// <summary>
+    /// 直线移动到目标点（用于两个点的简单路径）
+    /// </summary>
+    protected virtual void MoveToNextPointLinear(GameObject targetPoint)
+    {
+        if (rb2D == null)
+        {
+            return;
+        }
+
+        Vector2 currentPos = transform.position;
+        Vector2 targetPos = targetPoint.transform.position;
+        Vector2 direction = (targetPos - currentPos).normalized;
+
+        rb2D.velocity = direction * MoveSpeed;
+        moveDirection = direction;
+    }
+
+    /// <summary>
+    /// 初始化路径移动模式
+    /// </summary>
+    protected virtual void InitializePath()
+    {
+        UpdateMoveDirection();
     }
 
     /// <summary>
@@ -414,5 +462,43 @@ public class Enemy : MonoBehaviour
         {
             Delete();
         }
+    }
+
+    /// <summary>
+    /// 重置颜色
+    /// </summary>
+    public void ResetColor()
+    {
+        if (spriteRenderer != null)
+        {
+            originalColor = new Color(1f, 1f, 1f, 1f);
+            spriteRenderer.color = originalColor;
+            redIntensity = 0f;
+        }
+    }
+
+    /// <summary>
+    /// 更新红色度（基于剩余血量）
+    /// </summary>
+    /// <param name="currentHp">当前血量</param>
+    /// <param name="maxHpValue">最大血量</param>
+    public void UpdateRedIntensity()
+    {
+        if (spriteRenderer == null)
+        {
+            return;
+        }
+
+        // 计算血量百分比
+        float hpPercentage = Mathf.Clamp01((float)Hp / maxHp);
+
+        // 计算红色度（0血时红80%）
+        redIntensity = (1f - hpPercentage) * 0.8f;
+
+        // 应用红色度：默认初色为1,1,1，要求红色度为0则g与b都不降，要求红色度0.25则降低g与b0.25的值
+        Color newColor = originalColor;
+        newColor.g = Mathf.Clamp01(originalColor.g - redIntensity);
+        newColor.b = Mathf.Clamp01(originalColor.b - redIntensity);
+        spriteRenderer.color = newColor;
     }
 }

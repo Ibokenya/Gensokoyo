@@ -54,15 +54,18 @@ TagManager:
   - name: Items
     uniqueID: 2389902059
     locked: 0
-  - name: Player&Enemy
+  - name: Enemy
     uniqueID: 1581323879
+    locked: 0
+  - name: Effect
+    uniqueID: 1817709973
     locked: 0
   - name: Bullet
     uniqueID: 4288645667
     locked: 0
+  - name: Player
+    uniqueID: 2779579707
+    locked: 0
   - name: PanDing
     uniqueID: 2698055243
-    locked: 0
-  - name: Effect
-    uniqueID: 1817709973
     locked: 0

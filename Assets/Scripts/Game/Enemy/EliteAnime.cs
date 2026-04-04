@@ -84,6 +84,13 @@ public class EliteAnime : Enemy
             return;
         }
 
+        // 检查是否为两个点的简单路径，如果是则直接直线移动（不使用贝塞尔）
+        if (MovePoints.Count == 2)
+        {
+            MoveToNextPointLinear(MovePoints[currentPointIndex]);
+            return;
+        }
+
         if (isMovingAlongBezier)
         {
             t += Time.deltaTime * bezierSpeed;
@@ -125,6 +132,38 @@ public class EliteAnime : Enemy
                     SwitchToSecondaryMoveMode();
                     isFirstMoveCompleted = true;
                 }
+            }
+        }
+    }
+
+    /// <summary>
+    /// 直线移动到目标点（用于两个点的简单路径）
+    /// </summary>
+    protected override void MoveToNextPointLinear(GameObject targetPoint)
+    {
+        if (rb2D == null)
+        {
+            return;
+        }
+
+        Vector2 currentPos = transform.position;
+        Vector2 targetPos = targetPoint.transform.position;
+        Vector2 direction = (targetPos - currentPos).normalized;
+
+        rb2D.velocity = direction * MoveSpeed;
+        moveDirection = direction;
+
+        // 检查是否到达目标点
+        if (Vector2.Distance(currentPos, targetPos) < ArrivalDistance)
+        {
+            currentPointIndex++;
+            UpdateMoveDirection();
+
+            if (currentPointIndex >= MovePoints.Count)
+            {
+                rb2D.velocity = Vector2.zero;
+                SwitchToSecondaryMoveMode();
+                isFirstMoveCompleted = true;
             }
         }
     }

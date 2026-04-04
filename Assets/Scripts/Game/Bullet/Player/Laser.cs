@@ -31,6 +31,8 @@ public class Laser : MonoBehaviour
 
     private float TimeClock = 0f;// 动画时钟
 
+    private int LaserInterval = 5;// 激光伤害间隔帧（每秒12帧出伤）
+
     void Awake()
     {
         // 确保获取到 SpriteRenderer 组件
@@ -67,7 +69,12 @@ public class Laser : MonoBehaviour
         UpdateLaserEndPos();
         UpdateLaserVisual();
         UpdateLaserAnime();
-        UpdateLaserDamage();
+        LaserInterval-=1;
+        if(LaserInterval == 0)
+        {
+            UpdateLaserDamage();
+            LaserInterval = 5;
+        }   
     }
     
     /// <summary>
@@ -113,9 +120,14 @@ public class Laser : MonoBehaviour
         // 对所有命中的物体造成伤害
         foreach (RaycastHit2D hit in hits)
         {
-            if (hit.collider != null)
+            if (hit.collider != null && hit.collider.CompareTag("Enemy"))
             {
-                // 这里可以添加伤害逻辑
+                // 对敌人造成伤害
+                Enemy enemy = hit.collider.GetComponent<Enemy>();
+                if (enemy != null)
+                {
+                    enemy.Damage(damage);
+                }
             }
         }
     }
@@ -161,19 +173,6 @@ public class Laser : MonoBehaviour
                 CurrentIndex = 0;
                 
             spriteRenderer.sprite = LaserSprites[CurrentIndex];
-        }
-    }
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if(collision.CompareTag("Enemy"))
-        {
-            // 伤害敌人
-            Enemy enemy = collision.GetComponent<Enemy>();
-            if (enemy != null)
-            {
-                enemy.Damage(damage);
-            }
         }
     }
 }

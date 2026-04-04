@@ -30,7 +30,7 @@ public class Global_GameManager : Singleton<Global_GameManager>
     public int HpPiece;          // 残机碎片数
     public int BombCount;        // 残B数
     public int BombPiece;        // 残B碎片数
-    public int Power = 0;        // 灵力（火力等级）
+    public int Power = 100;        // 灵力（火力等级）
     public int Grade;            // 得点
     public int Graze;            // 擦弹数
     public int Score;            // 得分数
@@ -70,7 +70,7 @@ public class Global_GameManager : Singleton<Global_GameManager>
         HpPiece = 0;                  // 残机碎片数
         BombCount = 2;                // 残B数
         BombPiece = 0;                // 残B碎片数
-        Power = Mathf.Clamp(0,0,400); // 灵力值
+        Power = Mathf.Clamp(100,0,400); // 灵力值
         Grade = 0;                    // 得点
         Graze = 0;                    // 擦弹数
         Score = 0;                    // 得分数
