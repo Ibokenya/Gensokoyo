@@ -76,7 +76,6 @@ public class EvilShadow : MonoBehaviour
             spriteRenderer.color = originalColor;
             yield return null;
         }
-        Debug.Log($"[EvilShadow] 淡入完成，透明度为 {originalColor.a}");
         // 确保最终透明度为 targetAlpha
         originalColor.a = targetAlpha;
         spriteRenderer.color = originalColor;
@@ -120,6 +119,5 @@ public class EvilShadow : MonoBehaviour
         // 确保最终透明度为0并禁用
         originalColor.a = 0f;
         spriteRenderer.color = originalColor;
-        gameObject.SetActive(false);
     }
 }

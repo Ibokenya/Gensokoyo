@@ -213,14 +213,14 @@ public class AimPointAttack : MonoBehaviour
     /// <returns>计算后的伤害值</returns>
     private int CalculateDamage()
     {
-        // 基础伤害80，加上根据GameManager.power计算的额外伤害
-        int baseDamage = 80;
+        // 基础伤害60，加上根据GameManager.power计算的额外伤害
+        int baseDamage = 60;
         int powerBonus = 0;
         
         // 尝试获取GameManager实例并计算额外伤害
         if (Global_GameManager.Instance != null)
         {
-            powerBonus = (int)(Global_GameManager.Instance.Power / 100f) * 25;
+            powerBonus = (Global_GameManager.Instance.Power / 100) * 25;
         }
         
         return baseDamage + powerBonus;

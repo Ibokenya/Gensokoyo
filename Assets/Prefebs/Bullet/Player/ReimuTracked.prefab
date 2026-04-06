@@ -101,7 +101,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TrackSpeed: 8
   TurnSpeed: 10
-  damage: 7
+  damage: 6
 --- !u!50 &1136223370996281244
 Rigidbody2D:
   serializedVersion: 4

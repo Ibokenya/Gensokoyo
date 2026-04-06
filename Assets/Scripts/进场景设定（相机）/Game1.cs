@@ -9,12 +9,11 @@ public class Game1 : MonoBehaviour
     
     void OnEnable()
     {
-        Global_GameManager.Instance.state = State.Gaming;
         
         // 播放指定的BGM
         if (Global_AudioManager.Instance != null && bgmClip != null)
         {
-            Global_AudioManager.Instance.PlaySFX(bgmClip,false,0.5f);
+            Global_AudioManager.Instance.PlaySFX(bgmClip,false,0.2f);
         }
 
         Invoke(nameof(FadeOutMusic), 118f);// 118秒后淡出BGM
@@ -22,7 +21,7 @@ public class Game1 : MonoBehaviour
 
     void OnDisable()
     {
-        clearAllBullet.ClearScreenBullet();
+        clearAllBullet.ClearScreenBullet(false);
     }
 
     void FadeOutMusic()

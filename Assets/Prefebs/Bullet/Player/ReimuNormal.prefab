@@ -100,7 +100,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 9
-  damage: 12
+  damage: 10
   isNeedle: 0
 --- !u!50 &1894599557579401851
 Rigidbody2D:

@@ -15,6 +15,7 @@ public class AboutItem : MonoBehaviour
     public GameObject player;
     private int CheckInterval = 10;
     private bool isCollecting = false;
+    public AudioClip collectClip;
 
     void OnEnable()
     {
@@ -59,7 +60,6 @@ public class AboutItem : MonoBehaviour
     /// </summary>
     void OnTriggerEnter2D(Collider2D collision)
     {
-        Debug.Log(transform.name +"碰撞到"+collision.name);
         if (!isCollecting)
         {
             FlyToPlayer(collision.transform);
@@ -141,6 +141,11 @@ public class AboutItem : MonoBehaviour
         
         // 道具到达玩家位置，触发效果
         Effect();
+        // 播放收集音效
+        if (Global_AudioManager.Instance != null && collectClip != null)
+        {
+            Global_AudioManager.Instance.PlaySFX(collectClip,false);
+        }
         
         // 销毁道具
         Global_ObjectPool.Instance.Recycle(this.gameObject);
@@ -197,5 +202,10 @@ public class AboutItem : MonoBehaviour
                 FlyToPlayer(playerTransform, true);
             }
         }
+    }
+
+    public void SetCollectClip(AudioClip clip)
+    {
+        collectClip = clip;
     }
 }

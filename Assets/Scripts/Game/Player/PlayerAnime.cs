@@ -213,7 +213,7 @@ public class PlayerAnime : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.LeftShift))
         {
             // 移动速度减半
-            MoveSpeed = 2.5f;
+            MoveSpeed *= 0.4f;
             // 显示判定点并开始动画
             StartPandingAnime();
         }
@@ -296,8 +296,6 @@ public class PlayerAnime : MonoBehaviour
         TimeClock += Time.deltaTime;
 
         // 计算当前应该显示的帧数
-        // 假设游戏运行在60帧，Time.deltaTime约为1/60秒
-        // 我们使用帧数来控制动画速度
         int currentFrame = Mathf.FloorToInt(TimeClock * 60f);
 
         // 检查是否需要切换动画帧

@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6387986148332591516}
   - component: {fileID: 8832087177430399092}
   - component: {fileID: 4773338738208415288}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: "\u6697\u5F71\u5F393"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -175,7 +175,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78ac36358a37e0d4f8e3d78da2fa561f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 10
+  damage: 8
   moveSpeed: 7
   absorbDistance: 1.2
   isAbsorbed: 0

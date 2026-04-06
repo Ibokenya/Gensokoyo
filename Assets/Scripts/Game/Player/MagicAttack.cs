@@ -34,6 +34,8 @@ public class MagicAttack : MonoBehaviour
     private List<GameObject> activeMarkers = new (); // 当前活跃的标记列表
     private int frameCounter = 0; // 帧计数器，用于每10帧扫描一次敌人
 
+    public EvilEyeAttack evilEyeAttack; // 恶魔之眼攻击脚本
+
     void Awake()
     {
         InitPool();
@@ -46,10 +48,9 @@ public class MagicAttack : MonoBehaviour
         magicTimer = 0f;
         frameCounter = 0;
         
-        // 确保恶魔之眼和 EvilShadow 初始状态为禁用
+        // 确保恶魔之眼和 EvilShadow 初始透明度为0
         if (evilEye != null)
         {
-            evilEye.SetActive(false);
             // 确保初始透明度为0
             if (evilEye.TryGetComponent<SpriteRenderer>(out var evilEyeRenderer))
             {
@@ -60,7 +61,6 @@ public class MagicAttack : MonoBehaviour
         }
         if (evilShadow != null)
         {
-            evilShadow.SetActive(false);
             // 确保初始透明度为0
             if (evilShadow.TryGetComponent<SpriteRenderer>(out var evilShadowRenderer))
             {
@@ -84,17 +84,18 @@ public class MagicAttack : MonoBehaviour
         ClearAllMarkers();
         
         // 调用恶魔之眼的淡出方法
-        if (evilEye != null && evilEye.activeInHierarchy)
+        if (evilEye != null)
         {
-            EvilEyeAttack evilEyeAttack = evilEye.GetComponent<EvilEyeAttack>();
-            if (evilEyeAttack != null)
+            if (evilEye.TryGetComponent<EvilEyeAttack>(out var evilEyeAttack))
             {
                 evilEyeAttack.StartFadeOut();
+                evilEyeAttack.isFadeInComplete = false;
+                evilEyeAttack.ClearAllLasers();
             }
         }
         
         // 调用 EvilShadow 的淡出方法
-        if (evilShadow != null && evilShadow.activeInHierarchy)
+        if (evilShadow != null)
         {
             EvilShadow evilShadowScript = evilShadow.GetComponent<EvilShadow>();
             if (evilShadowScript != null)
@@ -366,23 +367,24 @@ public class MagicAttack : MonoBehaviour
         // 清理所有活跃的标记
         ClearAllMarkers();
         
-        // 激活并淡入恶魔之眼
+        // 淡入恶魔之眼
         if (evilEye != null)
         {
-            evilEye.SetActive(true);
             if (evilEye.TryGetComponent<EvilEyeAttack>(out var evilEyeAttack))
             {
                 evilEyeAttack.StartFadeIn();
             }
+            else{
+                Debug.LogWarning($"[MagicAttack] 恶魔之眼对象 {evilEye.name} 没有EvilEyeAttack组件");
+            }
         }
         else{
-            Debug.LogWarning($"[MagicAttack] 恶魔之眼对象 {evilEye.name} 没有EvilEyeAttack组件");
+            Debug.LogWarning("[MagicAttack] 恶魔之眼对象未设置");
         }
         
         // 激活 EvilShadow
         if (evilShadow != null)
         {
-            evilShadow.SetActive(true);
             EvilShadow evilShadowScript = evilShadow.GetComponent<EvilShadow>();
             if (evilShadowScript != null)
             {

@@ -195,17 +195,37 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
             }
         }
         
-        // 如果没有可用的，创建新的
-        if (sfxPool.Count < maxSFXPoolSize)
+        // 如果没有可用的，检查是否需要扩容
+        if (sfxPool.Count < 30) // 最大容量限制为30
         {
-            AudioSource newSource = gameObject.AddComponent<AudioSource>();
-            newSource.loop = false;
-            newSource.volume = sfxVolume;
-            sfxPool.Add(newSource);
-            return newSource;
+            // 扩充maxSFXPoolSize个容量
+            int expandCount = maxSFXPoolSize;
+            int newTotalCapacity = sfxPool.Count + expandCount;
+            
+            // 确保不超过30的限制
+            if (newTotalCapacity > 30)
+            {
+                expandCount = 30 - sfxPool.Count;
+                newTotalCapacity = 30;
+            }
+            
+            // 创建新的AudioSource
+            for (int i = 0; i < expandCount; i++)
+            {
+                AudioSource newSource = gameObject.AddComponent<AudioSource>();
+                newSource.loop = false;
+                newSource.volume = sfxVolume;
+                sfxPool.Add(newSource);
+            }
+            
+            Debug.Log($"音效池扩容，新增 {expandCount} 个AudioSource，总容量: {newTotalCapacity}");
+            
+            // 返回第一个新创建的AudioSource
+            return sfxPool[sfxPool.Count - expandCount];
         }
         
-        // 如果达到最大容量，返回第一个（会覆盖正在播放的）
+        // 如果达到最大容量30，返回第一个（会覆盖正在播放的）并发出警告
+        Debug.LogError("音效池已达到最大容量30，将覆盖正在播放的音效");
         return sfxPool[0];
     }
     

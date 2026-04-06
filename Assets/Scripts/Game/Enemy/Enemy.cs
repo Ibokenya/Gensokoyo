@@ -53,6 +53,10 @@ public class Enemy : MonoBehaviour
     // 颜色控制
     private Color originalColor; // 原始颜色
     private float redIntensity = 0f; // 红色强度
+    
+    // 死亡状态
+    private bool isDead = false; // 敌人是否已经死亡
+    private bool isKilled = false; // 敌人是否被击杀（而非自然回收）
 
     protected virtual void OnEnable()
     {
@@ -64,6 +68,8 @@ public class Enemy : MonoBehaviour
         flickerTimer = 0f;
         fadeTimer = 0f;
         isMarked = false; // 重置标记状态
+        isDead = false; // 重置死亡状态
+        isKilled = false; // 重置被击杀标记
         maxHp = Hp;
 
         if (rb2D != null)
@@ -74,7 +80,6 @@ public class Enemy : MonoBehaviour
         // 初始化各种移动模式
         if (moveMode == MoveMode.Path)
         {
-            Debug.Log(transform.name + "初始化路径移动模式");
             InitializePath();
         }
         else if (moveMode == MoveMode.Track)
@@ -168,13 +173,114 @@ public class Enemy : MonoBehaviour
     /// </summary>
     public virtual void Die()
     {
-        // 生成掉落物
-        SpawnItemDrops();
+        // 防止重复调用
+        if (isDead)
+        {
+            return;
+        }
+        
+        isDead = true;
+        isKilled = true; // 标记敌人被击杀
+        // 检查是否满足处决条件
+        if (CheckExecuteCondition())
+        {
+            // 满足处决条件，延迟回收
+            StartCoroutine(DelayedDelete());
+        }
+        else
+        {
+            // 不满足处决条件，立即回收
+            Delete();
+        } 
+    }
+    
+    /// <summary>
+    /// 检查是否满足处决条件
+    /// </summary>
+    /// <returns>是否满足处决条件</returns>
+    private bool CheckExecuteCondition()
+    {
+        // 检查敌人初始血量是否>=700
+        if (maxHp >= 700)
+        {
+            // 查找恶魔之眼攻击脚本实例
+            EvilEyeAttack evilEyeAttack = FindObjectOfType<EvilEyeAttack>();
+            if (evilEyeAttack != null)
+            {
+                // 检查恶魔之眼的透明度是否为1
+                SpriteRenderer evilEyeRenderer = evilEyeAttack.GetComponent<SpriteRenderer>();
+                if (evilEyeRenderer != null && evilEyeRenderer.color.a >= 0.99f)
+                {
+                    // 停止敌人的一切行为
+                    StopEnemyActions();
+                    
+                    // 触发处决效果
+                    evilEyeAttack.ExecuteEnemy(transform.position);
+                    return true;
+                }
+            }
+            else
+            {
+                Debug.LogWarning("未找到恶魔之眼攻击脚本实例");
+            }
+        }
+        return false;
+    }
+    
+    /// <summary>
+    /// 停止敌人的一切行为
+    /// </summary>
+    private void StopEnemyActions()
+    {
+        // 停止移动
+        if (rb2D != null)
+        {
+            rb2D.velocity = Vector2.zero;
+            rb2D.isKinematic = true;
+        }
+        
+        // 禁用碰撞
+        Collider2D[] colliders = GetComponents<Collider2D>();
+        foreach (Collider2D collider in colliders)
+        {
+            collider.enabled = false;
+        }
+        
+        // 禁用动画
+        Animator animator = GetComponent<Animator>();
+        if (animator != null)
+        {
+            animator.enabled = false;
+        }
+        
+        // 禁用脚本
+        MonoBehaviour[] scripts = GetComponents<MonoBehaviour>();
+        foreach (MonoBehaviour script in scripts)
+        {
+            if (script != this)
+            {
+                script.enabled = false;
+            }
+        }
+    }
+    
+    /// <summary>
+    /// 延迟回收敌人
+    /// </summary>
+    private IEnumerator DelayedDelete()
+    {
+        // 等待1秒，让处决动画完成
+        yield return new WaitForSeconds(1f);
         Delete();
     }
 
     public virtual void Delete()
     {
+        // 只有被击杀的敌人才生成掉落物
+        if (isKilled)
+        {
+            SpawnItemDrops();
+        }
         // 解除标记与敌人的父子关系，防止对象池复用时出现异常
         if (aimMarker != null)
         {
@@ -184,6 +290,10 @@ public class Enemy : MonoBehaviour
             if (magicAttack != null)
             {
                 magicAttack.RecycleMarker(aimMarker);
+            }
+            else
+            {
+                Debug.LogWarning("未找到魔法攻击脚本实例");
             }
             aimMarker = null;
         }

@@ -18,8 +18,8 @@ MonoBehaviour:
   m_Version: 1.1.0
   m_SourceFontFileGUID: 12adbd1573445d642944142cabd23edc
   m_SourceFontFile_EditorRef: {fileID: 12800000, guid: 12adbd1573445d642944142cabd23edc, type: 3}
-  m_SourceFontFile: {fileID: 0}
-  m_AtlasPopulationMode: 0
+  m_SourceFontFile: {fileID: 12800000, guid: 12adbd1573445d642944142cabd23edc, type: 3}
+  m_AtlasPopulationMode: 1
   m_FaceInfo:
     m_FaceIndex: 0
     m_FamilyName: Aa???????
@@ -88,8 +88,7 @@ MonoBehaviour:
   m_FontFeatureTable:
     m_GlyphPairAdjustmentRecords: []
   fallbackFontAssets: []
-  m_FallbackFontAssetTable:
-  - {fileID: 11400000, guid: 7d53a3986d7d47d49afbc86bbfa29f68, type: 2}
+  m_FallbackFontAssetTable: []
   m_CreationSettings:
     sourceFontFileName: 
     sourceFontFileGUID: 12adbd1573445d642944142cabd23edc
@@ -155,7 +154,7 @@ Texture2D:
   m_MipsStripped: 0
   m_TextureFormat: 1
   m_MipCount: 1
-  m_IsReadable: 0
+  m_IsReadable: 1
   m_IsPreProcessed: 0
   m_IgnoreMipmapLimit: 0
   m_MipmapLimitGroupName: 

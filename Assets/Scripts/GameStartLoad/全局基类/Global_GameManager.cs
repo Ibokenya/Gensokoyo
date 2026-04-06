@@ -41,6 +41,12 @@ public class Global_GameManager : Singleton<Global_GameManager>
 
     [Header("敌人管理")]
     public List<GameObject> EnemyList = new(); // 存储当前场景中的敌人
+    [Header("成长音效")]
+    public AudioClip PowerUpClip;//灵力增加音效
+    public AudioClip HpUpClip;//残机数增加音效
+    public AudioClip BombUpClip;//残B数增加音效
+
+    int pastPower = 0;//上一次灵力值，用于判断是否需要播放音效
 
 /// <summary>
 /// 事件系统
@@ -87,9 +93,14 @@ public class Global_GameManager : Singleton<Global_GameManager>
 
     public void AddPower(int count=1)
     {
+        pastPower = Power/100;
         if(Power<400)
         {
             Power += count;
+            if(Power/100 > pastPower && PowerUpClip != null)
+            {
+                Global_AudioManager.Instance.PlaySFX(PowerUpClip);
+            }
             Power = Mathf.Clamp(Power,0,400);
             OnPowerChanged?.Invoke(Power);
         }
@@ -118,6 +129,10 @@ public class Global_GameManager : Singleton<Global_GameManager>
         {
             HpPiece = 0;
             life++;
+            if(HpUpClip != null)
+            {
+                Global_AudioManager.Instance.PlaySFX(HpUpClip);
+            }
         }
         Hp += life;
         if(Hp>7)
@@ -155,6 +170,10 @@ public class Global_GameManager : Singleton<Global_GameManager>
         {
             BombPiece = 0;
             bomb++;
+            if(BombUpClip != null)
+            {
+                Global_AudioManager.Instance.PlaySFX(BombUpClip);
+            }
         }
         BombCount += bomb;
         if(BombCount>7)

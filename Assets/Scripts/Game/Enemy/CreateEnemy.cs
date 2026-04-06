@@ -85,13 +85,14 @@ public class CreateEnemy : MonoBehaviour
     void Update()
     {
 
-        // 获取当前音乐播放时间
+        // // 获取当前音乐播放时间
         // if (audioManager.CurrentBGMTime != 0)
         // {
         //     currentMusicTime = audioManager.CurrentBGMTime;
         // }
 
         currentMusicTime += Time.deltaTime;// 临时的   
+
         // 检查是否需要生成敌人
         CheckSpawnEnemies();
     }

@@ -136,15 +136,6 @@ public class Track : MonoBehaviour
             }
         }
     }
-    
-    /// <summary>
-    /// Åö×²¼ì²â
-    /// </summary>
-    /// <param name="other">Åö×²¶ÔÏó</param>
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-
-    }
     public void SetTarget(GameObject target)
     {
         this.Target = target;

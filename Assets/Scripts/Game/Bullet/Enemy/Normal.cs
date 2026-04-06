@@ -83,13 +83,4 @@ public class Normal : MonoBehaviour
             }
         }
     }
-    
-    /// <summary>
-    /// Åö×²¼ì²â
-    /// </summary>
-    /// <param name="other">Åö×²¶ÔÏó</param>
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-
-    }
 }

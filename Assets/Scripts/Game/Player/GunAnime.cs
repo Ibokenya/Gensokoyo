@@ -154,7 +154,6 @@ public class GunAnime : MonoBehaviour
 
     private void UpdateGunNumber(int power)
     {
-        Debug.Log("触发一次火力增长与子机增减事件");
         if(GunNumber < power/100)
         {
             AddGuns();
@@ -287,7 +286,6 @@ public class GunAnime : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.E))
         {
-            Debug.Log("测试，Power+50");
             Global_GameManager.Instance.AddPower(50);
         }
     }
@@ -295,7 +293,6 @@ public class GunAnime : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.Q))
         {
-            Debug.Log("测试，Power-50");
             Global_GameManager.Instance.SubPower(50);
         }
     }

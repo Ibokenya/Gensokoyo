@@ -34,6 +34,8 @@ public class CreateItem : MonoBehaviour
     [Header("掉落物生成参数")]
     public float spawnOffset = 0.5f; // 掉落物生成位置的随机偏移范围
     public GameObject player;
+    [Header("收集音效")]
+    public AudioClip collectClip;
 
     void OnEnable()
     {
@@ -98,6 +100,7 @@ public class CreateItem : MonoBehaviour
                 // 从对象池获取物品
                 GameObject item = Global_ObjectPool.Instance.GetObject(prefab, spawnPosition, Quaternion.identity);
                 item.GetComponent<AboutItem>().player = player;
+                item.GetComponent<AboutItem>().SetCollectClip(collectClip);
                 if (item == null)
                 {
                     Debug.LogWarning($"无法从对象池获取物品: {prefab.name}");

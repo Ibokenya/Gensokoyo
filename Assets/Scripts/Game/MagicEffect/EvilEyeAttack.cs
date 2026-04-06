@@ -16,23 +16,44 @@ public class EvilEyeAttack : MonoBehaviour
     public List<GameObject> shadowBulletPrefabs; // 暗影弹预制件列表（共3种）
     public float spawnInterval = 0.5f; // 暗影弹生成间隔
     
+    [Header("处决效果")]
+    public GameObject giantHandPrefab; // 巨手预制件
+    public Sprite openHandSprite; // 张开的手精灵
+    public Sprite closedHandSprite; // 握住的手精灵
+    public float handSpawnYOffset = 6f; // 巨手生成位置的Y轴偏移
+    public float handSpawnXOffset = -0.3f; // 巨手生成位置的X轴偏移
+    public float handTargetYOffset = 1.6f; // 巨手目标位置的Y轴偏移
+    public float handFadeInDuration = 1f; // 巨手淡入时间
+    public float handFadeOutDuration = 0.5f; // 巨手淡出时间
+    public float handMinY = 0.52f; // 巨手最低Y坐标
+    
     // 空心矩形范围（通过4组坐标界定）
     public Vector2 innerRectBottomLeft; // 小矩形左下角坐标
     public Vector2 innerRectTopRight; // 小矩形右上角坐标
     public Vector2 outerRectBottomLeft; // 大矩形左下角坐标
     public Vector2 outerRectTopRight; // 大矩形右上角坐标
+
+    [Header("处决音效")]
+    public AudioClip deathClip; // 处决音效
     
     private SpriteRenderer spriteRenderer;
     private SpriteRenderer blackHoleRenderer;
     private List<GameObject> activeLasers = new List<GameObject>(); // 活跃的连线列表
-    private bool isFadeInComplete = false; // 淡入是否完成
+    public bool isFadeInComplete = false; // 淡入是否完成
     private float spawnTimer = 0f; // 暗影弹生成计时器
-    private int LaserInterval = 3;// 激光伤害间隔帧（每秒20帧出伤）
+    private int LaserInterval = 10;// 激光伤害间隔帧（每6帧出伤）
+    
+    // 巨手对象池
+    private Queue<GameObject> giantHandPool = new Queue<GameObject>();
+    private const int handPoolSize = 4; // 巨手对象池大小
 
     void Awake()
     {
         // 使用Global_ObjectPool初始化3种暗影弹的对象池
         InitializeShadowBulletPools();
+        
+        // 初始化巨手对象池
+        InitializeGiantHandPool();
     }
 
     // Start is called before the first frame update
@@ -58,7 +79,7 @@ public class EvilEyeAttack : MonoBehaviour
     void Update()
     {
         // 攻击逻辑
-        if (isFadeInComplete)
+        if (isFadeInComplete && Input.GetKey(KeyCode.LeftShift))
         {
             UpdateBlackHole();
             
@@ -71,7 +92,7 @@ public class EvilEyeAttack : MonoBehaviour
                 if(LaserInterval == 0)
                 {
                     DealDamageToEnemies();
-                    LaserInterval = 3;
+                    LaserInterval = 10;
                 }
                 UpdateShadowBullets();
             }
@@ -183,22 +204,25 @@ public class EvilEyeAttack : MonoBehaviour
         
         float elapsedTime = 0f;
         Color originalColor = spriteRenderer.color;
+        float currentAlpha = originalColor.a; // 获取当前透明度
+        float actualFadeDuration = fadeDuration * currentAlpha; // 计算实际淡出时间
         Color blackHoleColor = Color.black;
         if (blackHoleRenderer != null)
         {
             blackHoleColor = blackHoleRenderer.color;
         }
         
-        while (elapsedTime < fadeDuration)
+        while (elapsedTime < actualFadeDuration)
         {
             elapsedTime += Time.deltaTime;
-            float alpha = Mathf.Clamp01(1 - elapsedTime / fadeDuration);
+            float t = Mathf.Clamp01(elapsedTime / actualFadeDuration);
+            float alpha = Mathf.Clamp01(1 - t);
             
             // 恶魔之眼淡出
             originalColor.a = alpha;
             spriteRenderer.color = originalColor;
             
-            // 黑洞淡出：从0.5淡出到0
+            // 黑洞淡出：从当前透明度淡出到0
             if (blackHoleRenderer != null)
             {
                 blackHoleColor.a = alpha * 0.5f;
@@ -208,12 +232,16 @@ public class EvilEyeAttack : MonoBehaviour
             yield return null;
         }
         
-        // 确保最终透明度为0并禁用
+        // 确保最终透明度为0
         originalColor.a = 0f;
         spriteRenderer.color = originalColor;
-        gameObject.SetActive(false);
         
-        // 黑洞是EvilEye的子物体，会随着EvilEye的禁用激活而禁用激活，无需手动禁用
+        // 确保黑洞最终透明度为0
+        if (blackHoleRenderer != null)
+        {
+            blackHoleColor.a = 0f;
+            blackHoleRenderer.color = blackHoleColor;
+        }
     }
     
     /// <summary>
@@ -272,7 +300,7 @@ public class EvilEyeAttack : MonoBehaviour
     /// <summary>
     /// 清理所有连线
     /// </summary>
-    private void ClearAllLasers()
+    public void ClearAllLasers()
     {
         // 创建临时列表来存储需要删除的对象
         List<GameObject> lasersToDestroy = new List<GameObject>(activeLasers);
@@ -349,12 +377,10 @@ public class EvilEyeAttack : MonoBehaviour
     /// <summary>
     /// 计算伤害
     /// </summary>
-    /// <returns>每帧伤害值</returns>
+    /// <returns>每伤害帧伤害值</returns>
     private int CalDamage()
     {
-        // 具体伤害计算逻辑留空
-        // 这里返回一个默认值
-        return 1;
+        return 2+(Global_GameManager.Instance.Power/100);
     }
     
     /// <summary>
@@ -363,7 +389,7 @@ public class EvilEyeAttack : MonoBehaviour
     private void UpdateBlackHole()
     {
         // 黑洞旋转
-        if (blackHole != null && blackHole.activeInHierarchy)
+        if (blackHole != null && spriteRenderer != null && spriteRenderer.color.a >= 0.99f)
         {
             blackHole.transform.Rotate(0f, 0f, blackHoleRotationSpeed * Time.deltaTime);
         }
@@ -374,8 +400,14 @@ public class EvilEyeAttack : MonoBehaviour
     /// </summary>
     private void UpdateShadowBullets()
     {
-        // 检查黑洞是否存在且激活
-        if (blackHole == null || !blackHole.activeInHierarchy)
+        // 检查黑洞是否存在
+        if (blackHole == null)
+        {
+            return;
+        }
+        
+        // 检查恶魔之眼是否完全显示（透明度为1）
+        if (spriteRenderer != null && spriteRenderer.color.a < 0.99f)
         {
             return;
         }
@@ -494,5 +526,176 @@ public class EvilEyeAttack : MonoBehaviour
                 Global_ObjectPool.Instance.InitPool(shadowBulletPrefabs[i], 15);
             }
         }
+    }
+    
+    /// <summary>
+    /// 初始化巨手对象池
+    /// </summary>
+    private void InitializeGiantHandPool()
+    {
+        if (giantHandPrefab == null)
+        {
+            return;
+        }
+        
+        for (int i = 0; i < handPoolSize; i++)
+        {
+            GameObject hand = Instantiate(giantHandPrefab);
+            hand.SetActive(false);
+            giantHandPool.Enqueue(hand);
+        }
+    }
+    
+    /// <summary>
+    /// 从对象池获取巨手
+    /// </summary>
+    /// <returns>巨手对象</returns>
+    private GameObject GetGiantHandFromPool()
+    {
+        if (giantHandPool.Count > 0)
+        {
+            return giantHandPool.Dequeue();
+        }
+        else if (giantHandPrefab != null)
+        {
+            // 如果对象池为空，创建新的巨手
+            GameObject hand = Instantiate(giantHandPrefab);
+            hand.SetActive(false);
+            return hand;
+        }
+        return null;
+    }
+    
+    /// <summary>
+    /// 回收巨手到对象池
+    /// </summary>
+    /// <param name="hand">要回收的巨手</param>
+    private void RecycleGiantHand(GameObject hand)
+    {
+        if (hand != null)
+        {
+            hand.SetActive(false);
+            giantHandPool.Enqueue(hand);
+        }
+    }
+    
+    /// <summary>
+    /// 执行处决效果
+    /// </summary>
+    /// <param name="enemyPosition">敌人位置</param>
+    public void ExecuteEnemy(Vector3 enemyPosition)
+    {
+        // 从对象池获取巨手
+        GameObject hand = GetGiantHandFromPool();
+        if (hand == null)
+        {
+            return;
+        }
+        
+        // 计算巨手的生成位置
+        Vector3 spawnPosition = enemyPosition;
+        spawnPosition.y += handSpawnYOffset;
+        
+        // 计算巨手的目标位置
+        Vector3 targetPosition = enemyPosition;
+        targetPosition.x += handSpawnXOffset;
+        targetPosition.y += handTargetYOffset;
+        // 确保巨手的Y坐标不低于最低值
+        targetPosition.y = Mathf.Max(targetPosition.y, handMinY);
+        
+        // 初始化巨手
+        hand.transform.position = spawnPosition;
+        hand.transform.localScale = new Vector3(0, 0, 1);
+        
+        SpriteRenderer handRenderer = hand.GetComponent<SpriteRenderer>();
+        if (handRenderer != null)
+        {
+            Color color = handRenderer.color;
+            color.a = 0f;
+            handRenderer.color = color;
+        }
+        
+        hand.SetActive(true);
+        
+        // 开始处决动画
+        StartCoroutine(ExecuteAnimation(hand, targetPosition));
+    }
+    
+    /// <summary>
+    /// 处决动画协程
+    /// </summary>
+    /// <param name="hand">巨手对象</param>
+    /// <param name="targetPosition">目标位置</param>
+    private IEnumerator ExecuteAnimation(GameObject hand, Vector3 targetPosition)
+    {
+        SpriteRenderer handRenderer = hand.GetComponent<SpriteRenderer>();
+        if (handRenderer == null)
+        {
+            RecycleGiantHand(hand);
+            yield break;
+        }
+        // 播放处决音效
+        if (Global_AudioManager.Instance != null && deathClip != null)
+        {
+            Global_AudioManager.Instance.PlaySFX(deathClip,false);
+        }
+        // 设置初始精灵为张开的手
+        if (openHandSprite != null)
+        {
+            handRenderer.sprite = openHandSprite;
+        }
+        
+        float elapsedTime = 0f;
+        Vector3 startPosition = hand.transform.position;
+        Vector3 startScale = hand.transform.localScale;
+        Color startColor = handRenderer.color;
+        
+        // 淡入和移动到目标位置
+        while (elapsedTime < handFadeInDuration)
+        {
+            elapsedTime += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsedTime / handFadeInDuration);
+            
+            // 移动
+            hand.transform.position = Vector3.Lerp(startPosition, targetPosition, t);
+            
+            // 缩放
+            hand.transform.localScale = Vector3.Lerp(startScale, new Vector3(2.25f, 2.25f, 1), t);
+            
+            // 淡入
+            Color color = startColor;
+            color.a = t/2;
+            handRenderer.color = color;
+            
+            yield return null;
+        }
+        
+        // 切换到第二帧（握住的手）
+        if (closedHandSprite != null)
+        {
+            handRenderer.sprite = closedHandSprite;
+        }
+        
+        // 等待一小段时间
+        yield return new WaitForSeconds(0.1f);
+        
+        // 淡出
+        elapsedTime = 0f;
+        startColor = handRenderer.color;
+        while (elapsedTime < handFadeOutDuration)
+        {
+            elapsedTime += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsedTime / handFadeOutDuration);
+            
+            // 淡出
+            Color color = startColor;
+            color.a = 1f - t;
+            handRenderer.color = color;
+            
+            yield return null;
+        }
+        
+        // 回收巨手
+        RecycleGiantHand(hand);
     }
 }
