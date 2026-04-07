@@ -7,7 +7,6 @@ public class ClearAllBullet : MonoBehaviour
     [SerializeField] 
     private List<float> clearTimes = new ();
     public AudioClip clearClip;//清屏音效clip
-    public AudioClip BeHitClip;//中弹音效clip
     private float currentMusicTime = 0f;
 
     void Update()
@@ -45,11 +44,6 @@ public class ClearAllBullet : MonoBehaviour
     /// </summary>
     public void ClearScreenBullet(bool isPlaySound = true)
     {
-        // 播放清屏音效
-        if(isPlaySound)
-        {
-            Global_AudioManager.Instance.PlaySFX(BeHitClip);
-        }
         // 找到所有敌人子弹
         GameObject[] enemyBullets = GameObject.FindGameObjectsWithTag("EnemyBullet");
         GameObject[] playerBullets = GameObject.FindGameObjectsWithTag("PlayerBullet");
