@@ -13,6 +13,7 @@ public class PauseEvent : MonoBehaviour
     public PauseUI pauseUI;// 暂停界面的脚本组件引用
     public AudioClip Choose;// 选择音效
     public AudioClip Click;// 点击音效
+    public AudioClip Stop;// 停止音效
 
     private float NoneAlpha = 0.3f;
     private float FullAlpha = 1f;
@@ -23,7 +24,7 @@ public class PauseEvent : MonoBehaviour
     void OnEnable()
     {
         index = 0;
-        BeChoose(index);
+        BeChoose(index,true);
         Really.SetActive(false);
         isReally = false;
     }
@@ -123,8 +124,13 @@ public class PauseEvent : MonoBehaviour
         }
     }
 
-    private void BeChoose(int index)
+    private void BeChoose(int index,bool isOnEnable = false)
     {
+        if(isOnEnable)
+        {
+            Global_AudioManager.Instance.PlaySFX(Stop);
+            return;
+        }
         Global_AudioManager.Instance.PlaySFX(Choose);
         pauseButtons[index].alpha = FullAlpha;
     }

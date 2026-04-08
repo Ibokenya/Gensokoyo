@@ -141,10 +141,10 @@ public class AboutItem : MonoBehaviour
         
         // 道具到达玩家位置，触发效果
         Effect();
-        // 播放收集音效
+        // 播放收集音效（限制同时播放数量）
         if (Global_AudioManager.Instance != null && collectClip != null)
         {
-            Global_AudioManager.Instance.PlaySFX(collectClip,false);
+            Global_AudioManager.Instance.PlayCollectSFX(collectClip);
         }
         
         // 销毁道具

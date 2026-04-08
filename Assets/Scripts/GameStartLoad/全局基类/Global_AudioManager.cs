@@ -259,6 +259,55 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
         }
     }
     
+    // 收集音效计数器
+    private int collectSoundCount = 0;
+    // 收集音效最大同时播放数量
+    private const int maxCollectSoundCount = 3;
+    
+    /// <summary>
+    /// 播放收集音效（限制同时播放数量）
+    /// </summary>
+    /// <param name="clip">音效剪辑</param>
+    /// <param name="volume">音量（0-1）</param>
+    public void PlayCollectSFX(AudioClip clip, float volume = 1f)
+    {
+        if (clip == null)
+        {
+            Debug.LogWarning("收集音效剪辑为空，无法播放");
+            return;
+        }
+        
+        // 检查当前收集音效数量是否达到限制
+        if (collectSoundCount >= maxCollectSoundCount)
+        {
+            return; // 达到限制，跳过播放
+        }
+        
+        // 从音效池获取可用的AudioSource
+        AudioSource source = GetAvailableSFXSource();
+        if (source != null)
+        {
+            collectSoundCount++;
+            source.clip = clip;
+            source.loop = false;
+            source.volume = Mathf.Clamp01(volume) * sfxVolume;
+            source.Play();
+            
+            // 监听音效播放完成事件
+            StartCoroutine(MonitorCollectSound(source));
+        }
+    }
+    
+    /// <summary>
+    /// 监听收集音效播放完成
+    /// </summary>
+    /// <param name="source">音频源</param>
+    private IEnumerator MonitorCollectSound(AudioSource source)
+    {
+        yield return new WaitWhile(() => source.isPlaying);
+        collectSoundCount = Mathf.Max(0, collectSoundCount - 1);
+    }
+    
     #endregion
     
     #region 背景音乐方法

@@ -1,43 +1,73 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
+/// <summary>
+/// 符卡效果管理器
+/// 负责管理4种符卡技能的释放和协调
+/// </summary>
 public class SpellCardEffect : MonoBehaviour
 {
+    [Header("4种符卡攻击设置")]
     public List<GameObject> effects;// 总共四种符卡特效——灵梦常规，灵梦决死，魔理沙常规，魔理沙决死
+    private int EffectIndex = 0;
 
-    public Animator animator;
+    [Header("4个子脚本引用")]
+    public ReimuNormal reimuNormal; // 灵梦常规技能脚本
+    public ReimuSuper reimuSuper;   // 灵梦决死技能脚本
+    public MarisaNormal marisaNormal; // 魔理沙常规技能脚本
+    public MarisaSuper marisaSuper;   // 魔理沙决死技能脚本
 
-    private bool isHitDelayActive = false; // 是否处于受击延迟状态
-    private readonly float hitDelayTime = 0.5f; // 受击延迟时间（现实时间）
-    private Coroutine hitDelayCoroutine;
-    public CardsRotate cardsRotate; // 引用CardsRotate脚本
-    private bool isAnimating = false; // 是否正在播放动画
+    [Header("音效设置")]
     public AudioClip BeHitClip;//中弹音效clip
     public AudioClip DelayClip;//决死延迟音效clip
 
+    [Header("脚本引用")]
+    public ClearAllBullet clearAllBullet;
+    public CardsRotate cardsRotate; // 引用CardsRotate脚本
+
+    [Header("物体引用")]
+    public GameObject player;// 玩家物体
+
+    private bool isHitDelayActive = false; // 是否处于受击延迟状态
+    private readonly float hitDelayTime = 1f; // 受击延迟时间（现实时间）
+    private Coroutine hitDelayCoroutine;
+    private bool isAnimating = false; // 是否正在播放动画
+
+    void OnDisable()
+    {
+        // 确保在禁用时取消受击延迟
+        if (hitDelayCoroutine != null)
+        {
+            StopCoroutine(hitDelayCoroutine);
+        }
+        isHitDelayActive = false;
+        isAnimating = false;
+    }
 
     void Update()
     {
-        if(Global_GameManager.Instance.state == State.Stop)
+        if (Global_GameManager.Instance.state == State.Stop)
         {
             return;
         }
+
         // 处理技能释放
         if (Input.GetKeyDown(KeyCode.X))
         {
-            if(Global_GameManager.Instance.BombCount <= 0)// 检查是否有符卡可用
+            if (Global_GameManager.Instance.BombCount <= 0)// 检查是否有符卡可用
             {
                 Debug.Log("没有符卡可用");
                 return;
             }
-            if(isAnimating)
+            if (isAnimating)
             {
                 Debug.Log("正在播放动画");
                 return;
             }
+
             Global_GameManager.Instance.SubBomb(1);// 减少符卡数量
+
             if (isHitDelayActive)
             {
                 isAnimating = true;
@@ -51,11 +81,14 @@ public class SpellCardEffect : MonoBehaviour
                 ReleaseNormalSpellCard();
             }
         }
-        if(Input.GetKeyDown(KeyCode.B))
+
+        if (Input.GetKeyDown(KeyCode.B))
         {
             Global_GameManager.Instance.AddBomb(1);
         }
     }
+
+    #region 释放技能相关
 
     /// <summary>
     /// 正常释放技能
@@ -64,16 +97,26 @@ public class SpellCardEffect : MonoBehaviour
     {
         // 设置无敌状态
         Global_GameManager.Instance.state = State.NoDead;
-        
+
         if (Global_GameManager.Instance.character == Character.Reimu)
         {
-            // 灵梦常规技能，AnimeIndex为1
-            animator.SetInteger("AnimeIndex", 1);
+            EffectIndex = 1;
+            Debug.Log("释放灵梦常规技能");
+            // 激活灵梦常规技能脚本
+            if (reimuNormal != null)
+            {
+                reimuNormal.IsAnime = true;
+            }
         }
         else if (Global_GameManager.Instance.character == Character.Marisa)
         {
-            // 魔理沙常规技能，AnimeIndex为3
-            animator.SetInteger("AnimeIndex", 3);
+            EffectIndex = 3;
+            Debug.Log("释放魔理沙常规技能");
+            // 激活魔理沙常规技能脚本
+            if (marisaNormal != null)
+            {
+                marisaNormal.IsAnime = true;
+            }
         }
     }
 
@@ -82,6 +125,7 @@ public class SpellCardEffect : MonoBehaviour
     /// </summary>
     public void ReleaseSpecialSpellCard()
     {
+        Debug.Log("释放了特殊技能");
         // 取消受击延迟
         if (hitDelayCoroutine != null)
         {
@@ -89,19 +133,29 @@ public class SpellCardEffect : MonoBehaviour
         }
         isHitDelayActive = false;
         Time.timeScale = 1f;
-        
+
         // 设置无敌状态
         Global_GameManager.Instance.state = State.NoDead;
 
         if (Global_GameManager.Instance.character == Character.Reimu)
         {
-            // 灵梦决死技能，AnimeIndex为2
-            animator.SetInteger("AnimeIndex", 2);
+            EffectIndex = 2;
+            Debug.Log("释放了灵梦决死技能");
+            // 激活灵梦决死技能脚本
+            if (reimuSuper != null)
+            {
+                reimuSuper.IsAnime = true;
+            }
         }
         else if (Global_GameManager.Instance.character == Character.Marisa)
         {
-            // 魔理沙决死技能，AnimeIndex为4
-            animator.SetInteger("AnimeIndex", 4);
+            EffectIndex = 4;
+            Debug.Log("释放了魔理沙决死技能");
+            // 激活魔理沙决死技能脚本
+            if (marisaSuper != null)
+            {
+                marisaSuper.IsAnime = true;
+            }
         }
     }
 
@@ -116,7 +170,7 @@ public class SpellCardEffect : MonoBehaviour
             isHitDelayActive = true;
             Time.timeScale = 0f;
             Debug.Log("进入决死预备状态");
-            if(DelayClip != null)
+            if (DelayClip != null)
             {
                 // 播放决死延迟音效
                 Global_AudioManager.Instance.PlaySFX(DelayClip);
@@ -129,9 +183,9 @@ public class SpellCardEffect : MonoBehaviour
         }
         else
         {
-            if(BeHitClip != null)
+            if (BeHitClip != null)
             {
-                // 播放决死延迟音效
+                // 播放中弹音效
                 Global_AudioManager.Instance.PlaySFX(BeHitClip);
             }
             // 没有按shift或没有符卡时，直接执行死亡逻辑
@@ -145,11 +199,11 @@ public class SpellCardEffect : MonoBehaviour
     private IEnumerator HitDelayCoroutine()
     {
         yield return new WaitForSecondsRealtime(hitDelayTime);
-        
+
         if (isHitDelayActive)
         {
             Time.timeScale = 1f;
-            if(BeHitClip != null)
+            if (BeHitClip != null)
             {
                 // 播放中弹音效
                 Global_AudioManager.Instance.PlaySFX(BeHitClip);
@@ -160,24 +214,31 @@ public class SpellCardEffect : MonoBehaviour
         }
     }
 
+    #endregion
+
     /// <summary>
-    /// 技能动画结束回调
+    /// 子脚本动画结束回调
     /// </summary>
-    public void OnSpellCardAnimationEnd()
+    /// <param name="skillType">技能类型：1-灵梦常规，2-灵梦决死，3-魔理沙常规，4-魔理沙决死</param>
+    public void OnChildAnimationEnd(int skillType)
     {
         isAnimating = false;
-        // 技能动画结束后，将AnimeIndex重置为0
-        animator.SetInteger("AnimeIndex", 0);
+        EffectIndex = 0;
+
         // 解除无敌状态
         Global_GameManager.Instance.state = State.Gaming;
+
+        Debug.Log($"技能 {skillType} 动画结束");
     }
 
-    public void SpellCardFadeOut()
+    /// <summary>
+    /// 清除屏幕子弹（供子脚本调用）
+    /// </summary>
+    public void ClearAllBullet()
     {
-        // 调用CardsRotate脚本的FadeOut方法，淡出符卡
-        if (cardsRotate != null)
+        if (clearAllBullet != null)
         {
-            cardsRotate.FadeOut();
+            clearAllBullet.ClearScreenBullet(false);
         }
     }
 }
