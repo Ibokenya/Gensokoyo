@@ -42,7 +42,8 @@ public class PlayerCollision : MonoBehaviour
         
         // 处理不同状态
         if(Global_GameManager.Instance.state == State.Gaming || 
-           Global_GameManager.Instance.state == State.NoDead)
+           Global_GameManager.Instance.state == State.NoDead ||
+           Global_GameManager.Instance.state == State.SpellCard)   
         {
             // 处理边界检测
             HandleBounds();
@@ -66,7 +67,8 @@ public class PlayerCollision : MonoBehaviour
     {
         // 只有在游戏状态和无敌状态时才处理移动
         if(Global_GameManager.Instance.state != State.Gaming && 
-           Global_GameManager.Instance.state != State.NoDead) return;
+           Global_GameManager.Instance.state != State.NoDead &&
+           Global_GameManager.Instance.state != State.SpellCard) return;
         
         // 确保rb2D已获取
         if (rb2D == null)
@@ -126,7 +128,8 @@ public class PlayerCollision : MonoBehaviour
     {
         // 只有在游戏状态和无敌状态时才处理边界检测
         if(Global_GameManager.Instance.state != State.Gaming && 
-           Global_GameManager.Instance.state != State.NoDead) return;
+           Global_GameManager.Instance.state != State.NoDead &&
+           Global_GameManager.Instance.state != State.SpellCard) return;
         
         // 获取当前位置
         Vector3 position = transform.position;

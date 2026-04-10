@@ -10,13 +10,18 @@ public class SpellCardEffect : MonoBehaviour
 {
     [Header("4种符卡攻击设置")]
     public List<GameObject> effects;// 总共四种符卡特效——灵梦常规，灵梦决死，魔理沙常规，魔理沙决死
-    private int EffectIndex = 0;
 
     [Header("4个子脚本引用")]
     public ReimuNormal reimuNormal; // 灵梦常规技能脚本
     public ReimuSuper reimuSuper;   // 灵梦决死技能脚本
     public MarisaNormal marisaNormal; // 魔理沙常规技能脚本
     public MarisaSuper marisaSuper;   // 魔理沙决死技能脚本
+    
+    [Header("4个技能空物体引用")]
+    public GameObject reimuNormalObject; // 灵梦常规技能空物体
+    public GameObject reimuSuperObject;   // 灵梦决死技能空物体
+    public GameObject marisaNormalObject; // 魔理沙常规技能空物体
+    public GameObject marisaSuperObject;   // 魔理沙决死技能空物体
 
     [Header("音效设置")]
     public AudioClip BeHitClip;//中弹音效clip
@@ -47,7 +52,7 @@ public class SpellCardEffect : MonoBehaviour
 
     void Update()
     {
-        if (Global_GameManager.Instance.state == State.Stop)
+        if (Global_GameManager.Instance.state == State.Pause)
         {
             return;
         }
@@ -100,8 +105,12 @@ public class SpellCardEffect : MonoBehaviour
 
         if (Global_GameManager.Instance.character == Character.Reimu)
         {
-            EffectIndex = 1;
             Debug.Log("释放灵梦常规技能");
+            // 激活灵梦常规技能空物体
+            if (reimuNormalObject != null)
+            {
+                reimuNormalObject.SetActive(true);
+            }
             // 激活灵梦常规技能脚本
             if (reimuNormal != null)
             {
@@ -110,8 +119,12 @@ public class SpellCardEffect : MonoBehaviour
         }
         else if (Global_GameManager.Instance.character == Character.Marisa)
         {
-            EffectIndex = 3;
             Debug.Log("释放魔理沙常规技能");
+            // 激活魔理沙常规技能空物体
+            if (marisaNormalObject != null)
+            {
+                marisaNormalObject.SetActive(true);
+            }
             // 激活魔理沙常规技能脚本
             if (marisaNormal != null)
             {
@@ -139,8 +152,12 @@ public class SpellCardEffect : MonoBehaviour
 
         if (Global_GameManager.Instance.character == Character.Reimu)
         {
-            EffectIndex = 2;
             Debug.Log("释放了灵梦决死技能");
+            // 激活灵梦决死技能空物体
+            if (reimuSuperObject != null)
+            {
+                reimuSuperObject.SetActive(true);
+            }
             // 激活灵梦决死技能脚本
             if (reimuSuper != null)
             {
@@ -149,8 +166,12 @@ public class SpellCardEffect : MonoBehaviour
         }
         else if (Global_GameManager.Instance.character == Character.Marisa)
         {
-            EffectIndex = 4;
             Debug.Log("释放了魔理沙决死技能");
+            // 激活魔理沙决死技能空物体
+            if (marisaSuperObject != null)
+            {
+                marisaSuperObject.SetActive(true);
+            }
             // 激活魔理沙决死技能脚本
             if (marisaSuper != null)
             {
@@ -200,7 +221,7 @@ public class SpellCardEffect : MonoBehaviour
     {
         yield return new WaitForSecondsRealtime(hitDelayTime);
 
-        if (isHitDelayActive)
+        if (isHitDelayActive && Global_GameManager.Instance.state != State.NoDead)
         {
             Time.timeScale = 1f;
             if (BeHitClip != null)
@@ -223,10 +244,38 @@ public class SpellCardEffect : MonoBehaviour
     public void OnChildAnimationEnd(int skillType)
     {
         isAnimating = false;
-        EffectIndex = 0;
 
         // 解除无敌状态
         Global_GameManager.Instance.state = State.Gaming;
+
+        // 禁用对应技能空物体
+        switch (skillType)
+        {
+            case 1: // 灵梦常规
+                if (reimuNormalObject != null)
+                {
+                    reimuNormalObject.SetActive(false);
+                }
+                break;
+            case 2: // 灵梦决死
+                if (reimuSuperObject != null)
+                {
+                    reimuSuperObject.SetActive(false);
+                }
+                break;
+            case 3: // 魔理沙常规
+                if (marisaNormalObject != null)
+                {
+                    marisaNormalObject.SetActive(false);
+                }
+                break;
+            case 4: // 魔理沙决死
+                if (marisaSuperObject != null)
+                {
+                    marisaSuperObject.SetActive(false);
+                }
+                break;
+        }
 
         Debug.Log($"技能 {skillType} 动画结束");
     }

@@ -13,8 +13,9 @@ public enum Character
 }
 public enum State
 {
-    Menu,CharacterChoose,ModeChoose,Gaming,Stop,Loading,Over,
-    Replay,Option,MusicRoom,Manual,Reincarnation,NoDead
+    Menu,CharacterChoose,ModeChoose,Gaming,Pause,Loading,Over,
+    Replay,Option,MusicRoom,Manual,Reincarnation,NoDead,TimeStop,
+    SpellCard
 }
 /// <summary>
 /// 全局游戏管理单例
@@ -38,6 +39,7 @@ public class Global_GameManager : Singleton<Global_GameManager>
     public int SceneLevel;       // 关卡等级
 
     public State state;      // 状态机
+    private State previousState; // 用于记录设置无敌前的状态
 
     [Header("敌人管理")]
     public List<GameObject> EnemyList = new(); // 存储当前场景中的敌人
@@ -248,5 +250,30 @@ public class Global_GameManager : Singleton<Global_GameManager>
             }
         }
         EnemyList.Clear();
+    }
+    
+    /// <summary>
+    /// 设置无敌状态
+    /// </summary>
+    /// <param name="time">无敌持续时间（秒）</param>
+    public void SetNoDead(float time,State thestate)
+    {
+        // 记录当前状态
+        previousState = thestate;
+        // 设置为无敌状态
+        state = State.NoDead;
+        // 启动协程，在指定时间后恢复之前的状态
+        StartCoroutine(RecoverStateAfterTime(time));
+    }
+    
+    /// <summary>
+    /// 在指定时间后恢复之前的状态
+    /// </summary>
+    /// <param name="time">等待时间（秒）</param>
+    private IEnumerator RecoverStateAfterTime(float time)
+    {
+        yield return new WaitForSeconds(time);
+        // 恢复之前的状态
+        state = previousState;
     }
 } 

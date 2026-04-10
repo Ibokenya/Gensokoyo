@@ -10,7 +10,7 @@ public class ReimuNormal : MonoBehaviour
 {
     [Header("播放控制")]
     public bool IsAnime = false; // 设置为true开始播放动画
-    private Animator animator; // 子物体上的动画组件
+    public Animator animator; // 子物体上的动画组件
     
     [Header("脚本引用")]
     public SpellCardEffect spellCardEffect; // 引用父物体的SpellCardEffect脚本
@@ -28,22 +28,13 @@ public class ReimuNormal : MonoBehaviour
     private int Timer = 20;// 定时器，用于技能出伤
     private bool isDamage = false;// 是否正在出伤
     
-    void Awake()
-    {
-        // 获取子物体上的Animator组件
-        animator = GetComponent<Animator>();
-        if (animator == null)
-        {
-            Debug.LogWarning($"[{gameObject.name}] 未找到Animator组件");
-        }
-    }
-    
     void OnEnable()
     {
         // 重置状态
         IsAnime = false;
         isDamage = false;
         Timer = 20;
+        Global_GameManager.Instance.state = State.SpellCard;
     }
     
     void Update()
@@ -54,7 +45,6 @@ public class ReimuNormal : MonoBehaviour
             // 设置Animator的IsAnime参数
             animator.SetBool("IsAnime", IsAnime);
         }
-        
         // 如果正在播放，处理出伤逻辑
         if (IsAnime)
         {
@@ -169,6 +159,7 @@ public class ReimuNormal : MonoBehaviour
     /// </summary>
     public void OnAnimationEnd()
     {
+        Global_GameManager.Instance.SetNoDead(0.1f,State.Gaming);
         IsAnime = false;
         isDamage = false;
         

@@ -33,7 +33,8 @@ public class ReimuShoot : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Global_GameManager.Instance.state != State.Gaming && 
+        if(Global_GameManager.Instance != null && 
+        Global_GameManager.Instance.state != State.Gaming && 
         Global_GameManager.Instance.state != State.NoDead) return;
         // 计时器持续累加
         shootTimer += Time.deltaTime;

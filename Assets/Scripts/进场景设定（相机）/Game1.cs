@@ -15,7 +15,7 @@ public class Game1 : MonoBehaviour
         && Global_AudioManager.Instance.GetCurrentBGMName() != "Game1")
         {
             Debug.Log("摄像头开始播放BGM");
-            Global_AudioManager.Instance.PlaySFX(bgmClip,false,0.3f);
+            Global_AudioManager.Instance.PlaySFX(bgmClip,false,0.1f);
         }
 
         Invoke(nameof(FadeOutMusic), 118f);// 118秒后淡出BGM

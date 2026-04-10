@@ -10,19 +10,24 @@ public class MarisaNormal : MonoBehaviour
 {
     [Header("播放控制")]
     public bool IsAnime = false; // 设置为true开始播放动画
-    private Animator animator; // 子物体上的动画组件
+    public Animator animator; // 子物体上的动画组件
     
     [Header("脚本引用")]
     public SpellCardEffect spellCardEffect; // 引用父物体的SpellCardEffect脚本
     public ClearAllBullet clearAllBullet; // 引用ClearAllBullet脚本
+    public LightCircle lightCircle; // 引用LightCircle脚本
+    public PlayerAnime playerAnime; // 引用PlayerAnime脚本
     
     [Header("音效设置")]
     public AudioClip MarisaNormalClip;//魔理沙常规音效clip
     
     [Header("伤害设置")]
+    private readonly int MarisaNormalDamageValue = 15;// 魔理沙常规伤害*45
     private int Timer = 20;// 定时器，用于技能出伤
     private bool isDamage = false;// 是否正在出伤
+    public static bool IsSkillSlowDown = false;// 技能是否正在减速
     
+    public Transform playerTransform; // 玩家变换组件
     private List<GameObject> Enemys => Global_GameManager.Instance.EnemyList;// 敌人列表
     
     void Awake()
@@ -41,6 +46,13 @@ public class MarisaNormal : MonoBehaviour
         IsAnime = false;
         isDamage = false;
         Timer = 20;
+        Global_GameManager.Instance.state = State.SpellCard;
+        
+        // 重置光圈
+        if (lightCircle != null)
+        {
+            lightCircle.ResetCircles();
+        }
     }
     
     void Update()
@@ -85,23 +97,30 @@ public class MarisaNormal : MonoBehaviour
     {
         isDamage = true;
     }
+
+    /// <summary>
+    /// 停止出伤
+    /// </summary>
+    public void StopToDamage()
+    {
+        isDamage = false;
+    }
     
     /// <summary>
-    /// 魔理沙常规伤害（待实现）
+    /// 魔理沙常规伤害
     /// </summary>
     public void MarisaNormalDamage()
     {
-        // 待实现魔理沙常规技能伤害逻辑
         if (Enemys.Count > 0)
         {
             // 创建临时列表以避免在遍历过程中修改原始列表
             List<GameObject> tempEnemys = new List<GameObject>(Enemys);
             foreach (var enemy in tempEnemys)
             {
-                if (enemy != null)
+                //身前伤害判定
+                if (enemy != null && enemy.transform.position.y > (playerTransform.position.y + 0.5f))
                 {
-                    // 这里添加魔理沙常规技能的伤害逻辑
-                    // enemy.GetComponent<Enemy>().Damage(damageValue);
+                    enemy.GetComponent<Enemy>().Damage(MarisaNormalDamageValue);
                 }
             }
         }
@@ -136,12 +155,25 @@ public class MarisaNormal : MonoBehaviour
             spellCardEffect.clearAllBullet.ClearScreenBullet(false);
         }
     }
+
+    public void SlowDown()
+    {
+        IsSkillSlowDown = true;
+        playerAnime.SetMoveSpeed(1f);
+    }
+
+    public void ResetMoveSpeed()
+    {
+        IsSkillSlowDown = false;
+        playerAnime.SetMoveSpeed(playerAnime.MoveSpeed);
+    }
     
     /// <summary>
     /// 动画结束回调
     /// </summary>
     public void OnAnimationEnd()
     {
+        Global_GameManager.Instance.SetNoDead(0.1f,State.Gaming);
         IsAnime = false;
         isDamage = false;
         
@@ -149,6 +181,12 @@ public class MarisaNormal : MonoBehaviour
         if (animator != null)
         {
             animator.SetBool("IsAnime", false);
+        }
+        
+        // 重置光圈
+        if (lightCircle != null)
+        {
+            lightCircle.ResetCircles();
         }
         
         // 通知父脚本动画结束

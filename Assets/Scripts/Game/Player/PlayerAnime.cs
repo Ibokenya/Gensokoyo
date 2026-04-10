@@ -39,6 +39,7 @@ public class PlayerAnime : MonoBehaviour
     [Header("移动参数")]
     [Header("玩家移动速度")]
     public float MoveSpeed = 5f;// 玩家移动速度
+    private float movespeed;
 
     [Header("状态")]
     private AnimeType _currentAnimeType = AnimeType.Idle;// 当前动画类型
@@ -90,6 +91,7 @@ public class PlayerAnime : MonoBehaviour
         {
             playerCollision = GetComponent<PlayerCollision>();
         }
+        movespeed = MoveSpeed;
         Global_GameManager.Instance.OnReincarnation += ReincarnationAnime;
     }
 
@@ -133,7 +135,9 @@ public class PlayerAnime : MonoBehaviour
         
         // 只有在游戏状态和无敌状态时才处理输入
         if(Global_GameManager.Instance.state == State.Gaming || 
-           Global_GameManager.Instance.state == State.NoDead)
+           Global_GameManager.Instance.state == State.NoDead ||
+           Global_GameManager.Instance.state == State.TimeStop ||
+           Global_GameManager.Instance.state == State.SpellCard)
         {
             // 检查输入
             CheckInput();
@@ -212,22 +216,30 @@ public class PlayerAnime : MonoBehaviour
         // 检测shift键状态
         if (Input.GetKeyDown(KeyCode.LeftShift))
         {
-            // 移动速度减半
-            MoveSpeed *= 0.4f;
-            // 显示判定点并开始动画
-            StartPandingAnime();
+            // 检查是否处于技能的slowdown状态
+            if (!MarisaNormal.IsSkillSlowDown)
+            {
+                // 移动速度减半
+                movespeed *= 0.4f;
+                // 显示判定点并开始动画
+                StartPandingAnime();
+            }
         }
         else if (Input.GetKeyUp(KeyCode.LeftShift))
         {
-            // 恢复正常移动速度
-            MoveSpeed = 5f;
-            // 隐藏判定点并停止动画
-            StopPandingAnime();
+            // 检查是否处于技能的slowdown状态
+            if (!MarisaNormal.IsSkillSlowDown)
+            {
+                // 恢复正常移动速度
+                movespeed = MoveSpeed;
+                // 隐藏判定点并停止动画
+                StopPandingAnime();
+            }
         }
         // 将移动状态传递给碰撞脚本
         if (playerCollision != null)
         {
-            playerCollision.UpdateMovement(leftKeyPressed, rightKeyPressed, upKeyPressed, downKeyPressed, MoveSpeed);
+            playerCollision.UpdateMovement(leftKeyPressed, rightKeyPressed, upKeyPressed, downKeyPressed, movespeed);
         }
     }
 
@@ -277,7 +289,7 @@ public class PlayerAnime : MonoBehaviour
     /// <summary>
     /// 停止判定点动画
     /// </summary>
-    private void StopPandingAnime()
+    public void StopPandingAnime()
     {
         // 停止判定点动画
         PandingdianAnimator.SetBool("IsShift", false);
@@ -521,11 +533,11 @@ public class PlayerAnime : MonoBehaviour
         Global_GameManager.Instance.state = State.NoDead;
         if(Input.GetKey(KeyCode.LeftShift))
         {
-            MoveSpeed = 2.5f;
+            movespeed = MoveSpeed * 0.5f;
         }
         else
         {
-            MoveSpeed = 5f;
+            movespeed = MoveSpeed;
         }
         Invoke(nameof(NoDeadEnd),1f);
     }
@@ -533,5 +545,10 @@ public class PlayerAnime : MonoBehaviour
     private void NoDeadEnd()
     {
         Global_GameManager.Instance.state = State.Gaming;
+    }
+
+    public void SetMoveSpeed(float speed)
+    {
+        movespeed = speed;
     }
 }

@@ -181,6 +181,14 @@ public class Enemy : MonoBehaviour
         
         isDead = true;
         isKilled = true; // 标记敌人被击杀
+        
+        // 检查是否处于时停状态
+        if (Global_GameManager.Instance.state == State.TimeStop)
+        {
+            // 时停期间，延迟到非时停状态时再处理
+            return;
+        }
+        
         // 检查是否满足处决条件
         if (CheckExecuteCondition())
         {

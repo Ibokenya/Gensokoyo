@@ -76,7 +76,7 @@ public class GunAnime : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Global_GameManager.Instance.state == State.Stop) return;
+        if(Global_GameManager.Instance.state == State.Pause) return;
         CheckUpdate();
         AddPower();
         SubPower();

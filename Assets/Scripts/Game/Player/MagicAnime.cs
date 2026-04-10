@@ -48,7 +48,8 @@ public class MagicAnime : MonoBehaviour
     
     void Update()
     {
-        if(Global_GameManager.Instance.state != State.Gaming && 
+        if(Global_GameManager.Instance != null && 
+        Global_GameManager.Instance.state != State.Gaming && 
         Global_GameManager.Instance.state != State.NoDead) return;
         if (!isExiting && Input.GetKeyUp(KeyCode.LeftShift))
         {

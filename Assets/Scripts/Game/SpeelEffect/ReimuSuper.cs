@@ -10,7 +10,7 @@ public class ReimuSuper : MonoBehaviour
 {
     [Header("播放控制")]
     public bool IsAnime = false; // 设置为true开始播放动画
-    private Animator animator; // 子物体上的动画组件
+    public Animator animator; // 子物体上的动画组件
     
     [Header("脚本引用")]
     public SpellCardEffect spellCardEffect; // 引用父物体的SpellCardEffect脚本
@@ -20,46 +20,38 @@ public class ReimuSuper : MonoBehaviour
     public GameObject player;// 玩家物体
     public GameObject spaceEye;// 亚空穴物体
     public List<GameObject> attackEffects;// 攻击效果对象列表（下踹、掌击、器械击、侧踢）
+    public GameObject WinEffect;// 退治效果
     
     [Header("音效设置")]
     public AudioClip TimeStopClip;//灵梦决死时停音效clip
     public List<AudioClip> ReimuHitList;//灵梦决死延迟音效clip队列（2个）
     
     [Header("伤害设置")]
-    private readonly int ReimuHitDamageValue = 200;// 灵梦决死伤害
-    private float attackEffectDuration = 0.3f;// 攻击效果持续时间
-    private float attackEffectInterval = 0.2f;// 攻击效果间隔时间
+    private readonly int ReimuHitDamageValue = 250;// 灵梦决死伤害
+    private readonly float attackEffectDuration = 0.25f;// 攻击效果持续时间
+    private readonly float attackEffectInterval = 0.167f;// 攻击效果间隔时间
     
     private List<GameObject> Enemys => Global_GameManager.Instance.EnemyList;// 敌人列表
     private bool isOpenOrCloseEye = false;// 是否正在开关亚空穴
     private Coroutine huntCoroutine;// 猎杀敌人的协程
-    
-    void Awake()
-    {
-        // 获取子物体上的Animator组件
-        animator = GetComponent<Animator>();
-        if (animator == null)
-        {
-            Debug.LogWarning($"[{gameObject.name}] 未找到Animator组件");
-        }
-    }
 
     void OnEnable()
     {
         // 重置状态
         IsAnime = false;
         isOpenOrCloseEye = false;
+        // 设置游戏状态为时停
+        Global_GameManager.Instance.state = State.TimeStop;
     }
     
     void Update()
-    {
+    {     
         // 检查是否需要开始播放动画
         if (animator != null)
         {
             // 设置Animator的IsAnime参数
             animator.SetBool("IsAnime", IsAnime);
         }
-        
         // 如果正在播放，处理亚空穴绑定
         if (IsAnime)
         {
@@ -104,10 +96,6 @@ public class ReimuSuper : MonoBehaviour
         if (TimeStopClip != null)
         {
             Global_AudioManager.Instance.PlaySFX(TimeStopClip);
-        }
-        else
-        {
-            Debug.Log("没有决死时停音效");
         }
     }
     
@@ -168,7 +156,6 @@ public class ReimuSuper : MonoBehaviour
         // 确保攻击效果列表不为空
         if (attackEffects == null || attackEffects.Count == 0)
         {
-            Debug.LogWarning("攻击效果列表为空");
             Time.timeScale = originalTimeScale;
             yield break;
         }
@@ -188,10 +175,10 @@ public class ReimuSuper : MonoBehaviour
         // 持续循环直到动画结束
         while (IsAnime)
         {
-            // 过滤掉已经被销毁的敌人
-            tempEnemys.RemoveAll(enemy => enemy == null);
+            // 过滤掉已经被销毁或死亡的敌人（Hp <= 0表示死亡）
+            tempEnemys.RemoveAll(enemy => enemy == null || enemy.GetComponent<Enemy>().Hp <= 0);
             
-            // 如果还有敌人，继续攻击
+            // 如果还有存活的敌人，继续攻击
             if (tempEnemys.Count > 0)
             {
                 // 遍历每个敌人
@@ -260,45 +247,15 @@ public class ReimuSuper : MonoBehaviour
             }
             else
             {
-                // 没有敌人时，随机显示攻击效果
-                yield return new WaitForSecondsRealtime(attackEffectInterval);
-                
-                // 查找可用的攻击效果对象
-                List<GameObject> availableEffects = new List<GameObject>();
-                foreach (var effect in attackEffects)
+                // 没有敌人时，激活退治效果
+                if (WinEffect != null)
                 {
-                    if (effect != null && !activeAttackEffects.Contains(effect) && !effect.activeSelf)
-                    {
-                        availableEffects.Add(effect);
-                    }
+                    WinEffect.SetActive(true);
                 }
                 
-                if (availableEffects.Count > 0)
-                {
-                    // 随机选择一个可用的攻击效果对象
-                    GameObject availableAttackEffect = availableEffects[Random.Range(0, availableEffects.Count)];
-                    
-                    // 随机选择位置和方向
-                    bool isRight = Random.value > 0.5f;
-                    int attackIndex = Random.Range(0, attackOffsets.Length);
-                    
-                    // 在玩家周围随机位置显示攻击效果
-                    Vector3 playerPosition = player != null ? player.transform.position : Vector3.zero;
-                    Vector3 effectPosition = playerPosition;
-                    effectPosition.x += isRight ? 1f : -1f;
-                    effectPosition.y += Random.Range(-0.5f, 0.5f);
-                    
-                    // 设置攻击效果的位置和旋转
-                    availableAttackEffect.transform.position = effectPosition;
-                    availableAttackEffect.transform.localScale = new Vector3(isRight ? 1 : -1, 1, 1);
-                    
-                    // 激活攻击效果
-                    availableAttackEffect.SetActive(true);
-                    activeAttackEffects.Add(availableAttackEffect);
-                    
-                    // 延迟后禁用攻击效果
-                    StartCoroutine(DisableAttackEffect(availableAttackEffect, activeAttackEffects));
-                }
+                // 等待一小段时间后停止猎杀
+                yield return new WaitForSecondsRealtime(0.5f);
+                break; // 退出猎杀循环
             }
             
             // 等待一段时间后再开始下一轮攻击
@@ -307,20 +264,12 @@ public class ReimuSuper : MonoBehaviour
         
         // 恢复时间缩放
         Time.timeScale = originalTimeScale;
-    }
-    
-    /// <summary>
-    /// 禁用攻击效果的协程
-    /// </summary>
-    private IEnumerator DisableAttackEffect(GameObject attackEffect, List<GameObject> activeAttackEffects)
-    {
-        yield return new WaitForSecondsRealtime(attackEffectDuration);
         
-        if (attackEffect != null)
-        {
-            attackEffect.SetActive(false);
-            activeAttackEffects.Remove(attackEffect);
-        }
+        // 恢复游戏状态为游戏中
+        Global_GameManager.Instance.state = State.Gaming;
+        
+        // 处理时停期间死亡的敌人
+        ProcessDeadEnemies();
     }
     
     /// <summary>
@@ -353,13 +302,14 @@ public class ReimuSuper : MonoBehaviour
     /// </summary>
     public void OnAnimationEnd()
     {
+        Global_GameManager.Instance.SetNoDead(0.1f,State.Gaming);
+        
         // 停止猎杀协程
         if (huntCoroutine != null)
         {
             StopCoroutine(huntCoroutine);
             huntCoroutine = null;
         }
-        
         // 重置状态
         IsAnime = false;
         isOpenOrCloseEye = false;
@@ -370,6 +320,7 @@ public class ReimuSuper : MonoBehaviour
             animator.SetBool("IsAnime", false);
         }
         
+        WinEffect.SetActive(false);
         // 恢复时间缩放
         Time.timeScale = 1f;
         
@@ -377,6 +328,35 @@ public class ReimuSuper : MonoBehaviour
         if (spellCardEffect != null)
         {
             spellCardEffect.OnChildAnimationEnd(2); // 2表示灵梦决死
+        }
+    }
+    /// <summary>
+    /// 灵梦从亚空穴返回（关闭退治效果）
+    /// </summary>
+    public void Back()
+    {
+        player.transform.position = new(-3,-4,0);
+    }
+    
+    /// <summary>
+    /// 处理时停期间死亡的敌人
+    /// </summary>
+    private void ProcessDeadEnemies()
+    {
+        // 创建敌人列表的副本以避免遍历过程中修改原始列表
+        List<GameObject> enemiesToProcess = new List<GameObject>(Enemys);
+        
+        foreach (var enemy in enemiesToProcess)
+        {
+            if (enemy != null)
+            {
+                Enemy enemyComponent = enemy.GetComponent<Enemy>();
+                if (enemyComponent != null && enemyComponent.Hp <= 0)
+                {
+                    // 手动调用Delete方法处理死亡敌人
+                    enemyComponent.Delete();
+                }
+            }
         }
     }
 }
