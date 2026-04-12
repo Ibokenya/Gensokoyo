@@ -15,12 +15,16 @@ public class MarisaSuper : MonoBehaviour
     [Header("脚本引用")]
     public SpellCardEffect spellCardEffect; // 引用父物体的SpellCardEffect脚本
     public ClearAllBullet clearAllBullet; // 引用ClearAllBullet脚本
+    public ParticleConection particleConection; // 引用质点连线脚本
     
     [Header("音效设置")]
     public AudioClip TimeOverClip;//钟声音效clip
+    public AudioClip FireClip;// 火焰音效clip
     
     [Header("伤害设置")]
-    private int Timer = 20;// 定时器，用于技能出伤
+    private int Timer = 20;// 定时器，用于技能出伤*14
+    private int damageValue = 100;// 伤害值
+
     private bool isDamage = false;// 是否正在出伤
     
     private List<GameObject> Enemys => Global_GameManager.Instance.EnemyList;// 敌人列表
@@ -100,8 +104,7 @@ public class MarisaSuper : MonoBehaviour
             {
                 if (enemy != null)
                 {
-                    // 这里添加魔理沙决死技能的伤害逻辑
-                    // enemy.GetComponent<Enemy>().Damage(damageValue);
+                    enemy.GetComponent<Enemy>().Damage(damageValue);
                 }
             }
         }
@@ -123,6 +126,21 @@ public class MarisaSuper : MonoBehaviour
     }
     
     /// <summary>
+    /// 播放火焰音效
+    /// </summary>
+    public void AudioFire()
+    {
+        if (FireClip != null)
+        {
+            Global_AudioManager.Instance.PlaySFX(FireClip);
+        }
+        else
+        {
+            Debug.Log("没有火焰音效");
+        }
+    }
+    
+    /// <summary>
     /// 清除屏幕子弹
     /// </summary>
     public void ClearAllBullet()
@@ -138,12 +156,53 @@ public class MarisaSuper : MonoBehaviour
     }
     
     /// <summary>
+    /// 时停方法
+    /// </summary>
+    public void TimeStop()
+    {
+        // 设置时间缩放为0
+        Time.timeScale = 0f;
+        // 切换游戏状态为时停
+        Global_GameManager.Instance.state = State.TimeStop;
+    }
+
+    /// <summary>
+    /// 开始创建连线
+    /// 由动画事件调用
+    /// </summary>
+    public void StartCreateLines()
+    {
+        if (particleConection != null)
+        {
+            particleConection.StartCreateLines();
+        }
+    }
+
+    /// <summary>
+    /// 清除质点连线
+    /// 由动画事件调用
+    /// </summary>
+    public void ClearPointLines()
+    {
+        if (particleConection != null)
+        {
+            particleConection.ClearLines();
+        }
+    }
+    
+    /// <summary>
     /// 动画结束回调
     /// </summary>
     public void OnAnimationEnd()
     {
         IsAnime = false;
         isDamage = false;
+
+        
+        // 将时间缩放改回1
+        Time.timeScale = 1f;
+        // 返回0.1s的无敌
+        Global_GameManager.Instance.SetNoDead(0.1f, State.Gaming);
         
         // 重置Animator参数
         if (animator != null)
