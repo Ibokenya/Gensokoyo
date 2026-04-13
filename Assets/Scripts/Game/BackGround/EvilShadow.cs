@@ -14,6 +14,8 @@ public class EvilShadow : MonoBehaviour
     public float fadeOutDuration = 3f; // 基础淡出时间（0.8透明度需要3秒）
     
     private SpriteRenderer spriteRenderer;
+    public bool isStartFadeIn = false;
+    private Coroutine fadeCoroutine;
 
     // Start is called before the first frame update
     void Start()
@@ -36,6 +38,13 @@ public class EvilShadow : MonoBehaviour
     
     void OnDisable()
     {
+        // 停止正在运行的协程
+        if (fadeCoroutine != null)
+        {
+            StopCoroutine(fadeCoroutine);
+            fadeCoroutine = null;
+        }
+        
         // 重置状态
         if (spriteRenderer != null)
         {
@@ -50,7 +59,11 @@ public class EvilShadow : MonoBehaviour
     /// </summary>
     public void StartFadeIn()
     {
-        StartCoroutine(FadeIn());
+        if (gameObject.activeInHierarchy)
+        {
+            isStartFadeIn = true;
+            fadeCoroutine = StartCoroutine(FadeIn());
+        }
     }
     
     /// <summary>
@@ -70,6 +83,12 @@ public class EvilShadow : MonoBehaviour
         
         while (elapsedTime < fadeInDuration)
         {
+            // 检查对象是否仍然激活
+            if (!gameObject.activeInHierarchy)
+            {
+                yield break;
+            }
+            
             elapsedTime += Time.deltaTime;
             float alpha = Mathf.Clamp01(elapsedTime / fadeInDuration);
             originalColor.a = alpha * targetAlpha; // 最终透明度为 targetAlpha
@@ -86,7 +105,18 @@ public class EvilShadow : MonoBehaviour
     /// </summary>
     public void StartFadeOut()
     {
-        StartCoroutine(FadeOut());
+        if (gameObject.activeInHierarchy)
+        {
+            // 停止正在运行的协程（包括淡入协程）
+            if (fadeCoroutine != null)
+            {
+                StopCoroutine(fadeCoroutine);
+                fadeCoroutine = null;
+            }
+            
+            isStartFadeIn = false;
+            fadeCoroutine = StartCoroutine(FadeOut());
+        }
     }
     
     /// <summary>
@@ -105,10 +135,16 @@ public class EvilShadow : MonoBehaviour
         
         // 动态计算淡出时间：根据当前透明度计算
         // 0.8透明度需要3秒，0.4透明度需要0.4*3/0.8 = 1.5秒
-        float dynamicFadeOutDuration = (currentAlpha / targetAlpha) * fadeOutDuration;
+        float dynamicFadeOutDuration = currentAlpha / targetAlpha * fadeOutDuration;
         
         while (elapsedTime < dynamicFadeOutDuration)
         {
+            // 检查对象是否仍然激活
+            if (!gameObject.activeInHierarchy)
+            {
+                yield break;
+            }
+            
             elapsedTime += Time.deltaTime;
             float alpha = Mathf.Clamp01(1 - elapsedTime / dynamicFadeOutDuration);
             originalColor.a = alpha * currentAlpha; // 从当前透明度淡出到0

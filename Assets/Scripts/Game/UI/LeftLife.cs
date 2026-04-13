@@ -19,17 +19,18 @@ public class LeftLife : MonoBehaviour
         int i = 0;
         while(i < life)
         {
-            LifeHearts[i].GetComponent<Image>().sprite = LifeHeartSprites[3]; // 1状态的生命图标
+            LifeHearts[i].GetComponent<Image>().sprite = LifeHeartSprites[3]; // 1状态的碎片图标
             i++;
         }
-        if(i < LifeHearts.Count)// 残机之外的碎片数
+        if(i < LifeHearts.Count)// 切换之后显示碎片
         {
             LifeHearts[i].GetComponent<Image>().sprite = LifeHeartSprites[lifePiece];
         }
         i++;
-        if(i < LifeHearts.Count)// 减血后至少把下一位清0
+        while(i < LifeHearts.Count)// 没血的时候把所有剩余位设为0
         {
             LifeHearts[i].GetComponent<Image>().sprite = LifeHeartSprites[0];
+            i++;
         }
     }
     private void UpdateLifeText(int lifePiece)

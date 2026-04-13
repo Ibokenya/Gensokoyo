@@ -32,6 +32,8 @@ public class SpellCardEffect : MonoBehaviour
     public CardsRotate cardsRotate; // 引用CardsRotate脚本
     public Graze graze; // 引用Graze脚本
     public PlayerAnime playerAnime; // 引用PlayerAnime脚本
+    public EvilEyeAttack evilEyeAttack; // 引用EvilEyeAttack脚本
+    public EvilShadow evilShadow; // 引用EvilShadow脚本
 
     [Header("物体引用")]
     public GameObject player;// 玩家物体
@@ -40,6 +42,10 @@ public class SpellCardEffect : MonoBehaviour
     private readonly float hitDelayTime = 1f; // 受击延迟时间（现实时间）
     private Coroutine hitDelayCoroutine;
     private bool isAnimating = false; // 是否正在播放动画
+    
+    // 存储魔理沙决死前的状态
+    private bool wasEvilEyeActive = false; // 恶魔之眼是否激活
+    private bool wasEvilShadowActive = false; // 暗影视界是否激活
 
     void OnDisable()
     {
@@ -153,6 +159,21 @@ public class SpellCardEffect : MonoBehaviour
         }
         isHitDelayActive = false;
         Time.timeScale = 1f;
+
+        // 存储魔理沙决死前的状态
+        if (Global_GameManager.Instance.character == Character.Marisa)
+        {
+            // 检查恶魔之眼是否激活
+            if (evilEyeAttack != null)
+            {
+                wasEvilEyeActive = evilEyeAttack.isFadeInComplete;
+            }
+            // 检查暗影视界是否激活
+            if (evilShadow != null && evilShadow.GetComponent<SpriteRenderer>() != null)
+            {
+                wasEvilShadowActive = evilShadow.isStartFadeIn;
+            }
+        }
 
         // 设置无敌状态
         Global_GameManager.Instance.state = State.NoDead;
@@ -325,6 +346,9 @@ public class SpellCardEffect : MonoBehaviour
                         playerAnime.SetMoveSpeed(playerAnime.MoveSpeed);
                         playerAnime.StopPandingAnime();
                     }
+                    
+                    // 重置恶魔之眼和暗影视界
+                    ResetEvilEffects();
                 }
             }
             
@@ -354,6 +378,30 @@ public class SpellCardEffect : MonoBehaviour
                 gunAnime.UpdateGunPos();
             }
         }
+    }
+    
+    /// <summary>
+    /// 重置恶魔之眼和暗影视界效果
+    /// </summary>
+    private void ResetEvilEffects()
+    {
+        // 检查是否需要重置恶魔之眼
+        if (evilEyeAttack != null && wasEvilEyeActive)
+        {
+            // 开始恶魔之眼淡出
+            evilEyeAttack.StartFadeOut();
+        }
+        
+        // 检查是否需要重置暗影视界
+        if (evilShadow != null && wasEvilShadowActive)
+        {
+            // 开始暗影视界淡出
+            evilShadow.StartFadeOut();
+        }
+        
+        // 重置存储的状态
+        wasEvilEyeActive = false;
+        wasEvilShadowActive = false;
     }
 
     /// <summary>

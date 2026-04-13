@@ -17,6 +17,8 @@ public class AboutItem : MonoBehaviour
     private bool isCollecting = false;
     public AudioClip collectClip;
 
+    private Coroutine collectCoroutine;
+
     void OnEnable()
     {
         // 获取刚体组件
@@ -33,6 +35,18 @@ public class AboutItem : MonoBehaviour
         }
         
         // 重置收集状态
+        isCollecting = false;
+        collectCoroutine = null;
+    }
+
+    void OnDisable()
+    {
+        // 停止收集协程
+        if (collectCoroutine != null)
+        {
+            StopCoroutine(collectCoroutine);
+            collectCoroutine = null;
+        }
         isCollecting = false;
     }
 
@@ -73,7 +87,7 @@ public class AboutItem : MonoBehaviour
     private void FlyToPlayer(Transform playerTransform, bool isRecycleLineTriggered = false)
     {
         isCollecting = true;
-        StartCoroutine(CollectItem(playerTransform, isRecycleLineTriggered));
+        collectCoroutine = StartCoroutine(CollectItem(playerTransform, isRecycleLineTriggered));
     }
     
     /// <summary>
@@ -92,14 +106,21 @@ public class AboutItem : MonoBehaviour
         const int updateInterval = 10;
         
         // 触发器触发时，只获取一次玩家坐标
-        Vector3 initialTargetPosition = playerTransform.position;
+        Vector3 initialTargetPosition = playerTransform != null ? playerTransform.position : transform.position;
         
         // 回收线触发时的目标位置
-        Vector3 recycleLineTargetPosition = playerTransform.position;
+        Vector3 recycleLineTargetPosition = playerTransform != null ? playerTransform.position : transform.position;
         
         // 持续移动
         while (true)
         {
+            // 检查玩家对象是否存在
+            if (playerTransform == null)
+            {
+                // 玩家对象已销毁，停止收集
+                break;
+            }
+            
             // 计算目标位置
             Vector3 targetPosition;
             if (isRecycleLineTriggered)
@@ -148,7 +169,14 @@ public class AboutItem : MonoBehaviour
         }
         
         // 销毁道具
-        Global_ObjectPool.Instance.Recycle(this.gameObject);
+        if (Global_ObjectPool.Instance != null)
+        {
+            Global_ObjectPool.Instance.Recycle(this.gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
     private void Effect()
     {
@@ -193,7 +221,7 @@ public class AboutItem : MonoBehaviour
         const float borderGetLine = 1.27f;
         
         // 检查玩家是否在回收线之上
-        if (player != null)
+        if (player != null && player.transform != null)
         {
             Transform playerTransform = player.transform;
             if (playerTransform.position.y >= borderGetLine && !isCollecting)

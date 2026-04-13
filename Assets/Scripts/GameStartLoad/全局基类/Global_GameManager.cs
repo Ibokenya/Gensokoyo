@@ -17,6 +17,23 @@ public enum State
     Replay,Option,MusicRoom,Manual,Reincarnation,NoDead,TimeStop,
     SpellCard
 }
+
+/// <summary>
+/// 游戏重置配置类
+/// </summary>
+[System.Serializable]
+public class GameResetConfig
+{
+    public int ResetBomb;
+    public int Hp;
+    public int HpPiece;
+    public int BombCount;
+    public int BombPiece;
+    public int Power;
+    public int Grade;
+    public int Graze;
+}
+
 /// <summary>
 /// 全局游戏管理单例
 /// 存储机体，难度，残机，得点等数据
@@ -211,6 +228,79 @@ public class Global_GameManager : Singleton<Global_GameManager>
     {
         Graze = 0;
         OnGrazeChanged?.Invoke(Graze);
+    }
+
+    /// <summary>
+    /// 重置游戏数据
+    /// 从JSON配置文件读取初始数据，保留当前机体和难度
+    /// </summary>
+    public void ResetGameDate()
+    {  
+        // 从JSON配置文件读取初始数据
+        string jsonFilePath = System.IO.Path.Combine(Application.dataPath, "Touho/JSON", "Game1_ResetConfig.json");
+        if (System.IO.File.Exists(jsonFilePath))
+        {
+            try
+            {
+                string jsonContent = System.IO.File.ReadAllText(jsonFilePath);
+                GameResetConfig config = JsonUtility.FromJson<GameResetConfig>(jsonContent);
+                if (config != null)
+                {
+                    // 设置初始数据
+                    ResetBomb = config.ResetBomb;
+                    Hp = config.Hp;
+                    HpPiece = config.HpPiece;
+                    BombCount = config.BombCount;
+                    BombPiece = config.BombPiece;
+                    Power = Mathf.Clamp(config.Power, 0, 400);
+                    Grade = config.Grade;
+                    Graze = config.Graze;
+                    Score = 0; // 每次重开游戏得分重置为0
+                    SceneLevel = 1; // 关卡等级重置为1（第一关）
+                    state = State.Gaming; // 状态重置为游戏中
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("读取游戏配置文件失败: " + e.Message);
+                // 如果读取失败，使用默认值
+                SetDefaultValues();
+            }
+        }
+        else
+        {
+            Debug.LogWarning("游戏配置文件不存在，使用默认值");
+            SetDefaultValues();
+        }
+        
+        // 读取最高得分
+        HighestScore = PlayerPrefs.GetInt("HighestScore", 0);
+        
+        // 触发相关事件
+        OnScoreChanged?.Invoke(Score);
+        OnPowerChanged?.Invoke(Power);
+        OnGradeChanged?.Invoke(Grade);
+        OnLeftLifeChanged?.Invoke(Hp, HpPiece);
+        OnBombChanged?.Invoke(BombCount, BombPiece);
+        OnGrazeChanged?.Invoke(Graze);
+    }
+    
+    /// <summary>
+    /// 设置默认游戏数据
+    /// </summary>
+    private void SetDefaultValues()
+    {
+        ResetBomb = 2;
+        Hp = 2;
+        HpPiece = 0;
+        BombCount = 2;
+        BombPiece = 0;
+        Power = 100;
+        Grade = 0;
+        Graze = 0;
+        Score = 0;
+        SceneLevel = 1;
+        state = State.Gaming;
     }
 
     /// <summary>

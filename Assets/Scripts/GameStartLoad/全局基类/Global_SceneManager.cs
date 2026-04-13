@@ -310,6 +310,12 @@ public class Global_SceneManager : Singleton<Global_SceneManager>
         {
             ResetSceneFromJson(sceneName);
         }
+        
+        // 切换到Game1场景时重置游戏数据
+        if (sceneName == "Game1" && Global_GameManager.Instance != null)
+        {
+            Global_GameManager.Instance.ResetGameDate();
+        }
     }
 
     /// <summary>
@@ -451,5 +457,75 @@ public class Global_SceneManager : Singleton<Global_SceneManager>
                 Debug.LogWarning("出了问题，定位在-全局场景单例类的简易动画函数");
                 break;
         }
+    }
+
+    /// <summary>
+    /// 重新开始游戏
+    /// 重新开始游戏必定是重加载Game1场景
+    /// 重新开始时判断当前场景，若不为Game1则直接LoadScene("Game1")，若当前场景就是Game1则LoadScene(SceneManager.GetActiveScene().buildIndex)
+    /// </summary>
+    public void RestartGame()
+    {
+        // 回收所有敌人
+        if (Global_GameManager.Instance != null)
+        {
+            Global_GameManager.Instance.RecycleAllEnemies();
+        }
+
+        // 回收场景中所有的道具
+        AboutItem[] items = FindObjectsOfType<AboutItem>();
+        foreach (AboutItem item in items)
+        {
+            if (item != null && item.gameObject != null)
+            {
+                if (Global_ObjectPool.Instance != null)
+                {
+                    Global_ObjectPool.Instance.Recycle(item.gameObject);
+                }
+                else
+                {
+                    Destroy(item.gameObject);
+                }
+            }
+        }
+
+        // 清除对象池中的所有元素
+        if (Global_ObjectPool.Instance != null)
+        {
+            Global_ObjectPool.Instance.ClearAllPools();
+        }
+
+        // 重置游戏数据
+        if (Global_GameManager.Instance != null)
+        {
+            Global_GameManager.Instance.ResetGameDate();
+        }
+
+        // 重置场景数据
+        ResetSceneFromJson("Game1");
+
+        // 判断当前场景
+        if (CurrentSceneName != "Game1")
+        {
+            // 若不为Game1则直接加载Game1场景
+            IntoNextScene("Game1", false);
+        }
+        else
+        {
+            // 若当前场景就是Game1则重新加载当前场景
+            Scene currentScene = SceneManager.GetActiveScene();
+            if (currentScene.IsValid())
+            {
+                // 使用场景索引重新加载
+                SceneManager.LoadScene(currentScene.buildIndex);
+            }
+            else
+            {
+                // 若场景无效，直接加载Game1
+                IntoNextScene("Game1", false);
+            }
+        }
+        Time.timeScale = 1f;
+        Global_GameManager.Instance.state = State.Gaming;
     }
 }

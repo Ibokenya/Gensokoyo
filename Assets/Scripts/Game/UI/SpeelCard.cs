@@ -27,9 +27,10 @@ public class SpeelCard : MonoBehaviour
             BombHearts[i].GetComponent<Image>().sprite = BombHeartSprites[cardPiece];
         }   
         i++;
-        if(i < BombHearts.Count)
+        while(i < BombHearts.Count)
         {
             BombHearts[i].GetComponent<Image>().sprite = BombHeartSprites[0];
+            i++;
         }
     }
     private void UpdateBombText(int cardPiece)
