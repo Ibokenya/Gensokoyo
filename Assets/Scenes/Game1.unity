@@ -8535,6 +8535,7 @@ Transform:
   - {fileID: 266555472}
   - {fileID: 263780573}
   - {fileID: 937145184}
+  - {fileID: 1159832127}
   m_Father: {fileID: 1896645484}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &273036238
@@ -8566,6 +8567,8 @@ MonoBehaviour:
   DelayClip: {fileID: 8300000, guid: a6a78cd8984a39546b4acce1a95443af, type: 3}
   clearAllBullet: {fileID: 1283300306}
   cardsRotate: {fileID: 886276803}
+  graze: {fileID: 1896029630}
+  playerAnime: {fileID: 1651681770}
   player: {fileID: 1651681769}
 --- !u!1 &278505375
 GameObject:
@@ -14571,6 +14574,7 @@ MonoBehaviour:
   clearAllBullet: {fileID: 1283300306}
   lightCircle: {fileID: 937145187}
   playerAnime: {fileID: 1651681770}
+  magicAnime: {fileID: 69477624}
   MarisaNormalClip: {fileID: 8300000, guid: c2c9766d9127748459c31abced1392b4, type: 3}
   playerTransform: {fileID: 1651681772}
 --- !u!95 &937145186
@@ -18142,7 +18146,7 @@ Transform:
   m_GameObject: {fileID: 1159832126}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -3, y: 0, z: 0}
+  m_LocalPosition: {x: -0.4000001, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -18154,7 +18158,7 @@ Transform:
   - {fileID: 1319260891}
   - {fileID: 1127643497}
   - {fileID: 19035009}
-  m_Father: {fileID: 1896645484}
+  m_Father: {fileID: 273036236}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1159832128
 MonoBehaviour:
@@ -25326,6 +25330,8 @@ MonoBehaviour:
   - {fileID: 1932002326}
   MagicGun: {fileID: 69477620}
   ShootNormal: {fileID: 1651681778}
+  Index: 0
+  isExitingMagic: 0
 --- !u!114 &1651681776
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -29047,7 +29053,6 @@ Transform:
   - {fileID: 1432468939}
   - {fileID: 1762003365}
   - {fileID: 273036236}
-  - {fileID: 1159832127}
   - {fileID: 1651681772}
   - {fileID: 1283300304}
   - {fileID: 1394028997}

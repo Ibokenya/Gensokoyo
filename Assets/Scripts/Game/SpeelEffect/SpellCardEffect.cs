@@ -30,6 +30,8 @@ public class SpellCardEffect : MonoBehaviour
     [Header("脚本引用")]
     public ClearAllBullet clearAllBullet;
     public CardsRotate cardsRotate; // 引用CardsRotate脚本
+    public Graze graze; // 引用Graze脚本
+    public PlayerAnime playerAnime; // 引用PlayerAnime脚本
 
     [Header("物体引用")]
     public GameObject player;// 玩家物体
@@ -139,6 +141,11 @@ public class SpellCardEffect : MonoBehaviour
     public void ReleaseSpecialSpellCard()
     {
         Debug.Log("释放了特殊技能");
+        // 强制停止擦弹音效
+        if (graze != null)
+        {
+            graze.ForceStopGrazeSound();
+        }
         // 取消受击延迟
         if (hitDelayCoroutine != null)
         {
@@ -248,6 +255,9 @@ public class SpellCardEffect : MonoBehaviour
         // 解除无敌状态
         Global_GameManager.Instance.state = State.Gaming;
 
+        // 检测玩家按键状态并重置动画状态
+        ResetPlayerAnimationState();
+
         // 禁用对应技能空物体
         switch (skillType)
         {
@@ -278,6 +288,72 @@ public class SpellCardEffect : MonoBehaviour
         }
 
         Debug.Log($"技能 {skillType} 动画结束");
+    }
+
+    /// <summary>
+    /// 重置玩家动画状态
+    /// 检测当前按键状态并更新玩家动画
+    /// </summary>
+    private void ResetPlayerAnimationState()
+    {
+        if (player != null)
+        {
+            PlayerAnime playerAnime = player.GetComponent<PlayerAnime>();
+            GunAnime gunAnime = player.GetComponent<GunAnime>();
+            
+            if (playerAnime != null)
+            {
+                // 检测左shift按键状态
+                bool isShiftPressed = Input.GetKey(KeyCode.LeftShift);
+                
+                // 重置魔理沙的移速和动画状态
+                if (Global_GameManager.Instance.character == Character.Marisa)
+                {
+                    // 重置技能减速状态
+                    MarisaNormal.IsSkillSlowDown = false;
+                    
+                    // 根据shift按键状态设置移速和动画
+                    if (isShiftPressed)
+                    {
+                        // 低速态
+                        playerAnime.SetMoveSpeed(playerAnime.MoveSpeed * 0.4f);
+                        playerAnime.StartPandingAnime();
+                    }
+                    else
+                    {
+                        // 快速态
+                        playerAnime.SetMoveSpeed(playerAnime.MoveSpeed);
+                        playerAnime.StopPandingAnime();
+                    }
+                }
+            }
+            
+            // 重置GunAnime状态
+            if (gunAnime != null && Global_GameManager.Instance.character == Character.Marisa)
+            {
+                // 检测左shift按键状态
+                bool isShiftPressed = Input.GetKey(KeyCode.LeftShift);
+                
+                // 重置魔法状态
+                gunAnime.isExitingMagic = false;
+                
+                // 根据shift按键状态切换武器
+                if (isShiftPressed)
+                {
+                    // 按下shift，切换到七曜魔法态
+                    gunAnime.Index = 2;
+                }
+                else
+                {
+                    // 未按下shift，切换到魔理沙常态
+                    gunAnime.Index = 1;
+                }
+                
+                // 执行武器切换
+                gunAnime.SwitchGun();
+                gunAnime.UpdateGunPos();
+            }
+        }
     }
 
     /// <summary>

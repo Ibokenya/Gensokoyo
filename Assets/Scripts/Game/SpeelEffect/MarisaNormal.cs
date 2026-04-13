@@ -17,6 +17,7 @@ public class MarisaNormal : MonoBehaviour
     public ClearAllBullet clearAllBullet; // 引用ClearAllBullet脚本
     public LightCircle lightCircle; // 引用LightCircle脚本
     public PlayerAnime playerAnime; // 引用PlayerAnime脚本
+    public MagicAnime magicAnime; // 引用MagicAnime脚本
     
     [Header("音效设置")]
     public AudioClip MarisaNormalClip;//魔理沙常规音效clip
@@ -105,6 +106,17 @@ public class MarisaNormal : MonoBehaviour
     {
         isDamage = false;
     }
+
+    /// <summary>
+    /// 清除所有连线
+    /// </summary>
+    public void ClearMagicLines()
+    {
+        if (magicAnime != null)
+        {
+            magicAnime.ClearLines();
+        }
+    }
     
     /// <summary>
     /// 魔理沙常规伤害
@@ -165,7 +177,17 @@ public class MarisaNormal : MonoBehaviour
     public void ResetMoveSpeed()
     {
         IsSkillSlowDown = false;
-        playerAnime.SetMoveSpeed(playerAnime.MoveSpeed);
+        // 根据shift按键状态设置移速和动画
+        if (Input.GetKey(KeyCode.LeftShift))
+        {
+            // 低速态
+            playerAnime.SetMoveSpeed(playerAnime.MoveSpeed * 0.4f);
+        }
+        else
+        {
+            // 快速态
+            playerAnime.SetMoveSpeed(playerAnime.MoveSpeed);
+        }
     }
     
     /// <summary>

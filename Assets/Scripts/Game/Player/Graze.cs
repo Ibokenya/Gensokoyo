@@ -51,13 +51,27 @@ public class Graze : MonoBehaviour
             {
                 currentBullets.Remove(collision);
             }
-            
+
             // 如果列表为空，停止播放音效
             if (currentBullets.Count == 0 && isPlaying)
             {
                 Global_AudioManager.Instance.StopLoopSFX(grazeSound);
                 isPlaying = false;
             }
+        }
+    }
+
+    /// <summary>
+    /// 强制停止擦弹音效
+    /// 在时停动画结束后调用，确保擦弹音效被正确停止
+    /// </summary>
+    public void ForceStopGrazeSound()
+    {
+        currentBullets.Clear();
+        if (isPlaying)
+        {
+            Global_AudioManager.Instance.StopLoopSFX(grazeSound);
+            isPlaying = false;
         }
     }
 }

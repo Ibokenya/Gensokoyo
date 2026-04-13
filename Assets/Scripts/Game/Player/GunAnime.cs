@@ -38,12 +38,12 @@ public class GunAnime : MonoBehaviour
         new Vector2(0.22f, 0.1f),
     };
 
-    private int Index;//0:灵梦子机 1:魔理沙子机 2:七曜魔法子机
+    public int Index;//0:灵梦子机 1:魔理沙子机 2:七曜魔法子机
     private int GunNumber = 0;// 子机数量
 
     private bool isShifted = false;// 是否按下Shift
     public bool IsShiftedNow => isShifted;// 是否按下Shift
-    private bool isExitingMagic = false; // 是否正在退出魔法状态
+    public bool isExitingMagic = false; // 是否正在退出魔法状态
 
     void OnEnable()
     {
@@ -82,7 +82,7 @@ public class GunAnime : MonoBehaviour
         SubPower();
     }
 
-    private void SwitchGun()
+    public void SwitchGun()
     {
         switch (Index)
         {
@@ -193,7 +193,7 @@ public class GunAnime : MonoBehaviour
         UpdateGunPos();
     }
 
-    private void UpdateGunPos()
+    public void UpdateGunPos()
     {
         if(Index==0)// 灵梦子机
         {

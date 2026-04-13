@@ -23,7 +23,7 @@ public class MarisaSuper : MonoBehaviour
     
     [Header("伤害设置")]
     private int Timer = 20;// 定时器，用于技能出伤*14
-    private int damageValue = 100;// 伤害值
+    private readonly int damageValue = 100;// 伤害值
 
     private bool isDamage = false;// 是否正在出伤
     
@@ -45,6 +45,8 @@ public class MarisaSuper : MonoBehaviour
         IsAnime = false;
         isDamage = false;
         Timer = 20;
+        Global_GameManager.Instance.state = State.TimeStop;
+
     }
     
     void Update()
@@ -91,20 +93,46 @@ public class MarisaSuper : MonoBehaviour
     }
     
     /// <summary>
-    /// 魔理沙决死伤害（待实现）
+    /// 魔理沙决死伤害
     /// </summary>
     public void MarisaHitDamage()
     {
-        // 待实现魔理沙决死技能伤害逻辑
         if (Enemys.Count > 0)
         {
             // 创建临时列表以避免在遍历过程中修改原始列表
-            List<GameObject> tempEnemys = new List<GameObject>(Enemys);
+            List<GameObject> tempEnemys = new(Enemys);
             foreach (var enemy in tempEnemys)
             {
                 if (enemy != null)
                 {
-                    enemy.GetComponent<Enemy>().Damage(damageValue);
+                    if (enemy.TryGetComponent<Enemy>(out var enemyComponent))
+                    {
+                        // 调用Damage方法，确保设置isKilled标志
+                        // 时停期间，Die方法会检测时停状态并延迟处理
+                        enemyComponent.Damage(damageValue);
+                    }
+                }
+            }
+        }
+    }
+    
+    /// <summary>
+    /// 处理时停期间死亡的敌人
+    /// </summary>
+    private void ProcessDeadEnemies()
+    {
+        // 创建敌人列表的副本以避免遍历过程中修改原始列表
+        List<GameObject> enemiesToProcess = new(Enemys);
+        
+        foreach (var enemy in enemiesToProcess)
+        {
+            if (enemy != null)
+            {
+                Enemy enemyComponent = enemy.GetComponent<Enemy>();
+                if (enemyComponent != null && enemyComponent.Hp <= 0)
+                {
+                    // 手动调用Delete方法处理死亡敌人
+                    enemyComponent.Delete();
                 }
             }
         }
@@ -162,8 +190,6 @@ public class MarisaSuper : MonoBehaviour
     {
         // 设置时间缩放为0
         Time.timeScale = 0f;
-        // 切换游戏状态为时停
-        Global_GameManager.Instance.state = State.TimeStop;
     }
 
     /// <summary>
@@ -198,9 +224,12 @@ public class MarisaSuper : MonoBehaviour
         IsAnime = false;
         isDamage = false;
 
-        
         // 将时间缩放改回1
         Time.timeScale = 1f;
+        
+        // 处理时停期间死亡的敌人
+        ProcessDeadEnemies();
+        
         // 返回0.1s的无敌
         Global_GameManager.Instance.SetNoDead(0.1f, State.Gaming);
         

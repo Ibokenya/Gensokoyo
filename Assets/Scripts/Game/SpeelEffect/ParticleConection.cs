@@ -20,6 +20,15 @@ public class ParticleConection : MonoBehaviour
     private readonly int maxLines = 11; // 需要创建的连线数量
     private int createdLines = 0; // 已创建的连线数量
     
+    void OnDisable()
+    {   
+        // 清理所有连线
+        foreach (LineRenderer lineRenderer in lineRenderers)
+        {
+            lineRenderer.gameObject.SetActive(false);
+        }
+    }
+
     /// <summary>
     /// 开始创建连线
     /// 由动画事件调用
@@ -41,16 +50,13 @@ public class ParticleConection : MonoBehaviour
     {
         while (createdLines < maxLines && currentIndex < particles.Count && nextIndex < particles.Count && createdLines < lineRenderers.Length)
         {
-            // 显示连线
-            StartCoroutine(ShowLine(lineRenderers[createdLines], particles[currentIndex], particles[nextIndex], framesPerLine));
+            // 显示连线，等待完成
+            yield return StartCoroutine(ShowLine(lineRenderers[createdLines], particles[currentIndex], particles[nextIndex], framesPerLine));
             
             // 增加索引
             currentIndex++;
             nextIndex++;
             createdLines++;
-            
-            // 立即创建下一条连线，无间隔
-            yield return null;
         }
     }
     
