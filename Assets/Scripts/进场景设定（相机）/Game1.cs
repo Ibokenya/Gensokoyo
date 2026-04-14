@@ -6,6 +6,14 @@ public class Game1 : MonoBehaviour
     public AudioClip bgmClip; // 指定要播放的BGM文件
 
     public ClearAllBullet clearAllBullet;// 清除所有子弹组件
+
+    [Header("时间查看器")]
+    public float currentTime;
+
+    void Update()
+    {
+        currentTime += Time.deltaTime;
+    }
     
     void OnEnable()
     {
@@ -15,7 +23,7 @@ public class Game1 : MonoBehaviour
         && Global_AudioManager.Instance.GetCurrentBGMName() != "Game1")
         {
             Debug.Log("摄像头开始播放BGM");
-            Global_AudioManager.Instance.PlaySFX(bgmClip,false,0.1f);
+            Global_AudioManager.Instance.PlaySFX(bgmClip,false,0.8f);
         }
 
         Invoke(nameof(FadeOutMusic), 118f);// 118秒后淡出BGM

@@ -43,6 +43,10 @@ public class SpellCardEffect : MonoBehaviour
     private Coroutine hitDelayCoroutine;
     private bool isAnimating = false; // 是否正在播放动画
     
+    // 存储音乐状态
+    private string currentBGMName = "";
+    private float currentBGMPosition = 0f;
+    
     // 存储魔理沙决死前的状态
     private bool wasEvilEyeActive = false; // 恶魔之眼是否激活
     private bool wasEvilShadowActive = false; // 暗影视界是否激活
@@ -142,12 +146,12 @@ public class SpellCardEffect : MonoBehaviour
     }
 
     /// <summary>
-    /// 受击时释放特殊技能
+    /// 受击时释放特殊符卡
     /// </summary>
     public void ReleaseSpecialSpellCard()
     {
-        Debug.Log("释放了特殊技能");
-        // 强制停止擦弹音效
+        Debug.Log("释放特殊符卡");
+        // 强制停止擦弹效果
         if (graze != null)
         {
             graze.ForceStopGrazeSound();
@@ -159,6 +163,16 @@ public class SpellCardEffect : MonoBehaviour
         }
         isHitDelayActive = false;
         Time.timeScale = 1f;
+        
+        // 停止音乐并记录状态
+        if(Global_AudioManager.Instance != null)
+        {
+            currentBGMName = Global_AudioManager.Instance.GetCurrentBGMName();
+            currentBGMPosition = Global_AudioManager.Instance.GetCurrentBGMPosition();
+            
+            Global_AudioManager.Instance.StopBGM();
+            Global_AudioManager.Instance.StopAllSFX();
+        }
 
         // 存储魔理沙决死前的状态
         if (Global_GameManager.Instance.character == Character.Marisa)
@@ -293,6 +307,8 @@ public class SpellCardEffect : MonoBehaviour
                 {
                     reimuSuperObject.SetActive(false);
                 }
+                // 恢复音乐
+                ResumeMusic();
                 break;
             case 3: // 魔理沙常规
                 if (marisaNormalObject != null)
@@ -305,10 +321,25 @@ public class SpellCardEffect : MonoBehaviour
                 {
                     marisaSuperObject.SetActive(false);
                 }
+                // 恢复音乐
+                ResumeMusic();
                 break;
         }
 
         Debug.Log($"技能 {skillType} 动画结束");
+    }
+    
+    /// <summary>
+    /// 恢复音乐播放
+    /// </summary>
+    private void ResumeMusic()
+    {
+        // 恢复之前的BGM
+        if(Global_AudioManager.Instance != null && !string.IsNullOrEmpty(currentBGMName))
+        {
+            Global_AudioManager.Instance.PlayBGM(currentBGMName);
+            Global_AudioManager.Instance.SetBGMPosition(currentBGMPosition);
+        }
     }
 
     /// <summary>
