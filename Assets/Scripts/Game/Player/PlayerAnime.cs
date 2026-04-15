@@ -131,9 +131,14 @@ public class PlayerAnime : MonoBehaviour
     void Update()
     {
         // 处理动画
+        if(Global_GameManager.Instance.state == State.Pause ||
+           Global_GameManager.Instance.state == State.TimeStop)
+        {
+            return;
+        }
         HandleAnimation();
         
-        // 只有在游戏状态和无敌状态时才处理输入
+        // 只有在游戏状态、无敌状态、时间停止状态、符卡状态时才处理输入
         if(Global_GameManager.Instance.state == State.Gaming || 
            Global_GameManager.Instance.state == State.NoDead ||
            Global_GameManager.Instance.state == State.TimeStop ||

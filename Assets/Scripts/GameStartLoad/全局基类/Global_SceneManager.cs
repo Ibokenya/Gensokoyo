@@ -326,7 +326,7 @@ public class Global_SceneManager : Singleton<Global_SceneManager>
     {
         // 1. 拼接JSON文件路径（Assets/Touho/JSON/[场景名]_ResetConfig.json）
         string jsonFileName = sceneName == "GameStartMenu" ? "MenuScene_ResetConfig.json" : $"{sceneName}_ResetConfig.json";
-        string jsonFilePath = Path.Combine(Application.dataPath, "Touho/JSON", jsonFileName);
+        string jsonFilePath = Path.Combine(Application.dataPath, "Resources/Touho/JSON", jsonFileName);
 
         // 2. 检查文件是否存在
         if (!File.Exists(jsonFilePath))

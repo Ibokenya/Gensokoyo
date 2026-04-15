@@ -357,26 +357,24 @@ public class SpellCardEffect : MonoBehaviour
             {
                 // 检测左shift按键状态
                 bool isShiftPressed = Input.GetKey(KeyCode.LeftShift);
-                
+                // 根据shift按键状态设置移速和动画
+                if (isShiftPressed)
+                {
+                    // 低速态
+                    playerAnime.SetMoveSpeed(playerAnime.MoveSpeed * 0.4f);
+                    playerAnime.StartPandingAnime();
+                }
+                else
+                {
+                    // 快速态
+                    playerAnime.SetMoveSpeed(playerAnime.MoveSpeed);
+                    playerAnime.StopPandingAnime();
+                }
                 // 重置魔理沙的移速和动画状态
                 if (Global_GameManager.Instance.character == Character.Marisa)
                 {
                     // 重置技能减速状态
                     MarisaNormal.IsSkillSlowDown = false;
-                    
-                    // 根据shift按键状态设置移速和动画
-                    if (isShiftPressed)
-                    {
-                        // 低速态
-                        playerAnime.SetMoveSpeed(playerAnime.MoveSpeed * 0.4f);
-                        playerAnime.StartPandingAnime();
-                    }
-                    else
-                    {
-                        // 快速态
-                        playerAnime.SetMoveSpeed(playerAnime.MoveSpeed);
-                        playerAnime.StopPandingAnime();
-                    }
                     
                     // 重置恶魔之眼和暗影视界
                     ResetEvilEffects();
@@ -403,11 +401,10 @@ public class SpellCardEffect : MonoBehaviour
                     // 未按下shift，切换到魔理沙常态
                     gunAnime.Index = 1;
                 }
-                
-                // 执行武器切换
-                gunAnime.SwitchGun();
-                gunAnime.UpdateGunPos();
-            }
+            }           
+            // 执行武器切换
+            gunAnime.SwitchGun();
+            gunAnime.UpdateGunPos();
         }
     }
     

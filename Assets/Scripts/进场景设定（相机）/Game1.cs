@@ -9,33 +9,35 @@ public class Game1 : MonoBehaviour
 
     [Header("时间查看器")]
     public float currentTime;
+    [Header("进入对话相关")]
+    public GameObject DialogBox;
 
     void Update()
     {
+        // 更新当前音乐时间
+        //currentTime = Global_AudioManager.Instance.CurrentBGMTime;
         currentTime += Time.deltaTime;
+        if(currentTime >= 118f)
+        {
+            Debug.Log("摄像头淡出BGM");
+            Global_AudioManager.Instance.FadeOutMusic(10f);
+            DialogBox.SetActive(true);
+        }
     }
     
     void OnEnable()
     {
-        
-        // 播放指定的BGM
+        //播放指定的BGM
         if (Global_AudioManager.Instance != null && bgmClip != null 
         && Global_AudioManager.Instance.GetCurrentBGMName() != "Game1")
         {
             Debug.Log("摄像头开始播放BGM");
             Global_AudioManager.Instance.PlaySFX(bgmClip,false,0.8f);
         }
-
-        Invoke(nameof(FadeOutMusic), 118f);// 118秒后淡出BGM
     }
 
     void OnDisable()
     {
         clearAllBullet.ClearScreenBullet(false);
-    }
-
-    void FadeOutMusic()
-    {
-        Global_AudioManager.Instance.FadeOutMusic(2f);
     }
 }
