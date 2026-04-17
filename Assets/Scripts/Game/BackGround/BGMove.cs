@@ -18,6 +18,8 @@ public class BGMove : MonoBehaviour
 
     [Header("鸟鸣音效")]
     public AudioClip BirdSound;// 鸟鸣音效
+    [Header("脚本引用")]
+    public ContinueBG continueBG;// 继续背景脚本
 
     // 目标速度常量
     private const float STAR_TARGET_SPEED = 1.0f; // 群星目标速度
@@ -32,16 +34,21 @@ public class BGMove : MonoBehaviour
 
     // 存储原始粒子最大数量
     private int originalMaxParticles;
+    
+    // 存储协程引用
+    private Coroutine controlStarSpeedCoroutine;
+    private Coroutine controlDarkCloudCoroutine;
+    private Coroutine controlParticleSystemCoroutine;
 
     // 动画事件触发方法（48s时触发）
     public void StartAnimationEvents()
     {
         // 48s时启动第一个协程：控制star、darkstar、dreamroad的速度
-        StartCoroutine(ControlStarSpeed());
+        controlStarSpeedCoroutine = StartCoroutine(ControlStarSpeed());
         // 48s时启动第二个协程：控制darkcloud的透明度和速度
-        StartCoroutine(ControlDarkCloud());
+        controlDarkCloudCoroutine = StartCoroutine(ControlDarkCloud());
         // 48s时启动第三个协程：控制粒子系统最大数量
-        StartCoroutine(ControlParticleSystem());
+        controlParticleSystemCoroutine = StartCoroutine(ControlParticleSystem());
     }
 
     // 第一个协程：控制star、darkstar、dreamroad的速度平滑过渡
@@ -118,6 +125,7 @@ public class BGMove : MonoBehaviour
             elapsedTime += Time.deltaTime;
             yield return null;
         }
+        Debug.Log("ControlStarSpeed协程完成");
     }
 
     // 第二个协程：控制darkcloud的透明度和速度变化
@@ -170,6 +178,7 @@ public class BGMove : MonoBehaviour
             elapsedTime += Time.deltaTime;
             yield return null;
         }
+        Debug.Log("ControlDarkCloud协程完成");
     }
 
     // 第三个协程：控制粒子系统最大数量
@@ -206,5 +215,21 @@ public class BGMove : MonoBehaviour
     public void AudioBirdSound()
     {
         Global_AudioManager.Instance.PlaySFX(BirdSound);
+    }
+
+    public void StartContinueBG()
+    {
+        // 停止自身的速度控制协程，避免与ContinueBG的控制冲突
+        if (controlStarSpeedCoroutine != null)
+        {
+            StopCoroutine(controlStarSpeedCoroutine);
+        }
+        if (controlDarkCloudCoroutine != null)
+        {
+            StopCoroutine(controlDarkCloudCoroutine);
+        }
+        
+        // 调用ContinueBG的StartTransition方法
+        continueBG.StartTransition();
     }
 }

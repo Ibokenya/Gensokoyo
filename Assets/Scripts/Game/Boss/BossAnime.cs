@@ -12,7 +12,8 @@ public enum BossAnimeType
 
 public class BossAnime : MonoBehaviour
 {
-    public Animator animator;// 琪露诺的动画
+    public Animator ChrinoAnimator;// 琪露诺动画
+    public Animator CircleAnimator;// 虹人环动画
     [Header("琪露诺的帧动画")]
     public List<Sprite> sprites;// 琪露诺的帧动画
     private int CurrentAnimeIndex =0;
@@ -26,7 +27,7 @@ public class BossAnime : MonoBehaviour
 
     void OnEnable()
     {
-        animator.SetBool("IsAppear", true);
+        ChrinoAnimator.SetBool("IsAppear", true);
         spriteRenderer = GetComponent<SpriteRenderer>();
         SetState(BossAnimeType.Idle);
     }
@@ -129,9 +130,57 @@ public class BossAnime : MonoBehaviour
         }
     }
 
+    public void SetLeft()
+    {
+        SetState(BossAnimeType.Left);
+    }
+
+    public void SetRight()
+    {
+        SetState(BossAnimeType.Right);
+    }
+    
+    public void SetIdle()
+    {
+        SetState(BossAnimeType.Idle);
+    }
+
     public void ShowHP()
     {
         HP.SetActive(true);
+        StartCoroutine(SmoothHPFill());
+    }
+    
+    /// <summary>
+    /// 平滑填充血条协程
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator SmoothHPFill()
+    {
+        if (HP != null)
+        {
+            Image hpImage = HP.GetComponent<Image>();
+            if (hpImage != null)
+            {
+                float duration = 1f;
+                float elapsedTime = 0f;
+                float startFill = 0f;
+                float targetFill = 1f;
+                
+                while (elapsedTime < duration)
+                {
+                    float t = elapsedTime / duration;
+                    float fillAmount = Mathf.Lerp(startFill, targetFill, t);
+                    hpImage.fillAmount = fillAmount;
+                    
+                    elapsedTime += Time.deltaTime;
+                    yield return null;
+                }
+                
+                // 确保最终填充度为1
+                hpImage.fillAmount = targetFill;
+            }
+        }
     }
 
     public void HideHP()
@@ -157,5 +206,22 @@ public class BossAnime : MonoBehaviour
                 hpImage.fillAmount = fillAmount;
             }
         }
+    }
+
+    public void PlayShowAnime()
+    {
+        StartCoroutine(ShowAnimeCoroutine());
+    }
+
+    private IEnumerator ShowAnimeCoroutine()
+    {
+        ChrinoAnimator.SetBool("IsAppear", true);
+        yield return new WaitForSeconds(1f);
+        ChrinoAnimator.SetBool("IsAround", true);
+        yield return new WaitForSeconds(2f);
+        ChrinoAnimator.enabled = false;
+        CircleAnimator.SetBool("IsShow", true);
+        CircleAnimator.SetBool("IsRotate", true);
+        yield return null;
     }
 }

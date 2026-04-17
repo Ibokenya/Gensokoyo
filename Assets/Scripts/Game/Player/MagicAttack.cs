@@ -167,7 +167,6 @@ public class MagicAttack : MonoBehaviour
     /// </summary>
     private void EnterMagicState()
     {
-        Time.timeScale = 0.9f;
         isMagicActive = true;
     }
     

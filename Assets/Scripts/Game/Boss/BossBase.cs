@@ -2,12 +2,24 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
+public class HpConfig
+{
+    [Header("每波血量配置")]
+    public int none1HP; // 第一波普通攻击血量
+    public int card1HP; // 第一波符卡血量
+    public int none2HP; // 第二波普通攻击血量
+    public int card2HP; // 第二波符卡血量
+}
+
 public class BossBase : MonoBehaviour
 {
-    [Header("Boss基础属性")]
-    public int HP;
-    public int MaxHP;
-    public float defense = 0f; // 减伤值
+    private int HP;
+    private int MaxHP;
+    private float defense = 0f; // 减伤值
+    
+    [Header("血量配置")]
+    public HpConfig hpConfig;
     
     [Header("引用")]
     public BossAnime bossAnime;
@@ -31,12 +43,6 @@ public class BossBase : MonoBehaviour
         
         // 更新血条
         UpdateHPBar();
-        
-        // 检查是否死亡
-        if (HP <= 0)
-        {
-            Die();
-        }
     }
     
     /// <summary>
@@ -51,11 +57,30 @@ public class BossBase : MonoBehaviour
     }
     
     /// <summary>
-    /// Boss死亡
+    /// 设置对应波次的血量
     /// </summary>
-    private void Die()
+    /// <param name="phaseIndex">波次索引（0: none1, 1: card1, 2: none2, 3: card2）</param>
+    public void SetPhaseHP(int phaseIndex)
     {
-        // 在这里添加死亡逻辑
-        Debug.Log("Boss已死亡");
+        switch (phaseIndex)
+        {
+            case 0:
+                HP = hpConfig.none1HP;
+                MaxHP = hpConfig.none1HP;
+                break;
+            case 1:
+                HP = hpConfig.card1HP;
+                MaxHP = hpConfig.card1HP;
+                break;
+            case 2:
+                HP = hpConfig.none2HP;
+                MaxHP = hpConfig.none2HP;
+                break;
+            case 3:
+                HP = hpConfig.card2HP;
+                MaxHP = hpConfig.card2HP;
+                break;
+        }
+        UpdateHPBar();
     }
 }

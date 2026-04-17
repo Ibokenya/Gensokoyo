@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class BossUI : MonoBehaviour
 {
@@ -9,15 +10,111 @@ public class BossUI : MonoBehaviour
     public List<GameObject> HPs;// 几个阴阳玉血条
     public GameObject TimeText;// 时间文本
     private TextMeshProUGUI timeTextComponent;
+
+    [Header("阴阳玉阶段图标")]
+    public List<Sprite> HpIcons;
     
     [Header("阶段信息")]
     public List<GameObject> phaseIndicators; // 阶段指示器
-    
-    private void Start()
+
+    void OnEnable()
     {
         if (TimeText != null)
         {
             timeTextComponent = TimeText.GetComponent<TextMeshProUGUI>();
+        }
+        ShowUI();
+    }
+    /// <summary>
+    /// 显示UI，1秒内淡入
+    /// </summary>
+    public void ShowUI()
+    {
+        StartCoroutine(FadeInUI());
+    }
+    
+    /// <summary>
+    /// UI淡入协程
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator FadeInUI()
+    {
+        float duration = 1f;
+        float elapsedTime = 0f;
+        
+        // 初始化透明度为0
+        foreach (GameObject hp in HPs)
+        {
+            if (hp != null)
+            {
+                Image image = hp.GetComponent<Image>();
+                if (image != null)
+                {
+                    Color color = image.color;
+                    color.a = 0f;
+                    image.color = color;
+                }
+            }
+        }
+        
+        if (timeTextComponent != null)
+        {
+            Color color = timeTextComponent.color;
+            color.a = 0f;
+            timeTextComponent.color = color;
+        }
+        
+        // 淡入效果
+        while (elapsedTime < duration)
+        {
+            float t = elapsedTime / duration;
+            float alpha = Mathf.Lerp(0f, 1f, t);
+            
+            foreach (GameObject hp in HPs)
+            {
+                if (hp != null)
+                {
+                    Image image = hp.GetComponent<Image>();
+                    if (image != null)
+                    {
+                        Color color = image.color;
+                        color.a = alpha;
+                        image.color = color;
+                    }
+                }
+            }
+            
+            if (timeTextComponent != null)
+            {
+                Color color = timeTextComponent.color;
+                color.a = alpha;
+                timeTextComponent.color = color;
+            }
+            
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        
+        // 确保最终透明度为1
+        foreach (GameObject hp in HPs)
+        {
+            if (hp != null)
+            {
+                Image image = hp.GetComponent<Image>();
+                if (image != null)
+                {
+                    Color color = image.color;
+                    color.a = 1f;
+                    image.color = color;
+                }
+            }
+        }
+        
+        if (timeTextComponent != null)
+        {
+            Color color = timeTextComponent.color;
+            color.a = 1f;
+            timeTextComponent.color = color;
         }
     }
     

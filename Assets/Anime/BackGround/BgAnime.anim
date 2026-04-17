@@ -21,25 +21,34 @@ AnimationClip:
         time: 0
         value: {x: 2.276, y: -5.623, z: 0}
         inSlope: {x: 0, y: 0, z: 0}
-        outSlope: {x: 0, y: 0, z: 12.20339}
+        outSlope: {x: 0, y: 0, z: 12}
         tangentMode: 0
         weightedMode: 0
         inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
         outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
       - serializedVersion: 3
         time: 83
-        value: {x: 2.276, y: -5.623, z: 1012.8814}
-        inSlope: {x: 0, y: 0, z: 12.20339}
-        outSlope: {x: 0, y: 0, z: 12.203388}
+        value: {x: 2.276, y: -5.623, z: 996.00006}
+        inSlope: {x: 0, y: 0, z: 12}
+        outSlope: {x: 0, y: 0, z: 12}
         tangentMode: 0
         weightedMode: 0
         inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
         outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
       - serializedVersion: 3
         time: 118
-        value: {x: 2.276, y: -5.623, z: 1440}
-        inSlope: {x: 0, y: 0, z: 12.203388}
-        outSlope: {x: 0, y: 0, z: -45}
+        value: {x: 2.276, y: -5.623, z: 1416}
+        inSlope: {x: 0, y: 0, z: 11.999996}
+        outSlope: {x: 0, y: 0, z: 11.999996}
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
+        outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
+      - serializedVersion: 3
+        time: 119
+        value: {x: 2.276, y: -5.623, z: 1428}
+        inSlope: {x: 0, y: 0, z: 12}
+        outSlope: {x: 0, y: 0, z: 0}
         tangentMode: 0
         weightedMode: 0
         inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
@@ -2092,25 +2101,16 @@ AnimationClip:
         time: 0
         value: 0
         inSlope: 0
-        outSlope: 12.20339
+        outSlope: 12
         tangentMode: 69
         weightedMode: 0
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
-        time: 83
-        value: 1012.8814
-        inSlope: 12.20339
-        outSlope: 12.203388
-        tangentMode: 69
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
-      - serializedVersion: 3
-        time: 118
-        value: 1440
-        inSlope: 12.203388
-        outSlope: -45
+        time: 119
+        value: 1428
+        inSlope: 12
+        outSlope: 0
         tangentMode: 69
         weightedMode: 0
         inWeight: 0.33333334
@@ -4682,7 +4682,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
-    path: "\u4E2D\u5FC3\u661F\u4F53"
+    path: "\u5B87\u5B99\u4E4B\u773C"
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -4694,7 +4694,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.y
-    path: "\u4E2D\u5FC3\u661F\u4F53"
+    path: "\u5B87\u5B99\u4E4B\u773C"
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -4706,7 +4706,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
-    path: "\u4E2D\u5FC3\u661F\u4F53"
+    path: "\u5B87\u5B99\u4E4B\u773C"
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -4862,7 +4862,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
-    path: "\u5B87\u5B99\u4E4B\u773C"
+    path: "\u4E2D\u5FC3\u661F\u4F53"
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -4874,7 +4874,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.y
-    path: "\u5B87\u5B99\u4E4B\u773C"
+    path: "\u4E2D\u5FC3\u661F\u4F53"
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -4886,7 +4886,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
-    path: "\u5B87\u5B99\u4E4B\u773C"
+    path: "\u4E2D\u5FC3\u661F\u4F53"
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -4902,6 +4902,13 @@ AnimationClip:
     messageOptions: 0
   - time: 117
     functionName: AudioBirdSound
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 119
+    functionName: StartContinueBG
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0

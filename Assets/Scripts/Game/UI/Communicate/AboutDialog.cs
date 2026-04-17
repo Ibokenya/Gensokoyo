@@ -39,6 +39,11 @@ public class AboutDialog : MonoBehaviour
     private int currentDialogIndex = 0;
     private bool isDialogActive = false;
 
+    public ContinueBG continueBG;// 继续背景脚本
+    public Game1 game1;// 游戏1脚本
+    public GameObject Boss;// 敌人物体
+
+
     private void Awake()
     {
         dialogText = DialogBox.GetComponent<TextMeshProUGUI>();
@@ -305,12 +310,41 @@ public class AboutDialog : MonoBehaviour
             // 对话结束，禁用对话框
             isDialogActive = false;
             Global_GameManager.Instance.state = State.Gaming;
+            continueBG.StartRecovery();
+            
+            // 处理音乐切换
+            HandleMusicSwitch();
+            
             gameObject.SetActive(false);
         }
         else
         {
             // 显示下一条对话
             ShowDialog(currentDialogList[currentDialogIndex]);
+        }
+    }
+    
+    /// <summary>
+    /// 处理音乐切换
+    /// </summary>
+    private void HandleMusicSwitch()
+    {
+        if (Global_AudioManager.Instance != null)
+        {
+            // 停止淡出协程并清理背景音乐
+            Global_AudioManager.Instance.StopFadeOutAndClearBGM();
+            
+            // 播放Boss BGM
+            Global_AudioManager.Instance.PlayBGM("Boss");
+            Boss.SetActive(true);
+            
+            // 时间标记
+            // 重置Game1中的currentTime为0
+            // 找到Game1脚本并重置currentTime
+            if (game1 != null)
+            {
+                game1.currentTime = 0f;
+            }
         }
     }
 

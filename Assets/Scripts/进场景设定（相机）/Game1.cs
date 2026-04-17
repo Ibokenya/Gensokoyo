@@ -14,10 +14,11 @@ public class Game1 : MonoBehaviour
 
     void Update()
     {
+        // 时间标记
         // 更新当前音乐时间
         //currentTime = Global_AudioManager.Instance.CurrentBGMTime;
         currentTime += Time.deltaTime;
-        if(currentTime >= 118f)
+        if(currentTime >= 118f && currentTime <= 119f)
         {
             Debug.Log("摄像头淡出BGM");
             Global_AudioManager.Instance.FadeOutMusic(10f);
@@ -29,7 +30,7 @@ public class Game1 : MonoBehaviour
     {
         //播放指定的BGM
         if (Global_AudioManager.Instance != null && bgmClip != null 
-        && Global_AudioManager.Instance.GetCurrentBGMName() != "Game1")
+        && Global_AudioManager.Instance.GetCurrentBGMName() != "Boss")
         {
             Debug.Log("摄像头开始播放BGM");
             Global_AudioManager.Instance.PlaySFX(bgmClip,false,0.8f);

@@ -35,6 +35,7 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
     private float bgmVolume = 0.70f;     // 背景音乐音量
     private float sfxVolume = 0.80f;     // 音效音量
     public float CurrentTime;
+    private Coroutine fadeOutCoroutine; // 存储淡出协程引用
 
     #endregion
 
@@ -540,7 +541,13 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
     {
         if (bgmSource != null && bgmSource.isPlaying)
         {
-            StartCoroutine(FadeOutMusicCoroutine(fadeOutTime));
+            // 停止之前可能正在进行的淡出协程
+            if (fadeOutCoroutine != null)
+            {
+                StopCoroutine(fadeOutCoroutine);
+            }
+            // 启动新的淡出协程并保存引用
+            fadeOutCoroutine = StartCoroutine(FadeOutMusicCoroutine(fadeOutTime));
         }
     }
     
@@ -554,6 +561,7 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
         {
             // 如果淡出时间小于等于0，直接停止音乐
             bgmSource.Stop();
+            fadeOutCoroutine = null;
             yield break;
         }
         
@@ -572,6 +580,29 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
         bgmSource.Stop();
         // 重置音量，以便下次播放
         bgmSource.volume = startVolume;
+        // 重置协程引用
+        fadeOutCoroutine = null;
+    }
+    
+    /// <summary>
+    /// 停止淡出协程并清理背景音乐
+    /// </summary>
+    public void StopFadeOutAndClearBGM()
+    {
+        // 停止淡出协程
+        if (fadeOutCoroutine != null)
+        {
+            StopCoroutine(fadeOutCoroutine);
+            fadeOutCoroutine = null;
+        }
+        
+        // 停止背景音乐并重置音量
+        if (bgmSource != null)
+        {
+            bgmSource.Stop();
+            // 重置音量到默认值
+            bgmSource.volume = bgmVolume;
+        }
     }
     
     #endregion

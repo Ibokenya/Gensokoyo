@@ -4,120 +4,253 @@ using UnityEngine;
 
 public class BossBeheve : MonoBehaviour
 {
-    [Header("阶段配置")]
-    public float none1Duration = 30f; // 第一阶段普通攻击持续时间
-    public float card1Duration = 45f; // 第一阶段符卡持续时间
-    public float none2Duration = 35f; // 第二阶段普通攻击持续时间
-    public float card2Duration = 50f; // 第二阶段符卡持续时间
-    public float finalCardDuration = 60f; // 最终符卡持续时间
-    
     [Header("阶段脚本")]
-    public MonoBehaviour none1Script; // 第一阶段普通攻击脚本
-    public MonoBehaviour card1Script; // 第一阶段符卡脚本
-    public MonoBehaviour none2Script; // 第二阶段普通攻击脚本
-    public MonoBehaviour card2Script; // 第二阶段符卡脚本
-    public MonoBehaviour finalCardScript; // 最终符卡脚本
+    public none1 none1Script; // 第一阶段普通攻击脚本
+    public card1 card1Script; // 第一阶段符卡脚本
+    public none2 none2Script; // 第二阶段普通攻击脚本
+    public card2 card2Script; // 第二阶段符卡脚本
+    public FinalCard finalCardScript; // 最终符卡脚本
     
     [Header("引用")]
+    public GameObject UI;
     public BossUI bossUI;
     public BossAnime bossAnime;
     
-    private float phaseTimer = 0f;
-    private int currentPhase = 0;
-    private int totalPhases = 5;
-    
-    // 阶段持续时间数组
-    private float[] phaseDurations;
-    // 阶段脚本数组
-    private MonoBehaviour[] phaseScripts;
-    
-    private void Start()
-    {
-        // 初始化阶段配置
-        phaseDurations = new float[] { none1Duration, card1Duration, none2Duration, card2Duration, finalCardDuration };
-        phaseScripts = new MonoBehaviour[] { none1Script, card1Script, none2Script, card2Script, finalCardScript };
-        
-        // 禁用所有阶段脚本
-        foreach (MonoBehaviour script in phaseScripts)
-        {
-            if (script != null)
-            {
-                script.enabled = false;
-            }
-        }
-        
-        // 开始第一阶段
-        StartPhase(0);
-    }
+    private float currentTime = 0f;
+    private bool hasPlayedCharacterAnimation = false;
+    private bool hasActivatedUI = false;
+    private bool hasActivatedNone1 = false;
+    private bool hasCalledNone1CheckOver = false;
+    private bool hasActivatedCard1 = false;
+    private bool hasCalledCard1CheckOver = false;
+    private bool hasActivatedNone2 = false;
+    private bool hasCalledNone2CheckOver = false;
+    private bool hasActivatedCard2 = false;
+    private bool hasCalledCard2CheckOver = false;
+    private bool hasCalledBgAndBallon = false;
+    private bool hasCalledFinalAnime = false;
+    private bool hasActivatedFinalCard = false;
+    private bool hasEndedFinalCard = false;
     
     private void Update()
     {
-        // 更新阶段计时器
-        phaseTimer += Time.deltaTime;
-        
-        // 检查是否需要切换阶段
-        if (phaseTimer >= phaseDurations[currentPhase])
+        // 获取当前音乐时间
+        if (Global_AudioManager.Instance != null)
         {
-            // 结束当前阶段
-            EndPhase(currentPhase);
-            
-            // 进入下一阶段
-            currentPhase++;
-            if (currentPhase < totalPhases)
-            {
-                StartPhase(currentPhase);
-            }
-            else
-            {
-                // 所有阶段结束
-                Debug.Log("Boss战所有阶段结束");
-            }
+            // 时间标记
+            // currentTime = Global_AudioManager.Instance.CurrentBGMTime;
+            currentTime += Time.deltaTime;
         }
         
-        // 更新UI时间文本
-        if (bossUI != null)
+        // 处理时间事件
+        HandleTimeEvents();
+    }
+    
+    /// <summary>
+    /// 处理时间事件
+    /// </summary>
+    private void HandleTimeEvents()
+    {
+        // 时间为0秒时，播放角色动画
+        if (currentTime >= 0f && currentTime < 1f && !hasPlayedCharacterAnimation)
         {
-            float timeLeft = phaseDurations[currentPhase] - phaseTimer;
-            bossUI.UpdateTimeText(timeLeft);
+            PlayCharacterAnimation();
+            hasPlayedCharacterAnimation = true;
+        }
+        
+        if (currentTime >= 4f && currentTime < 5f && !hasActivatedUI)
+        {
+            UI.SetActive(true);
+            bossAnime.ShowHP();
+            hasActivatedUI = true;
+        }
+
+        // 时间为5秒时，激活none1
+        if (currentTime >= 5f && currentTime < 6f && !hasActivatedNone1)
+        {
+            if (none1Script != null)
+            {
+                none1Script.enabled = true;
+                Debug.Log("激活none1");
+            }
+            hasActivatedNone1 = true;
+        }
+        
+        // 时间为21秒时，调用None1的CheckOver()方法
+        if (currentTime >= 21f && currentTime < 22f && !hasCalledNone1CheckOver)
+        {
+            // 由于none1现在是空的，暂时注释掉
+            // if (none1Script != null)
+            // {
+            //     none1Script.CheckOver();
+            // }
+            Debug.Log("调用none1.CheckOver()");
+            hasCalledNone1CheckOver = true;
+        }
+        
+        // 时间为22秒时，禁用none1激活card1
+        if (currentTime >= 22f && currentTime < 23f && !hasActivatedCard1)
+        {
+            if (none1Script != null)
+            {
+                none1Script.enabled = false;
+                Debug.Log("禁用none1");
+            }
+            if (card1Script != null)
+            {
+                card1Script.enabled = true;
+                Debug.Log("激活card1");
+            }
+            hasActivatedCard1 = true;
+        }
+        
+        // 时间为45秒时，调用card1的checkover
+        if (currentTime >= 45f && currentTime < 46f && !hasCalledCard1CheckOver)
+        {
+            // 由于card1现在是空的，暂时注释掉
+            // if (card1Script != null)
+            // {
+            //     card1Script.CheckOver();
+            // }
+            Debug.Log("调用card1.CheckOver()");
+            hasCalledCard1CheckOver = true;
+        }
+        
+        // 时间为46秒，禁用card1激活none2
+        if (currentTime >= 46f && currentTime < 47f && !hasActivatedNone2)
+        {
+            if (card1Script != null)
+            {
+                card1Script.enabled = false;
+                Debug.Log("禁用card1");
+            }
+            if (none2Script != null)
+            {
+                none2Script.enabled = true;
+                Debug.Log("激活none2");
+            }
+            hasActivatedNone2 = true;
+        }
+        
+        // 时间为58秒，调用none2的checkover
+        if (currentTime >= 58f && currentTime < 59f && !hasCalledNone2CheckOver)
+        {
+            // 由于none2现在是空的，暂时注释掉
+            // if (none2Script != null)
+            // {
+            //     none2Script.CheckOver();
+            // }
+            Debug.Log("调用none2.CheckOver()");
+            hasCalledNone2CheckOver = true;
+        }
+        
+        // 时间为59秒，禁用none2激活card2
+        if (currentTime >= 59f && currentTime < 60f && !hasActivatedCard2)
+        {
+            if (none2Script != null)
+            {
+                none2Script.enabled = false;
+                Debug.Log("禁用none2");
+            }
+            if (card2Script != null)
+            {
+                card2Script.enabled = true;
+                Debug.Log("激活card2");
+            }
+            hasActivatedCard2 = true;
+        }
+        
+        // 时间为83秒，调用card2的checkover
+        if (currentTime >= 83f && currentTime < 84f && !hasCalledCard2CheckOver)
+        {
+            // 由于card2现在是空的，暂时注释掉
+            // if (card2Script != null)
+            // {
+            //     card2Script.CheckOver();
+            // }
+            Debug.Log("调用card2.CheckOver()");
+            hasCalledCard2CheckOver = true;
+        }
+        
+        // 时间为84秒，禁用card2并调用BgAndBallon方法
+        if (currentTime >= 84f && currentTime < 85f && !hasCalledBgAndBallon)
+        {
+            if (card2Script != null)
+            {
+                card2Script.enabled = false;
+                Debug.Log("禁用card2");
+            }
+            BgAndBallon();
+            Debug.Log("调用BgAndBallon方法");
+            hasCalledBgAndBallon = true;
+        }
+        
+        // 时间为89秒，调用FinalAnime方法
+        if (currentTime >= 89f && currentTime < 90f && !hasCalledFinalAnime)
+        {
+            FinalAnime();
+            Debug.Log("调用FinalAnime方法");
+            hasCalledFinalAnime = true;
+        }
+        
+        // 时间为91秒，激活finalcard
+        if (currentTime >= 91f && currentTime < 92f && !hasActivatedFinalCard)
+        {
+            if (finalCardScript != null)
+            {
+                finalCardScript.enabled = true;
+                Debug.Log("激活finalCard");
+            }
+            hasActivatedFinalCard = true;
+        }
+        
+        // 时间为138秒，禁用finalcard，并调用AllOver方法
+        if (currentTime >= 138f && currentTime < 139f && !hasEndedFinalCard)
+        {
+            if (finalCardScript != null)
+            {
+                finalCardScript.enabled = false;
+                Debug.Log("禁用finalCard");
+            }
+            AllOver();
+            Debug.Log("一切都结束了");
+            hasEndedFinalCard = true;
         }
     }
     
     /// <summary>
-    /// 开始新阶段
+    /// 播放角色动画
     /// </summary>
-    /// <param name="phaseIndex">阶段索引</param>
-    private void StartPhase(int phaseIndex)
+    private void PlayCharacterAnimation()
     {
-        // 重置阶段计时器
-        phaseTimer = 0f;
-        
-        // 启用当前阶段脚本
-        if (phaseIndex < phaseScripts.Length && phaseScripts[phaseIndex] != null)
-        {
-            phaseScripts[phaseIndex].enabled = true;
-            Debug.Log("开始阶段 " + (phaseIndex + 1));
-        }
-        
-        // 更新UI
-        if (bossUI != null)
-        {
-            bossUI.UpdatePhaseIndicators(phaseIndex);
-            bossUI.ShowRemainingPhases(totalPhases, phaseIndex);
-        }
+        bossAnime.PlayShowAnime();
     }
     
     /// <summary>
-    /// 结束当前阶段
+    /// BgAndBallon方法
     /// </summary>
-    /// <param name="phaseIndex">阶段索引</param>
-    private void EndPhase(int phaseIndex)
+    private void BgAndBallon()
     {
-        // 禁用当前阶段脚本
-        if (phaseIndex < phaseScripts.Length && phaseScripts[phaseIndex] != null)
-        {
-            phaseScripts[phaseIndex].enabled = false;
-            Debug.Log("结束阶段 " + (phaseIndex + 1));
-        }
+        // 空方法，内部不实现
+        Debug.Log("调用BgAndBallon方法");
+    }
+    
+    /// <summary>
+    /// FinalAnime方法
+    /// </summary>
+    private void FinalAnime()
+    {
+        // 空方法，内部不实现
+        Debug.Log("调用FinalAnime方法");
+    }
+    
+    /// <summary>
+    /// AllOver方法
+    /// </summary>
+    private void AllOver()
+    {
+        // 空方法，内部不实现
+        Debug.Log("调用AllOver方法");
     }
     
     /// <summary>

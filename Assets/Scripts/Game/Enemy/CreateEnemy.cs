@@ -84,7 +84,7 @@ public class CreateEnemy : MonoBehaviour
 
     void Update()
     {
-
+        // 时间标记
         // // 获取当前音乐播放时间
         // if (audioManager.CurrentBGMTime != 0)
         // {
