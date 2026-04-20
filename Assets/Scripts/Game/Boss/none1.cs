@@ -7,16 +7,16 @@ public class none1 : MonoBehaviour
     [Header("一非参数")]
     public float shoot_interval1 = 2f; // 射击间隔1
     public float shoot_interval2 = 1f; // 射击间隔2
-    public float rotationSpeed = 60f; // 旋转速度
-    public GameObject fanBulletPrefab; // 扇形射击子弹预制件
-    public GameObject iceBulletPrefab1; // 冰点射击预制件1
-    public GameObject iceBulletPrefab2; // 冰点射击预制件2
+    public GameObject fanBulletPrefab; // 扇形射击子弹预制件（冰玉）
+    public GameObject iceBulletPrefab1; // 冰点射击预制件1（冰刺）
+    public GameObject iceBulletPrefab2; // 冰点射击预制件2（冰珠）
     public BossShootSystem bossShootSystem; // 射击系统引用
     
     [Header("子弹速度")]
     public float icePickSpeed = 5f; // IcePick 速度
     public float iceJadeSpeed = 6f; // IceJade 速度
     public float icePearlSpeed = 4f; // IcePearl 速度
+    public float rotationSpeed = 30f; // 旋转速度
     
     private void OnEnable()
     {
@@ -59,7 +59,7 @@ public class none1 : MonoBehaviour
         if (bossShootSystem != null)
         {
             // 启动定位扇形射击
-            bossShootSystem.Pos_FanShaped_Shoot(fanBulletPrefab, 2f);
+            bossShootSystem.Pos_FanShaped_Shoot(fanBulletPrefab, iceJadeSpeed);
             
             // 启动冰点射击（传递参数）
             bossShootSystem.IcePointAttack();
@@ -71,7 +71,7 @@ public class none1 : MonoBehaviour
 
     private void IcePointAttack()
     {
-        bossShootSystem.IcePoint_Shoot(iceBulletPrefab1, iceBulletPrefab2, 2f, 1f, 60f, icePickSpeed, iceJadeSpeed);
+        bossShootSystem.IcePoint_Shoot(iceBulletPrefab1, iceBulletPrefab2, shoot_interval1, shoot_interval2, rotationSpeed, icePickSpeed, icePearlSpeed);
     }
     
     /// <summary>

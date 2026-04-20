@@ -15,6 +15,10 @@ public class BossBeheve : MonoBehaviour
     public GameObject UI;
     public BossUI bossUI;
     public BossAnime bossAnime;
+    public GameObject card_UI;
+    public CardUI cardUI;
+    public GameObject BossBG;
+    public ChangeBG changeBG;
     
     private float currentTime = 0f;
     private bool hasPlayedCharacterAnimation = false;
@@ -54,6 +58,7 @@ public class BossBeheve : MonoBehaviour
         // 时间为0秒时，播放角色动画
         if (currentTime >= 0f && currentTime < 1f && !hasPlayedCharacterAnimation)
         {
+            BossBG.SetActive(true);
             PlayCharacterAnimation();
             hasPlayedCharacterAnimation = true;
         }
@@ -61,6 +66,7 @@ public class BossBeheve : MonoBehaviour
         if (currentTime >= 4f && currentTime < 5f && !hasActivatedUI)
         {
             UI.SetActive(true);
+            card_UI.SetActive(true);
             bossAnime.ShowHP();
             hasActivatedUI = true;
         }
@@ -71,6 +77,9 @@ public class BossBeheve : MonoBehaviour
             if (none1Script != null)
             {
                 none1Script.enabled = true;
+                cardUI.SetCard(0);
+                cardUI.SetCardName("-170℃");
+                cardUI.SetCardColor(0.8f);
                 Debug.Log("激活none1");
             }
             hasActivatedNone1 = true;
@@ -99,6 +108,9 @@ public class BossBeheve : MonoBehaviour
             if (card1Script != null)
             {
                 card1Script.enabled = true;
+                cardUI.SetCard(1);
+                cardUI.SetCardName("-220℃· \n冰冷彗星带");
+                cardUI.SetCardColor(0.6f);
                 Debug.Log("激活card1");
             }
             hasActivatedCard1 = true;
@@ -127,6 +139,9 @@ public class BossBeheve : MonoBehaviour
             if (none2Script != null)
             {
                 none2Script.enabled = true;
+                cardUI.SetCard(2);
+                cardUI.SetCardName("-260℃");
+                cardUI.SetCardColor(0.4f);
                 Debug.Log("激活none2");
             }
             hasActivatedNone2 = true;
@@ -155,6 +170,9 @@ public class BossBeheve : MonoBehaviour
             if (card2Script != null)
             {
                 card2Script.enabled = true;
+                cardUI.SetCard(3);
+                cardUI.SetCardName("-270℃· \n宇宙微波辐射");
+                cardUI.SetCardColor(0.2f);
                 Debug.Log("激活card2");
             }
             hasActivatedCard2 = true;
@@ -189,6 +207,9 @@ public class BossBeheve : MonoBehaviour
         if (currentTime >= 89f && currentTime < 90f && !hasCalledFinalAnime)
         {
             FinalAnime();
+            cardUI.SetCard(4);
+            cardUI.SetCardName("-273.15℃· \n然后分子便不再运动了");
+            cardUI.SetCardColor(0f);
             Debug.Log("调用FinalAnime方法");
             hasCalledFinalAnime = true;
         }

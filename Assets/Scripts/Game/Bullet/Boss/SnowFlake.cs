@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Ñ©»¨×Óµ¯
+/// </summary>
 public class SnowFlake : MonoBehaviour
 {
     // Start is called before the first frame update

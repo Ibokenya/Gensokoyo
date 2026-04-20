@@ -4,14 +4,107 @@ using UnityEngine;
 
 public class card1 : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [Header("一符参数")]
+    public GameObject stoneBulletPrefab; // 陨石子弹预制件
+    public GameObject frozenIceBulletPrefab; // 冰冻子弹预制件
+    public GameObject normalIceBulletPrefab; // 普通冰子弹预制件（用于冰块破裂）
+    public GameObject randomIcePickBulletPrefab; // 随机射击子弹预制件
+    public BossShootSystem bossShootSystem; // 射击系统引用
+    public GameObject boss; // Boss对象引用
+    
+    [Header("陨石冰冻旋转攻击参数")]
+    public int stoneCount = 5; // 陨石数量
+    public float rotationSpeed = 30f; // 旋转速度
+    
+    [Header("随机射击参数")]
+    public float bulletSpeed = 5f; // 子弹速度
+    public float shootInterval = 2f; // 射击间隔
+    
+    private void OnEnable()
     {
+        // 初始化弹幕池
+        if (stoneBulletPrefab != null)
+        {
+            Global_ObjectPool.Instance.InitPool(stoneBulletPrefab, 20);
+        }
+        if (frozenIceBulletPrefab != null)
+        {
+            Global_ObjectPool.Instance.InitPool(frozenIceBulletPrefab, 20);
+        }
+        if (normalIceBulletPrefab != null)
+        {
+            Global_ObjectPool.Instance.InitPool(normalIceBulletPrefab, 100);
+        }
+        if (randomIcePickBulletPrefab != null)
+        {
+            Global_ObjectPool.Instance.InitPool(randomIcePickBulletPrefab, 100);
+        }
         
+        // 开始攻击
+        StartAttacks();
     }
-
-    // Update is called once per frame
-    void Update()
+    
+    private void OnDisable()
+    {
+        // 停止所有协程
+        StopAllCoroutines();
+        
+        // 取消所有 Invoke 调用
+        CancelInvoke();
+        
+        // 停止 BossShootSystem 中的所有射击协程
+        if (bossShootSystem != null)
+        {
+            bossShootSystem.StopAllShooting();
+        }
+    }
+    
+    private void StartAttacks()
+    {
+        // 启动boss移动协程
+        StartCoroutine(MoveBossToCenter());
+    }
+    
+    private IEnumerator MoveBossToCenter()
+    {
+        if (boss != null)
+        {
+            Vector3 startPosition = boss.transform.position;
+            Vector3 targetPosition = new Vector3(-3f, 0f, 0f);
+            float duration = 2f;
+            float elapsedTime = 0f;
+            
+            // 平滑移动boss到中心位置
+            while (elapsedTime < duration)
+            {
+                float t = elapsedTime / duration;
+                // 使用平滑的缓动函数
+                t = Mathf.SmoothStep(0f, 1f, t);
+                boss.transform.position = Vector3.Lerp(startPosition, targetPosition, t);
+                elapsedTime += Time.deltaTime;
+                yield return null;
+            }
+            
+            // 确保boss到达精确位置
+            boss.transform.position = targetPosition;
+        }
+        
+        // 移动完成后开始攻击
+        if (bossShootSystem != null)
+        {
+            // 启动陨石冰冻旋转攻击
+            bossShootSystem.StoneFrozenAttack(stoneBulletPrefab, frozenIceBulletPrefab, normalIceBulletPrefab, stoneCount, rotationSpeed);
+            
+            // 启动随机射击
+            bossShootSystem.randomIcePick(randomIcePickBulletPrefab, bulletSpeed, shootInterval);
+        }
+    }
+    
+    /// <summary>
+    /// 一个关键的方法：检查boss是否已经死亡
+    /// 如果boss没死亡，则会播放时间到的效果
+    /// </summary>
+    public void CheckOver()
     {
         
     }

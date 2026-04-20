@@ -12,9 +12,9 @@ GameObject:
   - component: {fileID: 7597834041091451979}
   - component: {fileID: 8290766520935765290}
   - component: {fileID: 1901461303554977224}
-  - component: {fileID: 3909710038911036919}
+  - component: {fileID: -7392832807635186956}
   m_Layer: 7
-  m_Name: "mini\u51B0\u73E0"
+  m_Name: "mini\u51B0\u73E0-\u65CB\u8F6C"
   m_TagString: EnemyBullet
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -149,7 +149,7 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.64
---- !u!114 &3909710038911036919
+--- !u!114 &-7392832807635186956
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -158,8 +158,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 6918623884827800615}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c95cfd1e40fba7a49a2139b2211b28bc, type: 3}
+  m_Script: {fileID: 11500000, guid: 8ca4455621154194289c09779dc97d92, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BaseSpeed: 5
-  useSpeedOffset: 1
+  icePoint: {fileID: 0}
+  rotationSpeed: 30
+  moveSpeed: 3

@@ -17,75 +17,74 @@ public class NormalIce : MonoBehaviour
     
     void Start()
     {
-        // 获取刚体组件
+        // 获取Rigidbody2D组件
         rb2D = GetComponent<Rigidbody2D>();
     }
     
     public void SetSpeed(float speed)
     {
         BaseSpeed = speed;
-        // 重新计算实际速度并更新刚体速度
+        // 计算实际速度
         if (useSpeedOffset)
         {
-            // 生成速度偏移（-0.5 到 0.5 之间的十分位值）
+            // 计算速度偏移
             float speedOffset = Mathf.Round(Random.Range(-5f, 6f)) * 0.1f;
             actualSpeed = BaseSpeed + speedOffset;
         }
         else
         {
-            // 不使用速度偏移，直接使用基础速度
+            // 使用基础速度
             actualSpeed = BaseSpeed;
         }
         
-        // 更新移动速度
+        // 设置速度
         if (rb2D != null)
         {
-            // 根据子弹的旋转角度计算移动方向
-            Vector2 direction = transform.right;
+            // 设置速度
+            Vector2 direction = transform.TransformDirection(Vector2.right);
             rb2D.velocity = direction * actualSpeed;
         }
     }
     
     void OnEnable()
     {
-        // 确保刚体组件存在
+        // 获取Rigidbody2D组件
         if (rb2D == null)
         {
             rb2D = GetComponent<Rigidbody2D>();
         }
         
-        // 根据是否使用速度偏移计算实际速度
+        // 计算实际速度
         if (useSpeedOffset)
         {
-            // 生成速度偏移（-0.5 到 0.5 之间的十分位值）
+            // 计算速度偏移
             float speedOffset = Mathf.Round(Random.Range(-5f, 6f)) * 0.1f;
             actualSpeed = BaseSpeed + speedOffset;
         }
         else
         {
-            // 不使用速度偏移，直接使用基础速度
+            // 使用基础速度
             actualSpeed = BaseSpeed;
         }
         
-        // 设置移动速度
+        // 设置速度
         if (rb2D != null)
         {
-            // 根据子弹的旋转角度计算移动方向
-            Vector2 direction = transform.right;
+            // 设置速度
+            Vector2 direction = transform.TransformDirection(Vector2.right);
             rb2D.velocity = direction * actualSpeed;
-            // 确保物体不是运动学的
             rb2D.isKinematic = false;
         }
     }
     
     void Update()
     {
-        // 边界检测
+        // 检查边界
         CheckBounds();
     }
     
     /// <summary>
-    /// 检测边界，超出边界则回收
+    /// 检查边界，超出范围则回收
     /// </summary>
     private void CheckBounds()
     {
