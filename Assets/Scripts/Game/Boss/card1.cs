@@ -19,9 +19,12 @@ public class card1 : MonoBehaviour
     [Header("随机射击参数")]
     public float bulletSpeed = 5f; // 子弹速度
     public float shootInterval = 2f; // 射击间隔
+    public int bulletCount = 5; // 每轮射击子弹数
+    [Header("脚本引用")]
+    public BossUI bossUI; // BossUI脚本引用
     
     private void OnEnable()
-    {
+    {      
         // 初始化弹幕池
         if (stoneBulletPrefab != null)
         {
@@ -39,7 +42,8 @@ public class card1 : MonoBehaviour
         {
             Global_ObjectPool.Instance.InitPool(randomIcePickBulletPrefab, 100);
         }
-        
+        // 显示冰刺地形
+        bossShootSystem.ShowTerrain();
         // 开始攻击
         StartAttacks();
     }
@@ -48,9 +52,15 @@ public class card1 : MonoBehaviour
     {
         // 停止所有协程
         StopAllCoroutines();
-        
+        // 隐藏冰刺地形
+        bossShootSystem.HideTerrain();
         // 取消所有 Invoke 调用
         CancelInvoke();
+        // 恢复所有陨石的重力
+        if (bossShootSystem != null)
+        {
+            bossShootSystem.ResumeAllStonesGravity();
+        }
         
         // 停止 BossShootSystem 中的所有射击协程
         if (bossShootSystem != null)
@@ -96,7 +106,7 @@ public class card1 : MonoBehaviour
             bossShootSystem.StoneFrozenAttack(stoneBulletPrefab, frozenIceBulletPrefab, normalIceBulletPrefab, stoneCount, rotationSpeed);
             
             // 启动随机射击
-            bossShootSystem.randomIcePick(randomIcePickBulletPrefab, bulletSpeed, shootInterval);
+            bossShootSystem.randomIcePick(randomIcePickBulletPrefab, bulletSpeed, shootInterval, bulletCount);
         }
     }
     

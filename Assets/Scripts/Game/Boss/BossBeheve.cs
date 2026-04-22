@@ -68,6 +68,7 @@ public class BossBeheve : MonoBehaviour
             UI.SetActive(true);
             card_UI.SetActive(true);
             bossAnime.ShowHP();
+            bossUI.SetCardTime(16f);
             hasActivatedUI = true;
         }
 
@@ -94,6 +95,7 @@ public class BossBeheve : MonoBehaviour
             //     none1Script.CheckOver();
             // }
             Debug.Log("调用none1.CheckOver()");
+            bossUI.SetCardTime(23f);
             hasCalledNone1CheckOver = true;
         }
         
@@ -125,6 +127,7 @@ public class BossBeheve : MonoBehaviour
             //     card1Script.CheckOver();
             // }
             Debug.Log("调用card1.CheckOver()");
+            bossUI.SetCardTime(12f);
             hasCalledCard1CheckOver = true;
         }
         

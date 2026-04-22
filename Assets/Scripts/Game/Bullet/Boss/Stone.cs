@@ -7,13 +7,13 @@ public class Stone : MonoBehaviour
     private Rigidbody2D rb2D;
     private Vector2 targetPosition;
     private bool hasReachedTarget = false;
-    public bool IsReachedTarget { get { return hasReachedTarget; } }
+    public bool IsReachedTarget { get { return hasReachedTarget; } }// 是否到达目标位置
     
     // 边界范围
-    private readonly float minX = -11f;
-    private readonly float maxX = 5f;
-    private readonly float minY = -7.5f;
-    private readonly float maxY = 7.5f;
+    private readonly float minX = -12f;
+    private readonly float maxX = 6f;
+    private readonly float minY = -9f;
+    private readonly float maxY = 9f;
     
     void Start()
     {

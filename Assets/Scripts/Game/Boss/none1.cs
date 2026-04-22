@@ -17,7 +17,11 @@ public class none1 : MonoBehaviour
     public float iceJadeSpeed = 6f; // IceJade 速度
     public float icePearlSpeed = 4f; // IcePearl 速度
     public float rotationSpeed = 30f; // 旋转速度
+
+    [Header("脚本引用")]
+    public BossUI bossUI; // BossUI脚本引用
     
+       
     private void OnEnable()
     {
         // 初始化弹幕池
@@ -33,7 +37,6 @@ public class none1 : MonoBehaviour
         {
             Global_ObjectPool.Instance.InitPool(iceBulletPrefab2, 30);
         }
-        
         // 开始射击
         StartShooting();
     }
@@ -41,7 +44,6 @@ public class none1 : MonoBehaviour
     {
         // 停止所有协程
         StopAllCoroutines();
-        
         // 取消所有 Invoke 调用
         CancelInvoke();
         

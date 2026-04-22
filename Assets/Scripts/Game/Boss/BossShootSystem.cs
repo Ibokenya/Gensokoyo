@@ -7,12 +7,30 @@ public class BossShootSystem : MonoBehaviour
     public GameObject player;
     public GameObject boss;
     public GameObject IcePoint;
+    public GameObject IceTerraun;// 冰刺地形
     public List<GameObject> IcePoints;
     public List<Sprite> icePointSprites; // icepoint 帧动画素材
     private const float animationSpeed = 0.1f; // 动画速度
     private int currentSpriteIndex = 0; // 当前动画帧索引
     private Vector2 Center = new Vector2(-3, 0);
+#region none1参数
+    // none1相关参数由none1脚本提供
+#endregion
+
+#region card1参数
+    // card1相关参数由card1脚本提供
+    List<GameObject> stones = new ();
+    List<float> initialAngles = new (); // 保存每个陨石的初始角度
+    List<float> speedOffsets = new (); // 保存每个陨石的旋转速度偏移
+    List<Vector2> stonePositions = new (); // 保存已生成的陨石位置
+    List<float> individualAngles = new (); // 保存每个陨石的独立角度
+    Vector2 targetPosition;
     private int randomIcePickBulletCount = 5; // 随机射击的子弹数量
+#endregion
+
+#region none2参数
+    // none2相关参数由none2脚本提供
+#endregion
     
 #region 定位扇形射击（一非）
     public void Pos_FanShaped_Shoot(GameObject bullet, float shoot_interval)
@@ -217,29 +235,70 @@ public class BossShootSystem : MonoBehaviour
     
     private IEnumerator StoneFrozenAttackCoroutine(GameObject stoneBullet, GameObject frozenIceBullet, GameObject normalIceBullet, int stoneCount, float rotationSpeed)
     {
-        List<GameObject> stones = new List<GameObject>();
-        List<float> initialAngles = new List<float>(); // 保存每个陨石的初始角度
-        
+
+
         // 生成随机目标点并发射陨石
         for (int i = 0; i < stoneCount; i++)
         {
-            // 在中心点半径5范围内随机生成目标坐标
-            float angle = Random.Range(0, Mathf.PI * 2);
-            float radius = Random.Range(0, 5f);
-            float targetX = Center.x + Mathf.Cos(angle) * radius;
-            float targetY = Center.y + Mathf.Sin(angle) * radius;
+            bool validPosition = false;
+            int attempts = 0;
+            
+            // 尝试生成有效的陨石位置
+            while (!validPosition && attempts < 50)
+            {
+                attempts++;
+                // 生成随机角度
+                float angle = Random.Range(0, Mathf.PI * 2);
+                // 使用二次方分布，使陨石更可能出现在离圆心较远的地方
+                float randomValue = Random.value; // 0-1之间的随机值
+                // 映射到1-6的半径范围，使用二次方分布
+                float radius = 1f + (5f * randomValue * randomValue);
+                targetPosition = new Vector2(
+                    Center.x + Mathf.Cos(angle) * radius,
+                    Center.y + Mathf.Sin(angle) * radius
+                );
+                
+                // 检查与已有陨石的距离
+                validPosition = true;
+                foreach (var existingPos in stonePositions)
+                {
+                    if (Vector2.Distance(targetPosition, existingPos) < 1f)
+                    {
+                        validPosition = false;
+                        break;
+                    }
+                }
+            }
+            
+            // 如果无法找到有效位置，使用默认位置
+            if (!validPosition)
+            {
+                float angle = Random.Range(0, Mathf.PI * 2);
+                float radius = 3f + Random.Range(0, 3f);
+                targetPosition = new Vector2(
+                    Center.x + Mathf.Cos(angle) * radius,
+                    Center.y + Mathf.Sin(angle) * radius
+                );
+            }
+            
+            // 保存位置
+            stonePositions.Add(targetPosition);
             
             // 创建陨石子弹
-            GameObject stone = Global_ObjectPool.Instance.GetObject(stoneBullet, new Vector3(targetX, 7f, 0), Quaternion.identity);
+            GameObject stone = Global_ObjectPool.Instance.GetObject(stoneBullet, new Vector3(targetPosition.x, 7f, 0), Quaternion.identity);
             if (stone != null)
             {
                 Stone stoneScript = stone.GetComponent<Stone>();
                 if (stoneScript != null)
                 {
-                    stoneScript.Initialize(targetX, targetY);
+                    stoneScript.Initialize(targetPosition.x, targetPosition.y);
                     stones.Add(stone);
                     // 保存初始角度（弧度）
-                    initialAngles.Add(angle);
+                    initialAngles.Add(Mathf.Atan2(targetPosition.y - Center.y, targetPosition.x - Center.x));
+                    // 为每个陨石生成旋转速度偏移（-5到5之间）
+                    speedOffsets.Add(Random.Range(-5f, 5f));
+                    // 为每个陨石初始化独立角度
+                    individualAngles.Add(0f);
                 }
             }
             
@@ -278,26 +337,28 @@ public class BossShootSystem : MonoBehaviour
                     FrozenIce frozenIceScript = frozenIce.GetComponent<FrozenIce>();
                     if (frozenIceScript != null)
                     {
-                        frozenIceScript.ParentOb = stone;
+                        frozenIce.transform.parent = stone.transform;
                         frozenIceScript.normalIcePrefab = normalIceBullet;
+                        frozenIceScript.bossShootSystem = this;
                     }
                 }
             }
         }
         
         // 开始旋转所有陨石
-        float currentAngle = 0f;
         while (true)
         {
-            currentAngle += rotationSpeed * Time.deltaTime;
-            
             for (int i = 0; i < stones.Count; i++)
             {
                 var stone = stones[i];
-                if (stone != null && stone.activeInHierarchy && i < initialAngles.Count)
+                if (stone != null && stone.activeInHierarchy && i < initialAngles.Count && i < speedOffsets.Count && i < individualAngles.Count)
                 {
-                    // 计算每个陨石的旋转位置（使用初始角度加上当前旋转角度）
-                    float angle = currentAngle * Mathf.Deg2Rad + initialAngles[i];
+                    // 计算每个陨石的旋转速度（基础速度加上偏移）
+                    float stoneRotationSpeed = rotationSpeed + speedOffsets[i];
+                    // 更新每个陨石的独立角度
+                    individualAngles[i] += stoneRotationSpeed * Time.deltaTime;
+                    // 计算每个陨石的旋转位置（使用初始角度加上独立旋转角度）
+                    float angle = individualAngles[i] * Mathf.Deg2Rad + initialAngles[i];
                     float radius = Vector2.Distance(new Vector2(stone.transform.position.x, stone.transform.position.y), Center);
                     float x = Center.x + Mathf.Cos(angle) * radius;
                     float y = Center.y + Mathf.Sin(angle) * radius;
@@ -312,13 +373,15 @@ public class BossShootSystem : MonoBehaviour
 #endregion
 #region 随机射击（一符）
     /// <summary>
-    /// 随机射击方法
+    /// 随机射击方法（一符专用）
     /// </summary>
     /// <param name="bullet">子弹预制件</param>
     /// <param name="bulletSpeed">射击速度</param>
     /// <param name="shootInterval">射击间隔</param>
-    public void randomIcePick(GameObject bullet, float bulletSpeed, float shootInterval)
+    /// <param name="bulletCount">每轮射击子弹数</param>
+    public void randomIcePick(GameObject bullet, float bulletSpeed, float shootInterval, int bulletCount = 5)
     {
+        randomIcePickBulletCount = bulletCount;
         StartCoroutine(RandomIcePickCoroutine(bullet, bulletSpeed, shootInterval));
     }
     
@@ -338,6 +401,7 @@ public class BossShootSystem : MonoBehaviour
                 
                 if (bulletInstance != null)
                 {
+                    // 检查是否是NormalIce
                     NormalIce normalIce = bulletInstance.GetComponent<NormalIce>();
                     if (normalIce != null)
                     {
@@ -351,14 +415,7 @@ public class BossShootSystem : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 当FrozenIce被摧毁时调用，增加随机射击的子弹数量
-    /// </summary>
-    public void OnFrozenIceDestroyed()
-    {
-        randomIcePickBulletCount++;
-    }
-#endregion
+    #endregion
 #region 冰块破裂攻击（一符）
     /// <summary>
     /// 冰块破裂攻击——以指定位置为中心发射一圈NormalIce子弹
@@ -367,8 +424,8 @@ public class BossShootSystem : MonoBehaviour
     /// <param name="normalIcePrefab">NormalIce子弹预制件</param>
     public void FrozenIceExplode(Vector3 position, GameObject normalIcePrefab)
     {
-        // 发射12枚均匀分布的NormalIce子弹
-        int bulletCount = 12;
+        // 发射8枚均匀分布的NormalIce子弹
+        int bulletCount = 8;
         float angleStep = 360f / bulletCount;
         
         if (normalIcePrefab != null)
@@ -386,16 +443,235 @@ public class BossShootSystem : MonoBehaviour
                     NormalIce normalIce = bulletInstance.GetComponent<NormalIce>();
                     if (normalIce != null)
                     {
-                        normalIce.SetSpeed(5f);
+                        normalIce.SetSpeed(3f);
                     }
                 }
             }
         }
     }
+    /// <summary>
+    /// 当FrozenIce被摧毁时调用，增加陨石旋转速度和随机子弹数量
+    /// </summary>
+    public void OnFrozenIceDestroyed()
+    {
+        // 增加随机射击的子弹数量
+        randomIcePickBulletCount++;
+        
+        // 增加所有陨石的旋转速度
+        for (int i = 0; i < speedOffsets.Count; i++)
+        {
+            speedOffsets[i] += 2f;
+        }
+    }
 #endregion
+#region 随机射击（二非）
+    private Coroutine none2ShootingCoroutine;
     
+    /// <summary>
+    /// 二非随机射击方法
+    /// </summary>
+    /// <param name="bullet">子弹预制件（miniIceBall）</param>
+    /// <param name="bulletSpeed">射击速度</param>
+    /// <param name="shootInterval">射击间隔</param>
+    /// <param name="bulletCount">每轮射击子弹数</param>
+    public void none2RandomShoot(GameObject bullet, float bulletSpeed, float shootInterval, int bulletCount = 5)
+    {
+        // 停止之前的射击协程
+        if (none2ShootingCoroutine != null)
+        {
+            StopCoroutine(none2ShootingCoroutine);
+        }
+        
+        // 启动新的射击协程
+        none2ShootingCoroutine = StartCoroutine(None2RandomShootCoroutine(bullet, bulletSpeed, shootInterval, bulletCount));
+    }
     
+    private IEnumerator None2RandomShootCoroutine(GameObject bullet, float bulletSpeed, float shootInterval, int bulletCount)
+    {
+        while (true)
+        {
+            // 发射一波子弹
+            List<GameObject> waveBullets = new List<GameObject>();
+            
+            // 获取当前boss位置作为目标位置
+            Vector3 currentBossPosition = boss.transform.position;
+            
+            for (int i = 0; i < bulletCount; i++)
+            {
+                // 随机生成0-360度的角度
+                float randomAngle = Random.Range(0f, 360f);
+                Quaternion rotation = Quaternion.Euler(0, 0, randomAngle);
+                
+                // 使用对象池获取子弹
+                GameObject bulletInstance = Global_ObjectPool.Instance.GetObject(bullet, currentBossPosition, rotation);
+                
+                if (bulletInstance != null)
+                {
+                    waveBullets.Add(bulletInstance);
+                    
+                    // 设置miniIceBall参数
+                    miniIceBall miniIce = bulletInstance.GetComponent<miniIceBall>();
+                    if (miniIce != null)
+                    {
+                        miniIce.moveSpeed = bulletSpeed;
+                        // 不覆盖TurnInterval，使用预制体中设置的值
+                        miniIce.TargetPosition = currentBossPosition;
+                    }
+                }
+            }
+            
+            // 启动这一波子弹的融合处理
+            if (waveBullets.Count > 0)
+            {
+                StartBulletWave(waveBullets, currentBossPosition);
+            }
+            
+            // 等待射击间隔
+            yield return new WaitForSeconds(shootInterval);
+        }
+    }
+#endregion
+#region 子弹融合攻击（二非）
+    /// <summary>
+    /// 子弹波次数据类
+    /// </summary>
+    private class BulletWave
+    {
+        public int waveId;
+        public List<GameObject> bullets = new List<GameObject>();
+        public GameObject firstBullet = null;
+        public int totalBullets;
+        public int arrivedBullets = 0;
+        public Vector3 targetPosition;
+        public bool hasLaunched = false;
+    }
     
+    private List<BulletWave> activeWaves = new List<BulletWave>();
+    private int currentWaveId = 0;
+    
+    /// <summary>
+    /// 开始单波子弹融合攻击
+    /// </summary>
+    /// <param name="bullets">子弹列表</param>
+    /// <param name="targetPosition">目标位置</param>
+    public void StartBulletWave(List<GameObject> bullets, Vector3 targetPosition)
+    {
+        if (bullets == null || bullets.Count == 0)
+        {
+            return;
+        }
+        
+        // 创建新的波次
+        BulletWave newWave = new BulletWave();
+        newWave.waveId = currentWaveId++;
+        newWave.bullets = new List<GameObject>(bullets);
+        newWave.totalBullets = bullets.Count;
+        newWave.targetPosition = targetPosition;
+        activeWaves.Add(newWave);
+        
+        // 启动该波次的融合协程
+        StartCoroutine(ProcessBulletWaveCoroutine(newWave));
+    }
+    
+    private IEnumerator ProcessBulletWaveCoroutine(BulletWave wave)
+    {
+        // 存储波次中所有子弹的属性
+        int totalBulletsCount = wave.totalBullets;
+        int totalHP = 0;
+        float originalSpeed = 0;
+        // 记录原始速度（取第一个子弹的速度）
+        if (wave.bullets.Count > 0)
+        {
+            miniIceBall firstMiniIce = wave.bullets[0].GetComponent<miniIceBall>();
+            if (firstMiniIce != null)
+            {
+                originalSpeed = firstMiniIce.moveSpeed;Debug.Log($"[BossShootSystem] 波次 {wave.waveId} 记录到原始速度: {originalSpeed}");
+            }
+        }
+        
+        // 记录所有子弹的HP
+        foreach (var bullet in wave.bullets)
+        {
+            if (bullet != null && bullet.activeInHierarchy)
+            {
+                miniIceBall miniIce = bullet.GetComponent<miniIceBall>();
+                if (miniIce != null)
+                {
+                    totalHP += miniIce.hp;
+                }
+            }
+        }
+        
+        // 等待3秒，让子弹完成飞行和折返
+        yield return new WaitForSeconds(3f);
+        
+        // 回收所有剩余的子弹
+        foreach (var bullet in wave.bullets)
+        {
+            if (bullet != null && bullet.activeInHierarchy)
+            {
+                miniIceBall miniIce = bullet.GetComponent<miniIceBall>();
+                if (miniIce != null)
+                {
+                    miniIce.Recycle();
+                }
+            }
+        }
+        
+        // 创建一个新的大子弹
+        if (totalBulletsCount > 0 && player != null && wave.bullets.Count > 0)
+        { 
+            // 计算大子弹的属性
+            float scaleIncrease = totalBulletsCount * 0.2f;
+            int finalHP = totalHP;
+            float finalSpeed = Mathf.Max(1, originalSpeed - totalBulletsCount * 0.2f);  
+            // 从对象池获取一个子弹作为大子弹
+            GameObject bigBullet = Global_ObjectPool.Instance.GetObject(wave.bullets[0].gameObject, wave.targetPosition, Quaternion.identity);
+            if (bigBullet != null)
+            {
+                miniIceBall bigIce = bigBullet.GetComponent<miniIceBall>();
+                if (bigIce != null)
+                {
+                    // 设置大子弹属性
+                    bigIce.isMini = false; // 非mini态，无折返
+                    bigIce.moveSpeed = finalSpeed;
+                    bigIce.hp = finalHP;
+                    bigIce.transform.localScale = new Vector3(1 + scaleIncrease, 1 + scaleIncrease, 1);
+                    
+                    // 瞄准玩家发射
+                    Vector2 direction = (player.transform.position - bigBullet.transform.position).normalized;
+                    bigIce.FireInDirection(direction);
+                }
+            }
+        }
+        
+        wave.hasLaunched = true; 
+        // 从活动波次列表中移除
+        activeWaves.Remove(wave);
+    }
+    
+    /// <summary>
+    /// 停止所有子弹波次
+    /// </summary>
+    public void StopAllBulletWaves()
+    {
+        foreach (var wave in activeWaves)
+        {
+            foreach (var bullet in wave.bullets)
+            {
+                if (bullet != null && bullet.activeInHierarchy)
+                {
+                    miniIceBall miniIce = bullet.GetComponent<miniIceBall>();
+                    if (miniIce != null)
+                    {
+                        miniIce.Recycle();
+                    }
+                }
+            }
+        }
+        activeWaves.Clear();
+    }
+#endregion
     /// <summary>
     /// 停止所有射击协程
     /// </summary>
@@ -406,6 +682,37 @@ public class BossShootSystem : MonoBehaviour
         
         // 取消所有 Invoke 调用
         CancelInvoke();
+        
+        // 停止所有子弹波次
+        StopAllBulletWaves();
+    }
+    
+    public void ShowTerrain()
+    {
+        IceTerraun.SetActive(true);
+    }
+
+    public void HideTerrain()
+    {
+        IceTerraun.SetActive(false);
+    }
+
+    /// <summary>
+    /// 恢复所有陨石的重力
+    /// </summary>
+    public void ResumeAllStonesGravity()
+    {
+        foreach (var stone in stones)
+        {
+            if (stone != null && stone.activeInHierarchy)
+            {
+                Rigidbody2D rb2D = stone.GetComponent<Rigidbody2D>();
+                if (rb2D != null)
+                {
+                    rb2D.isKinematic = false;
+                }
+            }
+        }
     }
 
 }

@@ -7,14 +7,15 @@ public class FrozenIce : MonoBehaviour
     public GameObject ParentOb; // 父物体
     public int hp = 240; // 生命值
     public GameObject normalIcePrefab; // 普通冰子弹预制件（用于破裂攻击）
+    public BossShootSystem bossShootSystem; // Boss射击系统引用
     private Rigidbody2D rb2D;
     private float timer = 0f; // 计时器
     
     // 边界范围
-    private readonly float minX = -11f;
-    private readonly float maxX = 5f;
-    private readonly float minY = -7.5f;
-    private readonly float maxY = 6.5f;
+    private readonly float minX = -12f;
+    private readonly float maxX = 6f;
+    private readonly float minY = -9f;
+    private readonly float maxY = 9f;
 
     
     void Update()
@@ -73,7 +74,6 @@ public class FrozenIce : MonoBehaviour
         Vector3 destroyedPosition = transform.position;
         
         // 通知BossShootSystem增加随机射击的子弹数量
-        BossShootSystem bossShootSystem = FindObjectOfType<BossShootSystem>();
         if (bossShootSystem != null)
         {
             bossShootSystem.OnFrozenIceDestroyed();
@@ -94,6 +94,7 @@ public class FrozenIce : MonoBehaviour
     {
         ParentOb = null;
         normalIcePrefab = null;
+        bossShootSystem = null;
         hp = 240;
         timer = 0f;
         if (rb2D != null)

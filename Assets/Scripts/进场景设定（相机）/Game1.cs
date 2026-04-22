@@ -33,7 +33,7 @@ public class Game1 : MonoBehaviour
         && Global_AudioManager.Instance.GetCurrentBGMName() != "Boss")
         {
             Debug.Log("摄像头开始播放BGM");
-            Global_AudioManager.Instance.PlaySFX(bgmClip,false,0.8f);
+            Global_AudioManager.Instance.PlaySFX(bgmClip,false,0.1f);
         }
     }
 

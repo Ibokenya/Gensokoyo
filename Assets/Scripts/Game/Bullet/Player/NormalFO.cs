@@ -68,6 +68,14 @@ public class NormalFO : MonoBehaviour
             {
                 enemy.Damage(damage);
             }
+            else// 并非敌人而是冰块
+            {
+                FrozenIce frozenIce = collision.GetComponent<FrozenIce>();
+                if(frozenIce != null)
+                {
+                    frozenIce.TakeDamage(damage);
+                }
+            }
         }  
     }
 }

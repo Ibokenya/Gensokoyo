@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 冰珠子弹脚本(自带旋转效果)
+/// </summary>
 public class IcePearl : MonoBehaviour
 {
     public GameObject icePoint; // 冰点对象
@@ -12,10 +15,10 @@ public class IcePearl : MonoBehaviour
     private float distance; // 距离冰点的距离
     
     // 边界范围
-    private readonly float minX = -11f;
-    private readonly float maxX = 5f;
-    private readonly float minY = -7.5f;
-    private readonly float maxY = 6.5f;
+    private readonly float minX = -12f;
+    private readonly float maxX = 6f;
+    private readonly float minY = -9f;
+    private readonly float maxY = 9f;
     
     void Start()
     {
