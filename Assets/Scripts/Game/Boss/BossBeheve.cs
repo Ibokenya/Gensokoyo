@@ -72,98 +72,99 @@ public class BossBeheve : MonoBehaviour
             hasActivatedUI = true;
         }
 
-        // 时间为5秒时，激活none1
-        if (currentTime >= 5f && currentTime < 6f && !hasActivatedNone1)
-        {
-            if (none1Script != null)
-            {
-                none1Script.enabled = true;
-                cardUI.SetCard(0);
-                cardUI.SetCardName("-170℃");
-                cardUI.SetCardColor(0.8f);
-                Debug.Log("激活none1");
-            }
-            hasActivatedNone1 = true;
-        }
+        // // 时间为5秒时，激活none1
+        // if (currentTime >= 5f && currentTime < 6f && !hasActivatedNone1)
+        // {
+        //     if (none1Script != null)
+        //     {
+        //         none1Script.enabled = true;
+        //         cardUI.SetCard(0);
+        //         cardUI.SetCardName("-170℃");
+        //         cardUI.SetCardColor(0.8f);
+        //         Debug.Log("激活none1");
+        //     }
+        //     hasActivatedNone1 = true;
+        // }
         
-        // 时间为21秒时，调用None1的CheckOver()方法
-        if (currentTime >= 21f && currentTime < 22f && !hasCalledNone1CheckOver)
-        {
-            // 由于none1现在是空的，暂时注释掉
-            // if (none1Script != null)
-            // {
-            //     none1Script.CheckOver();
-            // }
-            Debug.Log("调用none1.CheckOver()");
-            bossUI.SetCardTime(23f);
-            hasCalledNone1CheckOver = true;
-        }
+        // // 时间为21秒时，调用None1的CheckOver()方法
+        // if (currentTime >= 21f && currentTime < 22f && !hasCalledNone1CheckOver)
+        // {
+        //     // 由于none1现在是空的，暂时注释掉
+        //     // if (none1Script != null)
+        //     // {
+        //     //     none1Script.CheckOver();
+        //     // }
+        //     Debug.Log("调用none1.CheckOver()");
+        //     bossUI.SetCardTime(23f);
+        //     hasCalledNone1CheckOver = true;
+        // }
         
-        // 时间为22秒时，禁用none1激活card1
-        if (currentTime >= 22f && currentTime < 23f && !hasActivatedCard1)
-        {
-            if (none1Script != null)
-            {
-                none1Script.enabled = false;
-                Debug.Log("禁用none1");
-            }
-            if (card1Script != null)
-            {
-                card1Script.enabled = true;
-                cardUI.SetCard(1);
-                cardUI.SetCardName("-220℃· \n冰冷彗星带");
-                cardUI.SetCardColor(0.6f);
-                Debug.Log("激活card1");
-            }
-            hasActivatedCard1 = true;
-        }
+        // // 时间为22秒时，禁用none1激活card1
+        // if (currentTime >= 22f && currentTime < 23f && !hasActivatedCard1)
+        // {
+        //     if (none1Script != null)
+        //     {
+        //         none1Script.enabled = false;
+        //         Debug.Log("禁用none1");
+        //     }
+        //     if (card1Script != null)
+        //     {
+        //         card1Script.enabled = true;
+        //         cardUI.SetCard(1);
+        //         cardUI.SetCardName("-220℃· \n冰冷彗星带");
+        //         cardUI.SetCardColor(0.6f);
+        //         Debug.Log("激活card1");
+        //     }
+        //     hasActivatedCard1 = true;
+        // }
         
-        // 时间为45秒时，调用card1的checkover
-        if (currentTime >= 45f && currentTime < 46f && !hasCalledCard1CheckOver)
-        {
-            // 由于card1现在是空的，暂时注释掉
-            // if (card1Script != null)
-            // {
-            //     card1Script.CheckOver();
-            // }
-            Debug.Log("调用card1.CheckOver()");
-            bossUI.SetCardTime(12f);
-            hasCalledCard1CheckOver = true;
-        }
+        // // 时间为45秒时，调用card1的checkover
+        // if (currentTime >= 45f && currentTime < 46f && !hasCalledCard1CheckOver)
+        // {
+        //     // 由于card1现在是空的，暂时注释掉
+        //     // if (card1Script != null)
+        //     // {
+        //     //     card1Script.CheckOver();
+        //     // }
+        //     Debug.Log("调用card1.CheckOver()");
+        //     bossUI.SetCardTime(12f);
+        //     hasCalledCard1CheckOver = true;
+        // }
         
-        // 时间为46秒，禁用card1激活none2
-        if (currentTime >= 46f && currentTime < 47f && !hasActivatedNone2)
-        {
-            if (card1Script != null)
-            {
-                card1Script.enabled = false;
-                Debug.Log("禁用card1");
-            }
-            if (none2Script != null)
-            {
-                none2Script.enabled = true;
-                cardUI.SetCard(2);
-                cardUI.SetCardName("-260℃");
-                cardUI.SetCardColor(0.4f);
-                Debug.Log("激活none2");
-            }
-            hasActivatedNone2 = true;
-        }
+        // // 时间为46秒，禁用card1激活none2
+        // if (currentTime >= 46f && currentTime < 47f && !hasActivatedNone2)
+        // {
+        //     if (card1Script != null)
+        //     {
+        //         card1Script.enabled = false;
+        //         Debug.Log("禁用card1");
+        //     }
+        //     if (none2Script != null)
+        //     {
+        //         none2Script.enabled = true;
+        //         cardUI.SetCard(2);
+        //         cardUI.SetCardName("-260℃");
+        //         cardUI.SetCardColor(0.4f);
+        //         Debug.Log("激活none2");
+        //     }
+        //     hasActivatedNone2 = true;
+        // }
         
-        // 时间为58秒，调用none2的checkover
-        if (currentTime >= 58f && currentTime < 59f && !hasCalledNone2CheckOver)
-        {
-            // 由于none2现在是空的，暂时注释掉
-            // if (none2Script != null)
-            // {
-            //     none2Script.CheckOver();
-            // }
-            Debug.Log("调用none2.CheckOver()");
-            hasCalledNone2CheckOver = true;
-        }
+        // // 时间为58秒，调用none2的checkover
+        // if (currentTime >= 58f && currentTime < 59f && !hasCalledNone2CheckOver)
+        // {
+        //     // 由于none2现在是空的，暂时注释掉
+        //     // if (none2Script != null)
+        //     // {
+        //     //     none2Script.CheckOver();
+        //     // }
+        //     Debug.Log("调用none2.CheckOver()");
+        //     bossUI.SetCardTime(24f);
+        //     hasCalledNone2CheckOver = true;
+        // }
         
         // 时间为59秒，禁用none2激活card2
-        if (currentTime >= 59f && currentTime < 60f && !hasActivatedCard2)
+        if (currentTime >= 5f && currentTime < 60f && !hasActivatedCard2)
         {
             if (none2Script != null)
             {

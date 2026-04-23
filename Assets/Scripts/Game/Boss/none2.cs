@@ -29,7 +29,6 @@ public class none2 : MonoBehaviour
         {
             Global_ObjectPool.Instance.InitPool(randomBulletPrefab, 30);
         }
-        bossShootSystem.ShowTerrain();
         // ¿ªÊ¼¹¥»÷
         StartAttacks();
     }

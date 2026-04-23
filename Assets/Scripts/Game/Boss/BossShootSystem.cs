@@ -6,17 +6,17 @@ public class BossShootSystem : MonoBehaviour
 {
     public GameObject player;
     public GameObject boss;
-    public GameObject IcePoint;
-    public GameObject IceTerraun;// 冰刺地形
-    public List<GameObject> IcePoints;
-    public List<Sprite> icePointSprites; // icepoint 帧动画素材
+    public GameObject IceTerrain;// 冰刺地形
+    public SpriteRenderer IceTerrainSprite;
+    public AudioClip FrozeSound; // 冰冻音效
     private const float animationSpeed = 0.1f; // 动画速度
     private int currentSpriteIndex = 0; // 当前动画帧索引
     private Vector2 Center = new Vector2(-3, 0);
 #region none1参数
-    // none1相关参数由none1脚本提供
+    public GameObject IcePoint;
+    public List<GameObject> IcePoints;
+    public List<Sprite> icePointSprites; // icepoint 帧动画素材
 #endregion
-
 #region card1参数
     // card1相关参数由card1脚本提供
     List<GameObject> stones = new ();
@@ -26,12 +26,51 @@ public class BossShootSystem : MonoBehaviour
     List<float> individualAngles = new (); // 保存每个陨石的独立角度
     Vector2 targetPosition;
     private int randomIcePickBulletCount = 5; // 随机射击的子弹数量
+#endregion  
+#region card2参数
+    // 雪花生成点列表（24个）
+    private List<Vector2> FlakePos = new List<Vector2>
+    {
+        // 上边框 (y=6)
+        new Vector2(-12, 6),
+        new Vector2(-9, 6),
+        new Vector2(-6, 6),
+        new Vector2(-3, 6),
+        new Vector2(0, 6),
+        new Vector2(3, 6),
+        new Vector2(6, 6),
+        // 下边框 (y=-6)
+        new Vector2(-12, -6),
+        new Vector2(-9, -6),
+        new Vector2(-6, -6),
+        new Vector2(-3, -6),
+        new Vector2(0, -6),
+        new Vector2(3, -6),
+        new Vector2(6, -6),
+        // 左边框 (x=-12, 排除上下边框重复的点)
+        new Vector2(-12,4),
+        new Vector2(-12, 2),
+        new Vector2(-12, 0),
+        new Vector2(-12, -2),
+        new Vector2(-12, -4),
+        // 右边框 (x=6, 排除上下边框重复的点)
+        new Vector2(6, 4),
+        new Vector2(6, 2),
+        new Vector2(6, 0),
+        new Vector2(6, -2),
+        new Vector2(6, -4)
+    };
+    // 存储活跃的雪花子弹
+    private List<GameObject> activeSnowFlakes = new List<GameObject>();
+
+    // 冰云生成参数
+    private Vector2 cloudSpawnMin; // 生成范围左下角
+    private Vector2 cloudSpawnMax; // 生成范围右上角
+    private int cloudCount; // 冰云数量
+    private GameObject cloudPrefab; // 冰云预制件
 #endregion
 
-#region none2参数
-    // none2相关参数由none2脚本提供
-#endregion
-    
+
 #region 定位扇形射击（一非）
     public void Pos_FanShaped_Shoot(GameObject bullet, float shoot_interval)
     {
@@ -672,6 +711,178 @@ public class BossShootSystem : MonoBehaviour
         activeWaves.Clear();
     }
 #endregion
+#region 雪花攻击（二符）
+    /// <summary>
+    /// 雪花攻击方法
+    /// </summary>
+    /// <param name="flakePrefab">雪花子弹预制体</param>
+    /// <param name="totalCount">生成的雪花总数</param>
+    public void SnowFlakeAttack(GameObject flakePrefab, int totalCount)
+    {
+        StartCoroutine(SnowFlakeAttackCoroutine(flakePrefab, totalCount));
+    }
+    
+    private IEnumerator SnowFlakeAttackCoroutine(GameObject flakePrefab, int totalCount)
+    {
+        // 生成指定数量的雪花子弹
+        for (int i = 0; i < totalCount; i++)
+        {
+            // 随机选择一个生成点
+            int randomPosIndex = Random.Range(0, FlakePos.Count);
+            Vector2 spawnPosition = FlakePos[randomPosIndex];
+            
+            // 使用对象池获取雪花子弹
+            GameObject flakeInstance = Global_ObjectPool.Instance.GetObject(flakePrefab, spawnPosition, Quaternion.identity);
+            
+            if (flakeInstance != null)
+            {
+                // 添加到活跃雪花列表
+                activeSnowFlakes.Add(flakeInstance);
+                
+                SnowFlake snowFlake = flakeInstance.GetComponent<SnowFlake>();
+                if (snowFlake != null)
+                {
+                    // 根据生成点位置确定移动方向
+                    Vector2 direction = GetSnowFlakeDirection(spawnPosition);
+                    snowFlake.SetDirection(direction);
+                }
+            }
+            
+            // 短暂延迟，避免所有雪花同时生成
+            yield return new WaitForSeconds(0.1f);
+        }
+    }
+    
+    /// <summary>
+    /// 根据生成点位置确定雪花移动方向
+    /// </summary>
+    /// <param name="position">生成点位置</param>
+    /// <returns>移动方向向量</returns>
+    private Vector2 GetSnowFlakeDirection(Vector2 position)
+    {
+        float x = position.x;
+        float y = position.y;
+        
+        // 上边框 (y=6)
+        if (y == 6)
+        {
+            if (x <= -9)
+            {
+                return new Vector2(1, -1).normalized; // 右下
+            }
+            else if (x >= 3)
+            {
+                return new Vector2(-1, -1).normalized; // 左下
+            }
+            else
+            {
+                return new Vector2(0, -1).normalized; // 向下
+            }
+        }
+        // 下边框 (y=-6)
+        else if (y == -6)
+        {
+            if (x <= -9)
+            {
+                return new Vector2(1, 1).normalized; // 右sahng
+            }
+            else if (x >= 3)
+            {
+                return new Vector2(-1, 1).normalized; // 左下
+            }
+            else
+            {
+                return new Vector2(0, 1).normalized; // 向上
+            }
+        }
+        // 左边框 (x=-12)
+        else if (x == -12)
+        {
+            if (y >= 4)
+            {
+                return new Vector2(1, -1).normalized; // 右下
+            }
+            else if (y <= -4)
+            {
+                return new Vector2(1, 1).normalized; // 右上
+            }
+            else
+            {
+                return new Vector2(1, 0).normalized; // 向右
+            }
+        }
+        // 右边框 (x=6)
+        else if (x == 6)
+        {
+            if (y >= 4)
+            {
+                return new Vector2(-1, -1).normalized; // 左下
+            }
+            else if (y <= -4)
+            {
+                return new Vector2(-1, 1).normalized; // 左上
+            }
+            else
+            {
+                return new Vector2(-1, 0).normalized; // 向左
+            }
+        }
+        
+        // 默认方向（向下）
+        return new Vector2(0, -1).normalized;
+    }
+#endregion
+#region 冰云攻击（二符）
+    /// <summary>
+    /// 创建冰云方法
+    /// </summary>
+    /// <param name="prefab">冰云预制件</param>
+    /// <param name="minPos">生成范围左下角</param>
+    /// <param name="maxPos">生成范围右上角</param>
+    /// <param name="count">生成数量</param>
+    public void CreateCloud(GameObject prefab, Vector2 minPos, Vector2 maxPos, int count)
+    {
+        cloudPrefab = prefab;
+        cloudSpawnMin = minPos;
+        cloudSpawnMax = maxPos;
+        cloudCount = count;
+        
+        // 生成初始冰云
+        for (int i = 0; i < count; i++)
+        {
+            SpawnCloud();
+        }
+    }
+    
+    /// <summary>
+    /// 生成单个冰云
+    /// </summary>
+    private void SpawnCloud()
+    {
+        if (cloudPrefab == null)
+            return;
+        
+        // 在指定范围内随机生成位置
+        float x = Random.Range(cloudSpawnMin.x, cloudSpawnMax.x);
+        float y = Random.Range(cloudSpawnMin.y, cloudSpawnMax.y);
+        Vector2 spawnPosition = new (x, y);
+        
+        // 使用对象池获取冰云
+        GameObject cloudInstance = Global_ObjectPool.Instance.GetObject(cloudPrefab, spawnPosition, Quaternion.identity);
+        cloudInstance.GetComponent<IceCloud>().bossShootSystem = this;
+    }
+    
+    /// <summary>
+    /// 当冰云被回收时调用，生成新的冰云
+    /// </summary>
+    public void OnCloudRecycled()
+    {
+        // 生成新的冰云
+        SpawnCloud();
+    }
+#endregion
+   
+    
     /// <summary>
     /// 停止所有射击协程
     /// </summary>
@@ -686,15 +897,61 @@ public class BossShootSystem : MonoBehaviour
         // 停止所有子弹波次
         StopAllBulletWaves();
     }
-    
+
     public void ShowTerrain()
     {
-        IceTerraun.SetActive(true);
+        StartCoroutine(ShowTerrainCoroutine());
+    }
+    private IEnumerator ShowTerrainCoroutine()
+    {
+        // 播放冰冻音效
+        if (FrozeSound != null)
+        {
+            Global_AudioManager.Instance.PlaySFX(FrozeSound);
+        }
+        float duration = 0.5f;
+        float elapsedTime = 0f;
+        if (IceTerrainSprite != null)
+        {
+            Color color = IceTerrainSprite.color;
+            color.a = 0f;
+            IceTerrainSprite.color = color;
+        }
+        while (elapsedTime < duration)
+        {
+            float t = elapsedTime / duration;
+            float alpha = Mathf.Lerp(0f, 0.4f, t);
+            if (IceTerrainSprite != null)
+            {
+                Color color = IceTerrainSprite.color;
+                color.a = alpha;
+                IceTerrainSprite.color = color;
+            }
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        IceTerrain.GetComponent<Collider2D>().enabled = true;
     }
 
     public void HideTerrain()
     {
-        IceTerraun.SetActive(false);
+        StartCoroutine(HideTerrainCoroutine());
+    }
+    private IEnumerator HideTerrainCoroutine()
+    {
+        IceTerrain.GetComponent<Collider2D>().enabled = false;
+        float duration = 0.5f;
+        float elapsedTime = 0f;
+        while (elapsedTime < duration)
+        {
+            float t = elapsedTime / duration;
+            Color color = IceTerrainSprite.color;
+            color.a = Mathf.Lerp(0.4f, 0f, t);
+            IceTerrainSprite.color = color;
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        IceTerrain.GetComponent<Collider2D>().enabled = false;
     }
 
     /// <summary>
@@ -714,5 +971,5 @@ public class BossShootSystem : MonoBehaviour
             }
         }
     }
-
+    
 }

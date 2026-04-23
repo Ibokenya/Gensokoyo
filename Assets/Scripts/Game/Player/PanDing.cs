@@ -15,28 +15,39 @@ public class PanDing : MonoBehaviour
         if(Global_GameManager.Instance.state == State.Gaming)
         {
             // 确保只对敌人和敌人子弹生效
-            if(collision.CompareTag("Enemy") || collision.CompareTag("EnemyBullet"))
+            if(collision.CompareTag("Enemy") || collision.CompareTag("EnemyBullet") || collision.CompareTag("BossBullet"))
             {
-                // 检查是否处于无敌状态
-                if (spellCardEffect != null && Global_GameManager.Instance.state == State.NoDead)
-                {
-                    // 无敌状态下不处理受击
-                    clearAllBullet.ClearScreenBullet();
-                    return;
-                }
+                // // 检查是否处于无敌状态
+                // if (spellCardEffect != null && Global_GameManager.Instance.state == State.NoDead)
+                // {
+                //     // 无敌状态下不处理受击
+                //     clearAllBullet.ClearScreenBullet();
+                //     return;
+                // }
                 
-                if (spellCardEffect != null)
-                {
-                    // 开始受击延迟
-                    spellCardEffect.StartHitDelay();
-                }
-                else
-                {
-                    // 没有符卡效果组件时，执行正常死亡逻辑
-                    Global_GameManager.Instance.SubLeftLife();
-                }
-                clearAllBullet.ClearScreenBullet();
+                // if (spellCardEffect != null)
+                // {
+                //     // 开始受击延迟
+                //     spellCardEffect.StartHitDelay();
+                // }
+                // else
+                // {
+                //     // 没有符卡效果组件时，执行正常死亡逻辑
+                //     Global_GameManager.Instance.SubLeftLife();
+                // }
+                // clearAllBullet.ClearScreenBullet();
+            }
+            if(collision.CompareTag("IceCloud"))
+            {
+
             }
         }  
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if(collision.CompareTag("IceCloud"))
+        {
+        }
     }
 }

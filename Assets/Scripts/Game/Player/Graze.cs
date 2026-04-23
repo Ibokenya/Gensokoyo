@@ -20,8 +20,8 @@ public class Graze : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        // 确保只对敌人子弹生效
-        if (collision.CompareTag("EnemyBullet"))
+        // 确保只对敌人和敌人子弹和Boss子弹生效
+        if (collision.CompareTag("Enemy") || collision.CompareTag("EnemyBullet") || collision.CompareTag("BossBullet"))
         {
             // 添加擦弹数
             Global_GameManager.Instance.AddGraze(1);
@@ -43,8 +43,8 @@ public class Graze : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        // 确保只对敌人子弹生效
-        if (collision.CompareTag("EnemyBullet"))
+        // 确保只对敌人和敌人子弹和Boss子弹生效
+        if (collision.CompareTag("Enemy") || collision.CompareTag("EnemyBullet") || collision.CompareTag("BossBullet"))
         {
             // 从列表中移除弹幕
             if (currentBullets.Contains(collision))

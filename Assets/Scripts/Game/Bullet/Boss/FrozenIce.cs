@@ -12,8 +12,8 @@ public class FrozenIce : MonoBehaviour
     private float timer = 0f; // ¼ÆÊ±Æ÷
     
     // ±ß½ç·¶Î§
-    private readonly float minX = -12f;
-    private readonly float maxX = 6f;
+    private readonly float minX = -13f;
+    private readonly float maxX = 7f;
     private readonly float minY = -9f;
     private readonly float maxY = 9f;
 
@@ -92,6 +92,7 @@ public class FrozenIce : MonoBehaviour
     
     void OnDisable()
     {
+        transform.parent = null;
         ParentOb = null;
         normalIcePrefab = null;
         bossShootSystem = null;

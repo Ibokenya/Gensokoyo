@@ -334,6 +334,8 @@ public class EvilEyeAttack : MonoBehaviour
         {
             if (laserObj != null)
             {
+                // ÒÆ³ý¸¸¶ÔÏó
+                laserObj.transform.parent = null;
                 Destroy(laserObj);
             }
         }

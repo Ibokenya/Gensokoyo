@@ -52,8 +52,6 @@ public class card1 : MonoBehaviour
     {
         // 停止所有协程
         StopAllCoroutines();
-        // 隐藏冰刺地形
-        bossShootSystem.HideTerrain();
         // 取消所有 Invoke 调用
         CancelInvoke();
         // 恢复所有陨石的重力

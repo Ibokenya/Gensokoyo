@@ -8,6 +8,8 @@ TagManager:
   - Item
   - EnemyBullet
   - PlayerBullet
+  - BossBullet
+  - IceCloud
   layers:
   - Default
   - TransparentFX

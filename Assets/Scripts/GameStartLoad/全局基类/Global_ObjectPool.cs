@@ -124,11 +124,24 @@ public class Global_ObjectPool : Singleton<Global_ObjectPool>
     public void Recycle(GameObject item)
     {
         if (item == null || !item) return; // 安全检查：确保物品存在
+        bool wasActive;
+        // 检查物品是否正在被激活或禁用
+        try
+        {
+            // 尝试访问物品的activeSelf属性，如果正在被激活/禁用会抛出异常
+            wasActive = item.activeSelf;
+        }
+        catch
+        {
+            // 物品正在被激活或禁用，延迟一帧再处理
+            StartCoroutine(DelayedRecycle(item));
+            return;
+        }
         
         string poolKey = item.name.Replace("(Clone)", ""); // 移除克隆后缀，匹配预制体名
         
         // 先保存当前状态
-        bool wasActive = item.activeSelf;
+        wasActive = item.activeSelf;
         
         // 禁用物品
         if (wasActive)
@@ -152,21 +165,21 @@ public class Global_ObjectPool : Singleton<Global_ObjectPool>
         // 再设置为对象池的子物体
         try
         {
-            // 直接设置父物体，不使用延迟调用
-            // 确保对象池游戏对象是活跃的
-            if (gameObject.activeInHierarchy)
+            // 确保对象池游戏对象是活跃的且场景已加载
+            if (gameObject != null && gameObject.scene != null && gameObject.scene.isLoaded && gameObject.activeInHierarchy)
             {
                 item.transform.SetParent(transform); // 归位到对象池父物体
-            }
-            else
-            {
-                // 如果对象池不活跃，暂时不设置父物体
-                Debug.LogWarning($"对象池游戏对象不活跃，暂时不设置父物体");
             }
         }
         catch (System.Exception e)
         {
             Debug.LogWarning($"回收物品时设置父物体失败：{e.Message}");
+            // 发生异常时，确保父物体为null
+            try
+            {
+                item.transform.SetParent(null);
+            }
+            catch { }
         }
 
         // 确保池存在，再放回
@@ -179,6 +192,18 @@ public class Global_ObjectPool : Singleton<Global_ObjectPool>
             // 未初始化的池：直接销毁
             Destroy(item);
             //  Debug.LogWarning($"回收一个不在物品池的物品：{poolKey}");
+        }
+    }
+    
+    /// <summary>
+    /// 延迟回收物品，避免在激活/禁用过程中修改父物体
+    /// </summary>
+    private IEnumerator DelayedRecycle(GameObject item)
+    {
+        yield return null; // 等待一帧
+        if (item != null && item)
+        {
+            Recycle(item);
         }
     }
 
