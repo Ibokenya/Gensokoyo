@@ -14,11 +14,14 @@ public class BossBeheve : MonoBehaviour
     [Header("引用")]
     public GameObject UI;
     public BossUI bossUI;
+    public GameObject FinalWordsUI;
     public BossAnime bossAnime;
     public GameObject card_UI;
     public CardUI cardUI;
     public GameObject BossBG;
     public ChangeBG changeBG;
+    public SpriteRenderer IcePinion_left;
+    public SpriteRenderer IcePinion_right;
     
     private float currentTime = 0f;
     private bool hasPlayedCharacterAnimation = false;
@@ -34,6 +37,8 @@ public class BossBeheve : MonoBehaviour
     private bool hasCalledBgAndBallon = false;
     private bool hasCalledFinalAnime = false;
     private bool hasActivatedFinalCard = false;
+    private bool hasCalledFinalCardCheckOver = false;
+
     private bool hasEndedFinalCard = false;
     
     private void Update()
@@ -164,73 +169,84 @@ public class BossBeheve : MonoBehaviour
         // }
         
         // 时间为59秒，禁用none2激活card2
-        if (currentTime >= 5f && currentTime < 60f && !hasActivatedCard2)
-        {
-            if (none2Script != null)
-            {
-                none2Script.enabled = false;
-                Debug.Log("禁用none2");
-            }
-            if (card2Script != null)
-            {
-                card2Script.enabled = true;
-                cardUI.SetCard(3);
-                cardUI.SetCardName("-270℃· \n宇宙微波辐射");
-                cardUI.SetCardColor(0.2f);
-                Debug.Log("激活card2");
-            }
-            hasActivatedCard2 = true;
-        }
+        // if (currentTime >= 59f && currentTime < 60f && !hasActivatedCard2)
+        // {
+        //     if (none2Script != null)
+        //     {
+        //         none2Script.enabled = false;
+        //         Debug.Log("禁用none2");
+        //     }
+        //     if (card2Script != null)
+        //     {
+        //         card2Script.enabled = true;
+        //         cardUI.SetCard(3);
+        //         cardUI.SetCardName("-270℃· \n宇宙微波辐射");
+        //         cardUI.SetCardColor(0.2f);
+        //         Debug.Log("激活card2");
+        //     }
+        //     hasActivatedCard2 = true;
+        // }
         
-        // 时间为83秒，调用card2的checkover
-        if (currentTime >= 83f && currentTime < 84f && !hasCalledCard2CheckOver)
-        {
-            // 由于card2现在是空的，暂时注释掉
-            // if (card2Script != null)
-            // {
-            //     card2Script.CheckOver();
-            // }
-            Debug.Log("调用card2.CheckOver()");
-            hasCalledCard2CheckOver = true;
-        }
+        // // 时间为83秒，调用card2的checkover
+        // if (currentTime >= 83f && currentTime < 84f && !hasCalledCard2CheckOver)
+        // {
+        //     // 由于card2现在是空的，暂时注释掉
+        //     // if (card2Script != null)
+        //     // {
+        //     //     card2Script.CheckOver();
+        //     // }
+        //     Debug.Log("调用card2.CheckOver()");
+        //     hasCalledCard2CheckOver = true;
+        // }
         
-        // 时间为84秒，禁用card2并调用BgAndBallon方法
-        if (currentTime >= 84f && currentTime < 85f && !hasCalledBgAndBallon)
-        {
-            if (card2Script != null)
-            {
-                card2Script.enabled = false;
-                Debug.Log("禁用card2");
-            }
-            BgAndBallon();
-            Debug.Log("调用BgAndBallon方法");
-            hasCalledBgAndBallon = true;
-        }
+        // // 时间为84秒，禁用card2并调用BgAndBallon方法
+        // if (currentTime >= 84f && currentTime < 85f && !hasCalledBgAndBallon)
+        // {
+        //     if (card2Script != null)
+        //     {
+        //         card2Script.enabled = false;
+        //         Debug.Log("禁用card2");
+        //     }
+        //     BgAndBallon();
+        //     Debug.Log("调用BgAndBallon方法");
+        //     hasCalledBgAndBallon = true;
+        // }
         
-        // 时间为89秒，调用FinalAnime方法
-        if (currentTime >= 89f && currentTime < 90f && !hasCalledFinalAnime)
-        {
-            FinalAnime();
-            cardUI.SetCard(4);
-            cardUI.SetCardName("-273.15℃· \n然后分子便不再运动了");
-            cardUI.SetCardColor(0f);
-            Debug.Log("调用FinalAnime方法");
-            hasCalledFinalAnime = true;
-        }
+        // // 时间为88秒，调用FinalAnime方法
+        // if (currentTime >= 88f && currentTime < 89f && !hasCalledFinalAnime)
+        // {
+        //     FinalAnime();
+        //     cardUI.SetCard(4);
+        //     cardUI.SetCardName("-273.15℃· \n然后分子便不再运动了");
+        //     cardUI.SetCardColor(0f);
+        //     Debug.Log("调用FinalAnime方法");
+        //     hasCalledFinalAnime = true;
+        // }
         
-        // 时间为91秒，激活finalcard
-        if (currentTime >= 91f && currentTime < 92f && !hasActivatedFinalCard)
+        // 时间为90秒，激活finalcard
+        if (currentTime >= 5f && currentTime < 91f && !hasActivatedFinalCard)
         {
             if (finalCardScript != null)
             {
                 finalCardScript.enabled = true;
+                ShowPinion();
                 Debug.Log("激活finalCard");
             }
             hasActivatedFinalCard = true;
         }
         
-        // 时间为138秒，禁用finalcard，并调用AllOver方法
-        if (currentTime >= 138f && currentTime < 139f && !hasEndedFinalCard)
+        // 时间为138秒，调用finalcard的checkover方法
+        if (currentTime >= 138f && currentTime < 139f && !hasCalledFinalCardCheckOver)
+        {
+            // if (finalCardScript != null)
+            // {
+            //     finalCardScript.CheckOver();
+            // }
+            hasCalledFinalCardCheckOver = true;
+        }
+
+        // 时间为139秒，禁用finalcard，并调用AllOver方法
+        if (currentTime >= 139f && currentTime < 140f && !hasEndedFinalCard)
         {
             if (finalCardScript != null)
             {
@@ -256,8 +272,7 @@ public class BossBeheve : MonoBehaviour
     /// </summary>
     private void BgAndBallon()
     {
-        // 空方法，内部不实现
-        Debug.Log("调用BgAndBallon方法");
+        FinalWordsUI.SetActive(true);
     }
     
     /// <summary>
@@ -289,4 +304,40 @@ public class BossBeheve : MonoBehaviour
             bossAnime.SetState(direction);
         }
     }
+
+    /// <summary>
+    /// 显示冰翼
+    /// </summary>
+    public void ShowPinion()
+    {
+        StartCoroutine(ShowIcePinion());
+    }
+    private IEnumerator ShowIcePinion()
+    {
+
+        if (IcePinion_left != null && IcePinion_right != null)
+        {
+            Color color = IcePinion_left.color;
+            color.a = 0f;
+            IcePinion_left.color = color;
+            IcePinion_right.color = color;
+        }
+        float duration = 2f;
+        float elapsedTime = 0f;
+        while (elapsedTime < duration)
+        {
+            float t = elapsedTime / duration;
+            float alpha = Mathf.Lerp(0f, 0.3f, t);
+            if (IcePinion_left != null && IcePinion_right != null)
+            {
+                Color color = IcePinion_left.color;
+                color.a = alpha;
+                IcePinion_left.color = color;
+                IcePinion_right.color = color;
+            }
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+    }
+
 }

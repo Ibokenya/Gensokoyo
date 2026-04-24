@@ -8,6 +8,9 @@ public class BossShootSystem : MonoBehaviour
     public GameObject boss;
     public GameObject IceTerrain;// 冰刺地形
     public SpriteRenderer IceTerrainSprite;
+    public GameObject ColdAir;
+    public SpriteRenderer ColdAirSprite;
+
     public AudioClip FrozeSound; // 冰冻音效
     private const float animationSpeed = 0.1f; // 动画速度
     private int currentSpriteIndex = 0; // 当前动画帧索引
@@ -68,6 +71,24 @@ public class BossShootSystem : MonoBehaviour
     private Vector2 cloudSpawnMax; // 生成范围右上角
     private int cloudCount; // 冰云数量
     private GameObject cloudPrefab; // 冰云预制件
+
+    // 彗星攻击参数
+    private float cometAttackInterval = 5f; // 彗星攻击间隔
+    private float cometSpawnY = 6f; // 彗星生成y坐标
+    private GameObject cometPrefab; // 彗星预制件
+    private GameObject linePrefab; // 连线预制件
+#endregion
+#region FinalCard参数
+    // FinalCard射击参数
+    private GameObject icePearlPrefab; // 冰珠预制件
+    private GameObject icePickPrefab; // 冰刺预制件
+    private float finalCardAngleOffset = 60f; // 角度偏移范围
+    private float finalCardAngleStep = 10f; // 射击偏移角度
+    private float finalCardShootInterval = 0.5f; // 射击间隔
+    
+    // 协程管理
+    private Coroutine icePearlCoroutine;
+    private Coroutine icePickCoroutine;
 #endregion
 
 
@@ -881,23 +902,249 @@ public class BossShootSystem : MonoBehaviour
         SpawnCloud();
     }
 #endregion
-   
+#region 彗星攻击（二符）
+    /// <summary>
+    /// 开始彗星攻击
+    /// </summary>
+    /// <param name="comet">彗星预制件</param>
+    /// <param name="line">连线预制件</param>
+    /// <param name="interval">攻击间隔</param>
+    /// <param name="spawnY">彗星生成y坐标</param>
+    public void StartCometAttack(GameObject comet, GameObject line, float interval, float spawnY)
+    {
+        cometPrefab = comet;
+        linePrefab = line;
+        cometAttackInterval = interval;
+        cometSpawnY = spawnY;
+        
+        // 启动彗星攻击协程
+        StartCoroutine(CometAttackCoroutine());
+    }
     
     /// <summary>
-    /// 停止所有射击协程
+    /// 彗星攻击协程
     /// </summary>
-    public void StopAllShooting()
+    private IEnumerator CometAttackCoroutine()
     {
-        // 停止所有协程
-        StopAllCoroutines();
-        
-        // 取消所有 Invoke 调用
-        CancelInvoke();
-        
-        // 停止所有子弹波次
-        StopAllBulletWaves();
+        while (true)
+        {
+            if (player != null && cometPrefab != null && linePrefab != null)
+            {
+                // 定位玩家当前x坐标
+                float playerX = player.transform.position.x;
+                if(playerX < -7f )
+                {
+                    playerX = -7f;
+                }
+                else if(playerX > 1f)
+                {
+                    playerX = 1f;
+                }
+                
+                // 生成连线并等待其动画完成后生成彗星
+                yield return StartCoroutine(GenerateLineAndWait(playerX));
+            }
+            
+            // 等待攻击间隔
+            yield return new WaitForSeconds(cometAttackInterval);
+        }
     }
+    
+    /// <summary>
+    /// 生成连线并等待动画完成
+    /// </summary>
+    /// <param name="x">连线的x坐标</param>
+    private IEnumerator GenerateLineAndWait(float x)
+    {
+        if (linePrefab == null)
+            yield break;
+        
+        // 创建连线对象
+        GameObject lineInstance = Global_ObjectPool.Instance.GetObject(linePrefab, new Vector3(x, 0, 0), Quaternion.identity);
+        if (lineInstance != null)
+        {
+            // 启动连线动画并等待完成
+            yield return StartCoroutine(LineAnimation(lineInstance));
+            
+            // 连线动画完成后生成彗星
+            SpawnComet(x);
+        }
+    }
+    
+    /// <summary>
+    /// 连线动画
+    /// </summary>
+    /// <param name="line">连线对象</param>
+    private IEnumerator LineAnimation(GameObject line)
+    {
+        if (line == null)
+            yield break;
+        
+        LineRenderer lineRenderer = line.GetComponent<LineRenderer>();
+        if (lineRenderer == null)
+            yield break;
+        
+        float duration1 = 1f; // 宽度从0到0.5的时间
+        float duration2 = 1f; // 宽度到1并淡出的时间
+        float elapsedTime = 0f;
+        
+        // 初始状态
+        Color initialColor = lineRenderer.startColor;
+        initialColor.a = 1f;
+        lineRenderer.startColor = initialColor;
+        lineRenderer.endColor = initialColor;
+        lineRenderer.startWidth = 0f;
+        lineRenderer.endWidth = 0f;
+        
+        // 第一阶段：宽度从0淡入到0.5f，花费1秒
+        while (elapsedTime < duration1)
+        {
+            elapsedTime += Time.deltaTime;
+            float t = elapsedTime / duration1;
+            float width = Mathf.Lerp(0f, 0.5f, t);
+            lineRenderer.startWidth = width;
+            lineRenderer.endWidth = width;
+            yield return null;
+        }
+        
+        // 第二阶段：宽度从0.5f增长到1f，同时透明度从1淡出到0，花费1秒
+        elapsedTime = 0f;
+        while (elapsedTime < duration2)
+        {
+            elapsedTime += Time.deltaTime;
+            float t = elapsedTime / duration2;
+            float width = Mathf.Lerp(0.5f, 1f, t);
+            float alpha = Mathf.Lerp(1f, 0f, t);
+            
+            lineRenderer.startWidth = width;
+            lineRenderer.endWidth = width;
+            
+            Color color = lineRenderer.startColor;
+            color.a = alpha;
+            lineRenderer.startColor = color;
+            lineRenderer.endColor = color;
+            
+            yield return null;
+        }
+        
+        // 回收连线
+        Global_ObjectPool.Instance.Recycle(line);
+    }
+    
+    /// <summary>
+    /// 生成彗星
+    /// </summary>
+    /// <param name="x">彗星生成的x坐标</param>
+    private void SpawnComet(float x)
+    {
+        if (cometPrefab == null)
+            return;
+        
+        // 在指定位置生成彗星
+        Vector3 spawnPosition = new Vector3(x, cometSpawnY, 0f);
+        GameObject cometInstance = Global_ObjectPool.Instance.GetObject(cometPrefab, spawnPosition, Quaternion.identity);
+    }
+#endregion
+#region 往复扫射射击（Final）
+    /// <summary>
+    /// 重复扫射射击方法
+    /// </summary>
+    /// <param name="bullet">子弹预制件</param>
+    /// <param name="angleOffset">角度偏移范围，默认60度</param>
+    /// <param name="angleStep">射击偏移角度，默认10度</param>
+    /// <param name="shootInterval">射击间隔，默认0.5秒</param>
+    /// <param name="startFromLeft">是否从区间左侧开始（从左向右扫），默认true</param>
+    public Coroutine RepeatShoot(GameObject bullet, float angleOffset = 60f, float angleStep = 10f, float shootInterval = 0.5f, bool startFromLeft = true)
+    {
+        return StartCoroutine(RepeatShootCoroutine(bullet, angleOffset, angleStep, shootInterval, startFromLeft));
+    }
+    
+    /// <summary>
+    /// 重复扫射射击协程
+    /// </summary>
+    /// <param name="bullet">子弹预制件</param>
+    /// <param name="angleOffset">角度偏移范围</param>
+    /// <param name="angleStep">射击偏移角度</param>
+    /// <param name="shootInterval">射击间隔</param>
+    /// <param name="startFromLeft">是否从区间左侧开始（从左向右扫）</param>
+    private IEnumerator RepeatShootCoroutine(GameObject bullet, float angleOffset, float angleStep, float shootInterval, bool startFromLeft)
+    {
+        while (true)
+        {
+            if (player != null && boss != null && bullet != null)
+            {
+                // 计算玩家相对于boss的角度
+                Vector3 direction = player.transform.position - boss.transform.position;
+                direction.z = 0;
+                float playerAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+                
+                // 确保角度在0-360度范围内
+                if (playerAngle < 0)
+                {
+                    playerAngle += 360f;
+                }
+                
+                // 计算射击区间
+                float startAngle = playerAngle - angleOffset;
+                float endAngle = playerAngle + angleOffset;
+                
+                // 从起始角度开始，朝结束角度方向射击
+                float currentAngle = startFromLeft ? startAngle : endAngle;
+                bool increasing = startFromLeft;
+                
+                // 发射第一发子弹
+                FireBullet(currentAngle, bullet);
+                
+                // 循环射击直到超出区间
+                while (true)
+                {
+                    // 根据方向增加或减少角度
+                    if (increasing)
+                    {
+                        currentAngle += angleStep;
+                        if (currentAngle >= endAngle)
+                        {
+                            currentAngle = endAngle;
+                            increasing = false;
+                        }
+                    }
+                    else
+                    {
+                        currentAngle -= angleStep;
+                        if (currentAngle <= startAngle)
+                        {
+                            currentAngle = startAngle;
+                            increasing = true;
+                        }
+                    }
+                    
+                    // 发射子弹
+                    FireBullet(currentAngle, bullet);
+                    
+                    // 等待射击间隔
+                    yield return new WaitForSeconds(shootInterval);
+                }
+            }
+            
+            yield return null;
+        }
+    }
+    
+    /// <summary>
+    /// 发射子弹
+    /// </summary>
+    /// <param name="angle">发射角度</param>
+    /// <param name="bullet">子弹预制件</param>
+    private void FireBullet(float angle, GameObject bullet)
+    {
+        Quaternion rotation = Quaternion.Euler(0, 0, angle);
+        Global_ObjectPool.Instance.GetObject(bullet, boss.transform.position, rotation);
+    }
+#endregion
 
+   
+    
+#region 冰刺地形相关
     public void ShowTerrain()
     {
         StartCoroutine(ShowTerrainCoroutine());
@@ -953,7 +1200,69 @@ public class BossShootSystem : MonoBehaviour
         }
         IceTerrain.GetComponent<Collider2D>().enabled = false;
     }
-
+#endregion
+#region 琪露诺的冷气相关
+    public void ShowColdAir()
+    {
+        ColdAir.SetActive(true);
+        StartCoroutine(ShowColdAirCoroutine());
+    }
+    private IEnumerator ShowColdAirCoroutine()
+    {
+        if (ColdAirSprite != null)
+        {
+            Color color = ColdAirSprite.color;
+            color.a = 0f;
+            ColdAirSprite.color = color;
+        }
+        float duration = 2f;
+        float elapsedTime = 0f;
+        while (elapsedTime < duration)
+        {
+            float t = elapsedTime / duration;
+            float alpha = Mathf.Lerp(0f, 0.3f, t);
+            if (ColdAirSprite != null)
+            {
+                Color color = ColdAirSprite.color;
+                color.a = alpha;
+                ColdAirSprite.color = color;
+            }
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+    }
+    public void HideColdAir()
+    {
+        ColdAir.SetActive(false);
+        StartCoroutine(HideColdAirCoroutine());
+    }
+    private IEnumerator HideColdAirCoroutine()
+    {
+        if (ColdAirSprite != null)
+        {
+            Color color = ColdAirSprite.color;
+            color.a = 0.4f;
+            ColdAirSprite.color = color;
+        }
+        float duration = 1f;
+        float elapsedTime = 0f;
+        while (elapsedTime < duration)
+        {
+            float t = elapsedTime / duration;
+            float alpha = Mathf.Lerp(0.3f, 0f, t);
+            if (ColdAirSprite != null)
+            {
+                Color color = ColdAirSprite.color;
+                color.a = alpha;
+                ColdAirSprite.color = color;
+            }
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        ColdAir.SetActive(false);
+    }
+#endregion
+    
     /// <summary>
     /// 恢复所有陨石的重力
     /// </summary>
@@ -970,6 +1279,20 @@ public class BossShootSystem : MonoBehaviour
                 }
             }
         }
+    }
+    /// <summary>
+    /// 停止所有射击协程
+    /// </summary>
+    public void StopAllShooting()
+    {
+        // 停止所有协程
+        StopAllCoroutines();
+        
+        // 取消所有 Invoke 调用
+        CancelInvoke();
+        
+        // 停止所有子弹波次
+        StopAllBulletWaves();
     }
     
 }

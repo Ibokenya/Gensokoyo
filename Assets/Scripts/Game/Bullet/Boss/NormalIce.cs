@@ -10,10 +10,10 @@ public class NormalIce : MonoBehaviour
     private Rigidbody2D rb2D;
     
     // �߽緶Χ
-    private readonly float minX = -12f;
-    private readonly float maxX = 6f;
-    private readonly float minY = -9f;
-    private readonly float maxY = 9f;
+    public float minX = -12f;
+    public float maxX = 6f;
+    public float minY = -9f;
+    public float maxY = 9f;
     
     void Start()
     {

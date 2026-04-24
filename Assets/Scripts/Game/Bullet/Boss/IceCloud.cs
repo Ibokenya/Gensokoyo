@@ -49,7 +49,7 @@ public class IceCloud : MonoBehaviour
         }
     }
     
-    private void Start()
+    private void OnEnable()
     {
         // ¿ªÊ¼µ­Èë
         StartCoroutine(FadeIn());
@@ -113,7 +113,7 @@ public class IceCloud : MonoBehaviour
         while (fadeTimer < fadeInTime)
         {
             fadeTimer += Time.deltaTime;
-            float alpha = Mathf.Lerp(0f, 0.4f, fadeTimer / fadeInTime);
+            float alpha = Mathf.Lerp(0f, 0.2f, fadeTimer / fadeInTime);
             
             if (spriteRenderer != null)
             {
@@ -153,5 +153,8 @@ public class IceCloud : MonoBehaviour
         {
             rb2D.velocity = Vector2.zero;
         }
+        Color color = spriteRenderer.color;
+        color.a = 0f;
+        spriteRenderer.color = color;
     }
 }

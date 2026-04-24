@@ -19,8 +19,15 @@ public class card2 : MonoBehaviour
     public Vector2 cloudSpawnMin = new Vector2(-10f, -4f); // 冰云生成范围左下角
     public Vector2 cloudSpawnMax = new Vector2(4f, 4f); // 冰云生成范围右上角
     
+    [Header("彗星攻击参数")]
+    public GameObject cometPrefab; // 彗星预制件
+    public GameObject linePrefab; // 连线预制件
+    public float cometAttackInterval = 5f; // 彗星攻击间隔
+    public float cometSpawnY = 6f; // 彗星生成y坐标
+    public float cometStartDelay = 3f; // 彗星攻击启动延迟时间
+    
     private void OnEnable()
-    {      
+    {
         // 初始化弹幕池
         if (snowFlakePrefab != null)
         {
@@ -33,6 +40,18 @@ public class card2 : MonoBehaviour
             Global_ObjectPool.Instance.InitPool(iceCloudPrefab, iceCloudCount);
         }
         
+        // 初始化彗星对象池
+        if (cometPrefab != null)
+        {
+            Global_ObjectPool.Instance.InitPool(cometPrefab, 3);
+        }
+        
+        // 初始化连线对象池
+        if (linePrefab != null)
+        {
+            Global_ObjectPool.Instance.InitPool(linePrefab, 3);
+        }
+        bossShootSystem.ShowColdAir();
         // 开始攻击
         StartAttacks();
     }
@@ -44,6 +63,7 @@ public class card2 : MonoBehaviour
         
         // 取消所有 Invoke 调用
         CancelInvoke();
+        bossShootSystem.HideColdAir();
         
         // 停止 BossShootSystem 中的所有射击协程
         if (bossShootSystem != null)
@@ -65,6 +85,24 @@ public class card2 : MonoBehaviour
         {
             bossShootSystem.CreateCloud(iceCloudPrefab, cloudSpawnMin, cloudSpawnMax, iceCloudCount);
         }
+        
+        // 启动彗星攻击（带延迟）
+        if (bossShootSystem != null && cometPrefab != null && linePrefab != null)
+        {
+            StartCoroutine(StartCometAttackWithDelay());
+        }
+    }
+    
+    /// <summary>
+    /// 带延迟启动彗星攻击
+    /// </summary>
+    private IEnumerator StartCometAttackWithDelay()
+    {
+        // 等待启动延迟时间
+        yield return new WaitForSeconds(cometStartDelay);
+        
+        // 启动彗星攻击
+        bossShootSystem.StartCometAttack(cometPrefab, linePrefab, cometAttackInterval, cometSpawnY);
     }
 
     private IEnumerator MoveToHerPos()
