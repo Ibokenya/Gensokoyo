@@ -75,6 +75,14 @@ public class NormalFO : MonoBehaviour
                 {
                     frozenIce.TakeDamage(damage);
                 }
+                else
+                {
+                    FrozenBall frozenBall = collision.GetComponent<FrozenBall>();
+                    if(frozenBall != null)
+                    {
+                        frozenBall.TakeDamage(damage);
+                    }
+                }
             }
         }  
     }

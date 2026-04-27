@@ -80,18 +80,70 @@ public class BossShootSystem : MonoBehaviour
 #endregion
 #region FinalCard参数
     // FinalCard射击参数
-    private GameObject icePearlPrefab; // 冰珠预制件
-    private GameObject icePickPrefab; // 冰刺预制件
-    private float finalCardAngleOffset = 60f; // 角度偏移范围
-    private float finalCardAngleStep = 10f; // 射击偏移角度
-    private float finalCardShootInterval = 0.5f; // 射击间隔
-    
-    // 协程管理
-    private Coroutine icePearlCoroutine;
-    private Coroutine icePickCoroutine;
+    public GameObject IceSpike; // 冰锥预制件
+    public IceRealm IceRealm; // 冰领域（场景固有对象）
+    // 冰珠存储列表
+    private List<GameObject> activeIcePearls = new List<GameObject>();
+    // 冻结的冰珠列表
+    private List<GameObject> frozenIcePearls = new List<GameObject>();
+
+    // 区域限制攻击相关变量
+    private Coroutine areaLimitCoroutine; // 区域限制攻击协程
+    private Coroutine fadeOutCoroutine; // 淡出协程
+    private GameObject currentAreaLimitBullet; // 当前区域限制攻击的子弹
+    private Vector3 currentAreaLimitCenter; // 当前区域限制攻击的中心
+    private float currentAreaLimitRadius; // 当前区域限制攻击的半径
+    private float currentAreaLimitRotationSpeed; // 当前区域限制攻击的旋转速度
+    private float currentAreaLimitShrinkSpeed; // 当前区域限制攻击的收缩速度
+    private float currentAreaLimitStopDistance; // 当前区域限制攻击的停止收缩距离
+    private float currentAreaLimitCheckRadius; // 当前区域限制攻击的检测玩家是否在范围内的半径
+    private float areaLimitCheckTimer = 0f; // 区域限制攻击的检查计时器
+    private const float areaLimitCheckInterval = 0.5f; // 区域限制攻击的检查间隔
+    private bool isReadyForCheck = false; // 是否允许检测玩家位置
+    private bool isFadingOut = false; // 是否正在淡出
+    public bool isInArea = false; // 是否在限制区域内
+    public bool isRealmActive = false; // 是否激活冰领域笼
+    private List<GameObject> currentAreaLimitBullets = new List<GameObject>(); // 当前区域限制攻击的子弹列表
+    private List<SpriteRenderer> currentAreaLimitSpriteRenderers = new List<SpriteRenderer>(); // 当前区域限制攻击的精灵渲染器列表
 #endregion
 
-
+    void OnEnable()
+    {
+        isReadyForCheck = false;
+        isInArea = false;
+    }
+    private void Update()
+    {
+        // 区域限制攻击的玩家位置检查
+        if (currentAreaLimitBullet != null && player != null && isReadyForCheck && !isFadingOut)
+        {
+            areaLimitCheckTimer += Time.deltaTime;
+            if (areaLimitCheckTimer >= areaLimitCheckInterval)
+            {
+                areaLimitCheckTimer = 0f;
+                
+                // 检测玩家是否在指定半径内
+                float distance = Vector3.Distance(player.transform.position, currentAreaLimitCenter);
+                if (distance > currentAreaLimitCheckRadius)
+                {
+                    // 玩家不在范围内，先淡出再重新启动区域限制攻击
+                    isInArea = false;
+                    StartFadeOutAndRestart();
+                }
+                else
+                {
+                    // 玩家在限制区域内
+                    isInArea = true;
+                    
+                    // 激活冰囚笼
+                    if (isReadyForCheck && IceRealm != null && isRealmActive)
+                    {
+                        IceRealm.Activate();
+                    }
+                }
+            }
+        }
+    }
 #region 定位扇形射击（一非）
     public void Pos_FanShaped_Shoot(GameObject bullet, float shoot_interval)
     {
@@ -295,8 +347,6 @@ public class BossShootSystem : MonoBehaviour
     
     private IEnumerator StoneFrozenAttackCoroutine(GameObject stoneBullet, GameObject frozenIceBullet, GameObject normalIceBullet, int stoneCount, float rotationSpeed)
     {
-
-
         // 生成随机目标点并发射陨石
         for (int i = 0; i < stoneCount; i++)
         {
@@ -1054,9 +1104,10 @@ public class BossShootSystem : MonoBehaviour
     /// <param name="angleStep">射击偏移角度，默认10度</param>
     /// <param name="shootInterval">射击间隔，默认0.5秒</param>
     /// <param name="startFromLeft">是否从区间左侧开始（从左向右扫），默认true</param>
-    public Coroutine RepeatShoot(GameObject bullet, float angleOffset = 60f, float angleStep = 10f, float shootInterval = 0.5f, bool startFromLeft = true)
+    /// <param name="storeBullets">是否存储子弹以执行后续冻结效果，默认false</param>
+    public Coroutine RepeatShoot(GameObject bullet, float angleOffset = 60f, float angleStep = 10f, float shootInterval = 0.5f, bool startFromLeft = true, bool storeBullets = false)
     {
-        return StartCoroutine(RepeatShootCoroutine(bullet, angleOffset, angleStep, shootInterval, startFromLeft));
+        return StartCoroutine(RepeatShootCoroutine(bullet, angleOffset, angleStep, shootInterval, startFromLeft, storeBullets));
     }
     
     /// <summary>
@@ -1067,38 +1118,47 @@ public class BossShootSystem : MonoBehaviour
     /// <param name="angleStep">射击偏移角度</param>
     /// <param name="shootInterval">射击间隔</param>
     /// <param name="startFromLeft">是否从区间左侧开始（从左向右扫）</param>
-    private IEnumerator RepeatShootCoroutine(GameObject bullet, float angleOffset, float angleStep, float shootInterval, bool startFromLeft)
+    /// <param name="storeBullets">是否存储子弹以执行后续冻结效果</param>
+    private IEnumerator RepeatShootCoroutine(GameObject bullet, float angleOffset, float angleStep, float shootInterval, bool startFromLeft, bool storeBullets)
     {
         while (true)
         {
             if (player != null && boss != null && bullet != null)
             {
-                // 计算玩家相对于boss的角度
+                // 初始化射击区间
                 Vector3 direction = player.transform.position - boss.transform.position;
                 direction.z = 0;
                 float playerAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-                
-                // 确保角度在0-360度范围内
                 if (playerAngle < 0)
                 {
                     playerAngle += 360f;
                 }
                 
-                // 计算射击区间
-                float startAngle = playerAngle - angleOffset;
-                float endAngle = playerAngle + angleOffset;
-                
-                // 从起始角度开始，朝结束角度方向射击
-                float currentAngle = startFromLeft ? startAngle : endAngle;
+                float currentAngle = startFromLeft ? (playerAngle - angleOffset) : (playerAngle + angleOffset);
                 bool increasing = startFromLeft;
                 
                 // 发射第一发子弹
-                FireBullet(currentAngle, bullet);
+                FireBullet(currentAngle, bullet, storeBullets);
                 
-                // 循环射击直到超出区间
+                // 循环射击
                 while (true)
                 {
-                    // 根据方向增加或减少角度
+                    // 等待射击间隔
+                    yield return new WaitForSeconds(shootInterval);
+                    
+                    // 重新计算玩家当前角度和区间
+                    direction = player.transform.position - boss.transform.position;
+                    direction.z = 0;
+                    playerAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+                    if (playerAngle < 0)
+                    {
+                        playerAngle += 360f;
+                    }
+                    
+                    float startAngle = playerAngle - angleOffset;
+                    float endAngle = playerAngle + angleOffset;
+                    
+                    // 根据方向更新角度
                     if (increasing)
                     {
                         currentAngle += angleStep;
@@ -1119,10 +1179,7 @@ public class BossShootSystem : MonoBehaviour
                     }
                     
                     // 发射子弹
-                    FireBullet(currentAngle, bullet);
-                    
-                    // 等待射击间隔
-                    yield return new WaitForSeconds(shootInterval);
+                    FireBullet(currentAngle, bullet, storeBullets);
                 }
             }
             
@@ -1135,14 +1192,509 @@ public class BossShootSystem : MonoBehaviour
     /// </summary>
     /// <param name="angle">发射角度</param>
     /// <param name="bullet">子弹预制件</param>
-    private void FireBullet(float angle, GameObject bullet)
+    /// <param name="storeBullet">是否存储子弹引用</param>
+    private void FireBullet(float angle, GameObject bullet, bool storeBullet = false)
     {
         Quaternion rotation = Quaternion.Euler(0, 0, angle);
-        Global_ObjectPool.Instance.GetObject(bullet, boss.transform.position, rotation);
+        GameObject bulletInstance = Global_ObjectPool.Instance.GetObject(bullet, boss.transform.position, rotation);
+        
+        if (storeBullet && bulletInstance != null)
+        {
+            activeIcePearls.Add(bulletInstance);
+            
+            // 设置子弹的BossShootSystem引用
+            NormalIce normalIce = bulletInstance.GetComponent<NormalIce>();
+            if (normalIce != null)
+            {
+                normalIce.bossShootSystem = this;
+            }
+        }
+    }
+    
+    /// <summary>
+    /// 从活跃冰珠列表中移除子弹
+    /// </summary>
+    /// <param name="icePearl">要移除的冰珠</param>
+    public void RemoveIcePearl(GameObject icePearl)
+    {
+        if (icePearl != null && activeIcePearls.Contains(icePearl))
+        {
+            activeIcePearls.Remove(icePearl);
+        }
+    }
+    
+    /// <summary>
+    /// 释放单个冻结的冰珠
+    /// </summary>
+    /// <param name="icePearl">要释放的冰珠</param>
+    public void ReleaseFrozenPearl(GameObject icePearl)
+    {
+        if (player == null || icePearl == null || !icePearl.activeInHierarchy)
+        {
+            return;
+        }
+        
+        // 获取玩家当前坐标
+        Vector3 playerPosition = player.transform.position;
+        
+        // 计算冰珠到玩家的方向
+        Vector3 direction = playerPosition - icePearl.transform.position;
+        direction.z = 0;
+        direction.Normalize();
+        
+        // 设置冰珠的速度
+        Rigidbody2D rb = icePearl.GetComponent<Rigidbody2D>();
+        if (rb != null)
+        {
+            float speed = 5f; // 冰珠速度
+            rb.velocity = direction * speed;
+        }
+        
+        // 从冻结列表中移除
+        if (frozenIcePearls.Contains(icePearl))
+        {
+            frozenIcePearls.Remove(icePearl);
+        }
+    }
+    
+    
+#endregion
+#region 冰珠冻结（Final）
+    /// <summary>
+    /// 冻结所有冰珠并生成冰球
+    /// </summary>
+    /// <param name="frozenIcePrefab">冰球预制件</param>
+    public void FrozenPearl(GameObject frozenIcePrefab)
+    {
+        List<GameObject> frozenIceList = new ();
+        List<GameObject> pearlsToRemove = new ();
+        
+        // 遍历所有活跃的冰珠
+        for (int i = 0; i < activeIcePearls.Count; i++)
+        {
+            GameObject icePearl = activeIcePearls[i];
+            if (icePearl != null && icePearl.activeInHierarchy)
+            {
+                // 停止冰珠移动
+                Rigidbody2D rb = icePearl.GetComponent<Rigidbody2D>();
+                if (rb != null)
+                {
+                    rb.velocity = Vector2.zero;
+                }
+                
+                // 在冰珠位置创建冰球
+                if (frozenIcePrefab != null)
+                {
+                    try
+                    {
+                        GameObject frozenIce = Global_ObjectPool.Instance.GetObject(frozenIcePrefab, icePearl.transform.position, Quaternion.identity);
+                        if (frozenIce != null)
+                        {
+                            // 设置冰球的参数
+                            FrozenBall frozenBall = frozenIce.GetComponent<FrozenBall>();
+                            if (frozenBall != null)
+                            {
+                                frozenBall.bossShootSystem = this;
+                                frozenBall.icePearl = icePearl;
+                            }
+                            
+                            frozenIceList.Add(frozenIce);
+                        }
+                    }
+                    catch (System.Exception e)
+                    {
+                        Debug.LogWarning("创建冰球时出错: " + e.Message);
+                    }
+                }
+                
+                // 从活跃列表中移除冰珠，添加到冻结列表中，以便后续释放
+                pearlsToRemove.Add(icePearl);
+                frozenIcePearls.Add(icePearl);
+            }
+            else if (icePearl == null || !icePearl.activeInHierarchy)
+            {
+                // 记录已经不活跃的冰珠，稍后移除
+                pearlsToRemove.Add(icePearl);
+            }
+        }
+        
+        // 移除处理过的冰珠
+        foreach (GameObject pearl in pearlsToRemove)
+        {
+            activeIcePearls.Remove(pearl);
+        }
+        
+        // 启动冰球变大的协程
+        if (frozenIceList.Count > 0)
+        {
+            StartCoroutine(GrowFrozenIceCoroutine(frozenIceList));
+        }
+    }
+    /// <summary>
+    /// 冰球变大协程
+    /// </summary>
+    private IEnumerator GrowFrozenIceCoroutine(List<GameObject> frozenIceList)
+    {
+        float growthDuration = 8f; // 变大持续时间
+        float maxScale = 1.2f; // 最大缩放
+        float elapsedTime = 0f;
+        
+        // 初始化冰球缩放
+        foreach (var frozenIce in frozenIceList)
+        {
+            if (frozenIce != null)
+            {
+                frozenIce.transform.localScale = new Vector3(0.25f,0.25f,0f);
+            }
+        }
+        
+        // 持续变大
+        while (elapsedTime < growthDuration)
+        {
+            elapsedTime += Time.deltaTime;
+            float t = elapsedTime / growthDuration;
+            float scale = Mathf.Lerp(0.25f, maxScale, t);
+            
+            foreach (var frozenIce in frozenIceList)
+            {
+                if (frozenIce != null && frozenIce.activeInHierarchy)
+                {
+                    frozenIce.transform.localScale = Vector3.one * scale;
+                }
+            }
+            
+            yield return null;
+        }
     }
 #endregion
-
-   
+#region 区域限制攻击（Final）
+    /// <summary>
+    /// 区域限制攻击
+    /// </summary>
+    /// <param name="bullet">子弹预制件</param>
+    /// <param name="center">中心点</param>
+    /// <param name="radius">初始半径</param>
+    /// <param name="rotationSpeed">旋转速度</param>
+    /// <param name="shrinkSpeed">收缩速度</param>
+    /// <param name="stopDistance">停止收缩的距离</param>
+    /// <param name="checkRadius">检测玩家是否在范围内的半径</param>
+    public void AreaLimit(GameObject bullet, Vector3 center, float radius = 5f, float rotationSpeed = 90f,
+     float shrinkSpeed = 2f, float stopDistance = 2f, float checkRadius = 2.5f)
+    {
+        // 保存当前参数
+        currentAreaLimitBullet = bullet;
+        currentAreaLimitCenter = center;
+        currentAreaLimitRadius = radius;
+        currentAreaLimitRotationSpeed = rotationSpeed;
+        currentAreaLimitShrinkSpeed = shrinkSpeed;
+        currentAreaLimitStopDistance = stopDistance;
+        currentAreaLimitCheckRadius = checkRadius;
+        
+        // 停止之前的协程
+        if (areaLimitCoroutine != null)
+        {
+            StopCoroutine(areaLimitCoroutine);
+        }
+        
+        // 启动新的协程
+        areaLimitCoroutine = StartCoroutine(AreaLimitCoroutine(bullet, center, radius, rotationSpeed,
+         shrinkSpeed, stopDistance));
+    }
+    
+    /// <summary>
+    /// 区域限制攻击协程
+    /// <param name="bullet">子弹预制件</param>
+    /// <param name="center">中心点</param>
+    /// <param name="radius">初始半径</param>
+    /// <param name="rotationSpeed">旋转速度</param>
+    /// <param name="shrinkSpeed">收缩速度</param>
+    /// <param name="duration">持续时间</param>
+    /// <param name="stopDistance">停止收缩的距离</param>
+    /// </summary>
+    private IEnumerator AreaLimitCoroutine(GameObject bullet, Vector3 center, float radius,
+     float rotationSpeed, float shrinkSpeed, float stopDistance)
+    {
+        if (bullet == null)
+        {
+            yield break;
+        }
+        
+        List<GameObject> bullets = new List<GameObject>();
+        List<float> angles = new List<float>();
+        List<SpriteRenderer> spriteRenderers = new List<SpriteRenderer>();
+        
+        // 创建18枚均匀分布的子弹
+        int bulletCount = 18;
+        float angleStep = 360f / bulletCount;
+        
+        for (int i = 0; i < bulletCount; i++)
+        {
+            float angle = i * angleStep;
+            angles.Add(angle);
+            
+            // 计算子弹位置
+            float radians = angle * Mathf.Deg2Rad;
+            float x = center.x + Mathf.Cos(radians) * radius;
+            float y = center.y + Mathf.Sin(radians) * radius;
+            Vector3 position = new Vector3(x, y, 0f);
+            
+            // 计算子弹朝向（指向中心）
+            Vector3 direction = center - position;
+            float bulletAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+            Quaternion rotation = Quaternion.Euler(0, 0, bulletAngle+90f);
+            
+            // 创建子弹
+            GameObject bulletInstance = Global_ObjectPool.Instance.GetObject(bullet, position, rotation);
+            if (bulletInstance != null)
+            {
+                SpriteRenderer sr = bulletInstance.GetComponent<SpriteRenderer>();
+                sr.color = Color.white;
+                bullets.Add(bulletInstance);
+                currentAreaLimitBullets.Add(bulletInstance);
+                
+                // 获取SpriteRenderer用于淡出效果
+                if (sr != null)
+                {
+                    spriteRenderers.Add(sr);
+                    currentAreaLimitSpriteRenderers.Add(sr);
+                }
+                else
+                {
+                    spriteRenderers.Add(null);
+                    currentAreaLimitSpriteRenderers.Add(null);
+                }
+            }
+        }
+        
+        // 重置标志位
+        isReadyForCheck = false;
+        float elapsedTime = 0f;
+        float currentRadius = radius;
+        bool shouldShrink = true;
+        bool hasLoggedShrunk = false;
+        
+        // 控制子弹旋转和收缩
+        while (bullets.Count > 0)
+        {
+            elapsedTime += Time.deltaTime;
+            
+            // 检查是否应该停止收缩
+            if (currentRadius <= stopDistance)
+            {
+                shouldShrink = false;
+                
+                // 设置标志位
+                if (!hasLoggedShrunk)
+                {
+                    isReadyForCheck = true;
+                    hasLoggedShrunk = true;
+                }
+            }
+            
+            if (shouldShrink)
+            {
+                currentRadius -= shrinkSpeed * Time.deltaTime;
+                // 确保半径不会小于0
+                if (currentRadius < stopDistance)
+                {
+                    currentRadius = stopDistance;
+                }
+            }
+            
+            // 更新每颗子弹的位置和旋转
+            for (int i = 0; i < bullets.Count; i++)
+            {
+                GameObject bulletInstance = bullets[i];
+                if (bulletInstance != null && bulletInstance.activeInHierarchy)
+                {
+                    // 更新角度
+                    angles[i] += rotationSpeed * Time.deltaTime;
+                    if (angles[i] >= 360f)
+                    {
+                        angles[i] -= 360f;
+                    }
+                    
+                    // 计算新位置
+                    float radians = angles[i] * Mathf.Deg2Rad;
+                    float x = center.x + Mathf.Cos(radians) * currentRadius;
+                    float y = center.y + Mathf.Sin(radians) * currentRadius;
+                    Vector3 newPosition = new Vector3(x, y, 0f);
+                    
+                    // 更新位置
+                    bulletInstance.transform.position = newPosition;
+                    
+                    // 更新朝向（始终指向中心）
+                    Vector3 direction = center - newPosition;
+                    float bulletAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+                    Quaternion newRotation = Quaternion.Euler(0, 0, bulletAngle+90f);
+                    bulletInstance.transform.rotation = newRotation;
+                }
+                else
+                {
+                    // 移除无效的子弹
+                    bullets.RemoveAt(i);
+                    angles.RemoveAt(i);
+                    spriteRenderers.RemoveAt(i);
+                    i--;
+                }
+            }
+            yield return null;
+        }
+    }
+    
+    /// <summary>
+    /// 淡出并重启区域限制攻击
+    /// </summary>
+    private void StartFadeOutAndRestart()
+    {
+        if (fadeOutCoroutine != null)
+        {
+            StopCoroutine(fadeOutCoroutine);
+        }
+        
+        isFadingOut = true;
+        isReadyForCheck = false;
+        
+        fadeOutCoroutine = StartCoroutine(FadeOutAreaLimitCoroutine());
+    }
+    
+    /// <summary>
+    /// 区域限制攻击淡出协程
+    /// </summary>
+    private IEnumerator FadeOutAreaLimitCoroutine()
+    {
+        float fadeDuration = 1f;
+        float fadeElapsedTime = 0f;
+        
+        while (fadeElapsedTime < fadeDuration)
+        {
+            fadeElapsedTime += Time.deltaTime;
+            float alpha = 1f - (fadeElapsedTime / fadeDuration);
+            
+            for (int i = 0; i < currentAreaLimitBullets.Count; i++)
+            {
+                GameObject bulletInstance = currentAreaLimitBullets[i];
+                if (bulletInstance != null && bulletInstance.activeInHierarchy && i < currentAreaLimitSpriteRenderers.Count)
+                {
+                    SpriteRenderer sr = currentAreaLimitSpriteRenderers[i];
+                    if (sr != null)
+                    {
+                        Color color = sr.color;
+                        color.a = alpha;
+                        sr.color = color;
+                    }
+                }
+            }
+            
+            yield return null;
+        }
+        
+        // 回收所有子弹
+        foreach (GameObject bulletInstance in currentAreaLimitBullets)
+        {
+            if (bulletInstance != null && Global_ObjectPool.Instance != null)
+            {
+                Global_ObjectPool.Instance.Recycle(bulletInstance);
+            }
+        }
+        
+        // 清空列表
+        currentAreaLimitBullets.Clear();
+        currentAreaLimitSpriteRenderers.Clear();
+        
+        isFadingOut = false;
+        
+        // 重新调用AreaLimit方法
+        AreaLimit(
+            currentAreaLimitBullet,
+            currentAreaLimitCenter,
+            currentAreaLimitRadius,
+            currentAreaLimitRotationSpeed,
+            currentAreaLimitShrinkSpeed,
+            currentAreaLimitStopDistance,
+            currentAreaLimitCheckRadius
+        );
+    }
+#endregion
+#region 冰球破碎（Final）
+    /// <summary>
+    /// 释放冻结的冰珠
+    /// </summary>
+    public void ReleaseFrozenPearls()
+    {
+        if (player == null || frozenIcePearls.Count == 0)
+        {
+            return;
+        }
+        
+        // 获取玩家当前坐标
+        Vector3 playerPosition = player.transform.position;
+        
+        // 遍历所有冻结的冰珠
+        for (int i = 0; i < frozenIcePearls.Count; i++)
+        {
+            GameObject icePearl = frozenIcePearls[i];
+            if (icePearl != null && icePearl.activeInHierarchy)
+            {
+                // 计算冰珠到玩家的方向
+                Vector3 direction = playerPosition - icePearl.transform.position;
+                direction.z = 0;
+                direction.Normalize();
+                
+                // 设置冰珠的速度
+                Rigidbody2D rb = icePearl.GetComponent<Rigidbody2D>();
+                if (rb != null)
+                {
+                    float speed = 5f; // 冰珠速度
+                    rb.velocity = direction * speed;
+                }
+                frozenIcePearls.Remove(icePearl);
+            }
+        }
+    }
+    
+    /// <summary>
+    /// 激活冰领域
+    /// </summary>
+    /// <param name="position">激活位置</param>
+    public void ActivateIceRealm(Vector3 position)
+    {
+        if (IceRealm == null)
+        {
+            return;
+        }
+        
+        IceRealm.Activate();
+    }
+    
+    /// <summary>
+    /// 生成冰锥
+    /// </summary>
+    /// <param name="count">生成数量</param>
+    public void SpawnIceSpikes(int count)
+    {
+        if (IceSpike == null)
+        {
+            return;
+        }
+        
+        // 生成范围：x: -8.5~2.5, y: 6
+        float minX = -8.5f;
+        float maxX = 2.5f;
+        float y = 6f;
+        
+        for (int i = 0; i < count; i++)
+        {
+            // 随机x坐标
+            float x = Random.Range(minX, maxX);
+            Vector3 spawnPosition = new Vector3(x, y, 0f);
+            
+            // 生成冰锥
+            Global_ObjectPool.Instance.GetObject(IceSpike, spawnPosition, Quaternion.identity);
+        }
+    }
+#endregion
+    
     
 #region 冰刺地形相关
     public void ShowTerrain()

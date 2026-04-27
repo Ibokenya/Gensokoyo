@@ -8,12 +8,13 @@ public class NormalIce : MonoBehaviour
     public bool useSpeedOffset = true; // 是否使用速度偏移
     private float actualSpeed;
     private Rigidbody2D rb2D;
+    public BossShootSystem bossShootSystem; // Boss射击系统引用
     
     // 边界范围
-    public float minX = -12f;
-    public float maxX = 6f;
-    public float minY = -9f;
-    public float maxY = 9f;
+    public float minX = -11f;
+    public float maxX = 5f;
+    public float minY = -7.5f;
+    public float maxY = 6.5f;
     
     void Start()
     {
@@ -100,5 +101,17 @@ public class NormalIce : MonoBehaviour
                 Destroy(gameObject);
             }
         }
+    }
+    
+    void OnDisable()
+    {
+        // 从BossShootSystem的activeIcePearls列表中移除自己
+        if (bossShootSystem != null)
+        {
+            bossShootSystem.RemoveIcePearl(this.gameObject);
+        }
+        
+        // 重置参数
+        bossShootSystem = null;
     }
 }

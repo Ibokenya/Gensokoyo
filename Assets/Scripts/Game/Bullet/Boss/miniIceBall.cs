@@ -16,10 +16,10 @@ public class miniIceBall : MonoBehaviour
     private bool isFused = false; // 是否已融合
     
     // 边界范围
-    private readonly float minX = -12f;
-    private readonly float maxX = 6f;
-    private readonly float minY = -9f;
-    private readonly float maxY = 9f;
+    private readonly float minX = -11f;
+    private readonly float maxX = 5f;
+    private readonly float minY = -7.5f;
+    private readonly float maxY = 6.5f;
 
     void Start()
     {

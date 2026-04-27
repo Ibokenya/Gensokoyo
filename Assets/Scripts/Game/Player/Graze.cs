@@ -9,12 +9,24 @@ public class Graze : MonoBehaviour
 
     void OnDisable()
     {
-        // ÇåÀí
         currentBullets.Clear();
         if (isPlaying)
         {
             Global_AudioManager.Instance.StopLoopSFX(grazeSound);
             isPlaying = false;
+        }
+    }
+
+    private void Update()
+    {
+        if (currentBullets.Count > 0)
+        {
+            currentBullets.RemoveAll(bullet => bullet == null || !bullet.gameObject.activeInHierarchy);
+            if (currentBullets.Count == 0 && isPlaying)
+            {
+                Global_AudioManager.Instance.StopLoopSFX(grazeSound);
+                isPlaying = false;
+            }
         }
     }
 

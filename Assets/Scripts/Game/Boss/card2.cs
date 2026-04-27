@@ -11,7 +11,7 @@ public class card2 : MonoBehaviour
     
     [Header("雪花攻击参数")]
     public int snowFlakeCount = 50; // 雪花生成总数
-    public float attackInterval = 12f; // 攻击间隔（每隔多久发动一次雪花攻击）
+    public float attackInterval = 4f; // 攻击间隔（每隔多久发动一次雪花攻击）
     
     [Header("冰云攻击参数")]
     public int iceCloudCount = 10; // 冰云生成数量
