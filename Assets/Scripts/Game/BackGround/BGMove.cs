@@ -10,9 +10,6 @@ public class BGMove : MonoBehaviour
     
     public GameObject DarkCloud;// 黑暗物质
 
-    public GameObject MoonSurface;// 月面
-    public GameObject SereneSea;// 宁静海
-
     [Header("粒子系统引用")]
     public ParticleSystem SpaceDust;// 宇宙尘埃粒子系统
 

@@ -9,7 +9,8 @@ public class CardUI : MonoBehaviour
     [Header("符卡UI组件")]
     public Image cardImage; // 符卡图片
     public List<Sprite> cardSprites; // 符卡图片列表
-    public TextMeshProUGUI cardNameText; // 符卡名称文本
+    public TextMeshProUGUI cardNameText_1; // 符卡名称文本
+    public TextMeshProUGUI cardNameText_2; // 符卡名称文本
 
     public void SetCard(int cardIndex)
     {
@@ -20,14 +21,20 @@ public class CardUI : MonoBehaviour
         }
     }
 
-    public void SetCardName(string cardName)
+    public void SetCardName_1(string cardName)
     {
-        cardNameText.text = cardName;
+        cardNameText_1.text = cardName;
+    }
+
+    public void SetCardName_2(string cardName)
+    {
+        cardNameText_2.text = cardName;
     }
 
     public void SetCardColor(float green)
     {
-        cardNameText.color = new Color(0,green,1,1);
+        cardNameText_1.color = new Color(0,green,1,1);
+        cardNameText_2.color = new Color(0,green,1,1);
     }
 
     public void ShowCard()

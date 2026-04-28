@@ -29,6 +29,7 @@ public class none2 : MonoBehaviour
         {
             Global_ObjectPool.Instance.InitPool(randomBulletPrefab, 30);
         }
+        bossShootSystem.HideTerrain();
         // 开始攻击
         StartAttacks();
     }
@@ -37,8 +38,6 @@ public class none2 : MonoBehaviour
     {
         // 停止所有协程
         StopAllCoroutines();
-        // 隐藏冰刺地形
-        bossShootSystem.HideTerrain();
         // 取消所有 Invoke 调用
         CancelInvoke();
         
@@ -46,6 +45,7 @@ public class none2 : MonoBehaviour
         if (bossShootSystem != null)
         {
             bossShootSystem.StopAllShooting();
+            bossShootSystem.ClearBullet();
         }
     }
     

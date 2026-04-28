@@ -695,7 +695,7 @@ public class BossShootSystem : MonoBehaviour
             miniIceBall firstMiniIce = wave.bullets[0].GetComponent<miniIceBall>();
             if (firstMiniIce != null)
             {
-                originalSpeed = firstMiniIce.moveSpeed;Debug.Log($"[BossShootSystem] 波次 {wave.waveId} 记录到原始速度: {originalSpeed}");
+                originalSpeed = firstMiniIce.moveSpeed;
             }
         }
         
@@ -1750,7 +1750,7 @@ public class BossShootSystem : MonoBehaviour
             elapsedTime += Time.deltaTime;
             yield return null;
         }
-        IceTerrain.GetComponent<Collider2D>().enabled = false;
+        IceTerrainSprite.color = new Color(0.6f, 1, 1, 0);
     }
 #endregion
 #region 琪露诺的冷气相关
@@ -1814,7 +1814,38 @@ public class BossShootSystem : MonoBehaviour
         ColdAir.SetActive(false);
     }
 #endregion
-    
+#region 切换阶段清屏
+    public void ClearBullet()
+    {
+        // 找到所有敌人子弹
+        GameObject[] BossBullets = GameObject.FindGameObjectsWithTag("BossBullet");
+        GameObject[] EnemyBullets = GameObject.FindGameObjectsWithTag("EnemyBullet");
+        GameObject[] Enemy = GameObject.FindGameObjectsWithTag("Enemy");
+        // 回收所有敌人子弹
+        foreach (GameObject bullet in BossBullets)
+        {
+            if (bullet != null)
+            {
+                Global_ObjectPool.Instance.Recycle(bullet);
+            }
+        }
+        foreach (GameObject bullet in EnemyBullets)
+        {
+            if (bullet != null)
+            {
+                Global_ObjectPool.Instance.Recycle(bullet);
+            }
+        }
+        foreach (GameObject enemy in Enemy)
+        {
+            if (enemy != null)
+            {
+                Global_ObjectPool.Instance.Recycle(enemy);
+            }
+        }
+    }
+#endregion    
+
     /// <summary>
     /// 恢复所有陨石的重力
     /// </summary>

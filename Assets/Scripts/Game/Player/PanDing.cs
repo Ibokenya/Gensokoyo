@@ -15,7 +15,8 @@ public class PanDing : MonoBehaviour
         if(Global_GameManager.Instance.state == State.Gaming)
         {
             // 确保只对敌人和敌人子弹生效
-            if(collision.CompareTag("Enemy") || collision.CompareTag("EnemyBullet") || collision.CompareTag("BossBullet"))
+            if(collision.CompareTag("Enemy") || collision.CompareTag("EnemyBullet") ||
+             collision.CompareTag("BossBullet") || collision.CompareTag("Terrain"))
             {
                 // // 检查是否处于无敌状态
                 // if (spellCardEffect != null && Global_GameManager.Instance.state == State.NoDead)

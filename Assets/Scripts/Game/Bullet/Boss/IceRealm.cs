@@ -82,7 +82,8 @@ public class IceRealm : MonoBehaviour
     
     public void Activate()
     {
-        if (isFadingIn || isColliderActive)
+        // 如果正在淡出、淡入或碰撞器已激活，则不执行激活
+        if (isFadingOut || isFadingIn || isColliderActive)
         {
             return;
         }
@@ -145,6 +146,7 @@ public class IceRealm : MonoBehaviour
             collider2D.enabled = true;
             isColliderActive = true;
         }
+        Debug.Log("冰囚笼淡入");
     }
     
     private void StartFadeOut()
@@ -198,5 +200,6 @@ public class IceRealm : MonoBehaviour
         {
             collider2D.enabled = false;
         }
+        Debug.Log("冰囚笼淡出");
     }
 }

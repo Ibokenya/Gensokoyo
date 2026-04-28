@@ -163,3 +163,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   BaseSpeed: 3
   useSpeedOffset: 1
+  bossShootSystem: {fileID: 0}
+  minX: -11
+  maxX: 5
+  minY: -7.5
+  maxY: 6.5

@@ -11,6 +11,9 @@ public class FinalCard : MonoBehaviour
     public GameObject IceFlake;//冰花
     public GameObject RotatePick;//旋转冰刺
     public IceRealm IceRealm;//冰领域（场景固有对象）
+
+    [Header("脚本引用")]
+    public ChangeBG changeBG;
     
     [Header("FinalCard阶段参数")]
     public int currentPhase = 1; // 当前阶段（1-4）
@@ -116,6 +119,7 @@ public class FinalCard : MonoBehaviour
                 break;
             case 4:
                 IceRealm.enabled = true;
+                changeBG.ShowMagicEffect();
                 // 第四阶段
                 break;
         }

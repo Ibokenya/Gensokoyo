@@ -92,7 +92,6 @@ public class FrozenIce : MonoBehaviour
     
     void OnDisable()
     {
-        transform.parent = null;
         ParentOb = null;
         normalIcePrefab = null;
         bossShootSystem = null;

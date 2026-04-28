@@ -69,6 +69,8 @@ public class card2 : MonoBehaviour
         if (bossShootSystem != null)
         {
             bossShootSystem.StopAllShooting();
+            // 清除所有子弹
+            bossShootSystem.ClearBullet();
         }
     }
     

@@ -10,6 +10,8 @@ TagManager:
   - PlayerBullet
   - BossBullet
   - IceCloud
+  - Terrain
+  - Boss
   layers:
   - Default
   - TransparentFX

@@ -22,6 +22,7 @@ public class BossBeheve : MonoBehaviour
     public ChangeBG changeBG;
     public SpriteRenderer IcePinion_left;
     public SpriteRenderer IcePinion_right;
+    public Animator animator;
     
     private float currentTime = 0f;
     private bool hasPlayedCharacterAnimation = false;
@@ -70,6 +71,8 @@ public class BossBeheve : MonoBehaviour
         
         if (currentTime >= 4f && currentTime < 5f && !hasActivatedUI)
         {
+            
+            animator.SetBool("isAnime", true);
             UI.SetActive(true);
             card_UI.SetActive(true);
             bossAnime.ShowHP();
@@ -77,160 +80,181 @@ public class BossBeheve : MonoBehaviour
             hasActivatedUI = true;
         }
 
-        // // 时间为5秒时，激活none1
-        // if (currentTime >= 5f && currentTime < 6f && !hasActivatedNone1)
-        // {
-        //     if (none1Script != null)
-        //     {
-        //         none1Script.enabled = true;
-        //         cardUI.SetCard(0);
-        //         cardUI.SetCardName("-170℃");
-        //         cardUI.SetCardColor(0.8f);
-        //         Debug.Log("激活none1");
-        //     }
-        //     hasActivatedNone1 = true;
-        // }
+        // 时间为5秒时，激活none1
+        if (currentTime >= 5f && currentTime < 6f && !hasActivatedNone1)
+        {
+            if (none1Script != null)
+            {
+                none1Script.enabled = true;
+                cardUI.SetCard(0);
+                cardUI.SetCardName_1("-170℃");
+                cardUI.SetCardName_2("");
+                cardUI.SetCardColor(0.8f);
+                changeBG.ShowBg("none1", 0.3f);
+                Debug.Log("激活none1");
+            }
+            hasActivatedNone1 = true;
+        }
         
-        // // 时间为21秒时，调用None1的CheckOver()方法
-        // if (currentTime >= 21f && currentTime < 22f && !hasCalledNone1CheckOver)
-        // {
-        //     // 由于none1现在是空的，暂时注释掉
-        //     // if (none1Script != null)
-        //     // {
-        //     //     none1Script.CheckOver();
-        //     // }
-        //     Debug.Log("调用none1.CheckOver()");
-        //     bossUI.SetCardTime(23f);
-        //     hasCalledNone1CheckOver = true;
-        // }
+        // 时间为21秒时，调用None1的CheckOver()方法
+        if (currentTime >= 21f && currentTime < 22f && !hasCalledNone1CheckOver)
+        {
+            // 由于none1现在是空的，暂时注释掉
+            // if (none1Script != null)
+            // {
+            //     none1Script.CheckOver();
+            // }
+            animator.SetBool("isAnime", true);
+            Debug.Log("调用none1.CheckOver()");
+            changeBG.HideBg();
+            bossUI.SetCardTime(23f);
+            hasCalledNone1CheckOver = true;
+        }
         
-        // // 时间为22秒时，禁用none1激活card1
-        // if (currentTime >= 22f && currentTime < 23f && !hasActivatedCard1)
-        // {
-        //     if (none1Script != null)
-        //     {
-        //         none1Script.enabled = false;
-        //         Debug.Log("禁用none1");
-        //     }
-        //     if (card1Script != null)
-        //     {
-        //         card1Script.enabled = true;
-        //         cardUI.SetCard(1);
-        //         cardUI.SetCardName("-220℃· \n冰冷彗星带");
-        //         cardUI.SetCardColor(0.6f);
-        //         Debug.Log("激活card1");
-        //     }
-        //     hasActivatedCard1 = true;
-        // }
+        // 时间为22秒时，禁用none1激活card1
+        if (currentTime >= 22f && currentTime < 23f && !hasActivatedCard1)
+        {
+            if (none1Script != null)
+            {               
+                none1Script.enabled = false;
+                Debug.Log("禁用none1");
+            }
+            if (card1Script != null)
+            {
+                card1Script.enabled = true;
+                cardUI.SetCard(1);
+                cardUI.SetCardName_1("-220℃");
+                cardUI.SetCardName_2("冰冷彗星带");
+                cardUI.SetCardColor(0.6f);
+                changeBG.ShowBg("card1", 0.3f);
+                Debug.Log("激活card1");
+            }
+            hasActivatedCard1 = true;
+        }
         
-        // // 时间为45秒时，调用card1的checkover
-        // if (currentTime >= 45f && currentTime < 46f && !hasCalledCard1CheckOver)
-        // {
-        //     // 由于card1现在是空的，暂时注释掉
-        //     // if (card1Script != null)
-        //     // {
-        //     //     card1Script.CheckOver();
-        //     // }
-        //     Debug.Log("调用card1.CheckOver()");
-        //     bossUI.SetCardTime(12f);
-        //     hasCalledCard1CheckOver = true;
-        // }
+        // 时间为45秒时，调用card1的checkover
+        if (currentTime >= 45f && currentTime < 46f && !hasCalledCard1CheckOver)
+        {
+            // 由于card1现在是空的，暂时注释掉
+            // if (card1Script != null)
+            // {
+            //     card1Script.CheckOver();
+            // }
+            animator.SetBool("isAnime", true);
+            Debug.Log("调用card1.CheckOver()");
+            changeBG.HideBg();
+            bossUI.SetCardTime(12f);
+            hasCalledCard1CheckOver = true;
+        }
         
-        // // 时间为46秒，禁用card1激活none2
-        // if (currentTime >= 46f && currentTime < 47f && !hasActivatedNone2)
-        // {
-        //     if (card1Script != null)
-        //     {
-        //         card1Script.enabled = false;
-        //         Debug.Log("禁用card1");
-        //     }
-        //     if (none2Script != null)
-        //     {
-        //         none2Script.enabled = true;
-        //         cardUI.SetCard(2);
-        //         cardUI.SetCardName("-260℃");
-        //         cardUI.SetCardColor(0.4f);
-        //         Debug.Log("激活none2");
-        //     }
-        //     hasActivatedNone2 = true;
-        // }
+        // 时间为46秒，禁用card1激活none2
+        if (currentTime >= 46f && currentTime < 47f && !hasActivatedNone2)
+        {
+            if (card1Script != null)
+            {
+                card1Script.enabled = false;
+                Debug.Log("禁用card1");
+            }
+            if (none2Script != null)
+            {
+                none2Script.enabled = true;
+                cardUI.SetCard(2);
+                cardUI.SetCardName_1("-260℃");
+                cardUI.SetCardName_2("");
+                cardUI.SetCardColor(0.4f);
+                changeBG.ShowBg("none2", 0.3f);
+                Debug.Log("激活none2");
+            }
+            hasActivatedNone2 = true;
+        }
         
-        // // 时间为58秒，调用none2的checkover
-        // if (currentTime >= 58f && currentTime < 59f && !hasCalledNone2CheckOver)
-        // {
-        //     // 由于none2现在是空的，暂时注释掉
-        //     // if (none2Script != null)
-        //     // {
-        //     //     none2Script.CheckOver();
-        //     // }
-        //     Debug.Log("调用none2.CheckOver()");
-        //     bossUI.SetCardTime(24f);
-        //     hasCalledNone2CheckOver = true;
-        // }
+        // 时间为58秒，调用none2的checkover
+        if (currentTime >= 58f && currentTime < 59f && !hasCalledNone2CheckOver)
+        {
+            // 由于none2现在是空的，暂时注释掉
+            // if (none2Script != null)
+            // {
+            //     none2Script.CheckOver();
+            // }
+            animator.SetBool("isAnime", true);
+            Debug.Log("调用none2.CheckOver()");
+            changeBG.HideBg();
+            bossUI.SetCardTime(24f);
+            hasCalledNone2CheckOver = true;
+        }
         
         // 时间为59秒，禁用none2激活card2
-        // if (currentTime >= 59f && currentTime < 60f && !hasActivatedCard2)
-        // {
-        //     if (none2Script != null)
-        //     {
-        //         none2Script.enabled = false;
-        //         Debug.Log("禁用none2");
-        //     }
-        //     if (card2Script != null)
-        //     {
-        //         card2Script.enabled = true;
-        //         cardUI.SetCard(3);
-        //         cardUI.SetCardName("-270℃· \n宇宙微波辐射");
-        //         cardUI.SetCardColor(0.2f);
-        //         Debug.Log("激活card2");
-        //     }
-        //     hasActivatedCard2 = true;
-        // }
+        if (currentTime >= 59f && currentTime < 60f && !hasActivatedCard2)
+        {
+            if (none2Script != null)
+            {
+                none2Script.enabled = false;
+                Debug.Log("禁用none2");
+            }
+            if (card2Script != null)
+            {
+                card2Script.enabled = true;
+                cardUI.SetCard(3);
+                cardUI.SetCardName_1("-270℃");
+                cardUI.SetCardName_2("宇宙微波辐射");
+                cardUI.SetCardColor(0.2f);
+                changeBG.ShowBg("card2", 0.1f);
+                Debug.Log("激活card2");
+            }
+            hasActivatedCard2 = true;
+        }
         
-        // // 时间为83秒，调用card2的checkover
-        // if (currentTime >= 83f && currentTime < 84f && !hasCalledCard2CheckOver)
-        // {
-        //     // 由于card2现在是空的，暂时注释掉
-        //     // if (card2Script != null)
-        //     // {
-        //     //     card2Script.CheckOver();
-        //     // }
-        //     Debug.Log("调用card2.CheckOver()");
-        //     hasCalledCard2CheckOver = true;
-        // }
+        // 时间为83秒，调用card2的checkover
+        if (currentTime >= 83f && currentTime < 84f && !hasCalledCard2CheckOver)
+        {
+            // 由于card2现在是空的，暂时注释掉
+            // if (card2Script != null)
+            // {
+            //     card2Script.CheckOver();
+            // }
+            animator.SetBool("isAnime", true);
+            Debug.Log("调用card2.CheckOver()");
+            changeBG.HideBg();
+            hasCalledCard2CheckOver = true;
+        }
         
-        // // 时间为84秒，禁用card2并调用BgAndBallon方法
-        // if (currentTime >= 84f && currentTime < 85f && !hasCalledBgAndBallon)
-        // {
-        //     if (card2Script != null)
-        //     {
-        //         card2Script.enabled = false;
-        //         Debug.Log("禁用card2");
-        //     }
-        //     BgAndBallon();
-        //     Debug.Log("调用BgAndBallon方法");
-        //     hasCalledBgAndBallon = true;
-        // }
+        // 时间为84秒，禁用card2并调用BgAndBallon方法
+        if (currentTime >= 84f && currentTime < 85f && !hasCalledBgAndBallon)
+        {
+            if (card2Script != null)
+            {
+                card2Script.enabled = false;
+                Debug.Log("禁用card2");
+            }
+            BgAndBallon();
+            Debug.Log("调用BgAndBallon方法");
+            changeBG.ShowBg("balloon", 0.5f);
+            hasCalledBgAndBallon = true;
+        }
         
-        // // 时间为88秒，调用FinalAnime方法
-        // if (currentTime >= 88f && currentTime < 89f && !hasCalledFinalAnime)
-        // {
-        //     FinalAnime();
-        //     cardUI.SetCard(4);
-        //     cardUI.SetCardName("-273.15℃· \n然后分子便不再运动了");
-        //     cardUI.SetCardColor(0f);
-        //     Debug.Log("调用FinalAnime方法");
-        //     hasCalledFinalAnime = true;
-        // }
+        // 时间为88秒，调用FinalAnime方法
+        if (currentTime >= 88f && currentTime < 89f && !hasCalledFinalAnime)
+        {
+            FinalAnime();
+            cardUI.SetCard(4);
+            cardUI.SetCardName_1("-273.15℃");
+            cardUI.SetCardName_2("然后分子便不再运动了");
+            cardUI.SetCardColor(0f);
+            Debug.Log("调用FinalAnime方法");
+            changeBG.HideBg();
+            hasCalledFinalAnime = true;
+        }
         
         // 时间为90秒，激活finalcard
-        if (currentTime >= 5f && currentTime < 91f && !hasActivatedFinalCard)
+        if (currentTime >= 90f && currentTime < 91f && !hasActivatedFinalCard)
         {
             if (finalCardScript != null)
             {
                 finalCardScript.enabled = true;
-                ShowPinion();
+                ShowPinion();         
+                bossUI.SetCardTime(48f);
                 Debug.Log("激活finalCard");
+                changeBG.ShowBg("finalCard", 0.4f);
             }
             hasActivatedFinalCard = true;
         }
@@ -252,6 +276,8 @@ public class BossBeheve : MonoBehaviour
             {
                 finalCardScript.enabled = false;
                 Debug.Log("禁用finalCard");
+                changeBG.BeginDeadStarEffect();
+                changeBG.HideBg();
             }
             AllOver();
             Debug.Log("一切都结束了");
@@ -340,4 +366,8 @@ public class BossBeheve : MonoBehaviour
         }
     }
 
+    public void SetAnimeState()
+    {
+        animator.SetBool("isAnime", false);
+    }
 }

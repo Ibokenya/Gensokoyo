@@ -7,6 +7,10 @@ public class Graze : MonoBehaviour
     private List<Collider2D> currentBullets = new(); // 存储当前在判定区域内的弹幕
     private bool isPlaying = false; // 标记是否正在播放擦弹音效
 
+    void OnEnable()
+    {
+        currentBullets.Clear();
+    }
     void OnDisable()
     {
         currentBullets.Clear();
@@ -21,7 +25,7 @@ public class Graze : MonoBehaviour
     {
         if (currentBullets.Count > 0)
         {
-            currentBullets.RemoveAll(bullet => bullet == null || !bullet.gameObject.activeInHierarchy);
+            currentBullets.RemoveAll(item => item == null || !item.gameObject.activeInHierarchy);
             if (currentBullets.Count == 0 && isPlaying)
             {
                 Global_AudioManager.Instance.StopLoopSFX(grazeSound);
@@ -56,7 +60,8 @@ public class Graze : MonoBehaviour
     private void OnTriggerExit2D(Collider2D collision)
     {
         // 确保只对敌人和敌人子弹和Boss子弹生效
-        if (collision.CompareTag("Enemy") || collision.CompareTag("EnemyBullet") || collision.CompareTag("BossBullet"))
+        if (collision.CompareTag("Enemy") || collision.CompareTag("EnemyBullet") ||
+         collision.CompareTag("BossBullet"))
         {
             // 从列表中移除弹幕
             if (currentBullets.Contains(collision))
