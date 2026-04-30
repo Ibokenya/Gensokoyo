@@ -4,8 +4,11 @@ using UnityEngine;
 
 public class PanDing : MonoBehaviour
 {
+    public FreezeSystem freezeSystem; // 冻结系统引用
     public ClearAllBullet clearAllBullet;// 清除所有子弹组件
     public SpellCardEffect spellCardEffect;// 符卡效果组件
+
+    private const float ICE_CLOUD_FROZEN_DEGREE_INCREASE = 0.01f; // 每次碰撞冰云增加的冻结度
 
     /// <summary>
     /// 触发器检测
@@ -38,17 +41,15 @@ public class PanDing : MonoBehaviour
                 // }
                 // clearAllBullet.ClearScreenBullet();
             }
+            // 处理冰云碰撞（玩家不会受伤，但冻结度会增加）
             if(collision.CompareTag("IceCloud"))
             {
-
+                // 增加冻结度
+                if (freezeSystem != null)
+                {
+                    freezeSystem.IncreaseFrozenDegree(ICE_CLOUD_FROZEN_DEGREE_INCREASE);
+                }
             }
         }  
-    }
-
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        if(collision.CompareTag("IceCloud"))
-        {
-        }
     }
 }

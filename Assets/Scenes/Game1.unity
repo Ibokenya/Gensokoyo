@@ -8812,7 +8812,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.42, b: 1, a: 1}
+  m_Color: {r: 0, g: 0.5, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -11308,7 +11308,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &409717454
 RectTransform:
   m_ObjectHideFlags: 0
@@ -11344,6 +11344,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c4bc132ee9016c5458e6b7415e0a46dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  FrozenBar: {fileID: 244013965}
+  FrozenEffect: {fileID: 1104395253}
+  FrozenSprite: {fileID: 1367796304}
+  freezeSound: {fileID: 8300000, guid: 2830dc0ff58f9ac45bb3a27ea561faaf, type: 3}
+  playerAnime: {fileID: 1651681770}
+  FrozenScale: 1
 --- !u!4 &425655706
 Transform:
   m_ObjectHideFlags: 0
@@ -20721,6 +20727,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39cbec22314795a4db59110716cba38c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  freezeSystem: {fileID: 409717455}
   clearAllBullet: {fileID: 1283300306}
   spellCardEffect: {fileID: 273036238}
 --- !u!1 &1104395251
@@ -20740,7 +20747,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1104395252
 RectTransform:
   m_ObjectHideFlags: 0
@@ -20773,7 +20780,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 2100000, guid: e3bf93ab33ef8bd46b1c4b1de5773fae, type: 2}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.6039216}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -25737,7 +25744,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!212 &1367796304
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -25780,7 +25787,7 @@ SpriteRenderer:
   m_SortingLayer: 7
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: b95bdf436f064614c9dc1a3ce6e71e25, type: 3}
-  m_Color: {r: 0.7610062, g: 0.7610062, b: 0.7610062, a: 0.4}
+  m_Color: {r: 0.7610062, g: 0.7610062, b: 0.7610062, a: 0}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -28705,6 +28712,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c4bc132ee9016c5458e6b7415e0a46dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  FrozenBar: {fileID: 0}
+  FrozenEffect: {fileID: 0}
+  FrozenSprite: {fileID: 0}
+  freezeSound: {fileID: 0}
+  playerAnime: {fileID: 0}
+  FrozenScale: 0
 --- !u!1 &1460112506
 GameObject:
   m_ObjectHideFlags: 0
@@ -31082,6 +31095,7 @@ MonoBehaviour:
   Circle3: {fileID: 1953946126}
   CircleAnimator: {fileID: 1651681774}
   playerCollision: {fileID: 1651681776}
+  Ice: {fileID: 1948377066}
 --- !u!212 &1651681771
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -31154,6 +31168,7 @@ Transform:
   - {fileID: 69477621}
   - {fileID: 543953298}
   - {fileID: 33992961}
+  - {fileID: 1948377068}
   m_Father: {fileID: 1896645484}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!50 &1651681773
@@ -33968,6 +33983,7 @@ MonoBehaviour:
   bossShootSystem: {fileID: 1152852137}
   snowFlakeCount: 50
   attackInterval: 12
+  freezeSystem: {fileID: 409717455}
   iceCloudCount: 6
   iceCloudFloatSpeed: 0.5
   cloudSpawnMin: {x: -10, y: -4}
@@ -33997,9 +34013,9 @@ MonoBehaviour:
   boss: {fileID: 1800135221}
   stoneCount: 17
   rotationSpeed: 60
-  bulletSpeed: 5
-  shootInterval: 1
-  bulletCount: 5
+  bulletSpeed: 4
+  shootInterval: 2
+  bulletCount: 3
   bossUI: {fileID: 971464452}
 --- !u!114 &1800135229
 MonoBehaviour:
@@ -35867,6 +35883,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   grazeSound: {fileID: 8300000, guid: e49980e2d80f4834f86286a45493869a, type: 3}
+  FreezeSystem: {fileID: 409717455}
 --- !u!1 &1896645483
 GameObject:
   m_ObjectHideFlags: 0
@@ -36595,9 +36612,9 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -6321629
-  m_SortingLayer: 5
-  m_SortingOrder: 0
+  m_SortingLayerID: -1596912053
+  m_SortingLayer: 7
+  m_SortingOrder: 5
   m_Sprite: {fileID: 21300000, guid: 1f4117607cb7516429acd433b893f98c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -36617,12 +36634,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1948377066}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 13.609999, y: -11.650001, z: 0}
-  m_LocalScale: {x: 2, y: 2, z: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.8, y: 0.8, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1651681772}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1951855016
 GameObject:
@@ -39472,4 +39489,3 @@ SceneRoots:
   m_Roots:
   - {fileID: 2065778900}
   - {fileID: 1896645484}
-  - {fileID: 1948377068}

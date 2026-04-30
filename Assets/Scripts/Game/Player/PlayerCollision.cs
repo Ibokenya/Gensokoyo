@@ -48,9 +48,10 @@ public class PlayerCollision : MonoBehaviour
             // 处理边界检测
             HandleBounds();
         }
-        else if(Global_GameManager.Instance.state == State.Reincarnation)
+        else if(Global_GameManager.Instance.state == State.Reincarnation ||
+                Global_GameManager.Instance.state == State.Frozen)
         {
-            // 重生状态时，设置速度为0
+            // 重生状态或冻结状态时，设置速度为0
             rb2D.velocity = Vector2.zero;
         }
     }
@@ -65,7 +66,8 @@ public class PlayerCollision : MonoBehaviour
     /// <param name="moveSpeed">移动速度</param>
     public void UpdateMovement(bool leftPressed, bool rightPressed, bool upPressed, bool downPressed, float moveSpeed)
     {
-        // 只有在游戏状态和无敌状态时才处理移动
+        // 只有在游戏状态、无敌状态和符卡状态时才处理移动
+        // 冻结状态下禁止移动
         if(Global_GameManager.Instance.state != State.Gaming && 
            Global_GameManager.Instance.state != State.NoDead &&
            Global_GameManager.Instance.state != State.SpellCard) return;
@@ -118,7 +120,7 @@ public class PlayerCollision : MonoBehaviour
         }
 
         // 应用移动
-        rb2D.velocity = moveDirection * speed;
+        rb2D.velocity = moveDirection * speed * Global_GameManager.Instance.GetSpeedScale();
     }
 
     /// <summary>

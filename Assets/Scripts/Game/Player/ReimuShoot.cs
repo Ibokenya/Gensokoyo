@@ -58,7 +58,8 @@ public class ReimuShoot : MonoBehaviour
 
     private void ShootNeedle()
     {
-        if(Input.GetKey(KeyCode.Z) && shootTimer >= NeedleInterval)
+        if(Input.GetKey(KeyCode.Z) && shootTimer >= 
+        (NeedleInterval/Global_GameManager.Instance.GetSpeedScale()))
         {
             Global_ObjectPool.Instance.GetObject(NeedlePrefab, transform.position, NeedlePrefab.transform.rotation);
             // 重置计时器
@@ -68,7 +69,8 @@ public class ReimuShoot : MonoBehaviour
 
     private void ShootTracked()
     {
-        if(Input.GetKey(KeyCode.Z) && shootTimer >= TrackedInterval)
+        if(Input.GetKey(KeyCode.Z) && shootTimer >= 
+        (TrackedInterval/Global_GameManager.Instance.GetSpeedScale()))
         {
             Global_ObjectPool.Instance.GetObject(TrackedPrefab, transform.position, TrackedPrefab.transform.rotation);
             // 重置计时器

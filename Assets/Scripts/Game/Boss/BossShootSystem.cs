@@ -144,6 +144,7 @@ public class BossShootSystem : MonoBehaviour
             }
         }
     }
+
 #region 定位扇形射击（一非）
     public void Pos_FanShaped_Shoot(GameObject bullet, float shoot_interval)
     {
@@ -534,8 +535,8 @@ public class BossShootSystem : MonoBehaviour
     /// <param name="normalIcePrefab">NormalIce子弹预制件</param>
     public void FrozenIceExplode(Vector3 position, GameObject normalIcePrefab)
     {
-        // 发射8枚均匀分布的NormalIce子弹
-        int bulletCount = 8;
+        // 发射4枚均匀分布的NormalIce子弹
+        int bulletCount = 4;
         float angleStep = 360f / bulletCount;
         
         if (normalIcePrefab != null)

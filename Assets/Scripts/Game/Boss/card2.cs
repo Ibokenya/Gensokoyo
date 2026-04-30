@@ -14,6 +14,7 @@ public class card2 : MonoBehaviour
     public float attackInterval = 4f; // 攻击间隔（每隔多久发动一次雪花攻击）
     
     [Header("冰云攻击参数")]
+    public FreezeSystem freezeSystem; // 冻结系统引用
     public int iceCloudCount = 10; // 冰云生成数量
     public float iceCloudFloatSpeed = 0.5f; // 冰云飘浮速度
     public Vector2 cloudSpawnMin = new Vector2(-10f, -4f); // 冰云生成范围左下角
@@ -52,6 +53,13 @@ public class card2 : MonoBehaviour
             Global_ObjectPool.Instance.InitPool(linePrefab, 3);
         }
         bossShootSystem.ShowColdAir();
+        
+        // 设置冻结缩放比例为1.5f
+        if (freezeSystem != null)
+        {
+            freezeSystem.SetFrozenScale(1.5f);
+        }
+        
         // 开始攻击
         StartAttacks();
     }
@@ -71,6 +79,13 @@ public class card2 : MonoBehaviour
             bossShootSystem.StopAllShooting();
             // 清除所有子弹
             bossShootSystem.ClearBullet();
+        }
+        
+        // 恢复冻结缩放比例为1
+        FreezeSystem freezeSystem = FindObjectOfType<FreezeSystem>();
+        if (freezeSystem != null)
+        {
+            freezeSystem.ResetFrozenScale();
         }
     }
     

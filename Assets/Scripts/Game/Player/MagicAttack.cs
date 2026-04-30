@@ -107,6 +107,13 @@ public class MagicAttack : MonoBehaviour
     
     void Update()
     {
+        // 冻结状态下禁止魔法攻击
+        if(Global_GameManager.Instance != null && 
+           Global_GameManager.Instance.state == State.Frozen)
+        {
+            return;
+        }
+        
         // 当魔法态激活且未切换到恶魔之眼时，更新计时器
         if (isMagicActive && !isEvilEyeActive)
         {

@@ -15,7 +15,7 @@ public enum State
 {
     Menu,CharacterChoose,ModeChoose,Gaming,Pause,Loading,Over,
     Replay,Option,MusicRoom,Manual,Reincarnation,NoDead,TimeStop,
-    SpellCard,Dialog
+    SpellCard,Dialog,Frozen
 }
 
 /// <summary>
@@ -54,6 +54,7 @@ public class Global_GameManager : Singleton<Global_GameManager>
     public int Score;            // 得分数
     public int HighestScore;     // 最高得分数
     public int SceneLevel;       // 关卡等级
+    public float SpeedScale = 1f;//速度缩放比例（冰冻系统相关）
 
     public State state;      // 状态机
     private State previousState; // 用于记录设置无敌前的状态
@@ -101,6 +102,7 @@ public class Global_GameManager : Singleton<Global_GameManager>
         Score = 0;                    // 得分数
         HighestScore = PlayerPrefs.GetInt("HighestScore", 0); // 最高得分数
         SceneLevel = 1;               // 关卡等级（第几面）
+        SpeedScale = 1f;              //速度缩放比例（冰冻系统相关）
         state = State.Gaming;         // 状态机（初始为Loading）
     }
 
@@ -230,6 +232,16 @@ public class Global_GameManager : Singleton<Global_GameManager>
         OnGrazeChanged?.Invoke(Graze);
     }
 
+    public void SetSpeedScale(float scale)
+    {
+        SpeedScale = scale;
+    }
+
+    public float GetSpeedScale()
+    {
+        return SpeedScale;
+    }
+
     /// <summary>
     /// 重置游戏数据
     /// 从JSON配置文件读取初始数据，保留当前机体和难度
@@ -300,6 +312,7 @@ public class Global_GameManager : Singleton<Global_GameManager>
         Graze = 0;
         Score = 0;
         SceneLevel = 1;
+        SpeedScale = 1f;
         state = State.Gaming;
     }
 
