@@ -35,6 +35,8 @@ public class FrozenBall : MonoBehaviour
         // 通知BossShootSystem释放冰珠和生成冰锥
         if (bossShootSystem != null)
         {
+            // 摇动镜头
+            bossShootSystem.Shake(0.5f);
             // 释放对应的冰珠
             bossShootSystem.ReleaseFrozenPearl(icePearl);
             // 生成冰锥

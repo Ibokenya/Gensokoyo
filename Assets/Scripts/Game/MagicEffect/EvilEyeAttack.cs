@@ -35,6 +35,9 @@ public class EvilEyeAttack : MonoBehaviour
 
     [Header("处决音效")]
     public AudioClip deathClip; // 处决音效
+
+    [Header("boss对象")]
+    public GameObject boss; // Boss对象
     
     private SpriteRenderer spriteRenderer;
     private SpriteRenderer blackHoleRenderer;
@@ -283,33 +286,45 @@ public class EvilEyeAttack : MonoBehaviour
         {
             if (enemy != null)
             {
-                // 创建连线对象
-                GameObject laserObj = new GameObject("EvilEyeLaser");
-                laserObj.transform.parent = transform;
-                laserObj.transform.position = transform.position;
-                
-                // 添加 LineRenderer 组件
-                LineRenderer lineRenderer = laserObj.AddComponent<LineRenderer>();
-                lineRenderer.startWidth = laserWidth;
-                lineRenderer.endWidth = laserWidth;
-                lineRenderer.material = laserMaterial ? laserMaterial : new Material(Shader.Find("Sprites/Default"));
-                lineRenderer.startColor = new Color(1f, 0f, 0f, 0.5f);
-                lineRenderer.endColor = new Color(1f, 0f, 0f, 0.5f);
-                lineRenderer.positionCount = 2;
-                lineRenderer.useWorldSpace = true; // 使用世界空间坐标
-                
-                // 设置连线的两个点
-                lineRenderer.SetPosition(0, transform.position);
-                lineRenderer.SetPosition(1, enemy.transform.position);
-                
-                // 设置排序层级
-                lineRenderer.sortingLayerName = "Effect"; // 设置为效果层
-                lineRenderer.sortingOrder = 9; // 设置排序顺序
-                
-                // 添加到活跃连线列表
-                activeLasers.Add(laserObj);
+                CreateLaserToTarget(enemy.transform.position);
             }
         }
+        if (boss != null && boss.activeInHierarchy)
+        {
+            CreateLaserToTarget(boss.transform.position);
+        }
+    }
+    
+    /// <summary>
+    /// 创建到目标位置的连线
+    /// </summary>
+    private void CreateLaserToTarget(Vector3 targetPosition)
+    {
+        // 创建连线对象
+        GameObject laserObj = new GameObject("EvilEyeLaser");
+        laserObj.transform.parent = transform;
+        laserObj.transform.position = transform.position;
+        
+        // 添加 LineRenderer 组件
+        LineRenderer lineRenderer = laserObj.AddComponent<LineRenderer>();
+        lineRenderer.startWidth = laserWidth;
+        lineRenderer.endWidth = laserWidth;
+        lineRenderer.material = laserMaterial ? laserMaterial : new Material(Shader.Find("Sprites/Default"));
+        lineRenderer.startColor = new Color(1f, 0f, 0f, 0.5f);
+        lineRenderer.endColor = new Color(1f, 0f, 0f, 0.5f);
+        lineRenderer.positionCount = 2;
+        lineRenderer.useWorldSpace = true; // 使用世界空间坐标
+        
+        // 设置连线的两个点
+        lineRenderer.SetPosition(0, transform.position);
+        lineRenderer.SetPosition(1, targetPosition);
+        
+        // 设置排序层级
+        lineRenderer.sortingLayerName = "Effect"; // 设置为效果层
+        lineRenderer.sortingOrder = 9; // 设置排序顺序
+        
+        // 添加到活跃连线列表
+        activeLasers.Add(laserObj);
     }
     
     /// <summary>
@@ -374,6 +389,25 @@ public class EvilEyeAttack : MonoBehaviour
                 
                 // 更新敌人红色度
                 enemyComponent.UpdateRedIntensity();
+            }
+        }
+        
+        // 对Boss造成伤害
+        DealDamageToBoss();
+    }
+    
+    /// <summary>
+    /// 对Boss造成伤害
+    /// </summary>
+    private void DealDamageToBoss()
+    {
+        if (boss != null && boss.activeInHierarchy)
+        {
+            BossBase bossBase = boss.GetComponent<BossBase>();
+            if (bossBase != null)
+            {
+                int damage = CalDamage();
+                bossBase.TakeDamage(damage);
             }
         }
     }

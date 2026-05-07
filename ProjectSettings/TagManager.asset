@@ -12,6 +12,9 @@ TagManager:
   - IceCloud
   - Terrain
   - Boss
+  - FrozenBall
+  - FrozenIce
+  - MiniBall
   layers:
   - Default
   - TransparentFX

@@ -41,8 +41,20 @@ public class BossAnime : MonoBehaviour
             return;
         }
         PlayAnime();
-        
+    }
+    
+    void LateUpdate()
+    {
         // 更新血条位置，将世界坐标转换为UI坐标
+        // 使用LateUpdate确保在所有Update执行完毕后执行，且不受时间缩放影响
+        UpdateHPBarPosition();
+    }
+    
+    /// <summary>
+    /// 更新血条相对位置，不受时间缩放影响
+    /// </summary>
+    private void UpdateHPBarPosition()
+    {
         if(HP != null)
         {
             // 获取主相机
@@ -173,7 +185,7 @@ public class BossAnime : MonoBehaviour
                     float fillAmount = Mathf.Lerp(startFill, targetFill, t);
                     hpImage.fillAmount = fillAmount;
                     
-                    elapsedTime += Time.deltaTime;
+                    elapsedTime += Time.unscaledDeltaTime;
                     yield return null;
                 }
                 
@@ -210,18 +222,55 @@ public class BossAnime : MonoBehaviour
 
     public void PlayShowAnime()
     {
-        StartCoroutine(ShowAnimeCoroutine());
+        ChrinoAnimator.SetBool("IsAppear", true);
     }
 
-    private IEnumerator ShowAnimeCoroutine()
+    public void PlayAroundAnime()
     {
-        ChrinoAnimator.SetBool("IsAppear", true);
-        yield return new WaitForSeconds(1f);
         ChrinoAnimator.SetBool("IsAround", true);
-        yield return new WaitForSeconds(2f);
+    }
+
+    public void PlayRotateAnime()
+    {
         ChrinoAnimator.enabled = false;
         CircleAnimator.SetBool("IsShow", true);
         CircleAnimator.SetBool("IsRotate", true);
-        yield return null;
+    }
+    
+    /// <summary>
+    /// 隐藏Boss方法
+    /// 在1秒内将Boss对象的透明度平滑淡出为0.5f，淡出完成后隐藏血条
+    /// </summary>
+    public void Conceal()
+    {
+        GetComponent<Collider2D>().enabled = false;
+        StartCoroutine(ConcealCoroutine());
+    }
+    
+    private IEnumerator ConcealCoroutine()
+    {
+        float duration = 1f;
+        float elapsedTime = 0f;
+        SpriteRenderer sprite = GetComponent<SpriteRenderer>();
+        
+        if (sprite != null)
+        {
+            Color startColor = sprite.color;
+            Color targetColor = startColor;
+            targetColor.a = 0.5f;
+            
+            while (elapsedTime < duration)
+            {
+                float t = elapsedTime / duration;
+                sprite.color = Color.Lerp(startColor, targetColor, t);
+                elapsedTime += Time.deltaTime;
+                yield return null;
+            }
+            
+            sprite.color = targetColor;
+        }
+        
+        // 淡出完成后隐藏血条
+        HideHP();
     }
 }

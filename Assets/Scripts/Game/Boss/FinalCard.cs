@@ -66,6 +66,19 @@ public class FinalCard : MonoBehaviour
     private void OnDisable()
     {
         bossShootSystem.isRealmActive = false;
+        IceRealm.StartFadeOut();
+        bossShootSystem.isAllowAreaLimit = false;
+        // 停止所有协程
+        StopAllCoroutines();
+        // 取消所有 Invoke 调用
+        CancelInvoke();
+        
+        // 停止 BossShootSystem 中的所有射击协程
+        if (bossShootSystem != null)
+        {
+            bossShootSystem.StopAllShooting();
+            bossShootSystem.ClearBullet();
+        }
     }
     
     private void Update()
@@ -103,6 +116,7 @@ public class FinalCard : MonoBehaviour
                     phaseTimer = 0f;
                     Debug.Log("FinalCard进入第三阶段");
                     // 阶段切换，启动新的射击
+                    bossShootSystem.isAllowAreaLimit = true;
                     StartShooting();
                 }
                 break;

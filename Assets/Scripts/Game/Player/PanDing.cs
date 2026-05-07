@@ -21,25 +21,31 @@ public class PanDing : MonoBehaviour
             if(collision.CompareTag("Enemy") || collision.CompareTag("EnemyBullet") ||
              collision.CompareTag("BossBullet") || collision.CompareTag("Terrain"))
             {
-                // // 检查是否处于无敌状态
-                // if (spellCardEffect != null && Global_GameManager.Instance.state == State.NoDead)
-                // {
-                //     // 无敌状态下不处理受击
-                //     clearAllBullet.ClearScreenBullet();
-                //     return;
-                // }
+                Debug.Log($"玩家碰撞到{collision.name}");
+                // 检查是否开启作弊模式
+                if(Global_GameManager.Instance.isCheheat)
+                {
+                    // 作弊模式下不处理受击
+                    return;
+                }
+                // 检查是否处于无敌状态
+                if (spellCardEffect != null && Global_GameManager.Instance.state == State.NoDead)
+                {
+                    // 无敌状态下不处理受击
+                    return;
+                }
                 
-                // if (spellCardEffect != null)
-                // {
-                //     // 开始受击延迟
-                //     spellCardEffect.StartHitDelay();
-                // }
-                // else
-                // {
-                //     // 没有符卡效果组件时，执行正常死亡逻辑
-                //     Global_GameManager.Instance.SubLeftLife();
-                // }
-                // clearAllBullet.ClearScreenBullet();
+                if (spellCardEffect != null)
+                {
+                    // 开始受击延迟
+                    spellCardEffect.StartHitDelay();
+                }
+                else
+                {
+                    // 没有符卡效果组件时，执行正常死亡逻辑
+                    Global_GameManager.Instance.SubLeftLife();
+                }
+                clearAllBullet.ClearScreenBullet();
             }
             // 处理冰云碰撞（玩家不会受伤，但冻结度会增加）
             if(collision.CompareTag("IceCloud"))

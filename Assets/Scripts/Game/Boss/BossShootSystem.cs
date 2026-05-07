@@ -1,15 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using UnityEngine;
 
 public class BossShootSystem : MonoBehaviour
 {
+    public Game1 GameCamera;// 游戏相机，用来抖动镜头
     public GameObject player;
     public GameObject boss;
     public GameObject IceTerrain;// 冰刺地形
     public SpriteRenderer IceTerrainSprite;
     public GameObject ColdAir;
     public SpriteRenderer ColdAirSprite;
+    public BossBase bossBase;
 
     public AudioClip FrozeSound; // 冰冻音效
     private const float animationSpeed = 0.1f; // 动画速度
@@ -80,6 +83,7 @@ public class BossShootSystem : MonoBehaviour
 #endregion
 #region FinalCard参数
     // FinalCard射击参数
+    [HideInInspector]
     public GameObject IceSpike; // 冰锥预制件
     public IceRealm IceRealm; // 冰领域（场景固有对象）
     // 冰珠存储列表
@@ -100,6 +104,7 @@ public class BossShootSystem : MonoBehaviour
     private float areaLimitCheckTimer = 0f; // 区域限制攻击的检查计时器
     private const float areaLimitCheckInterval = 0.5f; // 区域限制攻击的检查间隔
     private bool isReadyForCheck = false; // 是否允许检测玩家位置
+    public bool isAllowAreaLimit = false; // 是否允许区域限制攻击
     private bool isFadingOut = false; // 是否正在淡出
     public bool isInArea = false; // 是否在限制区域内
     public bool isRealmActive = false; // 是否激活冰领域笼
@@ -115,7 +120,7 @@ public class BossShootSystem : MonoBehaviour
     private void Update()
     {
         // 区域限制攻击的玩家位置检查
-        if (currentAreaLimitBullet != null && player != null && isReadyForCheck && !isFadingOut)
+        if (currentAreaLimitBullet != null && player != null && isReadyForCheck && !isFadingOut && isAllowAreaLimit)
         {
             areaLimitCheckTimer += Time.deltaTime;
             if (areaLimitCheckTimer >= areaLimitCheckInterval)
@@ -155,7 +160,8 @@ public class BossShootSystem : MonoBehaviour
     {
         while (true)
         {
-            if (player != null && boss != null && bullet != null)
+            if (player != null && boss != null && bullet != null && 
+            Global_GameManager.Instance.state != State.SpellCard && !bossBase.isLockingHP)
             {
                 // 计算玩家相对于 boss 的方向向量
                 Vector3 direction = player.transform.position - boss.transform.position;
@@ -185,7 +191,7 @@ public class BossShootSystem : MonoBehaviour
                     Quaternion rotation = Quaternion.Euler(0, 0, currentAngle);
                     
                     // 使用对象池获取子弹
-                    GameObject bulletInstance = Global_ObjectPool.Instance.GetObject(bullet, boss.transform.position, rotation);
+                    Global_ObjectPool.Instance.GetObject(bullet, boss.transform.position, rotation);
                 }
             }
             
@@ -238,20 +244,23 @@ public class BossShootSystem : MonoBehaviour
     
     public void IcePoint_Shoot(GameObject bullet1, GameObject bullet2, float interval1, float interval2, float rotationSpeed, float bullet1Speed, float bullet2Speed)
     {
-        // 首先发射预制件1的弹幕（360° 12个），不使用速度偏移，不是冰珠
-        for (int i = 0; i < IcePoints.Count; i++)
+        if(Global_GameManager.Instance.state != State.SpellCard && !bossBase.isLockingHP)
         {
-            var icePoint = IcePoints[i];
-            if (icePoint != null)
+            // 首先发射预制件1的弹幕（360° 12个），不使用速度偏移，不是冰珠
+            for (int i = 0; i < IcePoints.Count; i++)
             {
-                FireBulletRing(icePoint, bullet1, 12, false, bullet1Speed, false, rotationSpeed, i);
+                var icePoint = IcePoints[i];
+                if (icePoint != null)
+                {
+                    FireBulletRing(icePoint, bullet1, 12, false, bullet1Speed, false, rotationSpeed, i);
+                }
             }
         }
         
         // 启动射击逻辑
         StartCoroutine(IcePointShootCoroutine(bullet2, interval1, interval2, bullet2Speed, rotationSpeed));
     }
-    
+
     // 冰点发射一圈环状子弹
     private void FireBulletRing(GameObject icePoint, GameObject bullet, int count, bool useSpeedOffset = true, float speed = -1f, bool isIcePearl = false, float rotationSpeed = 0f, int icePointIndex = 0)
     {
@@ -310,23 +319,23 @@ public class BossShootSystem : MonoBehaviour
         
         while (true)
         {
-            // 发射预制件2的弹幕（360° 12个），使用速度偏移，是冰珠
-            for (int i = 0; i < IcePoints.Count; i++)
+            if(Global_GameManager.Instance.state != State.SpellCard && !bossBase.isLockingHP)
             {
-                var icePoint = IcePoints[i];
-                if (icePoint != null)
+                // 发射预制件2的弹幕（360° 12个），使用速度偏移，是冰珠
+                for (int i = 0; i < IcePoints.Count; i++)
                 {
-                    FireBulletRing(icePoint, bullet2, 12, true, bullet2Speed, true, rotationSpeed, i);
+                    var icePoint = IcePoints[i];
+                    if (icePoint != null)
+                    {
+                        FireBulletRing(icePoint, bullet2, 12, true, bullet2Speed, true, rotationSpeed, i);
+                    }
                 }
-            }
-            
+            }      
             // 等待 interval2 后再次发射
             yield return new WaitForSeconds(interval2);
         }
     }
     
-
-
     public void CancelIcePoint()
     {
         IcePoint.SetActive(false);
@@ -457,7 +466,7 @@ public class BossShootSystem : MonoBehaviour
         }
         
         // 开始旋转所有陨石
-        while (true)
+        while (true && !bossBase.isLockingHP)
         {
             for (int i = 0; i < stones.Count; i++)
             {
@@ -500,23 +509,26 @@ public class BossShootSystem : MonoBehaviour
     {
         while (true)
         {
-            // 发射一波随机角度的子弹
-            for (int i = 0; i < randomIcePickBulletCount; i++)
+            if(Global_GameManager.Instance.state != State.SpellCard && !bossBase.isLockingHP)
             {
-                // 随机生成0-360度的角度
-                float randomAngle = Random.Range(0f, 360f);
-                Quaternion rotation = Quaternion.Euler(0, 0, randomAngle);
-                
-                // 使用对象池获取子弹
-                GameObject bulletInstance = Global_ObjectPool.Instance.GetObject(bullet, boss.transform.position, rotation);
-                
-                if (bulletInstance != null)
+                // 发射一波随机角度的子弹
+                for (int i = 0; i < randomIcePickBulletCount; i++)
                 {
-                    // 检查是否是NormalIce
-                    NormalIce normalIce = bulletInstance.GetComponent<NormalIce>();
-                    if (normalIce != null)
+                    // 随机生成0-360度的角度
+                    float randomAngle = Random.Range(0f, 360f);
+                    Quaternion rotation = Quaternion.Euler(0, 0, randomAngle);
+                    
+                    // 使用对象池获取子弹
+                    GameObject bulletInstance = Global_ObjectPool.Instance.GetObject(bullet, boss.transform.position, rotation);
+                    
+                    if (bulletInstance != null)
                     {
-                        normalIce.SetSpeed(bulletSpeed);
+                        // 检查是否是NormalIce
+                        NormalIce normalIce = bulletInstance.GetComponent<NormalIce>();
+                        if (normalIce != null)
+                        {
+                            normalIce.SetSpeed(bulletSpeed);
+                        }
                     }
                 }
             }
@@ -524,9 +536,8 @@ public class BossShootSystem : MonoBehaviour
             // 等待射击间隔
             yield return new WaitForSeconds(shootInterval);
         }
-    }
-    
-    #endregion
+    } 
+#endregion
 #region 冰块破裂攻击（一符）
     /// <summary>
     /// 冰块破裂攻击——以指定位置为中心发射一圈NormalIce子弹
@@ -575,7 +586,7 @@ public class BossShootSystem : MonoBehaviour
         }
     }
 #endregion
-#region 随机射击（二非）
+#region 小冰珠随机射击（二非）
     private Coroutine none2ShootingCoroutine;
     
     /// <summary>
@@ -601,43 +612,43 @@ public class BossShootSystem : MonoBehaviour
     {
         while (true)
         {
-            // 发射一波子弹
-            List<GameObject> waveBullets = new List<GameObject>();
-            
-            // 获取当前boss位置作为目标位置
-            Vector3 currentBossPosition = boss.transform.position;
-            
-            for (int i = 0; i < bulletCount; i++)
+            if(Global_GameManager.Instance.state != State.SpellCard && !bossBase.isLockingHP)
             {
-                // 随机生成0-360度的角度
-                float randomAngle = Random.Range(0f, 360f);
-                Quaternion rotation = Quaternion.Euler(0, 0, randomAngle);
+                // 发射一波子弹
+                List<GameObject> waveBullets = new List<GameObject>();
                 
-                // 使用对象池获取子弹
-                GameObject bulletInstance = Global_ObjectPool.Instance.GetObject(bullet, currentBossPosition, rotation);
+                // 获取当前boss位置作为目标位置
+                Vector3 currentBossPosition = boss.transform.position;
                 
-                if (bulletInstance != null)
+                for (int i = 0; i < bulletCount; i++)
                 {
-                    waveBullets.Add(bulletInstance);
+                    // 随机生成0-360度的角度
+                    float randomAngle = Random.Range(0f, 360f);
+                    Quaternion rotation = Quaternion.Euler(0, 0, randomAngle);
                     
-                    // 设置miniIceBall参数
-                    miniIceBall miniIce = bulletInstance.GetComponent<miniIceBall>();
-                    if (miniIce != null)
+                    // 使用对象池获取子弹
+                    GameObject bulletInstance = Global_ObjectPool.Instance.GetObject(bullet, currentBossPosition, rotation);
+                    
+                    if (bulletInstance != null)
                     {
-                        miniIce.moveSpeed = bulletSpeed;
-                        // 不覆盖TurnInterval，使用预制体中设置的值
-                        miniIce.TargetPosition = currentBossPosition;
+                        waveBullets.Add(bulletInstance);
+                        
+                        // 设置miniIceBall参数
+                        miniIceBall miniIce = bulletInstance.GetComponent<miniIceBall>();
+                        if (miniIce != null)
+                        {
+                            miniIce.moveSpeed = bulletSpeed;
+                            miniIce.TargetPosition = currentBossPosition;
+                        }
                     }
                 }
+                
+                // 启动这一波子弹的融合处理
+                if (waveBullets.Count > 0)
+                {
+                    StartBulletWave(waveBullets, currentBossPosition);
+                }
             }
-            
-            // 启动这一波子弹的融合处理
-            if (waveBullets.Count > 0)
-            {
-                StartBulletWave(waveBullets, currentBossPosition);
-            }
-            
-            // 等待射击间隔
             yield return new WaitForSeconds(shootInterval);
         }
     }
@@ -799,27 +810,29 @@ public class BossShootSystem : MonoBehaviour
         // 生成指定数量的雪花子弹
         for (int i = 0; i < totalCount; i++)
         {
-            // 随机选择一个生成点
-            int randomPosIndex = Random.Range(0, FlakePos.Count);
-            Vector2 spawnPosition = FlakePos[randomPosIndex];
-            
-            // 使用对象池获取雪花子弹
-            GameObject flakeInstance = Global_ObjectPool.Instance.GetObject(flakePrefab, spawnPosition, Quaternion.identity);
-            
-            if (flakeInstance != null)
+            if(Global_GameManager.Instance.state != State.SpellCard && !bossBase.isLockingHP)
             {
-                // 添加到活跃雪花列表
-                activeSnowFlakes.Add(flakeInstance);
+                // 随机选择一个生成点
+                int randomPosIndex = Random.Range(0, FlakePos.Count);
+                Vector2 spawnPosition = FlakePos[randomPosIndex];
                 
-                SnowFlake snowFlake = flakeInstance.GetComponent<SnowFlake>();
-                if (snowFlake != null)
+                // 使用对象池获取雪花子弹
+                GameObject flakeInstance = Global_ObjectPool.Instance.GetObject(flakePrefab, spawnPosition, Quaternion.identity);
+                
+                if (flakeInstance != null)
                 {
-                    // 根据生成点位置确定移动方向
-                    Vector2 direction = GetSnowFlakeDirection(spawnPosition);
-                    snowFlake.SetDirection(direction);
+                    // 添加到活跃雪花列表
+                    activeSnowFlakes.Add(flakeInstance);
+                    
+                    SnowFlake snowFlake = flakeInstance.GetComponent<SnowFlake>();
+                    if (snowFlake != null)
+                    {
+                        // 根据生成点位置确定移动方向
+                        Vector2 direction = GetSnowFlakeDirection(spawnPosition);
+                        snowFlake.SetDirection(direction);
+                    }
                 }
-            }
-            
+            } 
             // 短暂延迟，避免所有雪花同时生成
             yield return new WaitForSeconds(0.1f);
         }
@@ -979,7 +992,8 @@ public class BossShootSystem : MonoBehaviour
     {
         while (true)
         {
-            if (player != null && cometPrefab != null && linePrefab != null)
+            if (player != null && cometPrefab != null && linePrefab != null &&
+             !bossBase.isLockingHP )
             {
                 // 定位玩家当前x坐标
                 float playerX = player.transform.position.x;
@@ -1619,42 +1633,6 @@ public class BossShootSystem : MonoBehaviour
 #endregion
 #region 冰球破碎（Final）
     /// <summary>
-    /// 释放冻结的冰珠
-    /// </summary>
-    public void ReleaseFrozenPearls()
-    {
-        if (player == null || frozenIcePearls.Count == 0)
-        {
-            return;
-        }
-        
-        // 获取玩家当前坐标
-        Vector3 playerPosition = player.transform.position;
-        
-        // 遍历所有冻结的冰珠
-        for (int i = 0; i < frozenIcePearls.Count; i++)
-        {
-            GameObject icePearl = frozenIcePearls[i];
-            if (icePearl != null && icePearl.activeInHierarchy)
-            {
-                // 计算冰珠到玩家的方向
-                Vector3 direction = playerPosition - icePearl.transform.position;
-                direction.z = 0;
-                direction.Normalize();
-                
-                // 设置冰珠的速度
-                Rigidbody2D rb = icePearl.GetComponent<Rigidbody2D>();
-                if (rb != null)
-                {
-                    float speed = 5f; // 冰珠速度
-                    rb.velocity = direction * speed;
-                }
-                frozenIcePearls.Remove(icePearl);
-            }
-        }
-    }
-    
-    /// <summary>
     /// 激活冰领域
     /// </summary>
     /// <param name="position">激活位置</param>
@@ -1822,6 +1800,8 @@ public class BossShootSystem : MonoBehaviour
         GameObject[] BossBullets = GameObject.FindGameObjectsWithTag("BossBullet");
         GameObject[] EnemyBullets = GameObject.FindGameObjectsWithTag("EnemyBullet");
         GameObject[] Enemy = GameObject.FindGameObjectsWithTag("Enemy");
+        GameObject[] FrozenBall = GameObject.FindGameObjectsWithTag("FrozenBall");
+        GameObject[] MiniBall = GameObject.FindGameObjectsWithTag("MiniBall");
         // 回收所有敌人子弹
         foreach (GameObject bullet in BossBullets)
         {
@@ -1844,6 +1824,20 @@ public class BossShootSystem : MonoBehaviour
                 Global_ObjectPool.Instance.Recycle(enemy);
             }
         }
+        foreach (GameObject frozenBall in FrozenBall)
+        {
+            if (frozenBall != null)
+            {
+                Global_ObjectPool.Instance.Recycle(frozenBall);
+            }
+        }
+        foreach (GameObject miniBall in MiniBall)
+        {
+            if (miniBall != null)
+            {
+                Global_ObjectPool.Instance.Recycle(miniBall);
+            }
+        }
     }
 #endregion    
 
@@ -1863,6 +1857,10 @@ public class BossShootSystem : MonoBehaviour
                 }
             }
         }
+    }
+    public void Shake(float ShakeTime)
+    {
+        GameCamera.Shake(ShakeTime);
     }
     /// <summary>
     /// 停止所有射击协程

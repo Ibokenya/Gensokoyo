@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class ChangeBG : MonoBehaviour
 {
+    public BossBeheve bossBeheve;
     [Header("boss战对于背景的引用")]
     public GameObject none1;
     public GameObject card1;
@@ -16,7 +17,7 @@ public class ChangeBG : MonoBehaviour
     public GameObject Magic_effect;
     public Animator DeadStar_effect;
 
-    private GameObject currentBG;
+    private GameObject currentBG;// 当前符卡对应的背景
 
 
     public void ShowBg(string bgName,float finalAlpha)
@@ -93,10 +94,11 @@ public class ChangeBG : MonoBehaviour
     {
         DeadStar_effect.SetBool("IsAnime", true);
     }
-
-    public void EndDeadStarEffect()
+    
+    public void AnimationEnd()
     {
         DeadStar_effect.SetBool("IsAnime", false);
+        bossBeheve.ExplosionEnd();
+        Debug.Log("新星爆炸动画结束");
     }
-
 }

@@ -335,7 +335,7 @@ public class AboutDialog : MonoBehaviour
             Global_AudioManager.Instance.StopFadeOutAndClearBGM();
             
             // 播放Boss BGM
-            Global_AudioManager.Instance.PlayBGM("Boss");
+            // Global_AudioManager.Instance.PlayBGM("Boss");
             Boss.SetActive(true);
             
             // 时间标记
@@ -343,6 +343,7 @@ public class AboutDialog : MonoBehaviour
             // 找到Game1脚本并重置currentTime
             if (game1 != null)
             {
+                game1.SwitchToBossBGM();
                 game1.currentTime = 0f;
             }
         }

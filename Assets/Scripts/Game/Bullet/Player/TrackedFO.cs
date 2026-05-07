@@ -13,10 +13,10 @@ public class TrackedFO : MonoBehaviour
     public float TurnSpeed = 10f; // 转向速度
 
     public int damage = 10;// 伤害值
-    private readonly float minX = -8.4f;
-    private readonly float maxX = 3f;
-    private readonly float minY = -5.3f;
-    private readonly float maxY = 4.5f;
+    private readonly float minX = -9.5f;
+    private readonly float maxX = 3.5f;
+    private readonly float minY = -5.5f;
+    private readonly float maxY = 5.5f;
     private GameObject target; // 目标
     private Rigidbody2D rb2D;
     private int scanFrameCounter = 0; // 扫描帧计数器
@@ -69,7 +69,7 @@ public class TrackedFO : MonoBehaviour
     }
 
     /// <summary>
-    /// 寻找距离最近的敌人作为目标
+    /// 寻找距离最近的敌人作为目标（包括Boss）
     /// </summary>
     private void FindTarget()
     {
@@ -93,8 +93,36 @@ public class TrackedFO : MonoBehaviour
             }
         }
         
+        // 检查Boss是否比当前目标更近
+        GameObject boss = FindActiveBoss();
+        if (boss != null && boss.activeSelf && boss.GetComponent<Collider2D>().enabled)
+        {
+            float bossDistance = Vector2.Distance(transform.position, boss.transform.position);
+            if (bossDistance < closestDistance)
+            {
+                closestEnemy = boss;
+            }
+        }
+        
         // 更新目标
         target = closestEnemy;
+    }
+    
+    /// <summary>
+    /// 查找活跃的Boss
+    /// </summary>
+    /// <returns>当前场景中的Boss对象</returns>
+    private GameObject FindActiveBoss()
+    {
+        GameObject[] bosses = GameObject.FindGameObjectsWithTag("Boss");
+        foreach (GameObject boss in bosses)
+        {
+            if (boss != null && boss.activeInHierarchy)
+            {
+                return boss;
+            }
+        }
+        return null;
     }
 
     /// <summary>
@@ -143,16 +171,46 @@ public class TrackedFO : MonoBehaviour
     /// </summary>
     void OnTriggerEnter2D(Collider2D collision)
     {
-        // 只与敌人碰撞
-        if (collision.CompareTag("Enemy"))
+        switch (collision.tag)
         {
-            Global_ObjectPool.Instance.Recycle(this.gameObject);
-            // 伤害敌人
-            Enemy enemy = collision.GetComponent<Enemy>();
-            if (enemy != null)
-            {
-                enemy.Damage(damage);
-            }
+            case "Enemy":
+                var enemy = collision.GetComponent<Enemy>();
+                if (enemy != null)
+                {
+                    enemy.Damage(damage);
+                }
+                break;
+            case "Boss":
+                var boss = collision.GetComponent<BossBase>();
+                if (boss != null)
+                {
+                    boss.TakeDamage(damage);
+                }
+                break;
+            case "FrozenIce":
+                var frozenIce = collision.GetComponent<FrozenIce>();
+                if (frozenIce != null)
+                {
+                    frozenIce.TakeDamage(damage);
+                }
+                break;
+            case "FrozenBall":
+                var frozenBall = collision.GetComponent<FrozenBall>();
+                if (frozenBall != null)
+                {
+                    frozenBall.TakeDamage(damage);
+                }
+                break;
+            case "MiniBall":
+                var miniBall = collision.GetComponent<miniIceBall>();
+                if (miniBall != null)
+                {
+                    miniBall.TakeDamage(damage);
+                }
+                break;
+            default:
+                break;
         }
+        Global_ObjectPool.Instance.Recycle(this.gameObject);
     }
 }

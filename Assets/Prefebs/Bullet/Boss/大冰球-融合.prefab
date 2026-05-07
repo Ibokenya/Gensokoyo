@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 2142870147423194565}
   m_Layer: 9
   m_Name: "\u5927\u51B0\u7403-\u878D\u5408"
-  m_TagString: Enemy
+  m_TagString: MiniBall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -164,4 +164,6 @@ MonoBehaviour:
   moveSpeed: 3
   TurnInterval: 1.5
   TargetPosition: {x: 0, y: 0, z: 0}
-  hp: 100
+  maxHP: 99
+  hp: 50
+  isMini: 1

@@ -20,6 +20,7 @@ public class none1 : MonoBehaviour
 
     [Header("脚本引用")]
     public BossUI bossUI; // BossUI脚本引用
+    public BossBase bossBase; // Boss基础属性引用
     
        
     private void OnEnable()
@@ -51,6 +52,7 @@ public class none1 : MonoBehaviour
         if (bossShootSystem != null)
         {
             bossShootSystem.StopAllShooting();
+            bossShootSystem.ClearBullet();
         }
         // 取消冰点射击
         bossShootSystem.CancelIcePoint();
@@ -77,12 +79,25 @@ public class none1 : MonoBehaviour
     }
     
     /// <summary>
-    /// 一个关键的方法：检查boss是否已经死亡
-    /// 如果boss没死亡，则会播放时间到的效果
+    /// 检查boss是否已经死亡或处于锁血状态
+    /// 如果boss处于锁血状态，说明玩家成功讨伐当前阶段
     /// </summary>
     public void CheckOver()
     {
-
+        if (bossBase != null)
+        {
+            bool isDefeated = bossBase.CheckOver();
+            if (isDefeated)
+            {
+                Debug.Log("none1阶段：玩家成功讨伐Boss！");
+                // 可以在这里添加讨伐成功的效果或奖励逻辑
+            }
+            else
+            {
+                Debug.Log("none1阶段：Boss仍然存活，时间到");
+                // 可以在这里添加时间到的效果逻辑
+            }
+        }
     }
     
 }

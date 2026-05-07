@@ -246,14 +246,47 @@ public class DarkFO : MonoBehaviour
     /// <param name="collision">碰撞信息</param>
     void OnTriggerEnter2D(Collider2D collision)
     {
-        // 检查是否碰撞到敌人
-        if (collision.CompareTag("Enemy"))
+        switch (collision.tag)
         {
-            // 对敌人造成伤害
-            collision.GetComponent<Enemy>().Damage(currentDamage); 
-            // 回收暗影弹
-            Recycle();
+            case "Enemy":
+                var enemy = collision.GetComponent<Enemy>();
+                if (enemy != null)
+                {
+                    enemy.Damage(currentDamage);
+                }
+                break;
+            case "Boss":
+                var boss = collision.GetComponent<BossBase>();
+                if (boss != null)
+                {
+                    boss.TakeDamage(currentDamage);
+                }
+                break;
+            case "FrozenIce":
+                var frozenIce = collision.GetComponent<FrozenIce>();
+                if (frozenIce != null)
+                {
+                    frozenIce.TakeDamage(currentDamage);
+                }
+                break;
+            case "FrozenBall":
+                var frozenBall = collision.GetComponent<FrozenBall>();
+                if (frozenBall != null)
+                {
+                    frozenBall.TakeDamage(currentDamage);
+                }
+                break;
+            case "MiniBall":
+                var miniBall = collision.GetComponent<miniIceBall>();
+                if (miniBall != null)
+                {
+                    miniBall.TakeDamage(currentDamage);
+                }
+                break;
+            default:
+                break;
         }
+        Recycle();
     }
     
     /// <summary>

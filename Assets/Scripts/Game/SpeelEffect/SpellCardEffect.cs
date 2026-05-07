@@ -98,11 +98,6 @@ public class SpellCardEffect : MonoBehaviour
                 ReleaseNormalSpellCard();
             }
         }
-
-        if (Input.GetKeyDown(KeyCode.B))
-        {
-            Global_GameManager.Instance.AddBomb(1);
-        }
     }
 
     #region 释放技能相关

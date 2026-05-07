@@ -220,7 +220,7 @@ public class AimPointAttack : MonoBehaviour
         // 尝试获取GameManager实例并计算额外伤害
         if (Global_GameManager.Instance != null)
         {
-            powerBonus = (Global_GameManager.Instance.Power / 100) * 25;
+            powerBonus = Global_GameManager.Instance.Power / 100 * 25;
         }
         
         return baseDamage + powerBonus;
@@ -240,6 +240,11 @@ public class AimPointAttack : MonoBehaviour
             {
                 // 调用敌人的damage方法
                 enemy.Damage(damage);
+            }
+            if (transform.parent.CompareTag("Boss"))
+            {
+                // 对Boss造成伤害
+                transform.parent.GetComponent<BossBase>().TakeDamage(damage);
             }
         }
     }

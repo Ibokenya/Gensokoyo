@@ -7,7 +7,9 @@ public class miniIceBall : MonoBehaviour
     public float moveSpeed = 5f; // 移动速度
     public float TurnInterval = 2f; // 转向间隔
     public Vector3 TargetPosition; // 目标坐标
-    public int hp = 100; // 生命值
+    public int maxHP = 50; // 生命值
+    [HideInInspector]
+    public int hp;
     public bool isMini = true; // 是否为mini态（是否有折返）
     
     private Rigidbody2D rb2D;
@@ -30,6 +32,7 @@ public class miniIceBall : MonoBehaviour
             Vector2 direction = transform.up;
             rb2D.velocity = direction * moveSpeed;
         }
+        hp = maxHP;
     }
     
     void OnEnable()
@@ -125,45 +128,6 @@ public class miniIceBall : MonoBehaviour
     }
     
     /// <summary>
-    /// 设置为融合状态
-    /// </summary>
-    public void SetFused()
-    {
-        isFused = true;
-        if (rb2D != null)
-        {
-            rb2D.velocity = Vector2.zero;
-        }
-    }
-    
-    /// <summary>
-    /// 增加大小
-    /// </summary>
-    /// <param name="amount">增加量</param>
-    public void IncreaseSize(float amount)
-    {
-        transform.localScale += new Vector3(amount, amount, 0);
-    }
-    
-    /// <summary>
-    /// 增加生命值
-    /// </summary>
-    /// <param name="amount">增加量</param>
-    public void IncreaseHP(int amount)
-    {
-        hp += amount;
-    }
-    
-    /// <summary>
-    /// 降低移动速度
-    /// </summary>
-    /// <param name="amount">降低量</param>
-    public void DecreaseSpeed(float amount)
-    {
-        moveSpeed = Mathf.Max(1, moveSpeed - amount);
-    }
-    
-    /// <summary>
     /// 向指定方向发射
     /// </summary>
     /// <param name="direction">方向向量</param>
@@ -186,7 +150,7 @@ public class miniIceBall : MonoBehaviour
         isFused = false;
         isMini = true; // 重置为mini态
         timer = 0f;
-        hp = 100;
+        hp = maxHP;
         if (rb2D != null)
         {
             rb2D.velocity = Vector2.zero;

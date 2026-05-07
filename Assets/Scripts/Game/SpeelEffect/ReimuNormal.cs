@@ -20,6 +20,9 @@ public class ReimuNormal : MonoBehaviour
     [Header("音效设置")]
     public AudioClip ReimuNormalClip;//灵梦常规音效clip
     public AudioClip FireClip;//火焰音效clip
+
+    [Header("boss对象")]
+    public GameObject boss; // Boss对象
     
     [Header("伤害设置")]
     private readonly int ReimuFireDamage = 50;// 灵梦常规伤害(实际出伤*15)
@@ -35,6 +38,8 @@ public class ReimuNormal : MonoBehaviour
         isDamage = false;
         Timer = 20;
         Global_GameManager.Instance.state = State.SpellCard;
+        // 对Boss造成伤害
+        ReimuNormalDamageToBoss();
     }
     
     void Update()
@@ -94,6 +99,22 @@ public class ReimuNormal : MonoBehaviour
                 {
                     enemy.GetComponent<Enemy>().Damage(ReimuFireDamage);
                 }
+            }
+        }
+    }
+    
+    /// <summary>
+    /// 灵梦常规对Boss发送技能攻击通知
+    /// </summary>
+    private void ReimuNormalDamageToBoss()
+    {
+        if (boss != null && boss.activeInHierarchy)
+        {
+            BossBase bossBase = boss.GetComponent<BossBase>();
+            if (bossBase != null)
+            {
+                // 发送技能攻击通知，不直接造成伤害，让Boss有机会规避
+                bossBase.OnPlayerSkillAttack(1); // 1表示灵梦常规
             }
         }
     }
@@ -160,6 +181,11 @@ public class ReimuNormal : MonoBehaviour
     public void OnAnimationEnd()
     {
         Global_GameManager.Instance.SetNoDead(0.1f,State.Gaming);
+        BossBase bossBase = boss.GetComponent<BossBase>();
+        if (bossBase != null)
+        {
+            bossBase.DefenseEnd(); // 关闭防御屏障
+        }
         IsAnime = false;
         isDamage = false;
         

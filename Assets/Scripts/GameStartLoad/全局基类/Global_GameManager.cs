@@ -67,6 +67,7 @@ public class Global_GameManager : Singleton<Global_GameManager>
     public AudioClip BombUpClip;//残B数增加音效
 
     int pastPower = 0;//上一次灵力值，用于判断是否需要播放音效
+    public bool isCheheat = false;//是否开启作弊模式
 
 /// <summary>
 /// 事件系统
@@ -96,7 +97,7 @@ public class Global_GameManager : Singleton<Global_GameManager>
         HpPiece = 0;                  // 残机碎片数
         BombCount = 2;                // 残B数
         BombPiece = 0;                // 残B碎片数
-        Power = Mathf.Clamp(100,0,400); // 灵力值
+        Power = Mathf.Clamp(100,100,400); // 灵力值
         Grade = 0;                    // 得点
         Graze = 0;                    // 擦弹数
         Score = 0;                    // 得分数
@@ -104,6 +105,7 @@ public class Global_GameManager : Singleton<Global_GameManager>
         SceneLevel = 1;               // 关卡等级（第几面）
         SpeedScale = 1f;              //速度缩放比例（冰冻系统相关）
         state = State.Gaming;         // 状态机（初始为Loading）
+        isCheheat = false;            //是否开启作弊模式
     }
 
     public void AddScore(int score = 1)
@@ -129,10 +131,10 @@ public class Global_GameManager : Singleton<Global_GameManager>
 
     public void SubPower(int count=1)
     {
-        if(Power>0)
+        if(Power>100)
         {
             Power -= count;
-            Power = Mathf.Clamp(Power,0,400);
+            Power = Mathf.Clamp(Power,100,400);
             OnPowerChanged?.Invoke(Power);
         }
     }

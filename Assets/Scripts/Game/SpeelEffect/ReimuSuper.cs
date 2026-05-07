@@ -15,6 +15,9 @@ public class ReimuSuper : MonoBehaviour
     [Header("脚本引用")]
     public SpellCardEffect spellCardEffect; // 引用父物体的SpellCardEffect脚本
     public ClearAllBullet clearAllBullet; // 引用ClearAllBullet脚本
+
+    [Header("boss对象")]
+    public GameObject boss; // Boss对象
     
     [Header("物体引用")]
     public GameObject player;// 玩家物体
@@ -34,6 +37,7 @@ public class ReimuSuper : MonoBehaviour
     private List<GameObject> Enemys => Global_GameManager.Instance.EnemyList;// 敌人列表
     private bool isOpenOrCloseEye = false;// 是否正在开关亚空穴
     private Coroutine huntCoroutine;// 猎杀敌人的协程
+    private float originalTimeScale = 1f;// 原始时间缩放值
 
     void OnEnable()
     {
@@ -42,6 +46,8 @@ public class ReimuSuper : MonoBehaviour
         isOpenOrCloseEye = false;
         // 设置游戏状态为时停
         Global_GameManager.Instance.state = State.TimeStop;
+        // 对Boss造成伤害
+        ReimuSuperDamageToBoss();
     }
     
     void Update()
@@ -139,8 +145,11 @@ public class ReimuSuper : MonoBehaviour
     /// </summary>
     private IEnumerator HuntEnemiesCoroutine()
     {
+        // 记录协程开始时间（用于控制退治效果显示时机）
+        float startTime = Time.realtimeSinceStartup;
+        
         // 保存当前时间缩放
-        float originalTimeScale = Time.timeScale;
+        originalTimeScale = Time.timeScale;
         Time.timeScale = 0f;
         
         // 创建敌人列表的副本
@@ -247,7 +256,16 @@ public class ReimuSuper : MonoBehaviour
             }
             else
             {
-                // 没有敌人时，激活退治效果
+                // 计算从协程开始到现在的时间
+                float elapsedTime = Time.realtimeSinceStartup - startTime;
+                
+                // 如果还没到2秒，等待剩余时间
+                if (elapsedTime < 2f)
+                {
+                    yield return new WaitForSecondsRealtime(2f - elapsedTime);
+                }
+                
+                // 没有敌人时，激活退治效果（至少在动画开始后2秒）
                 if (WinEffect != null)
                 {
                     WinEffect.SetActive(true);
@@ -261,15 +279,6 @@ public class ReimuSuper : MonoBehaviour
             // 等待一段时间后再开始下一轮攻击
             yield return new WaitForSecondsRealtime(attackEffectInterval * 2);
         }
-        
-        // 恢复时间缩放
-        Time.timeScale = originalTimeScale;
-        
-        // 恢复游戏状态为游戏中
-        Global_GameManager.Instance.state = State.Gaming;
-        
-        // 处理时停期间死亡的敌人
-        ProcessDeadEnemies();
     }
     
     /// <summary>
@@ -296,6 +305,22 @@ public class ReimuSuper : MonoBehaviour
             activeAttackEffects.Remove(attackEffect);
         }
     }
+    
+    /// <summary>
+    /// 灵梦决死对Boss发送技能攻击通知
+    /// </summary>
+    private void ReimuSuperDamageToBoss()
+    {
+        if (boss != null && boss.activeInHierarchy)
+        {
+            BossBase bossBase = boss.GetComponent<BossBase>();
+            if (bossBase != null)
+            {
+                // 发送技能攻击通知，不直接造成伤害，让Boss有机会规避
+                bossBase.OnPlayerSkillAttack(2); // 2表示灵梦决死
+            }
+        }
+    }
 
     /// <summary>
     /// 动画结束回调
@@ -303,7 +328,11 @@ public class ReimuSuper : MonoBehaviour
     public void OnAnimationEnd()
     {
         Global_GameManager.Instance.SetNoDead(0.1f,State.Gaming);
-        
+        BossBase bossBase = boss.GetComponent<BossBase>();
+        if (bossBase != null)
+        {
+            bossBase.DefenseEnd(); // 关闭防御屏障
+        }
         // 停止猎杀协程
         if (huntCoroutine != null)
         {
@@ -336,6 +365,14 @@ public class ReimuSuper : MonoBehaviour
     public void Back()
     {
         player.transform.position = new(-3,-4,0);
+        // 恢复时间缩放
+        Time.timeScale = originalTimeScale;
+        
+        // 恢复游戏状态为游戏中
+        Global_GameManager.Instance.state = State.Gaming;
+        
+        // 处理时停期间死亡的敌人
+        ProcessDeadEnemies();
     }
     
     /// <summary>

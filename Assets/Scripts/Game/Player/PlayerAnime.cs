@@ -81,7 +81,7 @@ public class PlayerAnime : MonoBehaviour
     public GameObject Ice; // 冰冻效果物体
 
     // QTE相关常量
-    private const int QTE_TARGET_COUNT = 19; // 需要完成的QTE次数
+    private const int QTE_TARGET_COUNT = 12; // 需要完成的QTE次数
     private const float QTE_TIME_LIMIT = 0.2f; // QTE按键间隔限制（秒）
 
     // QTE相关变量

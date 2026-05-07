@@ -120,14 +120,45 @@ public class Laser : MonoBehaviour
         // 对所有命中的物体造成伤害
         foreach (RaycastHit2D hit in hits)
         {
-            if (hit.collider != null && hit.collider.CompareTag("Enemy"))
+            switch (hit.collider.tag)
             {
-                // 对敌人造成伤害
-                Enemy enemy = hit.collider.GetComponent<Enemy>();
-                if (enemy != null)
-                {
-                    enemy.Damage(damage);
-                }
+                case "Enemy":
+                    var enemy = hit.collider.GetComponent<Enemy>();
+                    if (enemy != null)
+                    {
+                        enemy.Damage(damage);
+                    }
+                    break;
+                case "Boss":
+                    var boss = hit.collider.GetComponent<BossBase>();
+                    if (boss != null)
+                    {
+                        boss.TakeDamage(damage);
+                    }
+                    break;
+                case "FrozenIce":
+                    var frozenIce = hit.collider.GetComponent<FrozenIce>();
+                    if (frozenIce != null)
+                    {
+                        frozenIce.TakeDamage(damage);
+                    }
+                    break;
+                case "FrozenBall":
+                    var frozenBall = hit.collider.GetComponent<FrozenBall>();
+                    if (frozenBall != null)
+                    {
+                        frozenBall.TakeDamage(damage);
+                    }
+                    break;
+                case "MiniBall":
+                    var miniBall = hit.collider.GetComponent<miniIceBall>();
+                    if (miniBall != null)
+                    {
+                        miniBall.TakeDamage(damage);
+                    }
+                    break;
+                default:
+                    break;
             }
         }
     }

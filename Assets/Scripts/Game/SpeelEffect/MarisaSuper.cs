@@ -21,6 +21,9 @@ public class MarisaSuper : MonoBehaviour
     public AudioClip TimeOverClip;//钟声音效clip
     public AudioClip FireClip;// 火焰音效clip
     
+    [Header("boss对象")]
+    public GameObject boss; // Boss对象
+    
     [Header("伤害设置")]
     private int Timer = 20;// 定时器，用于技能出伤*14
     private readonly int damageValue = 100;// 伤害值
@@ -46,7 +49,8 @@ public class MarisaSuper : MonoBehaviour
         isDamage = false;
         Timer = 20;
         Global_GameManager.Instance.state = State.TimeStop;
-
+        // 对Boss造成伤害
+        MarisaHitDamageToBoss();
     }
     
     void Update()
@@ -112,6 +116,22 @@ public class MarisaSuper : MonoBehaviour
                         enemyComponent.Damage(damageValue);
                     }
                 }
+            }
+        }
+    }
+    
+    /// <summary>
+    /// 魔理沙决死对Boss发送技能攻击通知
+    /// </summary>
+    private void MarisaHitDamageToBoss()
+    {
+        if (boss != null && boss.activeInHierarchy)
+        {
+            BossBase bossBase = boss.GetComponent<BossBase>();
+            if (bossBase != null)
+            {
+                // 发送技能攻击通知，不直接造成伤害，让Boss有机会规避
+                bossBase.OnPlayerSkillAttack(4); // 4表示魔理沙决死
             }
         }
     }
@@ -232,6 +252,11 @@ public class MarisaSuper : MonoBehaviour
         
         // 返回0.1s的无敌
         Global_GameManager.Instance.SetNoDead(0.1f, State.Gaming);
+        BossBase bossBase = boss.GetComponent<BossBase>();
+        if (bossBase != null)
+        {
+            bossBase.DefenseEnd(); // 关闭防御屏障
+        }
         
         // 重置Animator参数
         if (animator != null)

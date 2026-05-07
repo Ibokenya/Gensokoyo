@@ -72,12 +72,15 @@ public class FrozenIce : MonoBehaviour
     {
         // 保存当前位置用于发射破裂子弹
         Vector3 destroyedPosition = transform.position;
-        
+        bossShootSystem.Shake(0.5f);
         // 通知BossShootSystem增加随机射击的子弹数量
         if (bossShootSystem != null)
         {
             bossShootSystem.OnFrozenIceDestroyed();
-            bossShootSystem.FrozenIceExplode(destroyedPosition, normalIcePrefab);
+            if(Global_GameManager.Instance.state != State.SpellCard)
+            {
+                bossShootSystem.FrozenIceExplode(destroyedPosition, normalIcePrefab);
+            }
         }
         
         if (Global_ObjectPool.Instance != null)

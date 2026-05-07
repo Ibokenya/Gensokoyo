@@ -12,6 +12,7 @@ public class FreezeSystem : MonoBehaviour
 
     [Header("冻结相关参数")]
     public AudioClip freezeSound;//冻结音效
+    public bool IsStop;//是否停止冻结系统
 
     [Header("玩家动画引用")]
     public PlayerAnime playerAnime; // 引用玩家动画脚本
@@ -31,7 +32,7 @@ public class FreezeSystem : MonoBehaviour
 
     void Update()
     {
-        if (!IsFrozen)
+        if (!IsFrozen && Global_GameManager.Instance.state == State.Gaming && !IsStop)
         {
             // 随时间增长冰冻进度
             FrozenDegree += BASE_FROZEN_SPEED * FrozenScale * Time.deltaTime;
@@ -46,6 +47,11 @@ public class FreezeSystem : MonoBehaviour
             {
                 Freeze();
             }
+        }
+        if(Global_GameManager.Instance.state == State.SpellCard || 
+        Global_GameManager.Instance.state == State.Reincarnation)
+        {
+            FrozenDegree = 0f;
         }
     }
 

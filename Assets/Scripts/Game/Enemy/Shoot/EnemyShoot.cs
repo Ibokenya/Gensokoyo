@@ -47,6 +47,10 @@ public class EnemyShoot : MonoBehaviour
     
     void Update()
     {
+        if(Global_GameManager.Instance.state == State.SpellCard)
+        {
+            return;
+        }
         if (shootConfigs.Count > 0)
         {
             // 获取当前射击配置

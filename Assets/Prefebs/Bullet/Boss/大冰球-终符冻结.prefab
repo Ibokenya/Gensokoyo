@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 4377846515373887415}
   m_Layer: 9
   m_Name: "\u5927\u51B0\u7403-\u7EC8\u7B26\u51BB\u7ED3"
-  m_TagString: Enemy
+  m_TagString: FrozenBall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -163,3 +163,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hp: 300
   bossShootSystem: {fileID: 0}
+  icePearl: {fileID: 0}

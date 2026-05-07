@@ -20,8 +20,10 @@ public class card1 : MonoBehaviour
     public float bulletSpeed = 5f; // 子弹速度
     public float shootInterval = 2f; // 射击间隔
     public int bulletCount = 5; // 每轮射击子弹数
+    
     [Header("脚本引用")]
     public BossUI bossUI; // BossUI脚本引用
+    public BossBase bossBase; // Boss基础属性引用
     
     private void OnEnable()
     {      
@@ -109,11 +111,24 @@ public class card1 : MonoBehaviour
     }
     
     /// <summary>
-    /// 一个关键的方法：检查boss是否已经死亡
-    /// 如果boss没死亡，则会播放时间到的效果
+    /// 检查boss是否已经死亡或处于锁血状态
+    /// 如果boss处于锁血状态，说明玩家成功讨伐当前阶段
     /// </summary>
     public void CheckOver()
     {
-        
+        if (bossBase != null)
+        {
+            bool isDefeated = bossBase.CheckOver();
+            if (isDefeated)
+            {
+                Debug.Log("card1阶段：玩家成功讨伐Boss！");
+                // 可以在这里添加讨伐成功的效果或奖励逻辑
+            }
+            else
+            {
+                Debug.Log("card1阶段：Boss仍然存活，时间到");
+                // 可以在这里添加时间到的效果逻辑
+            }
+        }
     }
 }

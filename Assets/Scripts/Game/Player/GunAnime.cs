@@ -39,7 +39,7 @@ public class GunAnime : MonoBehaviour
     };
 
     public int Index;//0:灵梦子机 1:魔理沙子机 2:七曜魔法子机
-    private int GunNumber = 0;// 子机数量
+    private int GunNumber = 1;// 子机数量
 
     private bool isShifted = false;// 是否按下Shift
     public bool IsShiftedNow => isShifted;// 是否按下Shift
@@ -56,7 +56,8 @@ public class GunAnime : MonoBehaviour
             Index = 1;
         }
         SwitchGun();
-        GunNumber = Global_GameManager.Instance.Power/100;
+        GunNumber = 1;
+        
         // 同步子机激活状态
         if (Index == 0) UpdateGuns(ReimuGuns);
         else if (Index == 1) UpdateGuns(MarisaGuns);
@@ -78,8 +79,7 @@ public class GunAnime : MonoBehaviour
     {
         if(Global_GameManager.Instance.state == State.Pause) return;
         CheckUpdate();
-        AddPower();
-        SubPower();
+        Cheat();
     }
 
     public void SwitchGun()
@@ -282,18 +282,23 @@ public class GunAnime : MonoBehaviour
         }
     }
 
-    private void AddPower()
+    private void Cheat()
     {
         if(Input.GetKeyDown(KeyCode.E))
         {
             Global_GameManager.Instance.AddPower(50);
         }
-    }
-    private void SubPower()
-    {
         if(Input.GetKeyDown(KeyCode.Q))
         {
             Global_GameManager.Instance.SubPower(50);
+        }
+        if (Input.GetKeyDown(KeyCode.B))
+        {
+            Global_GameManager.Instance.AddBomb(1);
+        }
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            Global_GameManager.Instance.isCheheat = !Global_GameManager.Instance.isCheheat;
         }
     }
 

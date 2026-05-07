@@ -8,6 +8,7 @@ public class card2 : MonoBehaviour
     public GameObject snowFlakePrefab; // 雪花子弹预制件
     public GameObject iceCloudPrefab; // 冰云预制件
     public BossShootSystem bossShootSystem; // 射击系统引用
+    public BossBase bossBase; // Boss基础属性引用
     
     [Header("雪花攻击参数")]
     public int snowFlakeCount = 50; // 雪花生成总数
@@ -152,11 +153,24 @@ public class card2 : MonoBehaviour
     }
     
     /// <summary>
-    /// 一个关键的方法：检查boss是否已经死亡
-    /// 如果boss没死亡，则会播放时间到的效果
+    /// 检查boss是否已经死亡或处于锁血状态
+    /// 如果boss处于锁血状态，说明玩家成功讨伐当前阶段
     /// </summary>
     public void CheckOver()
     {
-        
+        if (bossBase != null)
+        {
+            bool isDefeated = bossBase.CheckOver();
+            if (isDefeated)
+            {
+                Debug.Log("card2阶段：玩家成功讨伐Boss！");
+                // 可以在这里添加讨伐成功的效果或奖励逻辑
+            }
+            else
+            {
+                Debug.Log("card2阶段：Boss仍然存活，时间到");
+                // 可以在这里添加时间到的效果逻辑
+            }
+        }
     }
 }

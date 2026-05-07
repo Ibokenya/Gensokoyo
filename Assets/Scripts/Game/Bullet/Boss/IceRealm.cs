@@ -149,7 +149,7 @@ public class IceRealm : MonoBehaviour
         Debug.Log("±ùÇôÁýµ­Èë");
     }
     
-    private void StartFadeOut()
+    public void StartFadeOut()
     {
         if (isFadingOut)
         {
@@ -173,7 +173,7 @@ public class IceRealm : MonoBehaviour
         
         while (elapsedTime < fadeOutDuration)
         {
-            elapsedTime += Time.deltaTime;
+            elapsedTime += Time.unscaledDeltaTime;
             float alpha = Mathf.Lerp(1f, 0f, elapsedTime / fadeOutDuration);
             
             if (spriteRenderer != null)

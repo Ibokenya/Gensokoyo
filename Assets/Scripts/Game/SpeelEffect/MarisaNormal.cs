@@ -21,6 +21,9 @@ public class MarisaNormal : MonoBehaviour
     
     [Header("音效设置")]
     public AudioClip MarisaNormalClip;//魔理沙常规音效clip
+
+    [Header("boss对象")]
+    public GameObject boss; // Boss对象
     
     [Header("伤害设置")]
     private readonly int MarisaNormalDamageValue = 15;// 魔理沙常规伤害*45
@@ -54,6 +57,8 @@ public class MarisaNormal : MonoBehaviour
         {
             lightCircle.ResetCircles();
         }
+        // 对Boss造成伤害
+        MarisaNormalDamageToBoss();
     }
     
     void Update()
@@ -139,6 +144,22 @@ public class MarisaNormal : MonoBehaviour
     }
     
     /// <summary>
+    /// 魔理沙常规对Boss发送技能攻击通知
+    /// </summary>
+    private void MarisaNormalDamageToBoss()
+    {
+        if (boss != null && boss.activeInHierarchy)
+        {
+            BossBase bossBase = boss.GetComponent<BossBase>();
+            if (bossBase != null)
+            {
+                // 发送技能攻击通知，不直接造成伤害，让Boss有机会规避
+                bossBase.OnPlayerSkillAttack(3); // 3表示魔理沙常规
+            }
+        }
+    }
+    
+    /// <summary>
     /// 播放魔理沙常规音效
     /// </summary>
     public void AudioMarisaNormal()
@@ -196,6 +217,11 @@ public class MarisaNormal : MonoBehaviour
     public void OnAnimationEnd()
     {
         Global_GameManager.Instance.SetNoDead(0.1f,State.Gaming);
+        BossBase bossBase = boss.GetComponent<BossBase>();
+        if (bossBase != null)
+        {
+            bossBase.DefenseEnd(); // 关闭防御屏障
+        }
         IsAnime = false;
         isDamage = false;
         
