@@ -12,6 +12,7 @@ public enum BossAnimeType
 
 public class BossAnime : MonoBehaviour
 {
+    public BossBeheve bossBeheve;
     public Animator ChrinoAnimator;// 琪露诺动画
     public Animator CircleAnimator;// 虹人环动画
     [Header("琪露诺的帧动画")]
@@ -272,5 +273,10 @@ public class BossAnime : MonoBehaviour
         
         // 淡出完成后隐藏血条
         HideHP();
+    }
+
+    public void OnDieEnd()
+    {
+        bossBeheve.OnDieEnd();
     }
 }

@@ -8,6 +8,7 @@ public class card2 : MonoBehaviour
     public GameObject snowFlakePrefab; // 雪花子弹预制件
     public GameObject iceCloudPrefab; // 冰云预制件
     public BossShootSystem bossShootSystem; // 射击系统引用
+    public UIManager uiManager; // UIManager脚本引用
     public BossBase bossBase; // Boss基础属性引用
     
     [Header("雪花攻击参数")]
@@ -163,12 +164,16 @@ public class card2 : MonoBehaviour
             bool isDefeated = bossBase.CheckOver();
             if (isDefeated)
             {
+                // 标记为获取了符卡2
+                uiManager.isCard2Get = true;
                 Debug.Log("card2阶段：玩家成功讨伐Boss！");
                 // 可以在这里添加讨伐成功的效果或奖励逻辑
             }
             else
             {
                 Debug.Log("card2阶段：Boss仍然存活，时间到");
+                // 标记为未获取符卡2
+                uiManager.isCard2Get = false;
                 // 可以在这里添加时间到的效果逻辑
             }
         }

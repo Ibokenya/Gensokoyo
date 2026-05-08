@@ -12,6 +12,8 @@ public class BossBeheve : MonoBehaviour
     public FinalCard finalCardScript; // 最终符卡脚本
     
     [Header("引用")]
+    public UIManager uiManager;
+
     public GameObject UI;
     public GameObject boss;
     public BossShootSystem bossShootSystem;
@@ -78,6 +80,7 @@ public class BossBeheve : MonoBehaviour
         if (currentTime >= 4f && currentTime < 5f && !hasActivatedUI)
         {
             animator.SetBool("isAnime", true);
+            
             UI.SetActive(true);
             card_UI.SetActive(true);
             bossAnime.ShowHP();
@@ -392,12 +395,21 @@ public class BossBeheve : MonoBehaviour
     public void ExplosionEnd()
     {
         Time.timeScale = 1f;
-        Invoke("ShowFinalUI", 1f);
+        bossAnime.ChrinoAnimator.enabled = true;
+        bossAnime.ChrinoAnimator.SetBool("IsDie", true);
     }
 
-    private void ShowFinalUI()
+    public void OnDieEnd()
     {
-        // 设置对应UI物体激活
+        changeBG.FreezeAll(5f);
+    }
+
+    public void ShowFinalUI()
+    {
+        Time.timeScale = 0f;
+        Debug.Log("显示最终UI");
+        Global_GameManager.Instance.state=State.FinalUI;
+        uiManager.ShowFinalUI();
     }
     
     /// <summary>

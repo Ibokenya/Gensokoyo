@@ -15,7 +15,7 @@ public enum State
 {
     Menu,CharacterChoose,ModeChoose,Gaming,Pause,Loading,Over,
     Replay,Option,MusicRoom,Manual,Reincarnation,NoDead,TimeStop,
-    SpellCard,Dialog,Frozen
+    SpellCard,Dialog,Frozen,FinalUI
 }
 
 /// <summary>

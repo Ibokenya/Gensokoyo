@@ -146,7 +146,8 @@ public class PlayerAnime : MonoBehaviour
     {
         // ¥¶¿Ì∂Øª≠
         if(Global_GameManager.Instance.state == State.Pause ||
-           Global_GameManager.Instance.state == State.TimeStop)
+           Global_GameManager.Instance.state == State.TimeStop ||
+           Global_GameManager.Instance.state == State.FinalUI)
         {
             return;
         }

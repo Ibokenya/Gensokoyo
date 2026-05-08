@@ -37,47 +37,53 @@ public class Graze : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        // 确保只对敌人和敌人子弹和Boss子弹生效
-        if (collision.CompareTag("Enemy") || collision.CompareTag("EnemyBullet") || collision.CompareTag("BossBullet"))
+        if(Global_GameManager.Instance.state == State.Gaming)
         {
-            // 增加擦弹数
-            Global_GameManager.Instance.AddGraze(1);
-            
-            // 擦弹时减少冻结进度
-            FreezeSystem.ReduceFrozenDegree();
-            
-            // 如果当前列表为空，且当前弹幕不在列表中，播放擦弹音效
-            if (currentBullets.Count == 0 && !isPlaying)
+            // 确保只对敌人和敌人子弹和Boss子弹生效
+            if (collision.CompareTag("Enemy") || collision.CompareTag("EnemyBullet") || collision.CompareTag("BossBullet"))
             {
-                Global_AudioManager.Instance.PlaySFX(grazeSound, true);
-                isPlaying = true;
-            }
-            
-            // 如果当前弹幕不在列表中，添加到列表
-            if (!currentBullets.Contains(collision))
-            {
-                currentBullets.Add(collision);
+                // 增加擦弹数
+                Global_GameManager.Instance.AddGraze(1);
+                
+                // 擦弹时减少冻结进度
+                FreezeSystem.ReduceFrozenDegree();
+                
+                // 如果当前列表为空，且当前弹幕不在列表中，播放擦弹音效
+                if (currentBullets.Count == 0 && !isPlaying)
+                {
+                    Global_AudioManager.Instance.PlaySFX(grazeSound, true);
+                    isPlaying = true;
+                }
+                
+                // 如果当前弹幕不在列表中，添加到列表
+                if (!currentBullets.Contains(collision))
+                {
+                    currentBullets.Add(collision);
+                }
             }
         }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        // 确保只对敌人和敌人子弹和Boss子弹生效
-        if (collision.CompareTag("Enemy") || collision.CompareTag("EnemyBullet") ||
-         collision.CompareTag("BossBullet"))
+        if(Global_GameManager.Instance.state == State.Gaming)
         {
-            // 从列表中移除弹幕
-            if (currentBullets.Contains(collision))
+            // 确保只对敌人和敌人子弹和Boss子弹生效
+            if (collision.CompareTag("Enemy") || collision.CompareTag("EnemyBullet") ||
+            collision.CompareTag("BossBullet"))
             {
-                currentBullets.Remove(collision);
-            }
+                // 从列表中移除弹幕
+                if (currentBullets.Contains(collision))
+                {
+                    currentBullets.Remove(collision);
+                }
 
-            // 如果列表为空，停止播放音效
-            if (currentBullets.Count == 0 && isPlaying)
-            {
-                Global_AudioManager.Instance.StopLoopSFX(grazeSound);
-                isPlaying = false;
+                // 如果列表为空，停止播放音效
+                if (currentBullets.Count == 0 && isPlaying)
+                {
+                    Global_AudioManager.Instance.StopLoopSFX(grazeSound);
+                    isPlaying = false;
+                }
             }
         }
     }

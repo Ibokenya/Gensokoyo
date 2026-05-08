@@ -14,6 +14,7 @@ public class FinalCard : MonoBehaviour
 
     [Header("脚本引用")]
     public ChangeBG changeBG;
+    public UIManager uiManager; // UIManager脚本引用
     
     [Header("FinalCard阶段参数")]
     public int currentPhase = 1; // 当前阶段（1-4）
@@ -67,6 +68,8 @@ public class FinalCard : MonoBehaviour
     {
         bossShootSystem.isRealmActive = false;
         IceRealm.StartFadeOut();
+        // 标记为获取了最终符卡
+        uiManager.isFinalCardGet = true;
         bossShootSystem.isAllowAreaLimit = false;
         // 停止所有协程
         StopAllCoroutines();

@@ -24,6 +24,7 @@ public class card1 : MonoBehaviour
     [Header("脚本引用")]
     public BossUI bossUI; // BossUI脚本引用
     public BossBase bossBase; // Boss基础属性引用
+    public UIManager uiManager; // UIManager脚本引用
     
     private void OnEnable()
     {      
@@ -122,11 +123,15 @@ public class card1 : MonoBehaviour
             if (isDefeated)
             {
                 Debug.Log("card1阶段：玩家成功讨伐Boss！");
+                // 标记为获取了符卡1
+                uiManager.isCard1Get = true;
                 // 可以在这里添加讨伐成功的效果或奖励逻辑
             }
             else
             {
                 Debug.Log("card1阶段：Boss仍然存活，时间到");
+                // 标记为未获取符卡1
+                uiManager.isCard1Get = false;
                 // 可以在这里添加时间到的效果逻辑
             }
         }
