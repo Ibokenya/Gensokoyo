@@ -20,6 +20,8 @@ public class AboutDialog : MonoBehaviour
     public GameObject DialogBox;
     private TextMeshProUGUI dialogText;
     private Image roleFaceImage;
+    [Header("玩家脚本引用")]
+    public PlayerAnime playerAnime;
 
     [Header("角色脸列表")]
     public List<Sprite> ReimuFace;
@@ -53,6 +55,7 @@ public class AboutDialog : MonoBehaviour
     private void OnEnable()
     {
         Global_GameManager.Instance.state = State.Dialog;
+        playerAnime.StopMove();
         currentDialogIndex = 0;
         isDialogActive = true;
         

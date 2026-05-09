@@ -16,7 +16,8 @@ public class BossUI : MonoBehaviour
     [Header("时间设置")]
     private float currentTime = 0f; // 当前剩余时间
     public AudioClip timeoutSound;//超时音效
-    private int lastPlayedSecond = -1; // 上一次播放音效的秒数
+    private int countdownSoundIndex = 5; // 当前应该播放第几秒的倒计时音效（5,4,3,2,1）
+    private bool isTimeTransitioning = false; // 是否正在进行时间过渡（防止过渡期间误触发音效）
 
     [Header("阴阳玉阶段图标")]
     public List<Sprite> HpIcons;
@@ -213,16 +214,48 @@ public class BossUI : MonoBehaviour
     /// </summary>
     private void PlayCountdownSound()
     {
-        int currentSecond = Mathf.FloorToInt(currentTime);
-        
-        // 只在剩余时间5,4,3,2,1秒时播放，且每秒只播放一次
-        if (currentSecond >= 1 && currentSecond <= 5 && currentSecond != lastPlayedSecond)
+        // 正在进行时间过渡时不播放音效
+        if (isTimeTransitioning)
         {
-            if (timeoutSound != null)
-            {
-                Global_AudioManager.Instance.PlaySFX(timeoutSound);
-            }
-            lastPlayedSecond = currentSecond;
+            return;
+        }
+        
+        // 检测并播放对应秒数的倒计时音效
+        if (currentTime < 5f && countdownSoundIndex == 5)
+        {
+            PlayTimeoutSound();
+            countdownSoundIndex = 4;
+        }
+        else if (currentTime < 4f && countdownSoundIndex == 4)
+        {
+            PlayTimeoutSound();
+            countdownSoundIndex = 3;
+        }
+        else if (currentTime < 3f && countdownSoundIndex == 3)
+        {
+            PlayTimeoutSound();
+            countdownSoundIndex = 2;
+        }
+        else if (currentTime < 2f && countdownSoundIndex == 2)
+        {
+            PlayTimeoutSound();
+            countdownSoundIndex = 1;
+        }
+        else if (currentTime < 1f && countdownSoundIndex == 1)
+        {
+            PlayTimeoutSound();
+            countdownSoundIndex = 0;
+        }
+    }
+    
+    /// <summary>
+    /// 播放超时音效
+    /// </summary>
+    private void PlayTimeoutSound()
+    {
+        if (timeoutSound != null)
+        {
+            Global_AudioManager.Instance.PlaySFX(timeoutSound);
         }
     }
     
@@ -242,6 +275,9 @@ public class BossUI : MonoBehaviour
     /// <returns></returns>
     private IEnumerator SmoothTimeTransition(float targetTime)
     {
+        // 设置标志，表示正在进行时间过渡
+        isTimeTransitioning = true;
+        
         float duration = 1f; // 过渡时间为1秒
         float startTime = currentTime;
         float elapsedTime = 0f;
@@ -260,6 +296,12 @@ public class BossUI : MonoBehaviour
         // 确保最终时间为目标时间
         currentTime = targetTime;
         UpdateTimeText(currentTime);
+        
+        // 重置标志，表示时间过渡结束
+        isTimeTransitioning = false;
+        
+        // 重置倒计时音效索引，确保倒计时音效能正常播放
+        countdownSoundIndex = 5;
     }
     
     /// <summary>

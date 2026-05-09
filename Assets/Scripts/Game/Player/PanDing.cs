@@ -7,6 +7,7 @@ public class PanDing : MonoBehaviour
     public FreezeSystem freezeSystem; // 冻结系统引用
     public ClearAllBullet clearAllBullet;// 清除所有子弹组件
     public SpellCardEffect spellCardEffect;// 符卡效果组件
+    public Graze graze; // 擦弹组件引用
 
     private const float ICE_CLOUD_FROZEN_DEGREE_INCREASE = 0.01f; // 每次碰撞冰云增加的冻结度
 
@@ -35,6 +36,9 @@ public class PanDing : MonoBehaviour
                     return;
                 }
                 
+                // 停止擦弹音效并清空擦弹列表（防止玩家复活后继续播放擦弹音效）
+                StopGrazeSound();
+                
                 if (spellCardEffect != null)
                 {
                     // 开始受击延迟
@@ -57,5 +61,17 @@ public class PanDing : MonoBehaviour
                 }
             }
         }  
+    }
+    
+    /// <summary>
+    /// 停止擦弹音效并清空擦弹列表
+    /// 防止玩家复活后继续播放擦弹音效
+    /// </summary>
+    private void StopGrazeSound()
+    {
+        if (graze != null)
+        {
+            graze.ForceStopGrazeSound();
+        }
     }
 }

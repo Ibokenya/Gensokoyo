@@ -9859,7 +9859,7 @@ MonoBehaviour:
   MaxGradeText: {fileID: 2009760615}
   GrazeText: {fileID: 1118423026}
   BorderLine: {fileID: 798813152}
-  FinalUI: {fileID: 0}
+  FinalUI: {fileID: 2077698497}
   leftLife: {fileID: 1399811763}
   speelCard: {fileID: 244875039}
   isCard1Get: 0
@@ -11986,13 +11986,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 389626601}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.38268343, w: 0.92387956}
-  m_LocalPosition: {x: 0.05, y: 0.75, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.1, y: 0.77, z: 0}
   m_LocalScale: {x: 0.172, y: 0.172, z: 0}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 1478418310}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 45}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &389626603
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -20396,10 +20396,10 @@ RectTransform:
   - {fileID: 1337432009}
   - {fileID: 1846741031}
   - {fileID: 1561676701}
-  - {fileID: 409717454}
   - {fileID: 1593890628}
   - {fileID: 711536498}
   - {fileID: 877752768}
+  - {fileID: 409717454}
   m_Father: {fileID: 257250752}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -23127,6 +23127,7 @@ MonoBehaviour:
   freezeSystem: {fileID: 409717455}
   clearAllBullet: {fileID: 1283300306}
   spellCardEffect: {fileID: 273036238}
+  graze: {fileID: 1896029630}
 --- !u!1 &1104395251
 GameObject:
   m_ObjectHideFlags: 0
@@ -24181,7 +24182,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1152852136
 Transform:
   m_ObjectHideFlags: 0
@@ -24366,8 +24367,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_text: "1000(\u57FA\u7840\u5F97\u5206) x 1.0(Normal) x 0.6(\u7EED\u5173)\n+ 325
-    x 73(\u64E6\u5F39\u5F97\u5206) \n+ 500 x 9(Bonus\u5F97\u5206)\n+ 7236 x 1.0(\u989D\u5916\u8F6C\u5316\u5F97\u5206) 
-    ="
+    x 73(\u64E6\u5F39\u5F97\u5206) \n+ 500 x 9(Bonus\u5F97\u5206)\n+ 7236(\u8F6C\u5316\u5F97\u5206)
+    x 1.0(Lunatic)  ="
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 1f6b0cd5c651d20478535d1c9e0c3644, type: 2}
   m_sharedMaterial: {fileID: 7434988772178564283, guid: 1f6b0cd5c651d20478535d1c9e0c3644, type: 2}
@@ -27022,7 +27023,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1283300304
 Transform:
   m_ObjectHideFlags: 0
@@ -29618,7 +29619,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1394028997
 Transform:
   m_ObjectHideFlags: 0
@@ -34657,7 +34658,7 @@ Animator:
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: 409342a57a750e443b81f287d4b365bc, type: 2}
   m_CullingMode: 0
-  m_UpdateMode: 0
+  m_UpdateMode: 2
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
@@ -34906,8 +34907,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 477.35007, y: -30.580002}
-  m_SizeDelta: {x: 192.26, y: 30.2501}
+  m_AnchoredPosition: {x: 510.35382, y: -30.580002}
+  m_SizeDelta: {x: 140.5827, y: 30.2501}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1641357780
 MonoBehaviour:
@@ -37477,7 +37478,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!212 &1762003364
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -37763,7 +37764,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!212 &1778340244
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -38467,7 +38468,7 @@ MonoBehaviour:
   RotatePick: {fileID: 5771480035523190098, guid: debc22624fde1284bbcde95662315c2f, type: 3}
   IceRealm: {fileID: 9153348902396529515}
   changeBG: {fileID: 675197468}
-  uiManager: {fileID: 0}
+  uiManager: {fileID: 257250753}
   currentPhase: 1
   phaseTimer: 0
   phase1Duration: 12
@@ -38492,7 +38493,7 @@ MonoBehaviour:
   snowFlakePrefab: {fileID: 4795242013973719645, guid: 426cc3a1f6f0ab1429df5bb0a3c84816, type: 3}
   iceCloudPrefab: {fileID: 3264009202762929382, guid: 2f2b9e705908ad64ab7f3f2ee24b2d4f, type: 3}
   bossShootSystem: {fileID: 1152852137}
-  uiManager: {fileID: 0}
+  uiManager: {fileID: 257250753}
   bossBase: {fileID: 1800135231}
   snowFlakeCount: 50
   attackInterval: 12
@@ -38531,7 +38532,7 @@ MonoBehaviour:
   bulletCount: 3
   bossUI: {fileID: 971464452}
   bossBase: {fileID: 1800135231}
-  uiManager: {fileID: 0}
+  uiManager: {fileID: 257250753}
 --- !u!114 &1800135229
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -41120,9 +41121,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1948377068}
   - component: {fileID: 1948377067}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: "\u51B0\u51BB\u7981\u9522"
-  m_TagString: EnemyBullet
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -43086,7 +43087,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71293642f6b854c4b8bd4231361a0b74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bgmClip1: {fileID: 8300000, guid: 4fd7c9a1eb89d95478d6b99e8ec59b78, type: 3}
+  bgmClip1: {fileID: 8300000, guid: ae1b5fafea1b96440a108f4b4cbb0469, type: 3}
   bgmClip2: {fileID: 8300000, guid: 4fd7c9a1eb89d95478d6b99e8ec59b78, type: 3}
   clearAllBullet: {fileID: 1283300306}
   currentTime: 0
@@ -43147,6 +43148,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   RoleFace: {fileID: 1510519772}
   DialogBox: {fileID: 965652724}
+  playerAnime: {fileID: 1651681770}
   ReimuFace:
   - {fileID: 21300000, guid: 60c3abcb78be39e4ebe5d5ae8371a3bf, type: 3}
   - {fileID: 21300000, guid: 0e7677bc1b1ffcc4b8e6a1f69e60b6fa, type: 3}
@@ -43168,7 +43170,7 @@ MonoBehaviour:
   MarisaDialogPath: "Touho/\u5BF9\u8BDD/MarisaDialog.csv"
   continueBG: {fileID: 1432468942}
   game1: {fileID: 2065778901}
-  Boss: {fileID: 0}
+  Boss: {fileID: 1152852135}
 --- !u!1 &2077698497
 GameObject:
   m_ObjectHideFlags: 0
@@ -43185,7 +43187,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2077698498
 RectTransform:
   m_ObjectHideFlags: 0
@@ -43236,37 +43238,39 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85f5f5a06d4f9e14bb0cb8c30fc4841f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  uiManager: {fileID: 0}
+  uiManager: {fileID: 257250753}
   csvFilePath: "Touho/\u5BF9\u8BDD/FinalUI_1"
-  Chrino: {fileID: 0}
-  FeatedBoss: {fileID: 0}
-  ChrinoName: {fileID: 0}
-  Msg: {fileID: 0}
-  MsgDesc: {fileID: 0}
-  FinalGradeIs: {fileID: 0}
-  FinalGradeCalu: {fileID: 0}
-  FinalGrade: {fileID: 0}
-  Graze: {fileID: 0}
-  GrazeText: {fileID: 0}
-  Miss: {fileID: 0}
-  MissText: {fileID: 0}
-  SpentTime: {fileID: 0}
-  SpentTimeText: {fileID: 0}
-  RemainRoad: {fileID: 0}
-  RemainRoadText: {fileID: 0}
-  LaterText: {fileID: 0}
-  Shadow: {fileID: 0}
-  ShadowText: {fileID: 0}
-  Card1: {fileID: 0}
-  Card1GetStatus: {fileID: 0}
-  Card1Text: {fileID: 0}
-  Card2: {fileID: 0}
-  Card2GetStatus: {fileID: 0}
-  Card2Text: {fileID: 0}
-  Card3: {fileID: 0}
-  Card3GetStatus: {fileID: 0}
-  Card3Text: {fileID: 0}
-  ChrinoAnim: {fileID: 0}
+  Chrino: {fileID: 1615390721}
+  FeatedBoss: {fileID: 1796246597}
+  ChrinoName: {fileID: 416474189}
+  Msg: {fileID: 1494229583}
+  MsgDesc: {fileID: 285428238}
+  FinalGradeIs: {fileID: 1273432792}
+  FinalGradeCalu: {fileID: 1156624000}
+  FinalGrade: {fileID: 1641357780}
+  Graze: {fileID: 2059669343}
+  GrazeText: {fileID: 1236845598}
+  Miss: {fileID: 1088203669}
+  MissText: {fileID: 903207936}
+  SpentTime: {fileID: 1445770121}
+  SpentTimeText: {fileID: 571617986}
+  RemainRoad: {fileID: 207183256}
+  RemainRoadText: {fileID: 116286174}
+  LaterText: {fileID: 2008051526}
+  Shadow: {fileID: 1776771075}
+  ShadowText: {fileID: 1561575496}
+  Card1: {fileID: 131776646}
+  Card1GetStatus: {fileID: 1407325122}
+  Card1Text: {fileID: 1402792852}
+  Card2: {fileID: 185213734}
+  Card2GetStatus: {fileID: 1375784337}
+  Card2Text: {fileID: 2136994879}
+  Card3: {fileID: 1492125634}
+  Card3GetStatus: {fileID: 938330080}
+  Card3Text: {fileID: 940747807}
+  ChrinoAnim: {fileID: 1615390723}
+  rotateTriggerChance: 0.4
+  standUpTriggerChance: 0.6
 --- !u!1 &2085216620
 GameObject:
   m_ObjectHideFlags: 0

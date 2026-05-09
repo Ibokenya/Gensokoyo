@@ -24,6 +24,8 @@ public class Game1 : MonoBehaviour
     private float decaySpeed = 2f; // 衰减速度
     private float shakeDuration = 0f; // 抖动剩余时长
 
+    private bool isfirst = true;
+
     void Awake()
     {
         // 保存摄像机原始位置
@@ -36,11 +38,12 @@ public class Game1 : MonoBehaviour
         // 更新当前音乐时间
         //currentTime = Global_AudioManager.Instance.CurrentBGMTime;
         currentTime += Time.deltaTime;
-        if(currentTime >= 118f && currentTime <= 119f)
+        if(currentTime >= 118f && currentTime <= 119f && isfirst)
         {
             Debug.Log("摄像头淡出BGM");
             Global_AudioManager.Instance.FadeOutMusic(10f);
             DialogBox.SetActive(true);
+            isfirst = false;
         }
         
         // 处理镜头抖动
@@ -54,7 +57,7 @@ public class Game1 : MonoBehaviour
         && Global_AudioManager.Instance.GetCurrentBGMName() != "Boss")
         {
             Debug.Log("摄像头开始播放BGM1");
-            Global_AudioManager.Instance.PlaySFX(bgmClip1,false,0.1f);
+            Global_AudioManager.Instance.PlaySFX(bgmClip1,false,0.8f);
         }
     }
 
@@ -68,6 +71,7 @@ public class Game1 : MonoBehaviour
         if (Global_AudioManager.Instance != null)
         {
             Debug.Log("摄像头开始播放BGM2");
+            Global_AudioManager.Instance.StopAllSFX();
             Global_AudioManager.Instance.PlaySFX(bgmClip2,false,0.8f);
         }
     }

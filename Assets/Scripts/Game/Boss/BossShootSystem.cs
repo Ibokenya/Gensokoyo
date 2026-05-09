@@ -639,6 +639,7 @@ public class BossShootSystem : MonoBehaviour
                         {
                             miniIce.moveSpeed = bulletSpeed;
                             miniIce.TargetPosition = currentBossPosition;
+                            miniIce.hp = miniIce.maxHP;
                         }
                     }
                 }
@@ -745,7 +746,6 @@ public class BossShootSystem : MonoBehaviour
         { 
             // 计算大子弹的属性
             float scaleIncrease = totalBulletsCount * 0.2f;
-            int finalHP = totalHP;
             float finalSpeed = Mathf.Max(1, originalSpeed - totalBulletsCount * 0.2f);  
             // 从对象池获取一个子弹作为大子弹
             GameObject bigBullet = Global_ObjectPool.Instance.GetObject(wave.bullets[0].gameObject, wave.targetPosition, Quaternion.identity);
@@ -757,7 +757,7 @@ public class BossShootSystem : MonoBehaviour
                     // 设置大子弹属性
                     bigIce.isMini = false; // 非mini态，无折返
                     bigIce.moveSpeed = finalSpeed;
-                    bigIce.hp = finalHP;
+                    bigIce.hp = totalHP;
                     bigIce.transform.localScale = new Vector3(1 + scaleIncrease, 1 + scaleIncrease, 1);
                     
                     // 瞄准玩家发射

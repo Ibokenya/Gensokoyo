@@ -42,6 +42,20 @@ public class FinalUI : MonoBehaviour
     [Header("琪露诺的可爱动画")]
     public Animator ChrinoAnim;             // 琪露诺的动画组件
     
+    // Chrino动画控制变量
+    private bool isStand = true;            // 是否处于站立状态
+    private const float ANIMATION_CHECK_INTERVAL = 1f; // 每秒检测一次
+    private const float ANIMATION_COOLDOWN_TIME = 2.5f; // 冷却时间（秒），不受时间缩放影响
+    private float animationTimer = 0f;
+    private float cooldownTimer = 0f;       // 冷却计时器（使用真实时间）
+    
+    // 动画触发概率 (0-1)
+    [Header("动画触发概率")]
+    [Range(0f, 1f)]
+    public float rotateTriggerChance = 0.4f;    // 旋转触发概率
+    [Range(0f, 1f)]
+    public float standUpTriggerChance = 0.6f;   // 起身触发概率
+    
     // 逐字输出相关变量
     private TextMeshProUGUI currentPrintTarget;
     private string currentPrintText;
@@ -71,13 +85,13 @@ public class FinalUI : MonoBehaviour
     private bool isCalculatingScore;
     
     // UI显示间隔（帧）
-    private const int UI_INTERVAL = 10;
+    private const int UI_INTERVAL = 30;
     
     // CSV文本数据存储
     private Dictionary<int, string> csvTextData = new Dictionary<int, string>();
     
     // 文本ID常量
-    private const int TEXT_ID_MSG_DESC = 1;       // 情报描述
+    private const int TEXT_ID_MSG_DESC = 1;      // 情报描述
     private const int TEXT_ID_LATER_TEXT = 2;    // 后续预告
     private const int TEXT_ID_CARD1_DESC = 3;    // 符卡1描述
     private const int TEXT_ID_CARD2_DESC = 4;    // 符卡2描述
@@ -165,22 +179,7 @@ public class FinalUI : MonoBehaviour
     /// </summary>
     private void InitializeUIElements()
     {
-        // 隐藏所有GameObject类型的UI元素
-        Chrino?.SetActive(false);
-        FeatedBoss?.SetActive(false);
-        ChrinoName?.SetActive(false);
-        Msg?.SetActive(false);
-        FinalGradeIs?.SetActive(false);
-        Graze?.SetActive(false);
-        Miss?.SetActive(false);
-        SpentTime?.SetActive(false);
-        RemainRoad?.SetActive(false);
-        Shadow?.SetActive(false);
-        ShadowText?.SetActive(false);
-        Card1?.SetActive(false);
-        Card2?.SetActive(false);
-        Card3?.SetActive(false);
-        
+
         // 清空所有文本
         MsgDesc?.SetText("");
         FinalGradeCalu?.SetText("");
@@ -196,6 +195,22 @@ public class FinalUI : MonoBehaviour
         Card2Text?.SetText("");
         Card3GetStatus?.SetText("");
         Card3Text?.SetText("");
+
+        // 隐藏所有GameObject类型的UI元素
+        Chrino?.SetActive(false);
+        FeatedBoss?.SetActive(false);
+        ChrinoName?.SetActive(false);
+        Msg?.SetActive(false);
+        FinalGradeIs?.SetActive(false);
+        Graze?.SetActive(false);
+        Miss?.SetActive(false);
+        SpentTime?.SetActive(false);
+        RemainRoad?.SetActive(false);
+        Shadow?.SetActive(false);
+        ShadowText?.SetActive(false);
+        Card1?.SetActive(false);
+        Card2?.SetActive(false);
+        Card3?.SetActive(false);
     }
     
     /// <summary>
@@ -282,15 +297,67 @@ public class FinalUI : MonoBehaviour
         
         // 20. 显示符卡1
         yield return ShowCard(Card1, Card1GetStatus, Card1Text, uiManager?.isCard1Get ?? false, 
-            "-280℃·冰冷彗星带", GetTextById(TEXT_ID_CARD1_DESC), GetTextById(TEXT_ID_CARD_FAILED));
+            GetTextById(TEXT_ID_CARD1_DESC), GetTextById(TEXT_ID_CARD_FAILED));
         
         // 21. 显示符卡2
         yield return ShowCard(Card2, Card2GetStatus, Card2Text, uiManager?.isCard2Get ?? false, 
-            "-270℃·宇宙微波辐射", GetTextById(TEXT_ID_CARD2_DESC), GetTextById(TEXT_ID_CARD_FAILED));
+            GetTextById(TEXT_ID_CARD2_DESC), GetTextById(TEXT_ID_CARD_FAILED));
         
         // 22. 显示符卡3（最终符卡）
         yield return ShowCard(Card3, Card3GetStatus, Card3Text, uiManager?.isFinalCardGet ?? false, 
-            "-273.15℃·分子便不再运动了", GetTextById(TEXT_ID_CARD3_DESC), GetTextById(TEXT_ID_CARD_FAILED));
+            GetTextById(TEXT_ID_CARD3_DESC), GetTextById(TEXT_ID_CARD_FAILED));
+        
+        // 23. 将计算出的得分加到总分上
+        AddFinalScoreToTotal();
+        
+        // 24. 等待5秒后跳转到Game2场景
+        yield return new WaitForSecondsRealtime(5f);
+        
+        // 25. 重置GameManager数据并跳转场景
+        TransitionToGame2();
+    }
+    
+    /// <summary>
+    /// 将最终得分加到总分上
+    /// </summary>
+    private void AddFinalScoreToTotal()
+    {
+        if (Global_GameManager.Instance != null && uiManager != null)
+        {
+            // 获取当前总分
+            int currentScore = Global_GameManager.Instance.Score;
+            
+            // 将最终得分加到总分上
+            int newTotalScore = currentScore + finalScoreResult;
+            Global_GameManager.Instance.AddScore(finalScoreResult);
+            
+            Debug.Log($"得分累加完成 - 原分数: {currentScore}, 本关得分: {finalScoreResult}, 新总分: {newTotalScore}");
+        }
+    }
+    
+    /// <summary>
+    /// 重置数据并跳转到Game2场景
+    /// </summary>
+    private void TransitionToGame2()
+    {
+        // 重置GameManager数据
+        if (Global_GameManager.Instance != null)
+        {
+            Global_GameManager.Instance.ResetFor_Game2();
+        }
+        
+        // 恢复正常时间流速
+        Time.timeScale = 1f;
+        
+        // 跳转到Game2场景（不保留当前场景）
+        if (Global_SceneManager.Instance != null)
+        {
+            Global_SceneManager.Instance.IntoNextScene("Game2", false);
+        }
+        else
+        {
+            Debug.LogError("Global_SceneManager.Instance 为 null，无法跳转场景");
+        }
     }
     
     /// <summary>
@@ -342,7 +409,7 @@ public class FinalUI : MonoBehaviour
     /// 显示符卡信息
     /// </summary>
     private IEnumerator ShowCard(GameObject cardObj, TextMeshProUGUI statusText, TextMeshProUGUI descText, 
-        bool isGet, string cardName, string successDesc, string failedDesc)
+        bool isGet, string successDesc, string failedDesc)
     {
         // 激活符卡物体
         cardObj?.SetActive(true);
@@ -367,7 +434,7 @@ public class FinalUI : MonoBehaviour
         // 设置符卡描述
         if (descText != null)
         {
-            string text = isGet ? cardName + "\n" + successDesc : cardName + "\n" + failedDesc;
+            string text = isGet ? successDesc : failedDesc;
             descText.text = "";
             
             for (int i = 0; i < text.Length; i++)
@@ -666,7 +733,7 @@ public class FinalUI : MonoBehaviour
         yield return WaitForFrames(interval);
         
         // 换行 + 额外转化得分
-        FinalGradeCalu.text += "\n+ " + exScore.ToString();
+        FinalGradeCalu.text += "\n+ " + exScore.ToString() +"(转化得分)";
         yield return WaitForFrames(interval);
         
         // 输出 " x "
@@ -674,7 +741,7 @@ public class FinalUI : MonoBehaviour
         yield return WaitForFrames(interval);
         
         // 输出难度系数
-        FinalGradeCalu.text += difficultyMultiplier.ToString("F1") + "(难度)";
+        FinalGradeCalu.text += difficultyMultiplier.ToString("F1") + "(" + difficultyName + ")";
         yield return WaitForFrames(interval);
         
         // 输出 " = "
@@ -688,10 +755,7 @@ public class FinalUI : MonoBehaviour
         int exScoreTotal = Mathf.RoundToInt((float)exScore * difficultyMultiplier);
         
         finalScoreResult = baseScore + grazeScore + bonusScore + exScoreTotal;
-        
-        // 输出最终得分
-        FinalGradeCalu.text += finalScoreResult.ToString();
-        
+         
         // 设置最终得分显示
         FinalGrade.text = finalScoreResult.ToString();
         
@@ -764,5 +828,96 @@ public class FinalUI : MonoBehaviour
     public bool IsCalculatingScore()
     {
         return isCalculatingScore;
+    }
+    
+    void Update()
+    {
+        // 更新Chrino动画状态
+        UpdateChrinoAnimation();
+    }
+    
+    /// <summary>
+    /// 更新Chrino动画状态
+    /// </summary>
+    private void UpdateChrinoAnimation()
+    {
+        if (ChrinoAnim == null) return;
+        
+        // 如果处于冷却期，更新冷却计时器（使用真实时间）
+        if (cooldownTimer > 0)
+        {
+            cooldownTimer -= Time.unscaledDeltaTime;
+            return;
+        }
+        
+        // 更新计时器（使用真实时间，不受Time.timeScale影响）
+        animationTimer += Time.unscaledDeltaTime;
+        
+        // 每秒检测一次
+        if (animationTimer >= ANIMATION_CHECK_INTERVAL)
+        {
+            animationTimer = 0f;
+            
+            if (isStand)
+            {
+                // 站立状态：有几率触发旋转
+                TryTriggerRotate();
+            }
+            else
+            {
+                // 非站立状态：有几率触发起身
+                TryTriggerStandUp();
+            }
+        }
+    }
+    
+    /// <summary>
+    /// 尝试触发旋转动画
+    /// </summary>
+    private void TryTriggerRotate()
+    {
+        float randomValue = Random.value;
+        if (randomValue <= rotateTriggerChance)
+        {
+            // 触发旋转
+            ChrinoAnim.SetBool("IsRotate", true);
+            ChrinoAnim.SetBool("IsStandUp", false);
+            isStand = false;
+            cooldownTimer = ANIMATION_COOLDOWN_TIME;
+        }
+    }
+    
+    /// <summary>
+    /// 尝试触发起身动画
+    /// </summary>
+    private void TryTriggerStandUp()
+    {   
+        if (!isStand)
+        {
+            float randomValue = Random.value;
+            if (randomValue <= standUpTriggerChance)
+            {
+                // 触发起身
+                ChrinoAnim.SetBool("IsStandUp", true);
+                ChrinoAnim.SetBool("IsRotate", false);
+                isStand = true;
+                cooldownTimer = ANIMATION_COOLDOWN_TIME;
+            }
+        }
+    }
+    
+    /// <summary>
+    /// 重置Chrino动画状态为站立
+    /// </summary>
+    public void ResetChrinoAnimation()
+    {
+        if (ChrinoAnim != null)
+        {
+            ChrinoAnim.SetBool("IsRotate", false);
+            ChrinoAnim.SetBool("IsStandUp", true);
+            isStand = true;
+            cooldownTimer = 0f;
+            animationTimer = 0f;
+        }
     }
 }

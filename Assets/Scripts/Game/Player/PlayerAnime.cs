@@ -483,6 +483,29 @@ public class PlayerAnime : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 强行停止玩家移动
+    /// 即使玩家还按着方向键，也会立即停止
+    /// 并重置按键状态和动画
+    /// </summary>
+    public void StopMove()
+    {
+        // 重置按键状态
+        leftKeyPressed = false;
+        rightKeyPressed = false;
+        upKeyPressed = false;
+        downKeyPressed = false;
+        
+        // 切换到Idle动画
+        SetIdleAnime();
+        
+        // 调用碰撞脚本的StopMove方法停止物理移动
+        if (playerCollision != null)
+        {
+            playerCollision.StopMove();
+        }
+    }
+
     private void PanDingAnime()
     {
         Pandingdian.transform.Rotate(PandingdianRotation, PandingdianSpeed * Time.deltaTime);
@@ -633,7 +656,7 @@ public class PlayerAnime : MonoBehaviour
     /// <summary>
     /// 完成QTE
     /// </summary>
-    private void CompleteQTE()
+    public void CompleteQTE()
     {
         isQteActive = false;
         

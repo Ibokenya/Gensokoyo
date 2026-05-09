@@ -44,6 +44,7 @@ public class UIManager : MonoBehaviour
     public bool isFinalCardGet; // 是否获取了最终符卡
     public bool isContinueGame; // 是否续关过
     public int ExScore; // 额外得分
+    private int MissCount; // 受击次数
     
     [Header("游戏计时器")]
     public float gameTime = 0f; // 游戏时长（秒）
@@ -93,8 +94,9 @@ public class UIManager : MonoBehaviour
         Global_GameManager.Instance.OnGrazeChanged += SetGrazeText;
         Global_GameManager.Instance.OnLeftLifeChanged += SetLeftLife;
         Global_GameManager.Instance.OnBombChanged += SetBomb;
+        Global_GameManager.Instance.OnReincarnation += AddMissCount;
 #endregion
-
+        MissCount = 0;
         HighestScoreText.text = HighestScore.ToString();
         SetScoreText(CurrentScore);
         SetPowerText(Power);
@@ -114,6 +116,7 @@ public class UIManager : MonoBehaviour
         Global_GameManager.Instance.OnGrazeChanged -= SetGrazeText;
         Global_GameManager.Instance.OnLeftLifeChanged -= SetLeftLife;
         Global_GameManager.Instance.OnBombChanged -= SetBomb;
+        Global_GameManager.Instance.OnReincarnation -= AddMissCount;
         CancelInvoke();
     }
 
@@ -156,5 +159,10 @@ public class UIManager : MonoBehaviour
     public void ShowFinalUI()
     {
         FinalUI.SetActive(true);
+    }
+
+    public void AddMissCount(State state)
+    {
+        MissCount++;
     }
 }

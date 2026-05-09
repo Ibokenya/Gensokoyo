@@ -124,6 +124,28 @@ public class PlayerCollision : MonoBehaviour
     }
 
     /// <summary>
+    /// 强行停止玩家移动
+    /// 即使玩家还按着方向键，也会立即停止
+    /// </summary>
+    public void StopMove()
+    {
+        // 确保rb2D已获取
+        if (rb2D == null)
+        {
+            rb2D = GetComponent<Rigidbody2D>();
+            if (rb2D == null)
+            {
+                Debug.LogError("PlayerCollision: 找不到刚体组件，无法停止移动！");
+                return;
+            }
+        }
+        
+        // 将速度设为0，停止移动
+        rb2D.velocity = Vector2.zero;
+        moveDirection = Vector2.zero;
+    }
+
+    /// <summary>
     /// 处理边界检测
     /// </summary>
     private void HandleBounds()
@@ -131,7 +153,8 @@ public class PlayerCollision : MonoBehaviour
         // 只有在游戏状态和无敌状态时才处理边界检测
         if(Global_GameManager.Instance.state != State.Gaming && 
            Global_GameManager.Instance.state != State.NoDead &&
-           Global_GameManager.Instance.state != State.SpellCard) return;
+           Global_GameManager.Instance.state != State.SpellCard &&
+           Global_GameManager.Instance.state != State.Dialog) return;
         
         // 获取当前位置
         Vector3 position = transform.position;

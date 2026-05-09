@@ -84,7 +84,11 @@ public class SpellCardEffect : MonoBehaviour
             }
 
             Global_GameManager.Instance.SubBomb(1);// 减少符卡数量
-
+            if(Global_GameManager.Instance.state == State.Frozen)
+            {
+                playerAnime.CompleteQTE();// 完成QTE
+            }
+            
             if (isHitDelayActive)
             {
                 isAnimating = true;
@@ -107,6 +111,12 @@ public class SpellCardEffect : MonoBehaviour
     /// </summary>
     public void ReleaseNormalSpellCard()
     {
+        // 停止擦弹音效并清空擦弹列表
+        if (graze != null)
+        {
+            graze.ForceStopGrazeSound();
+        }
+        
         // 设置无敌状态
         Global_GameManager.Instance.state = State.NoDead;
 

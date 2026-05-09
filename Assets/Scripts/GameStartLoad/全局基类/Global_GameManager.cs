@@ -317,6 +317,27 @@ public class Global_GameManager : Singleton<Global_GameManager>
         SpeedScale = 1f;
         state = State.Gaming;
     }
+    
+    /// <summary>
+    /// 重置为Game2的初始数据
+    /// 保留当前得分，重置Grade、Graze为0，SceneLevel为2
+    /// </summary>
+    public void ResetFor_Game2()
+    {
+        // 保留当前得分（已经在FinalUI中累加过了）
+        // 重置Grade为0
+        Grade = 0;
+        OnGradeChanged?.Invoke(Grade);
+        
+        // 重置Graze为0
+        Graze = 0;
+        OnGrazeChanged?.Invoke(Graze);
+        
+        // 设置SceneLevel为2（第二关）
+        SceneLevel = 2;
+        
+        Debug.Log("已重置为Game2初始数据 - Grade: 0, Graze: 0, SceneLevel: 2, Score保留当前值");
+    }
 
     /// <summary>
     /// 添加敌人到敌人列表

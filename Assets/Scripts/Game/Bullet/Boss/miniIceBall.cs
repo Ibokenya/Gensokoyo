@@ -8,7 +8,6 @@ public class miniIceBall : MonoBehaviour
     public float TurnInterval = 2f; // 转向间隔
     public Vector3 TargetPosition; // 目标坐标
     public int maxHP = 50; // 生命值
-    [HideInInspector]
     public int hp;
     public bool isMini = true; // 是否为mini态（是否有折返）
     
@@ -32,7 +31,6 @@ public class miniIceBall : MonoBehaviour
             Vector2 direction = transform.up;
             rb2D.velocity = direction * moveSpeed;
         }
-        hp = maxHP;
     }
     
     void OnEnable()
@@ -150,7 +148,7 @@ public class miniIceBall : MonoBehaviour
         isFused = false;
         isMini = true; // 重置为mini态
         timer = 0f;
-        hp = maxHP;
+        hp = maxHP; // 重置HP为默认值
         if (rb2D != null)
         {
             rb2D.velocity = Vector2.zero;
