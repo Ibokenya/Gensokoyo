@@ -72,7 +72,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1817709973
-  m_SortingLayer: 6
+  m_SortingLayer: 4
   m_SortingOrder: 10
   m_Sprite: {fileID: -1760825267, guid: 88065cca751ad0c40bb829049ef5f26a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -98,14 +98,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rotationSpeed: 180
-  SwordPrefab: {fileID: 0}
   xMin: 20
   xMax: 30
   yMin: 21.8
   yMax: 32.7
   zMin: 34.4
   zMax: 51.6
-  SwordSpeed: 25
+  PearlSpeed: 30
   spawnDelayMin: 1
   spawnDelayMax: 1.6
   reuseDelayMin: 0.1
@@ -116,4 +115,3 @@ MonoBehaviour:
   - {fileID: -994780330, guid: f3c518721be299f4b951945e409193d9, type: 3}
   - {fileID: 1620580076, guid: f3c518721be299f4b951945e409193d9, type: 3}
   explosionFrameInterval: 20
-  Sword: {fileID: 0}

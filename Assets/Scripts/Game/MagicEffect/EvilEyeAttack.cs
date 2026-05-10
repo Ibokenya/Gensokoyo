@@ -42,7 +42,9 @@ public class EvilEyeAttack : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private SpriteRenderer blackHoleRenderer;
     private List<GameObject> activeLasers = new List<GameObject>(); // 活跃的连线列表
+    private Queue<GameObject> laserPool = new Queue<GameObject>(); // 连线对象池
     public bool isFadeInComplete = false; // 淡入是否完成
+    private bool isInEvilEyeMode = false; // 是否处于恶魔之眼攻击模式
     private float spawnTimer = 0f; // 暗影弹生成计时器
     private int LaserInterval = 10;// 激光伤害间隔帧（每6帧出伤）
     private Coroutine fadeCoroutine;
@@ -106,8 +108,11 @@ public class EvilEyeAttack : MonoBehaviour
             // 检测Z键按下和抬起
             if (Input.GetKey(KeyCode.Z))
             {
-                // Z键按下时，执行攻击逻辑
-                UpdateLasers();
+                // Z键按下时，执行攻击逻辑（只有在恶魔之眼模式下才创建连线）
+                if (isInEvilEyeMode)
+                {
+                    UpdateLasers();
+                }
                 LaserInterval-=1;
                 if(LaserInterval == 0)
                 {
@@ -121,6 +126,13 @@ public class EvilEyeAttack : MonoBehaviour
                 // Z键抬起时，清空所有连线
                 ClearAllLasers();
             }
+        }
+        
+        // 检测左Shift抬起，立即清除所有连线并退出恶魔之眼模式
+        if (isFadeInComplete && Input.GetKeyUp(KeyCode.LeftShift))
+        {
+            isInEvilEyeMode = false;
+            ClearAllLasers();
         }
     }
     
@@ -197,8 +209,9 @@ public class EvilEyeAttack : MonoBehaviour
             blackHoleRenderer.color = blackHoleColor;
         }
         
-        // 淡入完成，开始攻击
+        // 淡入完成，开始攻击，进入恶魔之眼攻击模式
         isFadeInComplete = true;
+        isInEvilEyeMode = true;
     }
     
     /// <summary>
@@ -279,6 +292,11 @@ public class EvilEyeAttack : MonoBehaviour
         // 清理之前的连线
         ClearAllLasers();
         
+        if (boss != null && boss.activeInHierarchy)
+        {
+            CreateLaserToTarget(boss.transform.position);
+            return;
+        }
         // 从 GameManager 获取所有活跃敌人
         List<GameObject> enemies = GetActiveEnemies();
         
@@ -288,43 +306,62 @@ public class EvilEyeAttack : MonoBehaviour
             {
                 CreateLaserToTarget(enemy.transform.position);
             }
-        }
-        if (boss != null && boss.activeInHierarchy)
-        {
-            CreateLaserToTarget(boss.transform.position);
-        }
+        }   
     }
     
     /// <summary>
-    /// 创建到目标位置的连线
+    /// 创建到目标位置的连线（使用对象池复用）
     /// </summary>
     private void CreateLaserToTarget(Vector3 targetPosition)
     {
-        // 创建连线对象
-        GameObject laserObj = new GameObject("EvilEyeLaser");
+        // 从对象池获取或创建连线对象
+        GameObject laserObj = GetLaserFromPool();
         laserObj.transform.parent = transform;
         laserObj.transform.position = transform.position;
+        laserObj.SetActive(true);
         
-        // 添加 LineRenderer 组件
-        LineRenderer lineRenderer = laserObj.AddComponent<LineRenderer>();
-        lineRenderer.startWidth = laserWidth;
-        lineRenderer.endWidth = laserWidth;
-        lineRenderer.material = laserMaterial ? laserMaterial : new Material(Shader.Find("Sprites/Default"));
-        lineRenderer.startColor = new Color(1f, 0f, 0f, 0.5f);
-        lineRenderer.endColor = new Color(1f, 0f, 0f, 0.5f);
-        lineRenderer.positionCount = 2;
-        lineRenderer.useWorldSpace = true; // 使用世界空间坐标
+        // 获取 LineRenderer 组件
+        LineRenderer lineRenderer = laserObj.GetComponent<LineRenderer>();
         
         // 设置连线的两个点
         lineRenderer.SetPosition(0, transform.position);
         lineRenderer.SetPosition(1, targetPosition);
         
-        // 设置排序层级
-        lineRenderer.sortingLayerName = "Effect"; // 设置为效果层
-        lineRenderer.sortingOrder = 9; // 设置排序顺序
-        
         // 添加到活跃连线列表
         activeLasers.Add(laserObj);
+    }
+    
+    /// <summary>
+    /// 从对象池获取连线对象
+    /// </summary>
+    private GameObject GetLaserFromPool()
+    {
+        if (laserPool.Count > 0)
+        {
+            return laserPool.Dequeue();
+        }
+        else
+        {
+            // 创建新的连线对象
+            GameObject laserObj = new GameObject("EvilEyeLaser");
+            
+            // 添加 LineRenderer 组件
+            LineRenderer lineRenderer = laserObj.AddComponent<LineRenderer>();
+            lineRenderer.startWidth = laserWidth;
+            lineRenderer.endWidth = laserWidth;
+            lineRenderer.material = laserMaterial ? laserMaterial : new Material(Shader.Find("Sprites/Default"));
+            lineRenderer.startColor = new Color(1f, 0f, 0f, 0.5f);
+            lineRenderer.endColor = new Color(1f, 0f, 0f, 0.5f);
+            lineRenderer.positionCount = 2;
+            lineRenderer.useWorldSpace = true; // 使用世界空间坐标
+            
+            // 设置排序层级
+            lineRenderer.sortingLayerName = "Effect"; // 设置为效果层
+            lineRenderer.sortingOrder = 9; // 设置排序顺序
+            
+            laserObj.SetActive(false);
+            return laserObj;
+        }
     }
     
     /// <summary>
@@ -337,21 +374,18 @@ public class EvilEyeAttack : MonoBehaviour
     }
     
     /// <summary>
-    /// 清理所有连线
+    /// 清理所有连线（放回对象池）
     /// </summary>
     public void ClearAllLasers()
     {
-        // 创建临时列表来存储需要删除的对象
-        List<GameObject> lasersToDestroy = new List<GameObject>(activeLasers);
-        
-        // 遍历临时列表并销毁对象
-        foreach (GameObject laserObj in lasersToDestroy)
+        // 将活跃连线放回对象池
+        foreach (GameObject laserObj in activeLasers)
         {
             if (laserObj != null)
             {
-                // 移除父对象
+                laserObj.SetActive(false);
                 laserObj.transform.parent = null;
-                Destroy(laserObj);
+                laserPool.Enqueue(laserObj);
             }
         }
         
@@ -364,6 +398,13 @@ public class EvilEyeAttack : MonoBehaviour
     /// </summary>
     private void DealDamageToEnemies()
     {
+        // 如果Boss激活，直接对Boss造成伤害，跳过遍历敌人列表
+        if (boss != null && boss.activeInHierarchy)
+        {
+            DealDamageToBoss();
+            return; // 直接返回，不再处理普通敌人
+        }
+        
         // 从 GameManager 获取所有活跃敌人
         List<GameObject> enemies = GetActiveEnemies();
         
@@ -391,9 +432,6 @@ public class EvilEyeAttack : MonoBehaviour
                 enemyComponent.UpdateRedIntensity();
             }
         }
-        
-        // 对Boss造成伤害
-        DealDamageToBoss();
     }
     
     /// <summary>
@@ -406,7 +444,8 @@ public class EvilEyeAttack : MonoBehaviour
             BossBase bossBase = boss.GetComponent<BossBase>();
             if (bossBase != null)
             {
-                int damage = CalDamage();
+                int damage = CalDamage() * 2;// 对Boss造成伤害值翻倍
+                // 对Boss造成伤害
                 bossBase.TakeDamage(damage);
             }
         }
@@ -440,7 +479,7 @@ public class EvilEyeAttack : MonoBehaviour
     /// <returns>每伤害帧伤害值</returns>
     private int CalDamage()
     {
-        return 2+(Global_GameManager.Instance.Power/100);
+        return 3+(Global_GameManager.Instance.Power/100);
     }
     
     /// <summary>
@@ -533,6 +572,7 @@ public class EvilEyeAttack : MonoBehaviour
     
     /// <summary>
     /// 获取空心矩形范围内的随机位置
+    /// 暗影弹只在外矩形边框上生成，但排除内矩形覆盖的区域
     /// </summary>
     /// <returns>随机位置</returns>
     private Vector3 GetRandomPositionInHollowRect()
@@ -549,8 +589,19 @@ public class EvilEyeAttack : MonoBehaviour
             bool isLeft = Random.value > 0.5f;
             x = isLeft ? outerRectBottomLeft.x : outerRectTopRight.x;
             
-            // 上下范围内随机
-            y = Random.Range(outerRectBottomLeft.y, outerRectTopRight.y);
+            // 上下范围内随机，但排除内矩形覆盖的区域
+            // 在上下两条线段中随机选择一条
+            bool isUpper = Random.value > 0.5f;
+            if (isUpper)
+            {
+                // 上边线段：从内矩形顶部到外矩形顶部
+                y = Random.Range(innerRectTopRight.y, outerRectTopRight.y);
+            }
+            else
+            {
+                // 下边线段：从外矩形底部到内矩形底部
+                y = Random.Range(outerRectBottomLeft.y, innerRectBottomLeft.y);
+            }
         }
         else
         {
@@ -559,8 +610,19 @@ public class EvilEyeAttack : MonoBehaviour
             bool isTop = Random.value > 0.5f;
             y = isTop ? outerRectTopRight.y : outerRectBottomLeft.y;
             
-            // 左右范围内随机
-            x = Random.Range(outerRectBottomLeft.x, outerRectTopRight.x);
+            // 左右范围内随机，但排除内矩形覆盖的区域
+            // 在左右两条线段中随机选择一条
+            bool isRight = Random.value > 0.5f;
+            if (isRight)
+            {
+                // 右边线段：从内矩形右侧到外矩形右侧
+                x = Random.Range(innerRectTopRight.x, outerRectTopRight.x);
+            }
+            else
+            {
+                // 左边线段：从外矩形左侧到内矩形左侧
+                x = Random.Range(outerRectBottomLeft.x, innerRectBottomLeft.x);
+            }
         }
         
         // 转换为世界坐标

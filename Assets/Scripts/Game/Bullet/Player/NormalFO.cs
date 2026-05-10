@@ -96,6 +96,7 @@ private readonly float minX = -9.5f;
             default:
                 break;
         }
+        Global_GameManager.Instance.AddScore(3);
         if(!isNeedle)
         {
             Global_ObjectPool.Instance.Recycle(this.gameObject);

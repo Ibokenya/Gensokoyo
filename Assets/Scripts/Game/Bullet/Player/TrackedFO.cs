@@ -211,6 +211,7 @@ public class TrackedFO : MonoBehaviour
             default:
                 break;
         }
+        Global_GameManager.Instance.AddScore(2);
         Global_ObjectPool.Instance.Recycle(this.gameObject);
     }
 }

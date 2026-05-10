@@ -11,23 +11,26 @@ public class card1 : MonoBehaviour
     public GameObject randomIcePickBulletPrefab; // 随机射击子弹预制件
     public BossShootSystem bossShootSystem; // 射击系统引用
     public GameObject boss; // Boss对象引用
-    
+
     [Header("陨石冰冻旋转攻击参数")]
     public int stoneCount = 5; // 陨石数量
     public float rotationSpeed = 30f; // 旋转速度
-    
+
     [Header("随机射击参数")]
     public float bulletSpeed = 5f; // 子弹速度
     public float shootInterval = 2f; // 射击间隔
     public int bulletCount = 5; // 每轮射击子弹数
-    
+
     [Header("脚本引用")]
     public BossUI bossUI; // BossUI脚本引用
     public BossBase bossBase; // Boss基础属性引用
     public UIManager uiManager; // UIManager脚本引用
-    
+
+    [Header("符卡收取奖励")]
+    public List<ItemDropConfig> card1ClearRewards; // 符卡1收取成功时的掉落物配置
+
     private void OnEnable()
-    {      
+    {
         // 初始化弹幕池
         if (stoneBulletPrefab != null)
         {
@@ -50,7 +53,7 @@ public class card1 : MonoBehaviour
         // 开始攻击
         StartAttacks();
     }
-    
+
     private void OnDisable()
     {
         // 停止所有协程
@@ -62,20 +65,20 @@ public class card1 : MonoBehaviour
         {
             bossShootSystem.ResumeAllStonesGravity();
         }
-        
+
         // 停止 BossShootSystem 中的所有射击协程
         if (bossShootSystem != null)
         {
             bossShootSystem.StopAllShooting();
         }
     }
-    
+
     private void StartAttacks()
     {
         // 启动boss移动协程
         StartCoroutine(MoveBossToCenter());
     }
-    
+
     private IEnumerator MoveBossToCenter()
     {
         if (boss != null)
@@ -84,7 +87,7 @@ public class card1 : MonoBehaviour
             Vector3 targetPosition = new Vector3(-3f, 0f, 0f);
             float duration = 2f;
             float elapsedTime = 0f;
-            
+
             // 平滑移动boss到中心位置
             while (elapsedTime < duration)
             {
@@ -95,22 +98,22 @@ public class card1 : MonoBehaviour
                 elapsedTime += Time.deltaTime;
                 yield return null;
             }
-            
+
             // 确保boss到达精确位置
             boss.transform.position = targetPosition;
         }
-        
+
         // 移动完成后开始攻击
         if (bossShootSystem != null)
         {
             // 启动陨石冰冻旋转攻击
             bossShootSystem.StoneFrozenAttack(stoneBulletPrefab, frozenIceBulletPrefab, normalIceBulletPrefab, stoneCount, rotationSpeed);
-            
+
             // 启动随机射击
             bossShootSystem.randomIcePick(randomIcePickBulletPrefab, bulletSpeed, shootInterval, bulletCount);
         }
     }
-    
+
     /// <summary>
     /// 检查boss是否已经死亡或处于锁血状态
     /// 如果boss处于锁血状态，说明玩家成功讨伐当前阶段
@@ -125,15 +128,27 @@ public class card1 : MonoBehaviour
                 Debug.Log("card1阶段：玩家成功讨伐Boss！");
                 // 标记为获取了符卡1
                 uiManager.isCard1Get = true;
-                // 可以在这里添加讨伐成功的效果或奖励逻辑
+                // 发放符卡收取奖励
+                SpawnClearRewards();
             }
             else
             {
                 Debug.Log("card1阶段：Boss仍然存活，时间到");
                 // 标记为未获取符卡1
                 uiManager.isCard1Get = false;
-                // 可以在这里添加时间到的效果逻辑
             }
+        }
+    }
+
+    /// <summary>
+    /// 生成符卡收取奖励
+    /// </summary>
+    private void SpawnClearRewards()
+    {
+        if (boss != null && card1ClearRewards != null && card1ClearRewards.Count > 0)
+        {
+            CreateItem.Instance.SpawnItems(boss.transform.position, card1ClearRewards);
+            Debug.Log("card1符卡收取成功，已发放奖励");
         }
     }
 }

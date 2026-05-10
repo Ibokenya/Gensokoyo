@@ -34,6 +34,7 @@ public class SpellCardEffect : MonoBehaviour
     public PlayerAnime playerAnime; // 引用PlayerAnime脚本
     public EvilEyeAttack evilEyeAttack; // 引用EvilEyeAttack脚本
     public EvilShadow evilShadow; // 引用EvilShadow脚本
+    public FreezeSystem freezeSystem; // 引用冻结系统脚本
 
     [Header("物体引用")]
     public GameObject player;// 玩家物体
@@ -51,6 +52,8 @@ public class SpellCardEffect : MonoBehaviour
     private bool wasEvilEyeActive = false; // 恶魔之眼是否激活
     private bool wasEvilShadowActive = false; // 暗影视界是否激活
 
+    private bool isFrozen = false; // 是否冻结
+
     void OnDisable()
     {
         // 确保在禁用时取消受击延迟
@@ -60,6 +63,7 @@ public class SpellCardEffect : MonoBehaviour
         }
         isHitDelayActive = false;
         isAnimating = false;
+        isFrozen = false;
     }
 
     void Update()
@@ -72,6 +76,11 @@ public class SpellCardEffect : MonoBehaviour
         // 处理技能释放
         if (Input.GetKeyDown(KeyCode.X))
         {
+            if (isFrozen)
+            {
+                Debug.Log("符卡已冻结");
+                return;
+            }
             if (Global_GameManager.Instance.BombCount <= 0)// 检查是否有符卡可用
             {
                 Debug.Log("没有符卡可用");
@@ -84,9 +93,23 @@ public class SpellCardEffect : MonoBehaviour
             }
 
             Global_GameManager.Instance.SubBomb(1);// 减少符卡数量
-            if(Global_GameManager.Instance.state == State.Frozen)
+            
+            // 检查是否处于冻结状态（包括冻结动画期间）
+            bool isInFrozenState = Global_GameManager.Instance.state == State.Frozen;
+            bool isFreezing = freezeSystem != null && freezeSystem.IsFrozen;
+            
+            if (isInFrozenState || isFreezing)
             {
-                playerAnime.CompleteQTE();// 完成QTE
+                // 重置冻结系统（解除冰冻状态）
+                if (freezeSystem != null)
+                {
+                    freezeSystem.ResetFreeze();
+                }
+                // 完成QTE（禁用Ice物体）
+                if (playerAnime != null)
+                {
+                    playerAnime.CompleteQTE();
+                }
             }
             
             if (isHitDelayActive)
@@ -116,6 +139,9 @@ public class SpellCardEffect : MonoBehaviour
         {
             graze.ForceStopGrazeSound();
         }
+        
+        // 收取场上所有道具（与回收线收取逻辑一致）
+        CollectAllItems();
         
         // 设置无敌状态
         Global_GameManager.Instance.state = State.NoDead;
@@ -178,6 +204,9 @@ public class SpellCardEffect : MonoBehaviour
             Global_AudioManager.Instance.StopBGM();
             Global_AudioManager.Instance.StopAllSFX();
         }
+        
+        // 收取场上所有道具（与回收线收取逻辑一致）
+        CollectAllItems();
 
         // 存储魔理沙决死前的状态
         if (Global_GameManager.Instance.character == Character.Marisa)
@@ -446,5 +475,31 @@ public class SpellCardEffect : MonoBehaviour
         {
             clearAllBullet.ClearScreenBullet(false);
         }
+    }
+
+    public void FreezeSpellCard()
+    {
+        isFrozen = true;
+    }
+
+    /// <summary>
+    /// 收取场上所有道具（与回收线收取逻辑一致）
+    /// </summary>
+    private void CollectAllItems()
+    {
+        // 查找场景中所有的AboutItem组件
+        AboutItem[] allItems = FindObjectsOfType<AboutItem>();
+        
+        foreach (AboutItem item in allItems)
+        {
+            // 只有未在收集状态且未在自动飞行的道具才会被收取
+            if (!item.IsCollecting && !item.IsAutoFlying)
+            {
+                // 触发飞向玩家的收集逻辑（与回收线触发一致）
+                item.FlyToPlayer(player.transform, true);
+            }
+        }
+        
+        Debug.Log($"符卡释放时收取了 {allItems.Length} 个道具");
     }
 }

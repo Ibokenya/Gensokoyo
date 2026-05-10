@@ -12,17 +12,18 @@ public class MagicAttack : MonoBehaviour
     public GameObject markerPrefab; // 瞄准标记预制体
     
     [Header("神秘珠预制体")]
-    public GameObject swordPrefab; // 神秘珠预制体
+    public GameObject pearlPrefab; // 神秘珠预制体
     
     [Header("场景对象")]
     public GameObject evilEye; // 场景中的恶魔之眼对象
     public GameObject evilShadow; // 场景中的 EvilShadow 对象
+    public GameObject boss; // Boss对象（通过外部引用）
     
     [Header("生成参数")]
     public float spawnDelayMin = 1f; // 生成瞄准点的最小延迟时间
     public float spawnDelayMax = 2f; // 生成瞄准点的最大延迟时间
     public float markerSpawnChance = 0.4f; // 为敌人添加瞄准点的概率（40%）
-    public float switchToEvilEyeTime = 13f; // 切换到恶魔之眼攻击的时间（秒）
+    public float switchToEvilEyeTime = 7f; // 切换到恶魔之眼攻击的时间（秒）
     public float evilEyeFadeDuration = 1f; // 恶魔之眼淡入淡出时间
     public float evilShadowFadeOutDuration = 3f; // EvilShadow 淡出时间
     
@@ -119,14 +120,26 @@ public class MagicAttack : MonoBehaviour
         {
             magicTimer += Time.deltaTime;
             
-            // 检查是否达到切换时间
+            // 检查是否达到切换时间，或者Boss激活时按下shift键
+            bool shouldSwitchToEvilEye = false;
             if (magicTimer >= switchToEvilEyeTime)
             {
-                SwitchToEvilEyeAttack();
+                shouldSwitchToEvilEye = true;
+            }
+            // 如果Boss激活且按下shift键，跳过标记攻击直接进入恶魔之眼攻击
+            else if (boss != null && boss.activeInHierarchy && Input.GetKey(KeyCode.LeftShift))
+            {
+                shouldSwitchToEvilEye = true;
             }
             
-            // 每10帧扫描一次敌人
-            if (Input.GetKey(KeyCode.Z))
+            if (shouldSwitchToEvilEye)
+            {
+                SwitchToEvilEyeAttack();
+                return; // 直接返回，不再执行后续逻辑
+            }
+            
+            // 每10帧扫描一次敌人（仅在非Boss战或Boss未激活时执行）
+            if (Input.GetKey(KeyCode.Z) && (boss == null || !boss.activeInHierarchy))
             {
                 frameCounter++;
                 if (frameCounter >= 10)
@@ -154,13 +167,13 @@ public class MagicAttack : MonoBehaviour
             }
             
             // 初始化神秘珠对象池，数量与标记对象池相同
-            if (swordPrefab != null)
+            if (pearlPrefab != null)
             {
-                Global_ObjectPool.Instance.InitPool(swordPrefab, 10);
+                Global_ObjectPool.Instance.InitPool(pearlPrefab, 10);
             }
             else
             {
-                Debug.LogError("MagicAttack: swordPrefab 未设置，无法初始化神秘珠对象池！");
+                Debug.LogError("MagicAttack: pearlPrefab 未设置，无法初始化神秘珠对象池！");
             }
         }
         else
@@ -295,7 +308,7 @@ public class MagicAttack : MonoBehaviour
         
         // 随机延迟开始淡入动画
         float randomDelay = Random.Range(spawnDelayMin, spawnDelayMax);
-        StartCoroutine(DelayedFadeIn(marker, randomDelay, swordPrefab));
+        StartCoroutine(DelayedFadeIn(marker, randomDelay, pearlPrefab));
     }
     
     /// <summary>
@@ -303,7 +316,7 @@ public class MagicAttack : MonoBehaviour
     /// </summary>
     /// <param name="marker">标记对象</param>
     /// <param name="delay">延迟时间</param>
-    /// <param name="swordPrefab">神秘珠预制件</param>
+    /// <param name="pearlPrefab">神秘珠预制件</param>
     private IEnumerator DelayedFadeIn(GameObject marker, float delay, GameObject swordPrefab)
     {
         yield return new WaitForSeconds(delay);
@@ -314,7 +327,7 @@ public class MagicAttack : MonoBehaviour
         {
             if (marker.TryGetComponent<AimPointAttack>(out var aimPointAttack))
             {
-                aimPointAttack.SetSwordPrefab(swordPrefab);
+                aimPointAttack.SetPearlPrefab(swordPrefab);
             }
             else
             {

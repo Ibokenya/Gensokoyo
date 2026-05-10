@@ -13,6 +13,8 @@ public class Global_ObjectPool : Singleton<Global_ObjectPool>
     private readonly Dictionary<string, Queue<GameObject>> ObjectPool = new();
     // 存储每个对象池的初始容量
     private readonly Dictionary<string, int> PoolInitialCapacities = new();
+    // 存储当前活跃的对象（已从池中取出但尚未回收）
+    private readonly Dictionary<string, HashSet<GameObject>> ActiveObjects = new();
     [Header("预生成数量")]
     public int ObjectsInPool_Count = 40;
 
@@ -78,6 +80,14 @@ public class Global_ObjectPool : Singleton<Global_ObjectPool>
         }
         item.transform.SetPositionAndRotation(position, rotation);
         item.SetActive(true);
+        
+        // 将对象添加到活跃对象集合
+        if (!ActiveObjects.ContainsKey(poolKey))
+        {
+            ActiveObjects[poolKey] = new HashSet<GameObject>();
+        }
+        ActiveObjects[poolKey].Add(item);
+        
         return item;
     }
     
@@ -182,6 +192,12 @@ public class Global_ObjectPool : Singleton<Global_ObjectPool>
             catch { }
         }
 
+        // 从活跃对象集合中移除
+        if (ActiveObjects.ContainsKey(poolKey))
+        {
+            ActiveObjects[poolKey].Remove(item);
+        }
+        
         // 确保池存在，再放回
         if (ObjectPool.ContainsKey(poolKey))
         {
@@ -208,10 +224,69 @@ public class Global_ObjectPool : Singleton<Global_ObjectPool>
     }
 
     /// <summary>
+    /// 禁用并回收所有活跃对象（场景切换时使用）
+    /// </summary>
+    public void DisableAndRecycleAllActiveObjects()
+    {
+        // 遍历所有活跃对象类型
+        foreach (var kvp in ActiveObjects)
+        {
+            string poolKey = kvp.Key;
+            HashSet<GameObject> activeSet = kvp.Value;
+            
+            // 创建临时列表避免在遍历过程中修改集合
+            List<GameObject> activeList = new List<GameObject>(activeSet);
+            
+            foreach (GameObject item in activeList)
+            {
+                if (item != null)
+                {
+                    try
+                    {
+                        // 禁用对象
+                        item.SetActive(false);
+                        
+                        // 解除父物体关系
+                        if (item.transform.parent != null)
+                        {
+                            item.transform.SetParent(null);
+                        }
+                        
+                        // 设置为对象池的子物体
+                        if (gameObject != null && gameObject.scene != null && gameObject.scene.isLoaded)
+                        {
+                            item.transform.SetParent(transform);
+                        }
+                        
+                        // 放回对象池
+                        if (ObjectPool.ContainsKey(poolKey))
+                        {
+                            ObjectPool[poolKey].Enqueue(item);
+                        }
+                    }
+                    catch (System.Exception e)
+                    {
+                        Debug.LogWarning($"回收活跃对象失败：{e.Message}");
+                    }
+                }
+            }
+            
+            // 清空该类型的活跃对象集合
+            activeSet.Clear();
+        }
+        
+        Debug.Log("已禁用并回收所有活跃对象");
+    }
+    
+    /// <summary>
     /// 清空所有物品池
     /// </summary>
     public void ClearAllPools()
     {
+        // 先禁用并回收所有活跃对象
+        DisableAndRecycleAllActiveObjects();
+        
+        // 销毁池中所有对象
         foreach (var pool in ObjectPool.Values)
         {
             while (pool.Count > 0)
@@ -222,6 +297,7 @@ public class Global_ObjectPool : Singleton<Global_ObjectPool>
         }
         ObjectPool.Clear();
         PoolInitialCapacities.Clear(); // 清空初始容量字典
+        ActiveObjects.Clear(); // 清空活跃对象集合
         Debug.Log("清空所有物品池");
     }
 }

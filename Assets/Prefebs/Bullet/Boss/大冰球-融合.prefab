@@ -164,6 +164,6 @@ MonoBehaviour:
   moveSpeed: 3
   TurnInterval: 1.5
   TargetPosition: {x: 0, y: 0, z: 0}
-  maxHP: 99
-  hp: 50
+  maxHP: 69
+  hp: 69
   isMini: 1

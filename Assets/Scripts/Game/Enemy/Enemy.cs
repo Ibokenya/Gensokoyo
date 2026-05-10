@@ -288,6 +288,7 @@ public class Enemy : MonoBehaviour
         if (isKilled)
         {
             SpawnItemDrops();
+            CreateItem.Instance.SpawnScoreItems(transform.position);
         }
         // 解除标记与敌人的父子关系，防止对象池复用时出现异常
         if (aimMarker != null)
@@ -298,10 +299,6 @@ public class Enemy : MonoBehaviour
             if (magicAttack != null)
             {
                 magicAttack.RecycleMarker(aimMarker);
-            }
-            else
-            {
-                Debug.LogWarning("未找到魔法攻击脚本实例");
             }
             aimMarker = null;
         }
@@ -327,12 +324,7 @@ public class Enemy : MonoBehaviour
             return;
         }
 
-        // 查找CreateItem实例
-        CreateItem createItem = FindObjectOfType<CreateItem>();
-        if (createItem != null)
-        {
-            createItem.SpawnItems(transform.position, itemDrops);
-        }
+        CreateItem.Instance.SpawnItems(transform.position, itemDrops);
     }
 
     /// <summary>

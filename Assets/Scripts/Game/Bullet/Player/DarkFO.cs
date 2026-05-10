@@ -286,6 +286,7 @@ public class DarkFO : MonoBehaviour
             default:
                 break;
         }
+        Global_GameManager.Instance.AddScore(7);
         Recycle();
     }
     

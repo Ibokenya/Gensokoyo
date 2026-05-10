@@ -261,7 +261,7 @@ public class Global_SceneManager : Singleton<Global_SceneManager>
             DeleteCurrentScene(CurrentSceneName, isHide);
         }
 
-        // 清除对象池中的所有元素
+        // 清除对象池中的所有元素（先禁用并回收活跃对象，再清空池）
         if (Global_ObjectPool.Instance != null)
         {
             Global_ObjectPool.Instance.ClearAllPools();

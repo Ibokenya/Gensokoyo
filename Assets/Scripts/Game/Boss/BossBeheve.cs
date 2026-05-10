@@ -307,6 +307,7 @@ public class BossBeheve : MonoBehaviour
                 bossAnime.Conceal();
             }
             bossUI.ShowFinalWarning();
+            bossShootSystem.FreezeSpellCard();
             hasCalledFinalAnime = true;
         }
         
@@ -381,6 +382,12 @@ public class BossBeheve : MonoBehaviour
         changeBG.HideBg();// 隐藏最终符卡背景
         bossShootSystem.HideTerrain();// 隐藏地形
         bossShootSystem.isAllowAreaLimit = false; // 禁用区域限制攻击
+        
+        // 淡出冰领域并禁用碰撞器
+        if (bossShootSystem.IceRealm != null)
+        {
+            bossShootSystem.IceRealm.StartFadeOut();
+        }
 
         Global_AudioManager.Instance.PlaySFX(finalOverSound);// 时符击败音效
     }

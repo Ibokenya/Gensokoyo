@@ -18,7 +18,7 @@ public class FreezeSystem : MonoBehaviour
     public PlayerAnime playerAnime; // 引用玩家动画脚本
 
     private float FrozenDegree;//冻结进度 0-1
-    private bool IsFrozen;//是否冻结
+    public bool IsFrozen;//是否冻结（公开供外部检测）
 
     public float FrozenScale = 1f;//冻结缩放比例(默认1，有的符卡程度会加快冻结速度)
 

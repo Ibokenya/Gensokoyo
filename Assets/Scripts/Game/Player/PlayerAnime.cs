@@ -78,6 +78,7 @@ public class PlayerAnime : MonoBehaviour
     public PlayerCollision playerCollision;
 
     [Header("冻结相关")]
+    public FreezeSystem freezeSystem;
     public GameObject Ice; // 冰冻效果物体
 
     // QTE相关常量
@@ -667,7 +668,6 @@ public class PlayerAnime : MonoBehaviour
         }
         
         // 重置冻结系统
-        FreezeSystem freezeSystem = FindObjectOfType<FreezeSystem>();
         if (freezeSystem != null)
         {
             freezeSystem.ResetFreeze();
@@ -675,21 +675,5 @@ public class PlayerAnime : MonoBehaviour
         
         // 恢复游戏状态
         Global_GameManager.Instance.state = State.Gaming;
-    }
-
-    /// <summary>
-    /// 获取当前QTE进度
-    /// </summary>
-    public int GetQTEProgress()
-    {
-        return qteCurrentCount;
-    }
-
-    /// <summary>
-    /// 获取QTE目标次数
-    /// </summary>
-    public int GetQTETargetCount()
-    {
-        return QTE_TARGET_COUNT;
     }
 }

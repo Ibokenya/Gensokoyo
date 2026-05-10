@@ -133,6 +133,8 @@ public class Laser : MonoBehaviour
                     var boss = hit.collider.GetComponent<BossBase>();
                     if (boss != null)
                     {
+                        damage = (int)(damage * 3);// 对Boss造成伤害值翻3倍
+                        // 对Boss造成伤害
                         boss.TakeDamage(damage);
                     }
                     break;
@@ -160,6 +162,7 @@ public class Laser : MonoBehaviour
                 default:
                     break;
             }
+            Global_GameManager.Instance.AddScore(2);
         }
     }
 

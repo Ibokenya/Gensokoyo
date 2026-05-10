@@ -1,10 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
-using JetBrains.Annotations;
 using UnityEngine;
+using UnityEngine.UI;
+
+
 
 public class BossShootSystem : MonoBehaviour
 {
+    [Header("副卡冻结特效")]
+    public Image FrozeImage;
+    [Header("符卡系统引用")]
+    public SpellCardEffect spellCardEffect;
+
     public Game1 GameCamera;// 游戏相机，用来抖动镜头
     public GameObject player;
     public GameObject boss;
@@ -107,7 +114,6 @@ public class BossShootSystem : MonoBehaviour
     public bool isAllowAreaLimit = false; // 是否允许区域限制攻击
     private bool isFadingOut = false; // 是否正在淡出
     public bool isInArea = false; // 是否在限制区域内
-    public bool isRealmActive = false; // 是否激活冰领域笼
     private List<GameObject> currentAreaLimitBullets = new List<GameObject>(); // 当前区域限制攻击的子弹列表
     private List<SpriteRenderer> currentAreaLimitSpriteRenderers = new List<SpriteRenderer>(); // 当前区域限制攻击的精灵渲染器列表
 #endregion
@@ -141,7 +147,7 @@ public class BossShootSystem : MonoBehaviour
                     isInArea = true;
                     
                     // 激活冰囚笼
-                    if (isReadyForCheck && IceRealm != null && isRealmActive)
+                    if (isReadyForCheck && IceRealm != null)
                     {
                         IceRealm.Activate();
                     }
@@ -803,6 +809,7 @@ public class BossShootSystem : MonoBehaviour
     public void SnowFlakeAttack(GameObject flakePrefab, int totalCount)
     {
         StartCoroutine(SnowFlakeAttackCoroutine(flakePrefab, totalCount));
+        Debug.Log($"开始生成雪花子弹");
     }
     
     private IEnumerator SnowFlakeAttackCoroutine(GameObject flakePrefab, int totalCount)
@@ -833,6 +840,10 @@ public class BossShootSystem : MonoBehaviour
                     }
                 }
             } 
+            else
+            {
+                Debug.Log("boss在锁血状态或符卡阶段，不生成雪花");
+            }
             // 短暂延迟，避免所有雪花同时生成
             yield return new WaitForSeconds(0.1f);
         }
@@ -1862,6 +1873,35 @@ public class BossShootSystem : MonoBehaviour
     {
         GameCamera.Shake(ShakeTime);
     }
+
+    /// <summary>
+    /// 冻结副卡特效
+    /// </summary>
+    public void FreezeSpellCard()
+    {
+        StartCoroutine(FreezeSpellCardCoroutine());
+        spellCardEffect.FreezeSpellCard();
+    }
+
+    private IEnumerator FreezeSpellCardCoroutine()
+    {
+        float duration =2f;
+        float elapsedTime = 0f;
+        while (elapsedTime < duration)
+        {
+            float t = elapsedTime / duration;
+            float alpha = Mathf.Lerp(0f, 0.8f, t);
+            if (FrozeImage != null)
+            {
+                Color color = FrozeImage.color;
+                color.a = alpha;
+                FrozeImage.color = color;
+            }
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+    }
+
     /// <summary>
     /// 停止所有射击协程
     /// </summary>

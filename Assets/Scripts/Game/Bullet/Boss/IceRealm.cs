@@ -23,7 +23,7 @@ public class IceRealm : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         collider2D = GetComponent<Collider2D>();
         
-        // 初始化状态
+        // 初始化状态：脚本保持激活，碰撞器初始未激活
         if (collider2D != null)
         {
             collider2D.enabled = false;
@@ -36,7 +36,7 @@ public class IceRealm : MonoBehaviour
             spriteRenderer.color = color;
         }
         
-        isWaitingForActivation = true;
+        isWaitingForActivation = false;
         isFadingIn = false;
         isFadingOut = false;
         isColliderActive = false;
@@ -88,22 +88,7 @@ public class IceRealm : MonoBehaviour
             return;
         }
         
-        isWaitingForActivation = false;
-        isFadingOut = false;
-        isColliderActive = false;
-        
-        if (collider2D != null)
-        {
-            collider2D.enabled = false;
-        }
-        
-        if (spriteRenderer != null)
-        {
-            Color color = spriteRenderer.color;
-            color.a = 0f;
-            spriteRenderer.color = color;
-        }
-        
+        // 开始淡入
         StartFadeIn();
     }
     
@@ -149,6 +134,9 @@ public class IceRealm : MonoBehaviour
         Debug.Log("冰囚笼淡入");
     }
     
+    /// <summary>
+    /// 开始淡出冰领域并禁用碰撞器
+    /// </summary>
     public void StartFadeOut()
     {
         if (isFadingOut)

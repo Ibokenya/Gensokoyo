@@ -104,7 +104,10 @@ public class UIManager : MonoBehaviour
         SetGrazeText(Graze);
         SetLeftLife(LeftLife, LifePiece);
         SetBomb(SpeelCard, CardPiece);
-        BorderLine.SetActive(true);
+        if (BorderLine != null)
+        {
+            BorderLine.SetActive(true);
+        }
         Invoke(nameof(HideBorderLine), 2f);
     }
 
@@ -153,7 +156,10 @@ public class UIManager : MonoBehaviour
 
     private void HideBorderLine()
     {
-        BorderLine.SetActive(false);
+        if (BorderLine != null)
+        {
+            BorderLine.SetActive(false);
+        }
     }
 
     public void ShowFinalUI()
