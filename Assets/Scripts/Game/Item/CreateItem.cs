@@ -59,6 +59,9 @@ public class CreateItem : MonoBehaviour
     public float scoreItemFlySpeed = 15f; // 得分点飞向玩家的速度
     public GameObject player;
 
+    private float lastPowerSpawnTime = -1f; // 上次生成Power道具的时间
+    private const float powerSpawnInterval = 0.5f; // 生成间隔
+
     protected virtual void Awake()
     {
         if (_instance == null)
@@ -186,6 +189,59 @@ public class CreateItem : MonoBehaviour
         }
 
         Debug.Log($"生成得分点: 总值={randomValue}, GradeMinus={gradeMinusCount}, GradeMinusMinus={gradeMinusMinusCount}");
+    }
+
+    public void SpwanPowerItems(Vector3 position)
+    {
+        if (Global_ObjectPool.Instance == null)
+        {
+            Debug.LogError("Global_ObjectPool instance not found!");
+            return;
+        }
+
+        float currentTime = Time.time;
+        bool canSpawnPower = (lastPowerSpawnTime < 0f) || (currentTime - lastPowerSpawnTime >= powerSpawnInterval);
+
+        ItemType spawnType = canSpawnPower ? ItemType.Power : ItemType.GradeMinusMinus;
+        bool shouldFlyToPlayer = !canSpawnPower; // GradeMinusMinus需要飞向玩家
+
+        int prefabIndex = (int)spawnType;
+        if (prefabIndex < 0 || prefabIndex >= ItemPrefabs.Count)
+        {
+            Debug.LogWarning($"ItemType {spawnType} 对应的预制体索引 {prefabIndex} 超出了范围!");
+            return;
+        }
+
+        GameObject prefab = ItemPrefabs[prefabIndex];
+        if (prefab == null)
+        {
+            Debug.LogWarning($"ItemType {spawnType} 对应的预制体为空!");
+            return;
+        }
+
+        Vector3 spawnPosition = position + GetRandomOffset();
+        GameObject item = Global_ObjectPool.Instance.GetObject(prefab, spawnPosition, Quaternion.identity);
+        
+        if (item != null)
+        {
+            AboutItem aboutItem = item.GetComponent<AboutItem>();
+            aboutItem.player = player;
+            aboutItem.SetCollectClip(collectClip);
+
+            if (shouldFlyToPlayer)
+            {
+                aboutItem.SetAutoFlyToPlayer(true, scoreItemFlySpeed);
+            }
+
+            if (canSpawnPower)
+            {
+                lastPowerSpawnTime = currentTime;
+            }
+        }
+        else
+        {
+            Debug.LogWarning($"无法从对象池获取物品: {prefab.name}");
+        }
     }
 
     /// <summary>

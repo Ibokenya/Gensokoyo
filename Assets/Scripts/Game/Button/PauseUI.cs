@@ -16,7 +16,8 @@ public class PauseUI : MonoBehaviour
 
     private void CheckInput()
     {
-        if(Input.GetKeyDown(KeyCode.Escape))
+        if(Input.GetKeyDown(KeyCode.Escape) && 
+        Global_GameManager.Instance.state != State.Over)
         {
             if(!isPaused)
             {

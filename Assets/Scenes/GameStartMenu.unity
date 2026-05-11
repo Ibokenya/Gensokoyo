@@ -2353,7 +2353,7 @@ GameObject:
   - component: {fileID: 739886837}
   - component: {fileID: 739886838}
   m_Layer: 5
-  m_Name: "\u6E38\u620F\u6A21\u5F0Fp"
+  m_Name: "\u51B7\u51BB\u7CFB\u7EDFp"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2406,7 +2406,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "6. \u6E38\u620F\u6A21\u5F0F\n\u6682\u65E0"
+  m_text: "6. \u51B7\u51BB\u7CFB\u7EDF\n\n\u5B87\u5B99\u7684\u6E29\u5EA6\u6781\u4F4E\uFF0C\u548C\u742A\u9732\u8BFA\u5BF9\u6218\u65F6\u73A9\u5BB6\u4F1A\u9010\u6E10\u88AB\u51B7\u6C14\u5F71\u54CD\n\u51B7\u51BB\u503C\u9AD8\u4E86\uFF0C\u5C31\u4F1A\u56E0\u4E3A\u592A\u51B7\u800C\u7741\u4E0D\u5F00\u773C\n\u89C6\u91CE\u53D7\u9650\u7684\u540C\u65F6\u4E5F\u4F1A\u5BF8\u6B65\u96BE\u884C\n\n\u51B7\u51BB\u503C\u79EF\u7D2F\u6EE1\u540E\u5C31\u4F1A\u88AB\u51BB\u6210\u51B0\u5757\n\n\u8FD9\u65F6\u9700\u8981\u8D76\u7D27\u5DE6\u53F3\u626D\u52A8\u8EAB\u4F53\u6469\u64E6\u751F\u70ED\u6765\u878D\u5316\u51B0\u5757(\u5FEB\u901F\u6309\u4E0B\u2190\u2192\u952E)\n\u6218\u6597\u65F6\u7684\u64E6\u5F39\u884C\u4E3A\u4E5F\u4F1A\u8BA9\u73A9\u5BB6\u56E0\u4E3A\u80BE\u4E0A\u817A\u7D20\u98D9\u5347\u800C\u7F13\u89E3\u51BB\u7ED3\u5EA6\u7684\u589E\u957F\n\n\u518D\u4E0D\u884C\u5C31\u76F4\u63A5\u91CA\u653E\u7B26\u5361\u5427\uFF01\n\u53CD\u6B63\u91CA\u653E\u7B26\u5361\u65F6\u603B\u662F\u5E72\u52B2\u6700\u201C\u706B\u70ED\u201D\u7684\u65F6\u5019\u561B~"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9ba8b39bd05944f4886cc2634c4c43d0, type: 2}
   m_sharedMaterial: {fileID: 7202970623986868507, guid: 9ba8b39bd05944f4886cc2634c4c43d0, type: 2}
@@ -2440,8 +2440,8 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 2
-  m_VerticalAlignment: 512
+  m_HorizontalAlignment: 1
+  m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -3096,7 +3096,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "7.\u753B\u9762\u663E\u793A\u7269\n\u8FD9\u662F\u5565\uFF1F"
+  m_text: "7.\u753B\u9762\u663E\u793A\u7269\n\n\u5F53boss\u73B0\u8EAB\u540E\uFF0C\u53EF\u4EE5\u770B\u5230\u5C4F\u5E55\u4E0B\u65B9\u6709\u4E2A\u5C0F\u5C0F\u7684\u7EA2\u8272\u6807\u8BB0\n\u8FD9\u5C31\u662Fboss\u6240\u5728\u7684\u4F4D\u7F6E\n\n\u90A3\u4E48\u4FBF\u6BEB\u4E0D\u72B9\u8C6B\u5730\u5728\u8FD9\u6761\u7EBF\u4E0A\u5C04\u51FB\u5427\uFF01\n\n\u89E3\u51B3\u4E86\u6CA1\u529E\u6CD5\u4E00\u8FB9\u770B\u7740\u5224\u5B9A\u70B9\u8EB2\u907F\u4E00\u8FB9\u53BB\u627Eboss\u4F4D\u7F6E\u7684\u96BE\u9898\n\n\u4F60\u770B\uFF0C\u5BF9\u4ED8\u654C\u4EBA\u7684\u65F6\u5019\u76F4\u63A5\u6C89\u5E95\u7136\u540E\u628A\u76EE\u5149\u653E\u5230\u73A9\u5BB6\u7684\u5224\u5B9A\u70B9\u8EAB\u4E0A\n\u65F6\u523B\u8BA9\u73A9\u5BB6\u5904\u4E8E\u663E\u793A\u7269\u4E0A\u65B9\n\u4E13\u5FC3\u5730\u8EB2\u907F\u654C\u4EBA\u7684\u653B\u51FB\uFF0C\u67D0\u4E00\u65F6\u523BBoss\u83AB\u540D\u5176\u5999\u5730\u5C31\u8D25\u5317\u4E86"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9ba8b39bd05944f4886cc2634c4c43d0, type: 2}
   m_sharedMaterial: {fileID: 7202970623986868507, guid: 9ba8b39bd05944f4886cc2634c4c43d0, type: 2}
@@ -3130,8 +3130,8 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 2
-  m_VerticalAlignment: 512
+  m_HorizontalAlignment: 1
+  m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -3541,7 +3541,7 @@ GameObject:
   - component: {fileID: 868677865}
   - component: {fileID: 868677864}
   m_Layer: 5
-  m_Name: "\u6E38\u620F\u6A21\u5F0F"
+  m_Name: "\u51B7\u51BB\u7CFB\u7EDF"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3586,7 +3586,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "6. \u6E38\u620F\u6A21\u5F0F"
+  m_text: "6. \u51B7\u51BB\u7CFB\u7EDF"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: a6d3ea3c1ec4ef1438650c53279732ee, type: 2}
   m_sharedMaterial: {fileID: -5231835930614122962, guid: a6d3ea3c1ec4ef1438650c53279732ee, type: 2}

@@ -11,10 +11,8 @@ public class ClearAllBullet : MonoBehaviour
 
     void Update()
     {
-        // 时间标记
         // 更新当前音乐时间
-        // currentMusicTime = Global_AudioManager.Instance.CurrentBGMTime;
-        currentMusicTime += Time.deltaTime;
+        currentMusicTime = Global_AudioManager.Instance.CurrentBGMTime;
 
         // 检查是否到达清屏时间点
         CheckClearTimes();

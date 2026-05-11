@@ -4,10 +4,47 @@ using UnityEngine;
 
 public class Game2 : MonoBehaviour
 {
-    // Start is called before the first frame update
+    public GameObject Msg1;
+    public GameObject Msg2;
+
+    public Animator FinalAnime;
+
+    public BGImageScroll starBgScroll;
+
     void Start()
     {
-        
+        // 启动10秒延迟协程
+        StartCoroutine(DelayAfterActivate());
+    }
+
+    IEnumerator DelayAfterActivate()
+    {
+        yield return new WaitForSeconds(10f);
+
+        // 禁用Msg1和Msg2
+        if (Msg1 != null)
+        {
+            Msg1.SetActive(false);
+        }
+        if (Msg2 != null)
+        {
+            Msg2.SetActive(false);
+        }
+
+        // 设置Animator的IsAnime为true
+        if (FinalAnime != null)
+        {
+            FinalAnime.SetBool("IsAnime", true);
+        }
+    }
+
+    public void StartBgMove()
+    {
+        // 开启Star的纹理偏移
+        if (starBgScroll != null)
+        {
+            starBgScroll.enabled = true;
+        }
     }
 
     // Update is called once per frame

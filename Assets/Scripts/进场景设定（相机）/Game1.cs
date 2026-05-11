@@ -34,14 +34,11 @@ public class Game1 : MonoBehaviour
     
     void Update()
     {
-        // 时间标记
         // 更新当前音乐时间
-        //currentTime = Global_AudioManager.Instance.CurrentBGMTime;
-        currentTime += Time.deltaTime;
+        currentTime = Global_AudioManager.Instance.CurrentBGMTime;
         if(currentTime >= 118f && currentTime <= 119f && isfirst)
         {
-            Debug.Log("摄像头淡出BGM");
-            Global_AudioManager.Instance.FadeOutMusic(10f);
+            // 激活对话框，淡出背景音乐由AboutDialog处理
             DialogBox.SetActive(true);
             isfirst = false;
         }
@@ -49,33 +46,11 @@ public class Game1 : MonoBehaviour
         // 处理镜头抖动
         HandleCameraShake();
     }
-    
-    void OnEnable()
-    {
-        //播放指定的BGM
-        if (Global_AudioManager.Instance != null && bgmClip1 != null 
-        && Global_AudioManager.Instance.GetCurrentBGMName() != "Boss")
-        {
-            Debug.Log("摄像头开始播放BGM1");
-            Global_AudioManager.Instance.PlaySFX(bgmClip1,false,0.8f);
-        }
-    }
 
     void OnDisable()
     {
         clearAllBullet.ClearScreenBullet(false);
     }
-
-    public void SwitchToBossBGM()
-    {
-        if (Global_AudioManager.Instance != null)
-        {
-            Debug.Log("摄像头开始播放BGM2");
-            Global_AudioManager.Instance.StopAllSFX();
-            Global_AudioManager.Instance.PlaySFX(bgmClip2,false,0.8f);
-        }
-    }
-
 
     /// <summary>
     /// 处理镜头抖动

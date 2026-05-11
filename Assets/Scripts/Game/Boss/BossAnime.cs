@@ -23,6 +23,7 @@ public class BossAnime : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     [Header("琪露诺的相关物体")]
     public GameObject HP;// 琪露诺的血条
+    public GameObject Mark;// 琪露诺的标记物
     
     private BossAnimeType currentState = BossAnimeType.Idle;
 
@@ -49,6 +50,7 @@ public class BossAnime : MonoBehaviour
         // 更新血条位置，将世界坐标转换为UI坐标
         // 使用LateUpdate确保在所有Update执行完毕后执行，且不受时间缩放影响
         UpdateHPBarPosition();
+        UpdateMarkPosition();
     }
     
     /// <summary>
@@ -80,6 +82,16 @@ public class BossAnime : MonoBehaviour
                 }
             }
         }
+    }
+
+    /// <summary>
+    /// 更新标记物相对位置，不受时间缩放影响
+    /// </summary>
+    private void UpdateMarkPosition()
+    {
+        Vector3 markPos = Mark.transform.position;
+        markPos.x = transform.position.x;
+        Mark.transform.position = markPos;
     }
      
     private void PlayAnime()

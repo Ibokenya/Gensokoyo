@@ -262,7 +262,8 @@ public class FinalUI : MonoBehaviour
         // 12. 设置中弹数文本（需要在UIManager中添加中弹数变量）
         if (MissText != null)
         {
-            MissText.text = "0"; // 暂时设为0，需要添加中弹计数
+            int missCount = uiManager.GetMissCount();
+            MissText.text = missCount.ToString();
         }
         yield return WaitForFrames(UI_INTERVAL);
         

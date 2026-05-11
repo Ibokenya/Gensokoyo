@@ -50,14 +50,12 @@ public class BossBeheve : MonoBehaviour
     private bool hasEndedFinalCard = false;
     public AudioClip finalOverSound;// 最终击破音效（Peng~~）
     
-       private void Update()
+    private void Update()
     {
         // 获取当前音乐时间
         if (Global_AudioManager.Instance != null)
         {
-            // 时间标记
-            // currentTime = Global_AudioManager.Instance.CurrentBGMTime;
-            currentTime += Time.deltaTime;
+            currentTime = Global_AudioManager.Instance.CurrentBGMTime;
         }
         
         // 处理时间事件
@@ -270,7 +268,7 @@ public class BossBeheve : MonoBehaviour
             // 重设血量条（从1%回到100%），为finalCard做准备
             if (bossAnime != null)
             {
-                bossAnime.SetHpBar(1, 1);
+                bossAnime.SetHpBar(10000, 10000);
             }
             hasCalledCard2CheckOver = true;
             bossUI.SubLife();
@@ -316,6 +314,8 @@ public class BossBeheve : MonoBehaviour
         {
             if (finalCardScript != null)
             {
+                // 重置锁血状态，为FinalCard第三阶段做准备
+                bossBase.isLockingHP = false;
                 finalCardScript.enabled = true;
                 ShowPinion();         
                 bossUI.SetCardTime(48f);

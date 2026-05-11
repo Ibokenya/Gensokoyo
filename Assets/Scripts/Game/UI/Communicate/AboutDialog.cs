@@ -54,6 +54,8 @@ public class AboutDialog : MonoBehaviour
 
     private void OnEnable()
     {
+        // 开始淡出背景音乐
+        StartCoroutine(FadeOutBGM());
         Global_GameManager.Instance.state = State.Dialog;
         playerAnime.StopMove();
         currentDialogIndex = 0;
@@ -72,6 +74,8 @@ public class AboutDialog : MonoBehaviour
         }
     }
 
+    private int frameCount = 0;
+
     private void Update()
     {
         if(Global_GameManager.Instance.state != State.Dialog)
@@ -87,6 +91,21 @@ public class AboutDialog : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Z))
         {
             NextDialog();
+        }
+        
+        // 按住左Ctrl键快速跳过对话（每30帧跳过一次）
+        if (Input.GetKey(KeyCode.LeftControl))
+        {
+            frameCount++;
+            if (frameCount >= 30)
+            {
+                NextDialog();
+                frameCount = 0;
+            }
+        }
+        else
+        {
+            frameCount = 0;
         }
     }
 
@@ -328,6 +347,19 @@ public class AboutDialog : MonoBehaviour
     }
     
     /// <summary>
+    /// 淡出背景音乐协程
+    /// </summary>
+    private IEnumerator FadeOutBGM()
+    {
+        if (Global_AudioManager.Instance != null)
+        {
+            // 使用Global_AudioManager的淡出方法
+            Global_AudioManager.Instance.FadeOutMusic(10f);
+        }
+        yield return null;
+    }
+    
+    /// <summary>
     /// 处理音乐切换
     /// </summary>
     private void HandleMusicSwitch()
@@ -338,18 +370,11 @@ public class AboutDialog : MonoBehaviour
             Global_AudioManager.Instance.StopFadeOutAndClearBGM();
             
             // 播放Boss BGM
-            // Global_AudioManager.Instance.PlayBGM("Boss");
-            Boss.SetActive(true);
-            
-            // 时间标记
-            // 重置Game1中的currentTime为0
-            // 找到Game1脚本并重置currentTime
-            if (game1 != null)
-            {
-                game1.SwitchToBossBGM();
-                game1.currentTime = 0f;
-            }
+            Global_AudioManager.Instance.PlayBGM("Boss");
         }
+        
+        // 激活Boss对象
+        Boss.SetActive(true);
     }
 
     private void OnDisable()

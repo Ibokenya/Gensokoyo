@@ -80,6 +80,7 @@ public class Global_GameManager : Singleton<Global_GameManager>
     public event Action<int,int> OnBombChanged;     // 符卡碎片改变事件
     public event Action<int> OnGrazeChanged;        // 擦弹数改变事件
     public event Action<State> OnReincarnation;     // 重生事件
+    public event Action<State> OnOver;              // 游戏结束事件
 #endregion
 
     protected override void Awake()
@@ -108,25 +109,36 @@ public class Global_GameManager : Singleton<Global_GameManager>
         isCheheat = false;            //是否开启作弊模式
     }
 
+    void OnDestroy()
+    {
+        // 保存最高分到 PlayerPrefs
+        PlayerPrefs.SetInt("HighestScore", HighestScore);
+        PlayerPrefs.Save();
+    }
+
     public void AddScore(int score = 1)
     {
         Score += score;
+        
+        // 如果当前分数超过最高分，更新最高分
+        if (Score > HighestScore)
+        {
+            HighestScore = Score;
+        }
+        
         OnScoreChanged?.Invoke(Score);
     }
 
     public void AddPower(int count=1)
     {
         pastPower = Power/100;
-        if(Power<400)
+        Power += count;
+        if(Power/100 > pastPower && PowerUpClip != null)
         {
-            Power += count;
-            if(Power/100 > pastPower && PowerUpClip != null)
-            {
-                Global_AudioManager.Instance.PlaySFX(PowerUpClip);
-            }
-            Power = Mathf.Clamp(Power,0,400);
-            OnPowerChanged?.Invoke(Power);
+            Global_AudioManager.Instance.PlaySFX(PowerUpClip);
         }
+        Power = Mathf.Clamp(Power,0,400);
+        OnPowerChanged?.Invoke(Power);
     }
 
     public void SubPower(int count=1)
@@ -181,8 +193,8 @@ public class Global_GameManager : Singleton<Global_GameManager>
         }
         else
         {
-            AddLeftLife(7,0);
-            //state = State.Over;   // 游戏结束，满目疮痍（用广播事件）
+            state = State.Over;   // 游戏结束，满目疮痍（用广播事件）
+            OnOver?.Invoke(state);
         }
     }
 

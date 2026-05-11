@@ -34,6 +34,7 @@ public class UIManager : MonoBehaviour
     public GameObject BorderLine;
     [Header("UI引用")]
     public GameObject FinalUI;
+    public GameObject GameOverUI;
 
     public LeftLife leftLife;
     public SpeelCard speelCard;
@@ -67,14 +68,6 @@ public class UIManager : MonoBehaviour
     {
         isTimerRunning = false;
     }
-    
-    /// <summary>
-    /// 获取游戏时长（秒）
-    /// </summary>
-    public float GetGameTime()
-    {
-        return gameTime;
-    }
 
     void Update()
     {
@@ -95,9 +88,15 @@ public class UIManager : MonoBehaviour
         Global_GameManager.Instance.OnLeftLifeChanged += SetLeftLife;
         Global_GameManager.Instance.OnBombChanged += SetBomb;
         Global_GameManager.Instance.OnReincarnation += AddMissCount;
+        Global_GameManager.Instance.OnOver += ShowGameOverUI;
 #endregion
         MissCount = 0;
-        HighestScoreText.text = HighestScore.ToString();
+        ExScore = 0;
+        isCard1Get = false;
+        isCard2Get = false;
+        isFinalCardGet = false;
+        isContinueGame = false;
+        SetHighestScoreText(HighestScore);
         SetScoreText(CurrentScore);
         SetPowerText(Power);
         SetGradeText(MaxGrade);
@@ -120,6 +119,7 @@ public class UIManager : MonoBehaviour
         Global_GameManager.Instance.OnLeftLifeChanged -= SetLeftLife;
         Global_GameManager.Instance.OnBombChanged -= SetBomb;
         Global_GameManager.Instance.OnReincarnation -= AddMissCount;
+        Global_GameManager.Instance.OnOver -= ShowGameOverUI;
         CancelInvoke();
     }
 
@@ -131,9 +131,19 @@ public class UIManager : MonoBehaviour
         PowerText_Ten.text = "." + ten.ToString("00");
     }
 
+    private void SetHighestScoreText(int highestScore)
+    {
+        HighestScoreText.text = highestScore.ToString();
+    }
+
     private void SetScoreText(int score)
     {
         ScoreText.text = score.ToString();
+        if (score > HighestScore)
+        {
+            Global_GameManager.Instance.HighestScore = score;
+            SetHighestScoreText(HighestScore);
+        }
     }
 
     private void SetGrazeText(int graze)
@@ -170,5 +180,20 @@ public class UIManager : MonoBehaviour
     public void AddMissCount(State state)
     {
         MissCount++;
+    }
+
+    public int GetMissCount()
+    {
+        return MissCount;
+    }
+
+    public void ShowGameOverUI(State state)
+    {
+        GameOverUI.SetActive(true);
+    }
+
+    public void AddExScore(int score)
+    {
+        ExScore+=score;
     }
 }

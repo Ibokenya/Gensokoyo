@@ -34,6 +34,8 @@ public class BossBase : MonoBehaviour
     [Header("引用")]
     public GameObject DefenseRealm; // 防御屏障
     public BossAnime bossAnime;
+    public UIManager uiManager;
+    public AudioClip Bonus;
     
     private void OnEnable()
     {
@@ -279,6 +281,11 @@ public class BossBase : MonoBehaviour
     /// </summary>
     public void LockHP()
     {
+        // 播放锁血音效
+        if (Bonus != null)
+        {
+            Global_AudioManager.Instance.PlaySFX(Bonus);
+        }
         isLockingHP = true;
         Debug.Log("Boss进入锁血状态");
     }
@@ -290,8 +297,8 @@ public class BossBase : MonoBehaviour
     /// <param name="damage">子弹伤害</param>
     private void ConvertDamageToReward(int damage)
     {
-        // TODO: 将伤害等比转化为奖励的逻辑
-        Debug.Log($"锁血状态下受到伤害: {damage}，转化为奖励");
+        uiManager.AddExScore(damage);
+        CreateItem.Instance.SpwanPowerItems(transform.position);
     }
     
     /// <summary>

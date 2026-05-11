@@ -277,6 +277,9 @@ public class Global_SceneManager : Singleton<Global_SceneManager>
             case "Game1":
                 Global_AudioManager.Instance.PlayBGM("Game1");
                 break;
+            case "Game2":
+                Global_AudioManager.Instance.PlayBGM("Over");
+                break;
             default:
                 Debug.LogWarning($"Œ¥≈‰÷√≥°æ∞{CurrentSceneName}µƒ±≥æ∞“Ù¿÷");
                 break;
