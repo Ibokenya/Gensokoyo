@@ -5,28 +5,24 @@ using UnityEngine;
 /// <summary>
 /// 激光类
 /// 魔理沙使用激光作为高速副手攻击
-/// 总额感觉我这激光没有那么炫酷
-/// 之后可能的话，再给激光加一个闪烁的特效
-/// 或者子机口处弄点粒子
-/// 但现在这样就算可以了
-/// 之后做射线碰撞也是头疼的事情
+/// 使用LineRenderer+激光材质实现
+/// 激光连线固定为(0,0,0)-(0,12,0)，通过父物体旋转控制方向
 /// </summary>
 public class Laser : MonoBehaviour
 {
     [Header("激光配置")]
-    public float MaxLength = 20f; // 激光最大长度
-    public float LaserWidth = 0.3f; // 激光宽度
+    public float MaxLength = 12f; // 激光长度（固定12）
+    public float LaserWidth = 0.02f; // 激光宽度（public，由Inspector赋值）
     public int damage = 1; // 激光伤害(每帧)
     public LayerMask HitLayer;// 激光可攻击目标层
 
-    public List<Sprite> LaserSprites = new();// 激光精灵列表
+    [Header("激光动画纹理")]
+    public List<Texture2D> LaserTextures = new();// 激光纹理列表
     public int AnimeSpeed = 4;
-    private int CurrentIndex = 0;// 当前精灵索引
+    private int CurrentIndex = 0;// 当前纹理索引
 
-    private Vector2 EndPos;// 激光结束位置
-    private Transform firePoint; // 发射点引用
-
-    private SpriteRenderer spriteRenderer;// 激光渲染器
+    private LineRenderer lineRenderer;// 激光连线渲染器
+    private Material laserMaterial;// 激光材质实例
     private bool isActive = false;// 激光是否激活
 
     private float TimeClock = 0f;// 动画时钟
@@ -35,39 +31,39 @@ public class Laser : MonoBehaviour
 
     void Awake()
     {
-        // 确保获取到 SpriteRenderer 组件
-        spriteRenderer = GetComponent<SpriteRenderer>();
-        if (spriteRenderer == null)
+        // 确保获取到 LineRenderer 组件
+        lineRenderer = GetComponent<LineRenderer>();
+        if (lineRenderer == null)
         {
-            Debug.LogError("SpriteRenderer component not found on Laser object!");
+            Debug.LogError("LineRenderer component not found on Laser object!");
         }
         else
         {
-            spriteRenderer.enabled = false;
-            transform.localScale = new Vector3(1f, LaserWidth, 1f);
+            lineRenderer.enabled = false;
+            // 设置起始和结束宽度为 LaserWidth，避免受基础宽度影响
+            lineRenderer.startWidth = LaserWidth;
+            lineRenderer.endWidth = LaserWidth;
+            lineRenderer.widthMultiplier = 1f;
+            // 创建材质实例
+            if (lineRenderer.material != null)
+            {
+                laserMaterial = new Material(lineRenderer.material);
+                lineRenderer.material = laserMaterial;
+            }
+            // 设置固定的激光连线点（本地坐标）
+            lineRenderer.SetPosition(0, Vector3.zero);
+            lineRenderer.SetPosition(1, new Vector3(0, MaxLength, 0));
         }
-    }
-
-    // 设置发射点
-    public void SetFirePoint(Transform firePointTransform)
-    {
-        firePoint = firePointTransform;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(!isActive || spriteRenderer == null || firePoint == null)
+        if(!isActive || lineRenderer == null)
         {
             return;
         }
         
-        // 更新激光位置为发射点位置
-        transform.position = firePoint.position;
-        
-        // 射线检测方向为发射点的上方向（默认向上）
-        UpdateLaserEndPos();
-        UpdateLaserVisual();
         UpdateLaserAnime();
         LaserInterval-=1;
         if(LaserInterval == 0)
@@ -76,38 +72,6 @@ public class Laser : MonoBehaviour
             LaserInterval = 5;
         }   
     }
-    
-    /// <summary>
-    /// 更新激光射线检测确定终点
-    /// </summary>
-    private void UpdateLaserEndPos()
-    {
-        // 激光终点始终设置为最大长度处
-        EndPos = (Vector2)transform.position + (Vector2)firePoint.up * MaxLength;
-    }
-
-    /// <summary>
-    /// 更新激光视觉效果（粗细，旋转等）
-    /// </summary>
-    private void UpdateLaserVisual()
-    {
-        if (spriteRenderer == null || firePoint == null)
-            return;
-            
-        Vector2 LaserDir = EndPos - (Vector2)transform.position;
-        float LaserLength = LaserDir.magnitude;
-        
-        // 确保激光长度不为0
-        if (LaserLength > 0)
-        {
-            // 计算激光方向角度
-            float angle = Mathf.Atan2(LaserDir.y, LaserDir.x) * Mathf.Rad2Deg;
-            transform.rotation = Quaternion.Euler(0, 0, angle);
-            
-            // 缩放：x轴为激光长度，y轴为激光宽度
-            transform.localScale = new Vector3(LaserLength, LaserWidth, 1f);
-        }
-    }
 
     /// <summary>
     /// 激光持续伤害判定
@@ -115,7 +79,8 @@ public class Laser : MonoBehaviour
     private void UpdateLaserDamage()
     {
         // 使用RaycastAll检测路径上的所有物体
-        RaycastHit2D[] hits = Physics2D.RaycastAll(transform.position, firePoint.up, MaxLength, HitLayer);
+        // 激光是发射器的子物体，从transform.position（世界坐标）开始检测
+        RaycastHit2D[] hits = Physics2D.RaycastAll(transform.position, transform.up, MaxLength, HitLayer);
         
         // 对所有命中的物体造成伤害
         foreach (RaycastHit2D hit in hits)
@@ -133,9 +98,9 @@ public class Laser : MonoBehaviour
                     var boss = hit.collider.GetComponent<BossBase>();
                     if (boss != null)
                     {
-                        damage = (int)(damage * 3);// 对Boss造成伤害值翻3倍
+                        int tempDamage = (int)(damage * 3);// 对Boss造成伤害值翻3倍
                         // 对Boss造成伤害
-                        boss.TakeDamage(damage);
+                        boss.TakeDamage(tempDamage);
                     }
                     break;
                 case "FrozenIce":
@@ -172,9 +137,9 @@ public class Laser : MonoBehaviour
     public void ActivateLaser()
     {
         isActive = true;
-        if (spriteRenderer != null)
+        if (lineRenderer != null)
         {
-            spriteRenderer.enabled = true;
+            lineRenderer.enabled = true;
         }
     }
 
@@ -184,18 +149,18 @@ public class Laser : MonoBehaviour
     public void StopLaser()
     {
         isActive = false;
-        if (spriteRenderer != null)
+        if (lineRenderer != null)
         {
-            spriteRenderer.enabled = false;
+            lineRenderer.enabled = false;
         }
     }
 
     /// <summary>
-    /// 更新激光动画
+    /// 更新激光动画（通过切换材质纹理实现）
     /// </summary>
     private void UpdateLaserAnime()
     {
-        if (LaserSprites.Count == 0)
+        if (LaserTextures.Count == 0 || laserMaterial == null)
             return;
             
         TimeClock += Time.deltaTime;
@@ -203,10 +168,20 @@ public class Laser : MonoBehaviour
         {
             TimeClock -= 1f / AnimeSpeed;
             CurrentIndex++;
-            if (CurrentIndex >= LaserSprites.Count)
+            if (CurrentIndex >= LaserTextures.Count)
                 CurrentIndex = 0;
                 
-            spriteRenderer.sprite = LaserSprites[CurrentIndex];
+            // 更新材质的Particle Texture属性
+            laserMaterial.SetTexture("_MainTex", LaserTextures[CurrentIndex]);
+        }
+    }
+
+    private void OnDestroy()
+    {
+        // 销毁材质实例，避免内存泄漏
+        if (laserMaterial != null)
+        {
+            Destroy(laserMaterial);
         }
     }
 }

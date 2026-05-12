@@ -6,7 +6,6 @@ public class MarisaShoot : MonoBehaviour
 {
     [Header("激光配置")]
     public GameObject laserPrefab; // 激光预制体
-    public AudioClip shootSound; // 射击音效
 
     private Laser laser; // 激光组件引用
     private bool isLaserActive = false; // 激光是否激活
@@ -45,20 +44,16 @@ public class MarisaShoot : MonoBehaviour
         {
             // 实例化激光预制体
             GameObject laserObj = Instantiate(laserPrefab, transform.position, transform.rotation);
+            // 设置激光对象为发射点对象的子对象
+            laserObj.transform.parent = transform;
+            // 重置本地位置为(0,0,0)
+            laserObj.transform.localPosition = Vector3.zero;
             laser = laserObj.GetComponent<Laser>();
             
             if (laser != null)
             {
-                // 设置发射点为当前物体的Transform
-                laser.SetFirePoint(transform);
                 laser.ActivateLaser();
                 isLaserActive = true;
-                
-                // 播放射击音效
-                if (shootSound != null)
-                {
-                    Global_AudioManager.Instance.PlaySFX(shootSound);
-                }
             }
             else
             {

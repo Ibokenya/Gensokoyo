@@ -362,28 +362,6 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
     }
     
     /// <summary>
-    /// ‘›Õ£±≥æ∞“Ù¿÷
-    /// </summary>
-    public void PauseBGM()
-    {
-        if (bgmSource != null && bgmSource.isPlaying)
-        {
-            bgmSource.Pause();
-        }
-    }
-    
-    /// <summary>
-    /// ª÷∏¥±≥æ∞“Ù¿÷
-    /// </summary>
-    public void ResumeBGM()
-    {
-        if (bgmSource != null && !bgmSource.isPlaying && bgmSource.time > 0f)
-        {
-            bgmSource.UnPause();
-        }
-    }
-    
-    /// <summary>
     /// Õ£÷πµ±«∞≤•∑≈µƒ±≥æ∞“Ù¿÷
     /// </summary>
     public void StopBGM()

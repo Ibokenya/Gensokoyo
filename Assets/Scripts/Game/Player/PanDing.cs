@@ -16,7 +16,8 @@ public class PanDing : MonoBehaviour
     /// </summary>
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(Global_GameManager.Instance.state == State.Gaming)
+        if(Global_GameManager.Instance.state == State.Gaming || 
+        Global_GameManager.Instance.state == State.Frozen)
         {
             // 确保只对敌人和敌人子弹生效
             if(collision.CompareTag("Enemy") || collision.CompareTag("EnemyBullet") ||
@@ -27,12 +28,6 @@ public class PanDing : MonoBehaviour
                 if(Global_GameManager.Instance.isCheheat)
                 {
                     // 作弊模式下不处理受击
-                    return;
-                }
-                // 检查是否处于无敌状态
-                if (spellCardEffect != null && Global_GameManager.Instance.state == State.NoDead)
-                {
-                    // 无敌状态下不处理受击
                     return;
                 }
                 

@@ -13,6 +13,8 @@ public class GameOver : MonoBehaviour
     public UIManager uiManager;
 
     private int CurrentIndex = 0;
+    private string currentBGMName = "";
+    private float currentBgmPosition = 0f;
 
     private Color DefaultColor = new Color(0.5f,0.5f,0.5f,0.5f);
     private Color SelectedColor = new Color(1,1,1,1);
@@ -21,6 +23,9 @@ public class GameOver : MonoBehaviour
     void OnEnable()
     {
         Time.timeScale = 0f;
+        currentBGMName = Global_AudioManager.Instance.GetCurrentBGMName();
+        currentBgmPosition = Global_AudioManager.Instance.GetCurrentBGMPosition();
+        Global_AudioManager.Instance.StopBGM();
         CurrentIndex = 3;
         Global_GameManager.Instance.state = State.Over;
         Options.Add(Continue);
@@ -143,7 +148,9 @@ public class GameOver : MonoBehaviour
         {
             uiManager.isContinueGame = true;
         }
-        
+        Global_AudioManager.Instance.PlayBGM(currentBGMName);
+        Global_AudioManager.Instance.SetBGMPosition(currentBgmPosition);
+        Global_GameManager.Instance.ReBack();
         // ½ûÓÃGameOver UI
         gameObject.SetActive(false);
     }

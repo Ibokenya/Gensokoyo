@@ -26,7 +26,7 @@ public class MarisaNormal : MonoBehaviour
     public GameObject boss; // Boss对象
     
     [Header("伤害设置")]
-    private readonly int MarisaNormalDamageValue = 15;// 魔理沙常规伤害*45
+    private readonly int MarisaNormalDamageValue = 16;// 魔理沙常规伤害*45
     private int Timer = 20;// 定时器，用于技能出伤
     private bool isDamage = false;// 是否正在出伤
     public static bool IsSkillSlowDown = false;// 技能是否正在减速

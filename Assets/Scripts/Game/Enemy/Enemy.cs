@@ -18,6 +18,13 @@ public class Enemy : MonoBehaviour
     protected int currentPointIndex = 0;// 当前目标移动点索引
     public float ArrivalDistance = 0.1f;// 到达移动点判断距离
     protected Vector2 moveDirection;// 移动方向向量
+    
+    [Header("贝塞尔曲线移动参数")]
+    protected float bezierT = 0f;// 当前曲线参数t
+    protected float bezierStep = 0.02f;// 曲线步长（每帧t的增量）
+    protected Vector2[] bezierControlPoints = new Vector2[4];// 当前贝塞尔曲线的4个控制点
+    protected Vector2 bezierStartPosition;// 当前曲线段的起始位置
+    protected Vector2 bezierEndPosition;// 当前曲线段的结束位置
 
     [Header("闪烁参数")]
     public float FlickerLifeTime = 8f;// 闪烁模式下的生存时间
@@ -71,6 +78,15 @@ public class Enemy : MonoBehaviour
         isDead = false; // 重置死亡状态
         isKilled = false; // 重置被击杀标记
         maxHp = Hp;
+        
+        // 重置贝塞尔曲线参数
+        bezierT = 0f;
+        bezierStartPosition = Vector2.zero;
+        bezierEndPosition = Vector2.zero;
+        for (int i = 0; i < 4; i++)
+        {
+            bezierControlPoints[i] = Vector2.zero;
+        }
 
         if (rb2D != null)
         {
@@ -346,7 +362,73 @@ public class Enemy : MonoBehaviour
     }
 
     /// <summary>
-    /// 移动到下一个点
+    /// 计算3次贝塞尔曲线上的点
+    /// </summary>
+    /// <param name="t">曲线参数，范围[0,1]</param>
+    /// <param name="p0">控制点0</param>
+    /// <param name="p1">控制点1</param>
+    /// <param name="p2">控制点2</param>
+    /// <param name="p3">控制点3</param>
+    /// <returns>曲线上的点</returns>
+    protected Vector2 CalculateCubicBezierPoint(float t, Vector2 p0, Vector2 p1, Vector2 p2, Vector2 p3)
+    {
+        float u = 1f - t;
+        float tt = t * t;
+        float uu = u * u;
+        float uuu = uu * u;
+        float ttt = tt * t;
+
+        Vector2 point = uuu * p0;
+        point += 3f * uu * t * p1;
+        point += 3f * u * tt * p2;
+        point += ttt * p3;
+
+        return point;
+    }
+
+    /// <summary>
+    /// 初始化贝塞尔曲线控制点
+    /// </summary>
+    protected virtual void InitializeBezierCurve()
+    {
+        if (MovePoints == null || MovePoints.Count < 2)
+        {
+            return;
+        }
+
+        // 获取起始点和结束点
+        bezierStartPosition = transform.position;
+        GameObject endPointObj = MovePoints[currentPointIndex];
+        if (endPointObj == null)
+        {
+            return;
+        }
+        bezierEndPosition = endPointObj.transform.position;
+
+        // 计算控制点
+        Vector2 direction = (bezierEndPosition - bezierStartPosition).normalized;
+        float distance = Vector2.Distance(bezierStartPosition, bezierEndPosition);
+
+        // 控制点1：从起点沿方向延伸1/3距离
+        bezierControlPoints[0] = bezierStartPosition;
+        bezierControlPoints[1] = bezierStartPosition + direction * (distance * 0.33f);
+
+        // 控制点2：从终点沿反方向延伸1/3距离
+        bezierControlPoints[2] = bezierEndPosition - direction * (distance * 0.33f);
+        bezierControlPoints[3] = bezierEndPosition;
+
+        // 计算合适的步长：基于移动速度和曲线长度
+        // 贝塞尔曲线的近似长度约为直线距离的1.1倍
+        float curveLength = distance * 1.1f;
+        float timeToComplete = curveLength / (MoveSpeed * 0.8f);
+        bezierStep = Time.deltaTime / timeToComplete;
+
+        // 重置t值
+        bezierT = 0f;
+    }
+
+    /// <summary>
+    /// 移动到下一个点（使用3次贝塞尔曲线）
     /// </summary>
     protected virtual void MoveToNextPoint()
     {
@@ -359,7 +441,7 @@ public class Enemy : MonoBehaviour
         if (targetPoint == null)
         {
             currentPointIndex++;
-            UpdateMoveDirection();
+            InitializeBezierCurve();
             return;
         }
 
@@ -370,20 +452,56 @@ public class Enemy : MonoBehaviour
         }
         else
         {
-            // 多点路径使用平滑移动
-            Vector2 targetDirection = (targetPoint.transform.position - transform.position).normalized;
-            moveDirection = targetDirection;
+            // 使用贝塞尔曲线移动
+            MoveWithBezierCurve();
+        }
+    }
 
-            if (rb2D != null)
-            {
-                rb2D.velocity = moveDirection * MoveSpeed;
-            }
+    /// <summary>
+    /// 使用贝塞尔曲线移动
+    /// </summary>
+    protected virtual void MoveWithBezierCurve()
+    {
+        if (rb2D == null)
+        {
+            return;
         }
 
-        if (Vector2.Distance(transform.position, targetPoint.transform.position) < ArrivalDistance)
+        // 如果是第一次移动，初始化贝塞尔曲线
+        if (bezierT <= 0f)
+        {
+            InitializeBezierCurve();
+        }
+
+        // 增加t值
+        bezierT += bezierStep;
+
+        // 计算当前曲线上的点
+        Vector2 currentPos = CalculateCubicBezierPoint(
+            Mathf.Clamp01(bezierT),
+            bezierControlPoints[0],
+            bezierControlPoints[1],
+            bezierControlPoints[2],
+            bezierControlPoints[3]
+        );
+
+        // 设置位置
+        transform.position = currentPos;
+
+        // 计算移动方向（用于其他可能需要方向的地方）
+        Vector2 nextPos = CalculateCubicBezierPoint(
+            Mathf.Clamp01(bezierT + 0.01f),
+            bezierControlPoints[0],
+            bezierControlPoints[1],
+            bezierControlPoints[2],
+            bezierControlPoints[3]
+        );
+        moveDirection = (nextPos - currentPos).normalized;
+
+        // 检查是否到达终点
+        if (bezierT >= 1f)
         {
             currentPointIndex++;
-            UpdateMoveDirection();
 
             if (currentPointIndex >= MovePoints.Count)
             {
@@ -393,6 +511,11 @@ public class Enemy : MonoBehaviour
                 }
                 SwitchToSecondaryMoveMode();
                 isFirstMoveCompleted = true;
+            }
+            else
+            {
+                // 准备下一个曲线段
+                bezierT = 0f;
             }
         }
     }
@@ -410,9 +533,37 @@ public class Enemy : MonoBehaviour
         Vector2 currentPos = transform.position;
         Vector2 targetPos = targetPoint.transform.position;
         Vector2 direction = (targetPos - currentPos).normalized;
+        float distance = Vector2.Distance(currentPos, targetPos);
 
-        rb2D.velocity = direction * MoveSpeed;
-        moveDirection = direction;
+        // 计算本帧移动距离
+        float moveDistance = MoveSpeed * 0.8f * Time.deltaTime;
+
+        // 如果距离小于本帧移动距离，直接到达目标点
+        if (distance <= moveDistance)
+        {
+            transform.position = targetPos;
+            moveDirection = direction;
+            
+            currentPointIndex++;
+            
+            if (currentPointIndex >= MovePoints.Count)
+            {
+                rb2D.velocity = Vector2.zero;
+                SwitchToSecondaryMoveMode();
+                isFirstMoveCompleted = true;
+            }
+            else
+            {
+                InitializeBezierCurve();
+            }
+        }
+        else
+        {
+            // 正常移动
+            transform.position += (Vector3)(direction * moveDistance);
+            moveDirection = direction;
+            rb2D.velocity = direction * MoveSpeed;
+        }
     }
 
     /// <summary>
@@ -420,7 +571,8 @@ public class Enemy : MonoBehaviour
     /// </summary>
     protected virtual void InitializePath()
     {
-        UpdateMoveDirection();
+        // 初始化贝塞尔曲线
+        InitializeBezierCurve();
     }
 
     /// <summary>

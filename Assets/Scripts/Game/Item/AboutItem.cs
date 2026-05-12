@@ -21,7 +21,7 @@ public class AboutItem : MonoBehaviour
 
     private bool isAutoFlying = false;
     private float autoFlySpeed = 15f;
-    private float autoFlyCheckInterval = 0.6f;
+    private float autoFlyCheckInterval = 0.3f;
     private float autoFlyCheckTimer = 0f;
     private const float autoFlyThreshold = 0.3f;
     private Vector3 autoFlyTargetPosition; // 缓存的目标位置
@@ -67,6 +67,9 @@ public class AboutItem : MonoBehaviour
 
     void Update()
     {
+        // 检测SpellCard状态，自动飞向玩家
+        CheckSpellCardState();
+
         // 自动飞向玩家逻辑
         if (isAutoFlying && player != null)
         {
@@ -86,6 +89,36 @@ public class AboutItem : MonoBehaviour
             CheckInterval = 10;
             CheckPos();
             CheckRecycleLine();
+        }
+    }
+
+    /// <summary>
+    /// 检测SpellCard状态，将道具标记为自动飞向玩家状态
+    /// </summary>
+    private void CheckSpellCardState()
+    {
+        // 如果已经在自动飞向状态或正在收集，无需处理
+        if (isAutoFlying || isCollecting)
+        {
+            return;
+        }
+
+        // 检测游戏状态是否为SpellCard
+        if (Global_GameManager.Instance != null && 
+            Global_GameManager.Instance.state == State.SpellCard)
+        {
+            // 检查player是否有效
+            if (player == null)
+            {
+                // 尝试查找玩家对象
+                player = GameObject.FindGameObjectWithTag("Player");
+            }
+
+            if (player != null)
+            {
+                // 将道具标记为自动飞向玩家状态
+                SetAutoFlyToPlayer(true, autoFlySpeed);
+            }
         }
     }
 
@@ -110,6 +143,11 @@ public class AboutItem : MonoBehaviour
         autoFlySpeed = flySpeed;
         if (autoFly)
         {
+            // 立即初始化目标位置为玩家当前位置
+            if (player != null)
+            {
+                autoFlyTargetPosition = player.transform.position;
+            }
             // 禁用重力
             if (rb2D != null)
             {

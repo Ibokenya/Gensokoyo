@@ -282,6 +282,9 @@ public class BossBeheve : MonoBehaviour
                 card2Script.enabled = false;
                 Debug.Log("禁用card2");
             }
+            // 重置无敌状态
+            bossBase.isNoDead = true;
+            bossBase.DefenseRealm.SetActive(true);
             BgAndBallon();
             Debug.Log("调用BgAndBallon方法");
             changeBG.ShowBg("balloon", 0.5f);
@@ -316,6 +319,9 @@ public class BossBeheve : MonoBehaviour
             {
                 // 重置锁血状态，为FinalCard第三阶段做准备
                 bossBase.isLockingHP = false;
+                // 重置无敌状态
+                bossBase.isNoDead = false;
+                bossBase.DefenseRealm.SetActive(false);
                 finalCardScript.enabled = true;
                 ShowPinion();         
                 bossUI.SetCardTime(48f);

@@ -110,6 +110,7 @@ public class PauseEvent : MonoBehaviour
             else if (Input.GetKeyDown(KeyCode.Z) && isManualIndex)
             {
                 // 进入页态
+                Global_AudioManager.Instance.PlaySFX(Click);
                 isManualIndex = false;
                 shadel.SetActive(true);
                 if (manual != null)
@@ -361,6 +362,7 @@ public class PauseEvent : MonoBehaviour
     /// </summary>
     private void UpdateManual()
     {
+        Global_AudioManager.Instance.PlaySFX(Choose);
         if (isManualIndex)
         {
             // 索引态，更新目录颜色

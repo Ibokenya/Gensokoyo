@@ -182,9 +182,8 @@ public class Global_GameManager : Singleton<Global_GameManager>
         if(Hp>0)
         {
             Hp--;
-            state = State.Reincarnation;
             SubPower(80);
-            OnReincarnation?.Invoke(state);
+            ReBack();
             OnLeftLifeChanged?.Invoke(Hp,HpPiece);
             if(BombCount < ResetBomb)
             {
@@ -197,6 +196,16 @@ public class Global_GameManager : Singleton<Global_GameManager>
             OnOver?.Invoke(state);
         }
     }
+
+    /// <summary>
+    /// 重新生成玩家
+    /// </summary>
+    public void ReBack()
+    {
+        state = State.Reincarnation;
+        OnReincarnation?.Invoke(state);
+    }
+
 
     public void AddBomb(int bomb = 0 , int piece = 0)
     {
@@ -262,13 +271,13 @@ public class Global_GameManager : Singleton<Global_GameManager>
     /// </summary>
     public void ResetGameDate()
     {  
-        // 从JSON配置文件读取初始数据
-        string jsonFilePath = System.IO.Path.Combine(Application.dataPath, "Resources/Touho/JSON", "Game1_ResetConfig.json");
-        if (System.IO.File.Exists(jsonFilePath))
+        // 从Resources加载JSON配置文件（兼容编辑器和打包后环境）
+        TextAsset jsonAsset = Resources.Load<TextAsset>("Touho/JSON/Game1_ResetConfig");
+        if (jsonAsset != null)
         {
             try
             {
-                string jsonContent = System.IO.File.ReadAllText(jsonFilePath);
+                string jsonContent = jsonAsset.text;
                 GameResetConfig config = JsonUtility.FromJson<GameResetConfig>(jsonContent);
                 if (config != null)
                 {

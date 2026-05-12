@@ -80,6 +80,14 @@ public class CreateEnemy : MonoBehaviour
         // 获取音频管理单例
         audioManager = Global_AudioManager.Instance;
         
+        // 重置生成状态
+        CurrentSpawn = 0;
+        
+        // 重置音乐时间，确保第一波敌人能正确生成
+        if (audioManager != null)
+        {
+            audioManager.CurrentBGMTime = 0f;
+        }
     }
 
     void Update()

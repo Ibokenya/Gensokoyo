@@ -50,6 +50,7 @@ public class Game1 : MonoBehaviour
     void OnDisable()
     {
         clearAllBullet.ClearScreenBullet(false);
+        Time.timeScale = 1f;
     }
 
     /// <summary>

@@ -10,56 +10,12 @@
       "isActive": true
     },
     {
-      "objectPath": "游戏开始菜单/游戏开始菜单背景",
-      "isActive": true
-    },
-    {
-      "objectPath": "游戏开始菜单/按钮集合",
-      "isActive": true
-    },
-    {
-      "objectPath": "游戏开始菜单/背景物体",
-      "isActive": true
-    },
-    {
       "objectPath": "难度选择",
       "isActive": false
     },
     {
-      "objectPath": "难度选择/选难度背景",
-      "isActive": true
-    },
-    {
-      "objectPath": "难度选择/按钮集合&描述",
-      "isActive": true
-    },
-    {
-      "objectPath": "难度选择/难度选择",
-      "isActive": true
-    },
-    {
       "objectPath": "角色选择",
       "isActive": false
-    },
-    {
-      "objectPath": "角色选择/选角色背景",
-      "isActive": true
-    },
-    {
-      "objectPath": "角色选择/Reimu",
-      "isActive": true  
-    },
-    {
-      "objectPath": "角色选择/Marisa",
-      "isActive": true  
-    },
-    {
-      "objectPath": "角色选择/按下z",
-      "isActive": true  
-    },
-    {
-      "objectPath": "角色选择/角色选择",
-      "isActive": true  
     },
     {
       "objectPath": "历史战绩",

@@ -7275,6 +7275,13 @@ AnimationClip:
     intParameter: 0
     messageOptions: 0
   - time: 5
+    functionName: ClearAllBullet
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 5
     functionName: AudioFire
     data: 
     objectReferenceParameter: {fileID: 0}
@@ -7304,13 +7311,6 @@ AnimationClip:
     messageOptions: 0
   - time: 8
     functionName: ClearPointLines
-    data: 
-    objectReferenceParameter: {fileID: 0}
-    floatParameter: 0
-    intParameter: 0
-    messageOptions: 0
-  - time: 8
-    functionName: ClearAllBullet
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0

@@ -191,12 +191,25 @@ public class CreateItem : MonoBehaviour
         Debug.Log($"生成得分点: 总值={randomValue}, GradeMinus={gradeMinusCount}, GradeMinusMinus={gradeMinusMinusCount}");
     }
 
-    public void SpwanPowerItems(Vector3 position)
+    public void SpawnPowerItems(Vector3 position)
     {
         if (Global_ObjectPool.Instance == null)
         {
             Debug.LogError("Global_ObjectPool instance not found!");
             return;
+        }
+
+        // 检查player是否已设置
+        if (player == null)
+        {
+            Debug.LogError("CreateItem.player is not assigned! Please assign it in Inspector.");
+            // 尝试自动查找玩家对象
+            player = GameObject.FindGameObjectWithTag("Player");
+            if (player == null)
+            {
+                Debug.LogError("Cannot find player object with tag 'Player'!");
+                return;
+            }
         }
 
         float currentTime = Time.time;
@@ -241,6 +254,11 @@ public class CreateItem : MonoBehaviour
         else
         {
             Debug.LogWarning($"无法从对象池获取物品: {prefab.name}");
+            // 即使获取失败，也更新时间戳，避免连续请求
+            if (canSpawnPower)
+            {
+                lastPowerSpawnTime = currentTime;
+            }
         }
     }
 
