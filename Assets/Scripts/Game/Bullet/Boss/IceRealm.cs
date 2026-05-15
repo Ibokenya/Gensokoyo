@@ -6,7 +6,7 @@ public class IceRealm : MonoBehaviour
 {
     public GameObject player;
     private SpriteRenderer spriteRenderer;
-    private new Collider2D collider2D;
+    private Collider2D Collider2D;
     
     private bool isFadingIn = false;
     private bool isFadingOut = false;
@@ -21,12 +21,12 @@ public class IceRealm : MonoBehaviour
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
-        collider2D = GetComponent<Collider2D>();
+        Collider2D = GetComponent<Collider2D>();
         
         // ³õÊ¼»¯×´Ì¬£º½Å±¾±£³Ö¼¤»î£¬Åö×²Æ÷³õÊ¼Î´¼¤»î
-        if (collider2D != null)
+        if (Collider2D != null)
         {
-            collider2D.enabled = false;
+            Collider2D.enabled = false;
         }
         
         if (spriteRenderer != null)
@@ -126,9 +126,9 @@ public class IceRealm : MonoBehaviour
         
         isFadingIn = false;
         
-        if (collider2D != null)
+        if (Collider2D != null)
         {
-            collider2D.enabled = true;
+            Collider2D.enabled = true;
             isColliderActive = true;
         }
         Debug.Log("±ùÇôÁýµ­Èë");
@@ -147,9 +147,9 @@ public class IceRealm : MonoBehaviour
         isFadingOut = true;
         isColliderActive = false;
         
-        if (collider2D != null)
+        if (Collider2D != null)
         {
-            collider2D.enabled = false;
+            Collider2D.enabled = false;
         }
         
         StartCoroutine(FadeOutCoroutine());
@@ -184,9 +184,9 @@ public class IceRealm : MonoBehaviour
         isFadingOut = false;
         isWaitingForActivation = true;
         isColliderActive = false;
-        if (collider2D != null)
+        if (Collider2D != null)
         {
-            collider2D.enabled = false;
+            Collider2D.enabled = false;
         }
         Debug.Log("±ùÇôÁýµ­³ö");
     }
