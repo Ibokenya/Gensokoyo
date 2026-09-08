@@ -3,54 +3,54 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// ÁéÃÎ³£¹æ¼¼ÄÜ½Å±¾
-/// ¹ÒÔØÔÚ"ÁéÃÎ³£¹æ"×ÓÎïÌåÉÏ
+/// çµæ¢¦å¸¸è§„æŠ€èƒ½è„šæœ¬
+/// æŒ‚è½½åœ¨"çµæ¢¦å¸¸è§„"å­ç‰©ä½“ä¸Š
 /// </summary>
 public class ReimuNormal : MonoBehaviour
 {
-    [Header("²¥·Å¿ØÖÆ")]
-    public bool IsAnime = false; // ÉèÖÃÎªtrue¿ªÊ¼²¥·Å¶¯»­
-    public Animator animator; // ×ÓÎïÌåÉÏµÄ¶¯»­×é¼ş
+    [Header("æ’­æ”¾æ§åˆ¶")]
+    public bool IsAnime = false; // è®¾ç½®ä¸ºtrueå¼€å§‹æ’­æ”¾åŠ¨ç”»
+    public Animator animator; // å­ç‰©ä½“ä¸Šçš„åŠ¨ç”»ç»„ä»¶
     
-    [Header("½Å±¾ÒıÓÃ")]
-    public SpellCardEffect spellCardEffect; // ÒıÓÃ¸¸ÎïÌåµÄSpellCardEffect½Å±¾
-    public CardsRotate cardsRotate; // ÒıÓÃCardsRotate½Å±¾
-    public ClearAllBullet clearAllBullet; // ÒıÓÃClearAllBullet½Å±¾
+    [Header("è„šæœ¬å¼•ç”¨")]
+    public SpellCardEffect spellCardEffect; // å¼•ç”¨çˆ¶ç‰©ä½“çš„SpellCardEffectè„šæœ¬
+    public CardsRotate cardsRotate; // å¼•ç”¨CardsRotateè„šæœ¬
+    public ClearAllBullet clearAllBullet; // å¼•ç”¨ClearAllBulletè„šæœ¬
     
-    [Header("ÒôĞ§ÉèÖÃ")]
-    public AudioClip ReimuNormalClip;//ÁéÃÎ³£¹æÒôĞ§clip
-    public AudioClip FireClip;//»ğÑæÒôĞ§clip
+    [Header("éŸ³æ•ˆè®¾ç½®")]
+    public AudioClip ReimuNormalClip;//çµæ¢¦å¸¸è§„éŸ³æ•ˆclip
+    public AudioClip FireClip;//ç«ç„°éŸ³æ•ˆclip
 
-    [Header("boss¶ÔÏó")]
-    public GameObject boss; // Boss¶ÔÏó
+    [Header("bosså¯¹è±¡")]
+    public GameObject boss; // Bosså¯¹è±¡
     
-    [Header("ÉËº¦ÉèÖÃ")]
-    private readonly int ReimuFireDamage = 50;// ÁéÃÎ³£¹æÉËº¦(Êµ¼Ê³öÉË*15)
+    [Header("ä¼¤å®³è®¾ç½®")]
+    private readonly int ReimuFireDamage = 50;// çµæ¢¦å¸¸è§„ä¼¤å®³(å®é™…å‡ºä¼¤*15)
     
-    private List<GameObject> Enemys => Global_GameManager.Instance.EnemyList;// µĞÈËÁĞ±í
-    private int Timer = 20;// ¶¨Ê±Æ÷£¬ÓÃÓÚ¼¼ÄÜ³öÉË
-    private bool isDamage = false;// ÊÇ·ñÕıÔÚ³öÉË
+    private List<GameObject> Enemys => Global_GameManager.Instance.EnemyList;// æ•Œäººåˆ—è¡¨
+    private int Timer = 20;// å®šæ—¶å™¨ï¼Œç”¨äºæŠ€èƒ½å‡ºä¼¤
+    private bool isDamage = false;// æ˜¯å¦æ­£åœ¨å‡ºä¼¤
     
     void OnEnable()
     {
-        // ÖØÖÃ×´Ì¬
+        // é‡ç½®çŠ¶æ€
         IsAnime = false;
         isDamage = false;
         Timer = 20;
         Global_GameManager.Instance.state = State.SpellCard;
-        // ¶ÔBossÔì³ÉÉËº¦
+        // å¯¹Bossé€ æˆä¼¤å®³
         ReimuNormalDamageToBoss();
     }
     
-    void Update()
+    void FixedUpdate()
     {
-        // ¼ì²éÊÇ·ñĞèÒª¿ªÊ¼²¥·Å¶¯»­
+        // æ£€æŸ¥æ˜¯å¦éœ€è¦å¼€å§‹æ’­æ”¾åŠ¨ç”»
         if (animator != null)
         {
-            // ÉèÖÃAnimatorµÄIsAnime²ÎÊı
+            // è®¾ç½®Animatorçš„IsAnimeå‚æ•°
             animator.SetBool("IsAnime", IsAnime);
         }
-        // Èç¹ûÕıÔÚ²¥·Å£¬´¦Àí³öÉËÂß¼­
+        // å¦‚æœæ­£åœ¨æ’­æ”¾ï¼Œå¤„ç†å‡ºä¼¤é€»è¾‘
         if (IsAnime)
         {
             HandleDamage();
@@ -58,7 +58,7 @@ public class ReimuNormal : MonoBehaviour
     }
     
     /// <summary>
-    /// ´¦Àí³öÉËÂß¼­
+    /// å¤„ç†å‡ºä¼¤é€»è¾‘
     /// </summary>
     void HandleDamage()
     {
@@ -77,7 +77,7 @@ public class ReimuNormal : MonoBehaviour
     }
     
     /// <summary>
-    /// ¿ªÊ¼³öÉË
+    /// å¼€å§‹å‡ºä¼¤
     /// </summary>
     public void StartToDamage()
     {
@@ -85,13 +85,13 @@ public class ReimuNormal : MonoBehaviour
     }
     
     /// <summary>
-    /// ÁéÃÎ³£¹æÉËº¦
+    /// çµæ¢¦å¸¸è§„ä¼¤å®³
     /// </summary>
     public void ReimuNormalDamage()
     {
         if (Enemys.Count > 0)
         {
-            // ´´½¨ÁÙÊ±ÁĞ±íÒÔ±ÜÃâÔÚ±éÀú¹ı³ÌÖĞĞŞ¸ÄÔ­Ê¼ÁĞ±í
+            // åˆ›å»ºä¸´æ—¶åˆ—è¡¨ä»¥é¿å…åœ¨éå†è¿‡ç¨‹ä¸­ä¿®æ”¹åŸå§‹åˆ—è¡¨
             List<GameObject> tempEnemys = new List<GameObject>(Enemys);
             foreach (var enemy in tempEnemys)
             {
@@ -104,7 +104,7 @@ public class ReimuNormal : MonoBehaviour
     }
     
     /// <summary>
-    /// ÁéÃÎ³£¹æ¶ÔBoss·¢ËÍ¼¼ÄÜ¹¥»÷Í¨Öª
+    /// çµæ¢¦å¸¸è§„å¯¹Bosså‘é€æŠ€èƒ½æ”»å‡»é€šçŸ¥
     /// </summary>
     private void ReimuNormalDamageToBoss()
     {
@@ -113,14 +113,14 @@ public class ReimuNormal : MonoBehaviour
             BossBase bossBase = boss.GetComponent<BossBase>();
             if (bossBase != null)
             {
-                // ·¢ËÍ¼¼ÄÜ¹¥»÷Í¨Öª£¬²»Ö±½ÓÔì³ÉÉËº¦£¬ÈÃBossÓĞ»ú»á¹æ±Ü
-                bossBase.OnPlayerSkillAttack(1); // 1±íÊ¾ÁéÃÎ³£¹æ
+                // å‘é€æŠ€èƒ½æ”»å‡»é€šçŸ¥ï¼Œä¸ç›´æ¥é€ æˆä¼¤å®³ï¼Œè®©Bossæœ‰æœºä¼šè§„é¿
+                bossBase.OnPlayerSkillAttack(1); // 1è¡¨ç¤ºçµæ¢¦å¸¸è§„
             }
         }
     }
     
     /// <summary>
-    /// ²¥·ÅÁéÃÎ³£¹æÒôĞ§
+    /// æ’­æ”¾çµæ¢¦å¸¸è§„éŸ³æ•ˆ
     /// </summary>
     public void AudioReimuNormal()
     {
@@ -130,12 +130,12 @@ public class ReimuNormal : MonoBehaviour
         }
         else
         {
-            Debug.Log("Ã»ÓĞÁéÃÎ³£¹æÒôĞ§");
+            Debug.Log("æ²¡æœ‰çµæ¢¦å¸¸è§„éŸ³æ•ˆ");
         }
     }
     
     /// <summary>
-    /// ²¥·Å»ğÑæÒôĞ§
+    /// æ’­æ”¾ç«ç„°éŸ³æ•ˆ
     /// </summary>
     public void AudioFire()
     {
@@ -145,12 +145,12 @@ public class ReimuNormal : MonoBehaviour
         }
         else
         {
-            Debug.Log("Ã»ÓĞ»ğÑæÒôĞ§");
+            Debug.Log("æ²¡æœ‰ç«ç„°éŸ³æ•ˆ");
         }
     }
     
     /// <summary>
-    /// ·û¿¨µ­³ö
+    /// ç¬¦å¡æ·¡å‡º
     /// </summary>
     public void SpellCardFadeOut()
     {
@@ -161,7 +161,7 @@ public class ReimuNormal : MonoBehaviour
     }
     
     /// <summary>
-    /// Çå³ıÆÁÄ»×Óµ¯
+    /// æ¸…é™¤å±å¹•å­å¼¹
     /// </summary>
     public void ClearAllBullet()
     {
@@ -176,7 +176,7 @@ public class ReimuNormal : MonoBehaviour
     }
     
     /// <summary>
-    /// ¶¯»­½áÊø»Øµ÷
+    /// åŠ¨ç”»ç»“æŸå›è°ƒ
     /// </summary>
     public void OnAnimationEnd()
     {
@@ -184,21 +184,21 @@ public class ReimuNormal : MonoBehaviour
         BossBase bossBase = boss.GetComponent<BossBase>();
         if (bossBase != null)
         {
-            bossBase.DefenseEnd(); // ¹Ø±Õ·ÀÓùÆÁÕÏ
+            bossBase.DefenseEnd(); // å…³é—­é˜²å¾¡å±éšœ
         }
         IsAnime = false;
         isDamage = false;
         
-        // ÖØÖÃAnimator²ÎÊı
+        // é‡ç½®Animatorå‚æ•°
         if (animator != null)
         {
             animator.SetBool("IsAnime", false);
         }
         
-        // Í¨Öª¸¸½Å±¾¶¯»­½áÊø
+        // é€šçŸ¥çˆ¶è„šæœ¬åŠ¨ç”»ç»“æŸ
         if (spellCardEffect != null)
         {
-            spellCardEffect.OnChildAnimationEnd(1); // 1±íÊ¾ÁéÃÎ³£¹æ
+            spellCardEffect.OnChildAnimationEnd(1); // 1è¡¨ç¤ºçµæ¢¦å¸¸è§„
         }
     }
 }

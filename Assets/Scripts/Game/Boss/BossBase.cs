@@ -1,46 +1,47 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ReplaySystem;
 
 [System.Serializable]
 public class HpConfig
 {
-    [Header("Ã¿²¨ÑªÁ¿ÅäÖÃ")]
-    public int none1HP; // µÚÒ»²¨ÆÕÍ¨¹¥»÷ÑªÁ¿
-    public int card1HP; // µÚÒ»²¨·û¿¨ÑªÁ¿
-    public int none2HP; // µÚ¶ş²¨ÆÕÍ¨¹¥»÷ÑªÁ¿
-    public int card2HP; // µÚ¶ş²¨·û¿¨ÑªÁ¿
+    [Header("æ¯æ³¢è¡€é‡é…ç½®")]
+    public int none1HP; // ç¬¬ä¸€æ³¢æ™®é€šæ”»å‡»è¡€é‡
+    public int card1HP; // ç¬¬ä¸€æ³¢ç¬¦å¡è¡€é‡
+    public int none2HP; // ç¬¬äºŒæ³¢æ™®é€šæ”»å‡»è¡€é‡
+    public int card2HP; // ç¬¬äºŒæ³¢ç¬¦å¡è¡€é‡
 }
 
 public class BossBase : MonoBehaviour
 {
     private int HP;
     private int MaxHP;
-    private float PowerDefense = 1f; // ÁéÁ¦Ïà¹ØÊÜÉËÏµÊı
-    private float phaseDamageMultiplier = 1f; // ½×¶Î²¹ÕıÊÜÉËÏµÊı
-    public bool isLockingHP = false; // ÊÇ·ñ´¦ÓÚËøÑª×´Ì¬
-    public bool isNoDead = false; // ÊÇ·ñÎŞµĞ
-    private float lockHPThreshold = 0.01f; // ËøÑªãĞÖµ£¨1%£©
-    private int currentPhaseDamage = 0; // µ±Ç°·û¿¨ÊÜµ½µÄ×ÜÉËº¦
-    private int currentPhaseIndex = 0; // µ±Ç°½×¶ÎË÷Òı£¨ÓÃÓÚ»ñÈ¡¶ÔÓ¦½×¶ÎÑªÁ¿ÅäÖÃ£©
-    private bool hasApplied30PercentCorrection = false; // ÊÇ·ñÒÑÓ¦ÓÃ30%Ê±¼äµã²¹Õı
-    private bool hasApplied70PercentCorrection = false; // ÊÇ·ñÒÑÓ¦ÓÃ70%Ê±¼äµã²¹Õı
-    private int hpAtPhaseStart = 0; // ½×¶Î¿ªÊ¼Ê±µÄÑªÁ¿
-    private float phaseTotalTime = 0f; // µ±Ç°½×¶Î×ÜÊ±³¤
-    private float phaseElapsedTime = 0f; // µ±Ç°½×¶ÎÒÑ½øĞĞÊ±¼ä
+    private float PowerDefense = 1f; // çµåŠ›ç›¸å…³å—ä¼¤ç³»æ•°
+    private float phaseDamageMultiplier = 1f; // é˜¶æ®µè¡¥æ­£å—ä¼¤ç³»æ•°
+    public bool isLockingHP = false; // æ˜¯å¦å¤„äºé”è¡€çŠ¶æ€
+    public bool isNoDead = false; // æ˜¯å¦æ— æ•Œ
+    private float lockHPThreshold = 0.01f; // é”è¡€é˜ˆå€¼ï¼ˆ1%ï¼‰
+    private int currentPhaseDamage = 0; // å½“å‰ç¬¦å¡å—åˆ°çš„æ€»ä¼¤å®³
+    private int currentPhaseIndex = 0; // å½“å‰é˜¶æ®µç´¢å¼•ï¼ˆç”¨äºè·å–å¯¹åº”é˜¶æ®µè¡€é‡é…ç½®ï¼‰
+    private bool hasApplied30PercentCorrection = false; // æ˜¯å¦å·²åº”ç”¨30%æ—¶é—´ç‚¹è¡¥æ­£
+    private bool hasApplied70PercentCorrection = false; // æ˜¯å¦å·²åº”ç”¨70%æ—¶é—´ç‚¹è¡¥æ­£
+    private int hpAtPhaseStart = 0; // é˜¶æ®µå¼€å§‹æ—¶çš„è¡€é‡
+    private float phaseTotalTime = 0f; // å½“å‰é˜¶æ®µæ€»æ—¶é•¿
+    private float phaseElapsedTime = 0f; // å½“å‰é˜¶æ®µå·²è¿›è¡Œæ—¶é—´
     
-    [Header("ÑªÁ¿ÅäÖÃ")]
+    [Header("è¡€é‡é…ç½®")]
     public HpConfig hpConfig;
     
-    [Header("ÒıÓÃ")]
-    public GameObject DefenseRealm; // ·ÀÓùÆÁÕÏ
+    [Header("å¼•ç”¨")]
+    public GameObject DefenseRealm; // é˜²å¾¡å±éšœ
     public BossAnime bossAnime;
     public UIManager uiManager;
     public AudioClip Bonus;
     
     private void OnEnable()
     {
-        // ¶©ÔÄÁéÁ¦¸Ä±äÊÂ¼ş
+        // è®¢é˜…çµåŠ›æ”¹å˜äº‹ä»¶
         if (Global_GameManager.Instance != null)
         {
             Global_GameManager.Instance.OnPowerChanged += OnPowerChangedHandler;
@@ -50,7 +51,7 @@ public class BossBase : MonoBehaviour
     
     private void OnDisable()
     {
-        // È¡Ïû¶©ÔÄÁéÁ¦¸Ä±äÊÂ¼ş
+        // å–æ¶ˆè®¢é˜…çµåŠ›æ”¹å˜äº‹ä»¶
         if (Global_GameManager.Instance != null)
         {
             Global_GameManager.Instance.OnPowerChanged -= OnPowerChangedHandler;
@@ -61,20 +62,20 @@ public class BossBase : MonoBehaviour
     
     private void Start()
     {
-        // ³õÊ¼»¯ÊÜÉËÏµÊı
+        // åˆå§‹åŒ–å—ä¼¤ç³»æ•°
         UpdateDefense();
-        // ³õÊ¼»¯ÑªÌõ
+        // åˆå§‹åŒ–è¡€æ¡
         UpdateHPBar();
     }
     
-    private void Update()
+    private void FixedUpdate()
     {
-        // ¸üĞÂ½×¶ÎÒÑ½øĞĞÊ±¼ä
+        // æ›´æ–°é˜¶æ®µå·²è¿›è¡Œæ—¶é—´
         if (phaseTotalTime > 0f && !isLockingHP)
         {
-            phaseElapsedTime += Time.deltaTime;
+            phaseElapsedTime += SimClock.FixedTickDt;
             
-            // ¼ì²é30%Ê±¼äµã²¹Õı
+            // æ£€æŸ¥30%æ—¶é—´ç‚¹è¡¥æ­£
             float timePercent = phaseElapsedTime / phaseTotalTime;
             if (timePercent >= 0.3f && !hasApplied30PercentCorrection)
             {
@@ -82,7 +83,7 @@ public class BossBase : MonoBehaviour
                 hasApplied30PercentCorrection = true;
             }
             
-            // ¼ì²é70%Ê±¼äµã²¹Õı
+            // æ£€æŸ¥70%æ—¶é—´ç‚¹è¡¥æ­£
             if (timePercent >= 0.7f && !hasApplied70PercentCorrection)
             {
                 ApplyDamageCorrection(0.7f);
@@ -92,16 +93,16 @@ public class BossBase : MonoBehaviour
     }
     
     /// <summary>
-    /// ÁéÁ¦¸Ä±äÊÂ¼ş´¦ÀíÆ÷
+    /// çµåŠ›æ”¹å˜äº‹ä»¶å¤„ç†å™¨
     /// </summary>
-    /// <param name="power">µ±Ç°ÁéÁ¦Öµ</param>
+    /// <param name="power">å½“å‰çµåŠ›å€¼</param>
     private void OnPowerChangedHandler(int power)
     {
         UpdateDefense();
     }
     
     /// <summary>
-    /// ¸ù¾İµ±Ç°½ÇÉ«ºÍÁéÁ¦Öµ¸üĞÂÊÜÉËÏµÊı
+    /// æ ¹æ®å½“å‰è§’è‰²å’ŒçµåŠ›å€¼æ›´æ–°å—ä¼¤ç³»æ•°
     /// </summary>
     private void UpdateDefense()
     {
@@ -114,14 +115,14 @@ public class BossBase : MonoBehaviour
         Character character = Global_GameManager.Instance.character;
         int power = Global_GameManager.Instance.Power;
         
-        // »ñÈ¡ÁéÁ¦ÖµµÄ°ÙÎ»Êı£¨100-400¶ÔÓ¦1-4£©
+        // è·å–çµåŠ›å€¼çš„ç™¾ä½æ•°ï¼ˆ100-400å¯¹åº”1-4ï¼‰
         int powerTier = Mathf.Clamp(Mathf.CeilToInt(power / 100f), 1, 4);
         
-        // ¸ù¾İ½ÇÉ«ºÍÁéÁ¦µÈ¼¶ÉèÖÃÊÜÉËÏµÊı
+        // æ ¹æ®è§’è‰²å’ŒçµåŠ›ç­‰çº§è®¾ç½®å—ä¼¤ç³»æ•°
         switch (character)
         {
             case Character.Reimu:
-                // ÁéÃÎ£º1, 0.94, 0.88, 0.82
+                // çµæ¢¦ï¼š1, 0.94, 0.88, 0.82
                 switch (powerTier)
                 {
                     case 1:
@@ -140,7 +141,7 @@ public class BossBase : MonoBehaviour
                 break;
                 
             case Character.Marisa:
-                // Ä§ÀíÉ³£º1, 0.9, 0.8, 0.7
+                // é­”ç†æ²™ï¼š1, 0.9, 0.8, 0.7
                 switch (powerTier)
                 {
                     case 1:
@@ -165,61 +166,61 @@ public class BossBase : MonoBehaviour
     }
     
     /// <summary>
-    /// ´¦ÀíBossÊÜÉË
+    /// å¤„ç†Bosså—ä¼¤
     /// </summary>
-    /// <param name="damage">ÉËº¦Öµ</param>
+    /// <param name="damage">ä¼¤å®³å€¼</param>
     public void TakeDamage(int damage)
     {
-        // Èç¹ûÎŞµĞ£¬Ö±½Ó·µ»Ø
+        // å¦‚æœæ— æ•Œï¼Œç›´æ¥è¿”å›
         if (isNoDead)
         {
             return;
         }
 
-        // Èç¹û´¦ÓÚËøÑª×´Ì¬£¬½«ÉËº¦×ª»¯Îª½±Àø
+        // å¦‚æœå¤„äºé”è¡€çŠ¶æ€ï¼Œå°†ä¼¤å®³è½¬åŒ–ä¸ºå¥–åŠ±
         if (isLockingHP)
         {
             ConvertDamageToReward(damage);
             return;
         }
         
-        // Í³¼Æµ±Ç°·û¿¨ÊÜµ½µÄÉËº¦
+        // ç»Ÿè®¡å½“å‰ç¬¦å¡å—åˆ°çš„ä¼¤å®³
         currentPhaseDamage += damage;
         
-        // Ó¦ÓÃÁ½¸öÊÜÉËÏµÊı£ºÁéÁ¦ÏµÊı ¡Á ½×¶Î²¹ÕıÏµÊı
+        // åº”ç”¨ä¸¤ä¸ªå—ä¼¤ç³»æ•°ï¼šçµåŠ›ç³»æ•° Ã— é˜¶æ®µè¡¥æ­£ç³»æ•°
         float totalMultiplier = PowerDefense * phaseDamageMultiplier;
         int finalDamage = (int)(damage * totalMultiplier);
-        // È·±£×îĞ¡ÉËº¦Îª1
+        // ç¡®ä¿æœ€å°ä¼¤å®³ä¸º1
         finalDamage = Mathf.Max(1, finalDamage);
         HP = Mathf.Max(0, HP - finalDamage);
         
-        // ¸üĞÂÑªÌõ
+        // æ›´æ–°è¡€æ¡
         UpdateHPBar();
         
-        // ¼ì²éÊÇ·ñ´ïµ½ËøÑªãĞÖµ
+        // æ£€æŸ¥æ˜¯å¦è¾¾åˆ°é”è¡€é˜ˆå€¼
         CheckLockHPThreshold();
     }
     
     /// <summary>
-    /// ¼ì²éÊ±¼ä½ø¶È²¢Ó¦ÓÃÉËº¦²¹Õı
-    /// ÓÉBossBeheveµ÷ÓÃ£¬´«Èëµ±Ç°½×¶ÎÒÑ½øĞĞÊ±¼äºÍ×ÜÊ±¼ä
+    /// æ£€æŸ¥æ—¶é—´è¿›åº¦å¹¶åº”ç”¨ä¼¤å®³è¡¥æ­£
+    /// ç”±BossBeheveè°ƒç”¨ï¼Œä¼ å…¥å½“å‰é˜¶æ®µå·²è¿›è¡Œæ—¶é—´å’Œæ€»æ—¶é—´
     /// </summary>
-    /// <param name="currentTime">µ±Ç°½×¶ÎÒÑ½øĞĞÊ±¼ä</param>
-    /// <param name="totalTime">µ±Ç°½×¶Î×ÜÊ±¼ä</param>
+    /// <param name="currentTime">å½“å‰é˜¶æ®µå·²è¿›è¡Œæ—¶é—´</param>
+    /// <param name="totalTime">å½“å‰é˜¶æ®µæ€»æ—¶é—´</param>
     public void CheckTimeCorrection(float currentTime, float totalTime)
     {
         if (totalTime <= 0) return;
         
         float timePercent = currentTime / totalTime;
         
-        // 30%Ê±¼äµã²¹Õı
+        // 30%æ—¶é—´ç‚¹è¡¥æ­£
         if (timePercent >= 0.3f && !hasApplied30PercentCorrection)
         {
             ApplyDamageCorrection(0.3f);
             hasApplied30PercentCorrection = true;
         }
         
-        // 70%Ê±¼äµã²¹Õı
+        // 70%æ—¶é—´ç‚¹è¡¥æ­£
         if (timePercent >= 0.7f && !hasApplied70PercentCorrection)
         {
             ApplyDamageCorrection(0.7f);
@@ -228,55 +229,55 @@ public class BossBase : MonoBehaviour
     }
     
     /// <summary>
-    /// Ó¦ÓÃÉËº¦²¹Õı
+    /// åº”ç”¨ä¼¤å®³è¡¥æ­£
     /// </summary>
-    /// <param name="timePercent">µ±Ç°Ê±¼ä°Ù·Ö±È£¨0.3»ò0.7£©</param>
+    /// <param name="timePercent">å½“å‰æ—¶é—´ç™¾åˆ†æ¯”ï¼ˆ0.3æˆ–0.7ï¼‰</param>
     private void ApplyDamageCorrection(float timePercent)
     {
-        // ¼ÆËãÊµ¼ÊÊ§È¥µÄÑªÁ¿
+        // è®¡ç®—å®é™…å¤±å»çš„è¡€é‡
         int actualLostHP = hpAtPhaseStart - HP;
-        // ¼ÆËãÆÚÍûÊ§È¥µÄÑªÁ¿£¨½×¶Î×ÜÑªÁ¿ ¡Á Ê±¼ä°Ù·Ö±È£©
+        // è®¡ç®—æœŸæœ›å¤±å»çš„è¡€é‡ï¼ˆé˜¶æ®µæ€»è¡€é‡ Ã— æ—¶é—´ç™¾åˆ†æ¯”ï¼‰
         int expectedLostHP = Mathf.RoundToInt(MaxHP * timePercent);
         
-        // ¼ÆËã²¹ÕıÏµÊı
+        // è®¡ç®—è¡¥æ­£ç³»æ•°
         float correctionFactor = 1f;
         if (actualLostHP > 0)
         {
             correctionFactor = (float)expectedLostHP / actualLostHP;
-            // ÔöÉËÏµÊı²»»áĞ¡ÓÚ1£¬¼õÉËÏµÊıÕı³£¼ÆËã
+            // å¢ä¼¤ç³»æ•°ä¸ä¼šå°äº1ï¼Œå‡ä¼¤ç³»æ•°æ­£å¸¸è®¡ç®—
             if (correctionFactor > 1)
             {
-                // ÔöÉË£ºÊµ¼ÊÊÜÉËÉÙÓÚÔ¤ÆÚ£¬ĞèÒªÔö¼ÓÉËº¦
+                // å¢ä¼¤ï¼šå®é™…å—ä¼¤å°‘äºé¢„æœŸï¼Œéœ€è¦å¢åŠ ä¼¤å®³
                 correctionFactor = Mathf.Max(1f, correctionFactor);
             }
         }
         
-        // Ó¦ÓÃ80%µÄ²¹ÕıĞ§¹û
+        // åº”ç”¨80%çš„è¡¥æ­£æ•ˆæœ
         float finalCorrection = 1f + (correctionFactor - 1f) * 0.8f;
         
-        // ¸üĞÂ½×¶Î²¹ÕıÊÜÉËÏµÊı£¬²¢ÏŞÖÆ·¶Î§£º¼õÉË0.8~1£¬ÔöÉË1~1.2
+        // æ›´æ–°é˜¶æ®µè¡¥æ­£å—ä¼¤ç³»æ•°ï¼Œå¹¶é™åˆ¶èŒƒå›´ï¼šå‡ä¼¤0.8~1ï¼Œå¢ä¼¤1~1.2
         phaseDamageMultiplier = Mathf.Clamp(finalCorrection, 0.8f, 1.2f);
         
     }
     
     /// <summary>
-    /// Êä³öµ±Ç°·û¿¨ÊÜµ½µÄÉËº¦Í³¼Æ²¢ÖØÖÃ
-    /// ÔÚÃ¿ÕÅ·û¿¨£¨none»òcard½Å±¾£©½áÊøÊ±µ÷ÓÃ
+    /// è¾“å‡ºå½“å‰ç¬¦å¡å—åˆ°çš„ä¼¤å®³ç»Ÿè®¡å¹¶é‡ç½®
+    /// åœ¨æ¯å¼ ç¬¦å¡ï¼ˆnoneæˆ–cardè„šæœ¬ï¼‰ç»“æŸæ—¶è°ƒç”¨
     /// </summary>
-    /// <param name="phaseName">µ±Ç°·û¿¨Ãû³Æ</param>
+    /// <param name="phaseName">å½“å‰ç¬¦å¡åç§°</param>
     public void LogPhaseDamage(string phaseName)
     {
-        Debug.Log($"·û¿¨ [{phaseName}] ÆÚ¼äÊÜµ½µÄ×ÜÉËº¦: {currentPhaseDamage}");
-        // ÖØÖÃÉËº¦Í³¼Æ
+        Debug.Log($"ç¬¦å¡ [{phaseName}] æœŸé—´å—åˆ°çš„æ€»ä¼¤å®³: {currentPhaseDamage}");
+        // é‡ç½®ä¼¤å®³ç»Ÿè®¡
         currentPhaseDamage = 0;
     }
     
     /// <summary>
-    /// ¼ì²éÊÇ·ñ´ïµ½ËøÑªãĞÖµ
+    /// æ£€æŸ¥æ˜¯å¦è¾¾åˆ°é”è¡€é˜ˆå€¼
     /// </summary>
     private void CheckLockHPThreshold()
     {
-        // µ±ÑªÁ¿ÏÂ½µµ½1%Ê±£¬´¥·¢ËøÑª
+        // å½“è¡€é‡ä¸‹é™åˆ°1%æ—¶ï¼Œè§¦å‘é”è¡€
         if (!isLockingHP && (float)HP / MaxHP <= lockHPThreshold)
         {
             LockHP();
@@ -284,25 +285,25 @@ public class BossBase : MonoBehaviour
     }
     
     /// <summary>
-    /// ËøÑª·½·¨
-    /// µ±ÑªÁ¿ÏÂ½µµ½1%Ê±´¥·¢£¬Í£Ö¹Éä»÷²¢ÏÔÊ¾ËøÑªUIºÍ¶¯»­
+    /// é”è¡€æ–¹æ³•
+    /// å½“è¡€é‡ä¸‹é™åˆ°1%æ—¶è§¦å‘ï¼Œåœæ­¢å°„å‡»å¹¶æ˜¾ç¤ºé”è¡€UIå’ŒåŠ¨ç”»
     /// </summary>
     public void LockHP()
     {
-        // ²¥·ÅËøÑªÒôĞ§
+        // æ’­æ”¾é”è¡€éŸ³æ•ˆ
         if (Bonus != null)
         {
             Global_AudioManager.Instance.PlaySFX(Bonus);
         }
         isLockingHP = true;
-        Debug.Log("Boss½øÈëËøÑª×´Ì¬");
+        Debug.Log("Bossè¿›å…¥é”è¡€çŠ¶æ€");
     }
     
     /// <summary>
-    /// ½«ÉËº¦×ª»¯Îª½±Àø
-    /// ËøÑª×´Ì¬ÏÂ£¬boss±»»÷ÖĞÊ±µ÷ÓÃ´Ë·½·¨
+    /// å°†ä¼¤å®³è½¬åŒ–ä¸ºå¥–åŠ±
+    /// é”è¡€çŠ¶æ€ä¸‹ï¼Œbossè¢«å‡»ä¸­æ—¶è°ƒç”¨æ­¤æ–¹æ³•
     /// </summary>
-    /// <param name="damage">×Óµ¯ÉËº¦</param>
+    /// <param name="damage">å­å¼¹ä¼¤å®³</param>
     private void ConvertDamageToReward(int damage)
     {
         uiManager.AddExScore(damage);
@@ -310,20 +311,20 @@ public class BossBase : MonoBehaviour
     }
     
     /// <summary>
-    /// Íæ¼ÒÊÍ·Å¼¼ÄÜ¹¥»÷µÄÍ¨Öª
-    /// boss¿ÉÒÔÍ¨¹ıÌØÊâ¶¯»­À´¹æ±ÜµôÍæ¼ÒµÄ¼¼ÄÜÉËº¦
+    /// ç©å®¶é‡Šæ”¾æŠ€èƒ½æ”»å‡»çš„é€šçŸ¥
+    /// bosså¯ä»¥é€šè¿‡ç‰¹æ®ŠåŠ¨ç”»æ¥è§„é¿æ‰ç©å®¶çš„æŠ€èƒ½ä¼¤å®³
     /// </summary>
-    /// <param name="skillType">¼¼ÄÜÀàĞÍ£¨1:ÁéÃÎ³£¹æ, 2:ÁéÃÎ¾öËÀ, 3:Ä§ÀíÉ³³£¹æ, 4:Ä§ÀíÉ³¾öËÀ£©</param>
+    /// <param name="skillType">æŠ€èƒ½ç±»å‹ï¼ˆ1:çµæ¢¦å¸¸è§„, 2:çµæ¢¦å†³æ­», 3:é­”ç†æ²™å¸¸è§„, 4:é­”ç†æ²™å†³æ­»ï¼‰</param>
     public void OnPlayerSkillAttack(int skillType)
     {
-        // ¿ªÆô·ÀÓùÆÁÕÏ
+        // å¼€å¯é˜²å¾¡å±éšœ
         DefenseRealm.SetActive(true);
         
-        // BossÊÜµ½¹Ì¶¨ÉËº¦£ºµ±Ç°½×¶Î×î´óÉúÃüÖµµÄ1/10
+        // Bosså—åˆ°å›ºå®šä¼¤å®³ï¼šå½“å‰é˜¶æ®µæœ€å¤§ç”Ÿå‘½å€¼çš„1/10
         int fixedDamage = MaxHP / 10;
         TakeDamage(fixedDamage);
         
-        Debug.Log($"BossÊÜµ½{skillType}¼¼ÄÜ¹¥»÷¹Ì¶¨ÉËº¦: {fixedDamage}");
+        Debug.Log($"Bosså—åˆ°{skillType}æŠ€èƒ½æ”»å‡»å›ºå®šä¼¤å®³: {fixedDamage}");
     }
 
     public void DefenseEnd()
@@ -332,27 +333,27 @@ public class BossBase : MonoBehaviour
     }
     
     /// <summary>
-    /// ¼ì²éÕ½¶·½á¹û
+    /// æ£€æŸ¥æˆ˜æ–—ç»“æœ
     /// </summary>
-    /// <returns>true±íÊ¾Íæ¼Ò»÷°Ü³É¹¦£¨boss´¦ÓÚËøÑª×´Ì¬£©£¬false±íÊ¾Íæ¼ÒÊ§°Ü£¨bossÈÔ´æ»î£©</returns>
+    /// <returns>trueè¡¨ç¤ºç©å®¶å‡»è´¥æˆåŠŸï¼ˆbosså¤„äºé”è¡€çŠ¶æ€ï¼‰ï¼Œfalseè¡¨ç¤ºç©å®¶å¤±è´¥ï¼ˆbossä»å­˜æ´»ï¼‰</returns>
     public bool CheckOver()
     {
         if (isLockingHP)
         {
-            // boss´¦ÓÚËøÑª×´Ì¬£¬Íæ¼Ò»÷°Ü³É¹¦
-            Debug.Log("Íæ¼Ò»÷°Ü³É¹¦£¡Boss´¦ÓÚËøÑª×´Ì¬");
+            // bosså¤„äºé”è¡€çŠ¶æ€ï¼Œç©å®¶å‡»è´¥æˆåŠŸ
+            Debug.Log("ç©å®¶å‡»è´¥æˆåŠŸï¼Bosså¤„äºé”è¡€çŠ¶æ€");
             return true;
         }
         else
         {
-            // bossÈÔÈ»´æ»î£¬Ê±¼äµ½£¬Íæ¼ÒÊ§°Ü
-            Debug.Log("Íæ¼Ò»÷É±Ê§°Ü£¡BossÈÔÈ»´æ»î");
+            // bossä»ç„¶å­˜æ´»ï¼Œæ—¶é—´åˆ°ï¼Œç©å®¶å¤±è´¥
+            Debug.Log("ç©å®¶å‡»æ€å¤±è´¥ï¼Bossä»ç„¶å­˜æ´»");
             return false;
         }
     }
     
     /// <summary>
-    /// ¸üĞÂÑªÌõÏÔÊ¾
+    /// æ›´æ–°è¡€æ¡æ˜¾ç¤º
     /// </summary>
     private void UpdateHPBar()
     {
@@ -363,26 +364,26 @@ public class BossBase : MonoBehaviour
     }
     
     /// <summary>
-    /// ÉèÖÃ¶ÔÓ¦²¨´ÎµÄÑªÁ¿
+    /// è®¾ç½®å¯¹åº”æ³¢æ¬¡çš„è¡€é‡
     /// </summary>
-    /// <param name="phaseIndex">²¨´ÎË÷Òı£¨0: none1, 1: card1, 2: none2, 3: card2£©</param>
-    /// <param name="totalTime">µ±Ç°½×¶Î×ÜÊ±³¤£¨Ãë£©</param>
+    /// <param name="phaseIndex">æ³¢æ¬¡ç´¢å¼•ï¼ˆ0: none1, 1: card1, 2: none2, 3: card2ï¼‰</param>
+    /// <param name="totalTime">å½“å‰é˜¶æ®µæ€»æ—¶é•¿ï¼ˆç§’ï¼‰</param>
     public void SetPhaseHP_Time(int phaseIndex, float totalTime = 0f)
     {
-        // ¸üĞÂµ±Ç°½×¶ÎË÷Òı
+        // æ›´æ–°å½“å‰é˜¶æ®µç´¢å¼•
         currentPhaseIndex = phaseIndex;
-        // ÖØÖÃËøÑª×´Ì¬
+        // é‡ç½®é”è¡€çŠ¶æ€
         isLockingHP = false;
-        // ÖØÖÃµ±Ç°·û¿¨ÉËº¦Í³¼Æ
+        // é‡ç½®å½“å‰ç¬¦å¡ä¼¤å®³ç»Ÿè®¡
         currentPhaseDamage = 0;
-        // ÖØÖÃ½×¶Î²¹ÕıÊÜÉËÏµÊı
+        // é‡ç½®é˜¶æ®µè¡¥æ­£å—ä¼¤ç³»æ•°
         phaseDamageMultiplier = 1f;
-        // ÖØÖÃ²¹Õı±êÖ¾
+        // é‡ç½®è¡¥æ­£æ ‡å¿—
         hasApplied30PercentCorrection = false;
         hasApplied70PercentCorrection = false;
-        // ÉèÖÃ½×¶Î×ÜÊ±³¤
+        // è®¾ç½®é˜¶æ®µæ€»æ—¶é•¿
         phaseTotalTime = totalTime;
-        // ÖØÖÃ½×¶ÎÒÑ½øĞĞÊ±¼ä
+        // é‡ç½®é˜¶æ®µå·²è¿›è¡Œæ—¶é—´
         phaseElapsedTime = 0f;
         
         switch (phaseIndex)
@@ -405,36 +406,36 @@ public class BossBase : MonoBehaviour
                 break;
         }
         
-        // ¼ÇÂ¼½×¶Î¿ªÊ¼Ê±µÄÑªÁ¿
+        // è®°å½•é˜¶æ®µå¼€å§‹æ—¶çš„è¡€é‡
         hpAtPhaseStart = HP;
         
         UpdateHPBar();
         
-        Debug.Log($"½×¶Î [{phaseIndex}] ¿ªÊ¼£¬×ÜÊ±³¤={totalTime}Ãë£¬ÑªÁ¿={HP}");
+        Debug.Log($"é˜¶æ®µ [{phaseIndex}] å¼€å§‹ï¼Œæ€»æ—¶é•¿={totalTime}ç§’ï¼Œè¡€é‡={HP}");
     }
     
     /// <summary>
-    /// »ñÈ¡µ±Ç°½×¶ÎË÷Òı
+    /// è·å–å½“å‰é˜¶æ®µç´¢å¼•
     /// </summary>
-    /// <returns>µ±Ç°½×¶ÎË÷Òı</returns>
+    /// <returns>å½“å‰é˜¶æ®µç´¢å¼•</returns>
     private int GetCurrentPhaseIndex()
     {
         return currentPhaseIndex;
     }
     
     /// <summary>
-    /// »ñÈ¡µ±Ç°ÑªÁ¿
+    /// è·å–å½“å‰è¡€é‡
     /// </summary>
-    /// <returns>µ±Ç°ÑªÁ¿Öµ</returns>
+    /// <returns>å½“å‰è¡€é‡å€¼</returns>
     public int GetHP()
     {
         return HP;
     }
     
     /// <summary>
-    /// »ñÈ¡×î´óÑªÁ¿
+    /// è·å–æœ€å¤§è¡€é‡
     /// </summary>
-    /// <returns>×î´óÑªÁ¿Öµ</returns>
+    /// <returns>æœ€å¤§è¡€é‡å€¼</returns>
     public int GetMaxHP()
     {
         return MaxHP;

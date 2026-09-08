@@ -1,18 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ReplaySystem;
 
 public class MarisaShoot : MonoBehaviour
 {
-    [Header("¼¤¹âÅäÖÃ")]
-    public GameObject laserPrefab; // ¼¤¹âÔ¤ÖÆÌå
+    [Header("æ¿€å…‰é…ç½®")]
+    public GameObject laserPrefab; // æ¿€å…‰é¢„åˆ¶ä½“
 
-    private Laser laser; // ¼¤¹â×é¼şÒıÓÃ
-    private bool isLaserActive = false; // ¼¤¹âÊÇ·ñ¼¤»î
+    private Laser laser; // æ¿€å…‰ç»„ä»¶å¼•ç”¨
+    private bool isLaserActive = false; // æ¿€å…‰æ˜¯å¦æ¿€æ´»
 
     void OnEnable()
     {
-        if(Input.GetKey(KeyCode.Z))
+        if(ReplayManager.Input.GetKey(LogicalKey.Fire))
             CreatLaser();
     }
     void OnDisable()
@@ -20,19 +21,18 @@ public class MarisaShoot : MonoBehaviour
         CleanLaser();
     }
 
-    // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         if(Global_GameManager.Instance != null && 
         Global_GameManager.Instance.state != State.Gaming && 
         Global_GameManager.Instance.state != State.NoDead) return;
-        // ¼ì²â Z ¼ü°´ÏÂ
-        if (Input.GetKeyDown(KeyCode.Z))
+        // æ£€æµ‹ Z é”®æŒ‰ä¸‹
+        if (ReplayManager.Input.GetKeyDown(LogicalKey.Fire))
         {
             CreatLaser();
         }
-        // ¼ì²â Z ¼üÌ§Æğ
-        else if (Input.GetKeyUp(KeyCode.Z))
+        // æ£€æµ‹ Z é”®æŠ¬èµ·
+        else if (ReplayManager.Input.GetKeyUp(LogicalKey.Fire))
         {
             CleanLaser();
         }
@@ -42,11 +42,11 @@ public class MarisaShoot : MonoBehaviour
     {
         if (!isLaserActive && laserPrefab != null)
         {
-            // ÊµÀı»¯¼¤¹âÔ¤ÖÆÌå
+            // å®ä¾‹åŒ–æ¿€å…‰é¢„åˆ¶ä½“
             GameObject laserObj = Instantiate(laserPrefab, transform.position, transform.rotation);
-            // ÉèÖÃ¼¤¹â¶ÔÏóÎª·¢Éäµã¶ÔÏóµÄ×Ó¶ÔÏó
+            // è®¾ç½®æ¿€å…‰å¯¹è±¡ä¸ºå‘å°„ç‚¹å¯¹è±¡çš„å­å¯¹è±¡
             laserObj.transform.parent = transform;
-            // ÖØÖÃ±¾µØÎ»ÖÃÎª(0,0,0)
+            // é‡ç½®æœ¬åœ°ä½ç½®ä¸º(0,0,0)
             laserObj.transform.localPosition = Vector3.zero;
             laser = laserObj.GetComponent<Laser>();
             
@@ -67,7 +67,7 @@ public class MarisaShoot : MonoBehaviour
         if (isLaserActive && laser != null)
         {
             laser.StopLaser();
-            // ÑÓ³ÙÏú»Ù¼¤¹â¶ÔÏó£¬È·±£ÊÓ¾õĞ§¹ûÍê³É
+            // å»¶è¿Ÿé”€æ¯æ¿€å…‰å¯¹è±¡ï¼Œç¡®ä¿è§†è§‰æ•ˆæœå®Œæˆ
             Destroy(laser.gameObject, 0.1f);
             laser = null;
             isLaserActive = false;

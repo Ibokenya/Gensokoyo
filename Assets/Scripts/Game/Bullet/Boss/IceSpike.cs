@@ -1,12 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ReplaySystem;
 
 public class IceSpike : MonoBehaviour
 {
     private Rigidbody2D rb2D;
     
-    // ±ß½ç·¶Î§
+    // è¾¹ç•ŒèŒƒå›´
     private readonly float minY = -6f;
     private readonly float maxY = 6f;
 
@@ -15,18 +16,18 @@ public class IceSpike : MonoBehaviour
         rb2D = GetComponent<Rigidbody2D>();
         if (rb2D != null)
         {
-            // ÉèÖÃÎª×ÔÓÉÏÂÂä
+            // è®¾ç½®ä¸ºè‡ªç”±ä¸‹è½
             rb2D.gravityScale = 1f;
         }
     }
 
-    void Update()
+    void FixedUpdate()
     {
         CheckBounds();
     }
     
     /// <summary>
-    /// ¼ì²é±ß½ç£¬³¬³ö·¶Î§Ôò»ØÊÕ
+    /// æ£€æŸ¥è¾¹ç•Œï¼Œè¶…å‡ºèŒƒå›´åˆ™å›æ”¶
     /// </summary>
     private void CheckBounds()
     {

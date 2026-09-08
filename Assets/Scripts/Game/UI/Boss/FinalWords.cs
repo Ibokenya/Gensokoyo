@@ -1,21 +1,21 @@
-using TMPro;
+ï»¿using TMPro;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 
 /// <summary>
-/// ×îÖÕ·û¿¨ĞûÑÔ
-/// ÕâÊÇUI²¿·ÖµÄ
+/// æœ€ç»ˆç¬¦å¡å®£è¨€
+/// è¿™æ˜¯UIéƒ¨åˆ†çš„
 /// </summary>
 public class FinalWords : MonoBehaviour
 {
     public TextMeshProUGUI TextRight;
     public TextMeshProUGUI TextLeft;
-    public GameObject DialogBalloon; // ¶Ô»°¿òÎïÌåÒıÓÃ
+    public GameObject DialogBalloon; // å¯¹è¯æ¡†ç‰©ä½“å¼•ç”¨
 
-    [Header("×îÖÕĞûÑÔÎÄ¼şÂ·¾¶")]
-    public string finalWordsPath = "Touho/¶Ô»°/FinalWords.csv";
+    [Header("æœ€ç»ˆå®£è¨€æ–‡ä»¶è·¯å¾„")]
+    public string finalWordsPath = "Touho/å¯¹è¯/FinalWords.csv";
 
     private List<FinalWordsData> finalWordsList;
     private int currentIndex = 0;
@@ -35,10 +35,10 @@ public class FinalWords : MonoBehaviour
         isActive = true;
         currentIndex = 0;
         
-        // ¼ÓÔØ×îÖÕĞûÑÔÊı¾İ
+        // åŠ è½½æœ€ç»ˆå®£è¨€æ•°æ®
         LoadFinalWords();
         
-        // ¿ªÊ¼ÏÔÊ¾×îÖÕĞûÑÔ
+        // å¼€å§‹æ˜¾ç¤ºæœ€ç»ˆå®£è¨€
         StartCoroutine(ShowFinalWordsSequence());
     }
 
@@ -46,20 +46,20 @@ public class FinalWords : MonoBehaviour
     {
         finalWordsList = new List<FinalWordsData>();
         
-        // ´ÓResources¼ÓÔØCSVÎÄ¼ş
+        // ä»ResourcesåŠ è½½CSVæ–‡ä»¶
         TextAsset csvFile = Resources.Load<TextAsset>(finalWordsPath.Replace(".csv", ""));
         
         if (csvFile == null)
         {
-            Debug.LogError("ÎŞ·¨ÕÒµ½×îÖÕĞûÑÔÎÄ¼ş: " + finalWordsPath);
+            Debug.LogError("æ— æ³•æ‰¾åˆ°æœ€ç»ˆå®£è¨€æ–‡ä»¶: " + finalWordsPath);
             return;
         }
 
-        // ½âÎöCSVÄÚÈİ
+        // è§£æCSVå†…å®¹
         string csvContent = csvFile.text;
         List<string> lines = ParseCSVContent(csvContent);
         
-        // ´¦ÀíÃ¿Ò»ĞĞÊı¾İ
+        // å¤„ç†æ¯ä¸€è¡Œæ•°æ®
         for (int i = 1; i < lines.Count; i++)
         {
             string line = lines[i].Trim();
@@ -75,7 +75,7 @@ public class FinalWords : MonoBehaviour
     }
 
     /// <summary>
-    /// ½âÎöCSVÄÚÈİ
+    /// è§£æCSVå†…å®¹
     /// </summary>
     private List<string> ParseCSVContent(string content)
     {
@@ -97,7 +97,7 @@ public class FinalWords : MonoBehaviour
             }
         }
         
-        // Ìí¼Ó×îºóÒ»ĞĞ
+        // æ·»åŠ æœ€åä¸€è¡Œ
         if (!string.IsNullOrEmpty(currentLine))
         {
             lines.Add(currentLine);
@@ -107,7 +107,7 @@ public class FinalWords : MonoBehaviour
     }
 
     /// <summary>
-    /// ½âÎöCSVĞĞ
+    /// è§£æCSVè¡Œ
     /// </summary>
     private FinalWordsData ParseCSVLine(string line)
     {
@@ -121,7 +121,7 @@ public class FinalWords : MonoBehaviour
         data.Right = parts[1];
         data.Left = parts[2];
         
-        // ½âÎö¼ä¸ôÊ±¼ä
+        // è§£æé—´éš”æ—¶é—´
         string intervalStr = parts[3].Trim();
 
         data.Interval = float.Parse(intervalStr);
@@ -130,7 +130,7 @@ public class FinalWords : MonoBehaviour
     }
 
     /// <summary>
-    /// ÏÔÊ¾×îÖÕĞûÑÔĞòÁĞ
+    /// æ˜¾ç¤ºæœ€ç»ˆå®£è¨€åºåˆ—
     /// </summary>
     private IEnumerator ShowFinalWordsSequence()
     {
@@ -139,31 +139,31 @@ public class FinalWords : MonoBehaviour
         {
             FinalWordsData data = finalWordsList[currentIndex];
             
-            // ÏÔÊ¾µ±Ç°ĞûÑÔ
+            // æ˜¾ç¤ºå½“å‰å®£è¨€
             TextRight.text = data.Right;
             TextLeft.text = data.Left;
             
-            // µÈ´ıÖ¸¶¨¼ä¸ô
+            // ç­‰å¾…æŒ‡å®šé—´éš”
             yield return new WaitForSeconds(data.Interval);
             
-            // ÒÆ¶¯µ½ÏÂÒ»Ìõ
+            // ç§»åŠ¨åˆ°ä¸‹ä¸€æ¡
             currentIndex++;
         }
         
-        // ËùÓĞĞûÑÔÏÔÊ¾Íê±Ï
+        // æ‰€æœ‰å®£è¨€æ˜¾ç¤ºå®Œæ¯•
         EndFinalWords();
     }
 
     /// <summary>
-    /// ½áÊø×îÖÕĞûÑÔ
+    /// ç»“æŸæœ€ç»ˆå®£è¨€
     /// </summary>
     private void EndFinalWords()
     {
-        // Çå¿ÕÎÄ±¾
+        // æ¸…ç©ºæ–‡æœ¬
         TextRight.text = "";
         TextLeft.text = "";
         
-        // Òş²Ø¶Ô»°¿ò
+        // éšè—å¯¹è¯æ¡†
         if (DialogBalloon != null)
         {
             DialogBalloon.SetActive(false);

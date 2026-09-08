@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using JetBrains.Annotations;
+using ReplaySystem;
 using UnityEditor;
 using UnityEngine;
 
@@ -15,7 +16,7 @@ enum AnimeType
 
 public class PlayerAnime : MonoBehaviour
 {
-    [Header("¾«ÁéÁĞ±í")]
+    [Header("ç²¾çµåˆ—è¡¨")]
     public List<Sprite> ReimuIdleSprites;
     public List<Sprite> ReimuLeftSprites;
     public List<Sprite> ReimuRightSprites;
@@ -23,7 +24,7 @@ public class PlayerAnime : MonoBehaviour
     public List<Sprite> MarisaLeftSprites;
     public List<Sprite> MarisaRightSprites;
     
-    [Header("µ±Ç°Ê¹ÓÃµÄ¾«ÁéÁĞ±í")]
+    [Header("å½“å‰ä½¿ç”¨çš„ç²¾çµåˆ—è¡¨")]
     [SerializeField]
     private List<Sprite> IdleSprites;
     [SerializeField]
@@ -31,77 +32,77 @@ public class PlayerAnime : MonoBehaviour
     [SerializeField]
     private List<Sprite> RightSprites;
 
-    [Header("¶¯»­²ÎÊı")]
+    [Header("åŠ¨ç”»å‚æ•°")]
     [SerializeField]    
-    private int _currentIndex = 0;// ¶¯»­Ë÷Òı
-    private float TimeClock;// Ê±ÖÓ£¬ÓÃÀ´¼ÇÂ¼¹ıÁË¶à³¤Ê±¼ä
-    [Header("¶¯»­ËÙ¶È£¨Ã¿¸ô¶àÉÙÖ¡ÇĞ»»Ò»´Î¶¯»­£©")]
-    public int AnimeSpeed = 4;// Ã¿¸ô¶àÉÙÖ¡ÇĞ»»Ò»´Î¶¯»­
+    private int _currentIndex = 0;// åŠ¨ç”»ç´¢å¼•
+    private float TimeClock;// æ—¶é’Ÿï¼Œç”¨æ¥è®°å½•è¿‡äº†å¤šé•¿æ—¶é—´
+    [Header("åŠ¨ç”»é€Ÿåº¦ï¼ˆæ¯éš”å¤šå°‘å¸§åˆ‡æ¢ä¸€æ¬¡åŠ¨ç”»ï¼‰")]
+    public int AnimeSpeed = 4;// æ¯éš”å¤šå°‘å¸§åˆ‡æ¢ä¸€æ¬¡åŠ¨ç”»
 
-    [Header("ÒÆ¶¯²ÎÊı")]
-    [Header("Íæ¼ÒÒÆ¶¯ËÙ¶È")]
-    public float MoveSpeed = 5f;// Íæ¼ÒÒÆ¶¯ËÙ¶È
+    [Header("ç§»åŠ¨å‚æ•°")]
+    [Header("ç©å®¶ç§»åŠ¨é€Ÿåº¦")]
+    public float MoveSpeed = 5f;// ç©å®¶ç§»åŠ¨é€Ÿåº¦
     private float movespeed;
 
-    [Header("×´Ì¬")]
-    private AnimeType _currentAnimeType = AnimeType.Idle;// µ±Ç°¶¯»­ÀàĞÍ
+    [Header("çŠ¶æ€")]
+    private AnimeType _currentAnimeType = AnimeType.Idle;// å½“å‰åŠ¨ç”»ç±»å‹
 
-    [Header("×é¼ş")]
-    private SpriteRenderer spriteRenderer;// ¾«ÁéäÖÈ¾Æ÷×é¼ş
-    [Header("ÅĞ¶¨µã¶¯»­")]
-    public GameObject Pandingdian;// Íæ¼ÒÅĞ¶¨µã
-    private Vector3 PandingdianRotation = Vector3.forward;// Íæ¼ÒÅĞ¶¨µãĞı×ª½Ç¶È
-    public float PandingdianSpeed = 360f;// Íæ¼ÒÅĞ¶¨µãĞı×ªËÙ¶È
-    public Animator PandingdianAnimator;// ÅĞ¶¨µã¶¯»­×é¼ş
+    [Header("ç»„ä»¶")]
+    private SpriteRenderer spriteRenderer;// ç²¾çµæ¸²æŸ“å™¨ç»„ä»¶
+    [Header("åˆ¤å®šç‚¹åŠ¨ç”»")]
+    public GameObject Pandingdian;// ç©å®¶åˆ¤å®šç‚¹
+    private Vector3 PandingdianRotation = Vector3.forward;// ç©å®¶åˆ¤å®šç‚¹æ—‹è½¬è§’åº¦
+    public float PandingdianSpeed = 360f;// ç©å®¶åˆ¤å®šç‚¹æ—‹è½¬é€Ÿåº¦
+    public Animator PandingdianAnimator;// åˆ¤å®šç‚¹åŠ¨ç”»ç»„ä»¶
 
 
-    [Header("ºçÈË»·¶¯»­")]
+    [Header("è™¹äººç¯åŠ¨ç”»")]
     public List<Sprite> ReimuCircles;
     public List<Sprite> MarisaCircles;
 
-    public GameObject Circle1;// ÄÚ²ãºçÈË»·
-    public GameObject Circle2;// ÖĞ²ãºçÈË»·
-    public GameObject Circle3;// Íâ²ãºçÈË»·
-    public Animator CircleAnimator;// ºçÈË»·¶¯»­×é¼ş
+    public GameObject Circle1;// å†…å±‚è™¹äººç¯
+    public GameObject Circle2;// ä¸­å±‚è™¹äººç¯
+    public GameObject Circle3;// å¤–å±‚è™¹äººç¯
+    public Animator CircleAnimator;// è™¹äººç¯åŠ¨ç”»ç»„ä»¶
 
 
-    private bool isPandingAnimePlaying = false;// ÅĞ¶¨µã¶¯»­ÊÇ·ñÕıÔÚ²¥·Å
-    private bool isCircleAnimePlaying = false;// ºçÈË»·¶¯»­ÊÇ·ñÕıÔÚ²¥·Å
+    private bool isPandingAnimePlaying = false;// åˆ¤å®šç‚¹åŠ¨ç”»æ˜¯å¦æ­£åœ¨æ’­æ”¾
+    private bool isCircleAnimePlaying = false;// è™¹äººç¯åŠ¨ç”»æ˜¯å¦æ­£åœ¨æ’­æ”¾
 
-    [Header("°´¼ü×´Ì¬")]
-    private bool leftKeyPressed = false;// ×ó¼üÊÇ·ñ°´ÏÂ
-    private bool rightKeyPressed = false;// ÓÒ¼üÊÇ·ñ°´ÏÂ
-    private bool upKeyPressed = false;// ÉÏ¼üÊÇ·ñ°´ÏÂ
-    private bool downKeyPressed = false;// ÏÂ¼üÊÇ·ñ°´ÏÂ
+    [Header("æŒ‰é”®çŠ¶æ€")]
+    private bool leftKeyPressed = false;// å·¦é”®æ˜¯å¦æŒ‰ä¸‹
+    private bool rightKeyPressed = false;// å³é”®æ˜¯å¦æŒ‰ä¸‹
+    private bool upKeyPressed = false;// ä¸Šé”®æ˜¯å¦æŒ‰ä¸‹
+    private bool downKeyPressed = false;// ä¸‹é”®æ˜¯å¦æŒ‰ä¸‹
 
-    // ÒıÓÃÅö×²½Å±¾
+    // å¼•ç”¨ç¢°æ’è„šæœ¬
     public PlayerCollision playerCollision;
 
-    [Header("¶³½áÏà¹Ø")]
+    [Header("å†»ç»“ç›¸å…³")]
     public FreezeSystem freezeSystem;
-    public GameObject Ice; // ±ù¶³Ğ§¹ûÎïÌå
+    public GameObject Ice; // å†°å†»æ•ˆæœç‰©ä½“
 
-    // QTEÏà¹Ø³£Á¿
-    private const int QTE_TARGET_COUNT = 12; // ĞèÒªÍê³ÉµÄQTE´ÎÊı
-    private const float QTE_TIME_LIMIT = 0.2f; // QTE°´¼ü¼ä¸ôÏŞÖÆ£¨Ãë£©
+    // QTEç›¸å…³å¸¸é‡
+    private const int QTE_TARGET_COUNT = 12; // éœ€è¦å®Œæˆçš„QTEæ¬¡æ•°
+    private const float QTE_TIME_LIMIT = 0.2f; // QTEæŒ‰é”®é—´éš”é™åˆ¶ï¼ˆç§’ï¼‰
 
-    // QTEÏà¹Ø±äÁ¿
-    private int qteCurrentCount = 0; // µ±Ç°QTE¼ÆÊı
-    private float qteLastPressTime = -1f; // ÉÏÒ»´Î°´¼üÊ±¼ä
-    private bool isQteActive = false; // QTEÊÇ·ñ¼¤»î
+    // QTEç›¸å…³å˜é‡
+    private int qteCurrentCount = 0; // å½“å‰QTEè®¡æ•°
+    private float qteLastPressTime = -1f; // ä¸Šä¸€æ¬¡æŒ‰é”®æ—¶é—´
+    private bool isQteActive = false; // QTEæ˜¯å¦æ¿€æ´»
 
     void OnEnable()
     {
-        // ³õÊ¼»¯¾«ÁéÁĞ±í
+        // åˆå§‹åŒ–ç²¾çµåˆ—è¡¨
         InitSpriteLists();
         
-        // »ñÈ¡×é¼ş
+        // è·å–ç»„ä»¶
         spriteRenderer = GetComponent<SpriteRenderer>();
         
-        // ³õÊ¼»¯ÏÔÊ¾µÚÒ»Ö¡
+        // åˆå§‹åŒ–æ˜¾ç¤ºç¬¬ä¸€å¸§
         spriteRenderer.sprite = IdleSprites[0];
         
-        // »ñÈ¡Åö×²½Å±¾ÒıÓÃ
+        // è·å–ç¢°æ’è„šæœ¬å¼•ç”¨
         if (playerCollision == null)
         {
             playerCollision = GetComponent<PlayerCollision>();
@@ -116,7 +117,7 @@ public class PlayerAnime : MonoBehaviour
     }
 
     /// <summary>
-    /// ³õÊ¼»¯¾«ÁéÁĞ±í
+    /// åˆå§‹åŒ–ç²¾çµåˆ—è¡¨
     /// </summary>
     private void InitSpriteLists()
     {
@@ -142,10 +143,10 @@ public class PlayerAnime : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
-    void Update()
+    // å›ºå®š 50Hz ç‰©ç†å¸§é©±åŠ¨ï¼Œä¿è¯ç¡®å®šæ€§
+    void FixedUpdate()
     {
-        // ´¦Àí¶¯»­
+        // å¤„ç†åŠ¨ç”»
         if(Global_GameManager.Instance.state == State.Pause ||
            Global_GameManager.Instance.state == State.TimeStop ||
            Global_GameManager.Instance.state == State.FinalUI)
@@ -153,7 +154,7 @@ public class PlayerAnime : MonoBehaviour
             return;
         }
         
-        // ´¦Àí¶³½á×´Ì¬µÄQTE
+        // å¤„ç†å†»ç»“çŠ¶æ€çš„QTE
         if(Global_GameManager.Instance.state == State.Frozen)
         {
             HandleFrozenQTE();
@@ -162,24 +163,26 @@ public class PlayerAnime : MonoBehaviour
         
         HandleAnimation();
         
-        // Ö»ÓĞÔÚÓÎÏ·×´Ì¬¡¢ÎŞµĞ×´Ì¬¡¢Ê±¼äÍ£Ö¹×´Ì¬¡¢·û¿¨×´Ì¬Ê±²Å´¦ÀíÊäÈë
+        // åªæœ‰åœ¨æ¸¸æˆçŠ¶æ€ã€æ— æ•ŒçŠ¶æ€ã€æ—¶é—´åœæ­¢çŠ¶æ€ã€ç¬¦å¡çŠ¶æ€æ—¶æ‰å¤„ç†è¾“å…¥
         if(Global_GameManager.Instance.state == State.Gaming || 
            Global_GameManager.Instance.state == State.NoDead ||
            Global_GameManager.Instance.state == State.TimeStop ||
            Global_GameManager.Instance.state == State.SpellCard)
         {
-            // ¼ì²éÊäÈë
+            // æ£€æŸ¥è¾“å…¥
             CheckInput();
         }
     }
 
     /// <summary>
-    /// ¼ì²éÊäÈë
+    /// æ£€æŸ¥è¾“å…¥ï¼ˆä» ReplayManager.Input è¯»é€»è¾‘é”®ï¼Œä¸ç‰©ç†æŒ‰é”®è§£è€¦ï¼‰
     /// </summary>
     private void CheckInput()
     {
-        // ¼ì²â×ó¼ü×´Ì¬
-        if (Input.GetKey(KeyCode.LeftArrow))
+        var inp = ReplayManager.Input;
+
+        // æ£€æµ‹å·¦é”®çŠ¶æ€
+        if (inp.GetKey(LogicalKey.Left))
         {
             if (!leftKeyPressed)
             {
@@ -200,8 +203,8 @@ public class PlayerAnime : MonoBehaviour
             }
         }
 
-        // ¼ì²âÓÒ¼ü×´Ì¬
-        if (Input.GetKey(KeyCode.RightArrow))
+        // æ£€æµ‹å³é”®çŠ¶æ€
+        if (inp.GetKey(LogicalKey.Right))
         {
             if (!rightKeyPressed)
             {
@@ -222,50 +225,45 @@ public class PlayerAnime : MonoBehaviour
             }
         }
 
-        // ¼ì²âÉÏ¼ü×´Ì¬
-        if (Input.GetKey(KeyCode.UpArrow))
+        // æ£€æµ‹ä¸Šé”®çŠ¶æ€
+        if (inp.GetKey(LogicalKey.Up))
         {
             upKeyPressed = true;
         }
-        else if (!Input.GetKey(KeyCode.UpArrow))
+        else
         {
             upKeyPressed = false;
         }
 
-        // ¼ì²âÏÂ¼ü×´Ì¬
-        if (Input.GetKey(KeyCode.DownArrow))
+        // æ£€æµ‹ä¸‹é”®çŠ¶æ€
+        if (inp.GetKey(LogicalKey.Down))
         {
             downKeyPressed = true;
         }
-        else if (!Input.GetKey(KeyCode.DownArrow))
+        else
         {
             downKeyPressed = false;
         }
 
-        // ¼ì²âshift¼ü×´Ì¬
-        if (Input.GetKeyDown(KeyCode.LeftShift))
+        // æ£€æµ‹ slowï¼ˆShiftï¼‰è¾¹æ²¿
+        if (inp.GetKeyDown(LogicalKey.Slow))
         {
-            // ¼ì²éÊÇ·ñ´¦ÓÚ¼¼ÄÜµÄslowdown×´Ì¬
+            // æ£€æŸ¥æ˜¯å¦å¤„äºæŠ€èƒ½çš„slowdownçŠ¶æ€
             if (!MarisaNormal.IsSkillSlowDown)
             {
-                // ÒÆ¶¯ËÙ¶È¼õ°ë
                 movespeed *= 0.4f;
-                // ÏÔÊ¾ÅĞ¶¨µã²¢¿ªÊ¼¶¯»­
                 StartPandingAnime();
             }
         }
-        else if (Input.GetKeyUp(KeyCode.LeftShift))
+        else if (inp.GetKeyUp(LogicalKey.Slow))
         {
-            // ¼ì²éÊÇ·ñ´¦ÓÚ¼¼ÄÜµÄslowdown×´Ì¬
             if (!MarisaNormal.IsSkillSlowDown)
             {
-                // »Ö¸´Õı³£ÒÆ¶¯ËÙ¶È
                 movespeed = MoveSpeed;
-                // Òş²ØÅĞ¶¨µã²¢Í£Ö¹¶¯»­
                 StopPandingAnime();
             }
         }
-        // ½«ÒÆ¶¯×´Ì¬´«µİ¸øÅö×²½Å±¾
+        // å°†ç§»åŠ¨çŠ¶æ€ä¼ é€’ç»™ç¢°æ’è„šæœ¬
         if (playerCollision != null)
         {
             playerCollision.UpdateMovement(leftKeyPressed, rightKeyPressed, upKeyPressed, downKeyPressed, movespeed);
@@ -273,11 +271,11 @@ public class PlayerAnime : MonoBehaviour
     }
 
     /// <summary>
-    /// ´¦Àí¶¯»­
+    /// å¤„ç†åŠ¨ç”»
     /// </summary>
     private void HandleAnimation()
     {
-        // ¸ù¾İµ±Ç°¶¯»­ÀàĞÍ²¥·Å¶ÔÓ¦¶¯»­
+        // æ ¹æ®å½“å‰åŠ¨ç”»ç±»å‹æ’­æ”¾å¯¹åº”åŠ¨ç”»
         switch (_currentAnimeType)
         {
             case AnimeType.Idle:
@@ -291,12 +289,12 @@ public class PlayerAnime : MonoBehaviour
                 break;
         }
         
-        // ´¦ÀíÅĞ¶¨µã¶¯»­
+        // å¤„ç†åˆ¤å®šç‚¹åŠ¨ç”»
         if (isPandingAnimePlaying)
         {
             PanDingAnime();
         }
-        // ´¦ÀíºçÈË»·¶¯»­
+        // å¤„ç†è™¹äººç¯åŠ¨ç”»
         if (isCircleAnimePlaying)
         {
             CircleAnime();
@@ -304,11 +302,11 @@ public class PlayerAnime : MonoBehaviour
     }
 
     /// <summary>
-    /// ¿ªÊ¼ÅĞ¶¨µã¶¯»­
+    /// å¼€å§‹åˆ¤å®šç‚¹åŠ¨ç”»
     /// </summary>
     public void StartPandingAnime()
     {
-        // ²¥·ÅÅĞ¶¨µã¶¯»­
+        // æ’­æ”¾åˆ¤å®šç‚¹åŠ¨ç”»
         PandingdianAnimator.SetBool("IsShift", true);
         isPandingAnimePlaying = true;
         CircleAnimator.SetBool("IsShift", true);
@@ -316,11 +314,11 @@ public class PlayerAnime : MonoBehaviour
     }
 
     /// <summary>
-    /// Í£Ö¹ÅĞ¶¨µã¶¯»­
+    /// åœæ­¢åˆ¤å®šç‚¹åŠ¨ç”»
     /// </summary>
     public void StopPandingAnime()
     {
-        // Í£Ö¹ÅĞ¶¨µã¶¯»­
+        // åœæ­¢åˆ¤å®šç‚¹åŠ¨ç”»
         PandingdianAnimator.SetBool("IsShift", false);
         isPandingAnimePlaying = false;
         CircleAnimator.SetBool("IsShift", false);
@@ -328,101 +326,101 @@ public class PlayerAnime : MonoBehaviour
     }
 
     /// <summary>
-    /// ²¥·ÅIdle¶¯»­
-    /// °´Ö¡¼ì²âÊ±¼ä£¬Ã¿¸ôAnimeSpeedÖ¡ÇĞ»»Ò»´Î¶¯»­
+    /// æ’­æ”¾IdleåŠ¨ç”»
+    /// æŒ‰å¸§æ£€æµ‹æ—¶é—´ï¼Œæ¯éš”AnimeSpeedå¸§åˆ‡æ¢ä¸€æ¬¡åŠ¨ç”»
     /// </summary>
     private void PlayIdleAnime()
     {
-        // Ôö¼ÓÊ±ÖÓ¼ÆÊı
+        // å¢åŠ æ—¶é’Ÿè®¡æ•°
         TimeClock += Time.deltaTime;
 
-        // ¼ÆËãµ±Ç°Ó¦¸ÃÏÔÊ¾µÄÖ¡Êı
+        // è®¡ç®—å½“å‰åº”è¯¥æ˜¾ç¤ºçš„å¸§æ•°
         int currentFrame = Mathf.FloorToInt(TimeClock * 60f);
 
-        // ¼ì²éÊÇ·ñĞèÒªÇĞ»»¶¯»­Ö¡
+        // æ£€æŸ¥æ˜¯å¦éœ€è¦åˆ‡æ¢åŠ¨ç”»å¸§
         if (currentFrame >= AnimeSpeed)
         {
-            // ÇĞ»»µ½ÏÂÒ»Ö¡
+            // åˆ‡æ¢åˆ°ä¸‹ä¸€å¸§
             _currentIndex = (_currentIndex + 1) % IdleSprites.Count;
             
-            // ¸üĞÂ¾«Áé
+            // æ›´æ–°ç²¾çµ
             if (spriteRenderer != null && IdleSprites.Count > 0)
             {
                 spriteRenderer.sprite = IdleSprites[_currentIndex];
             }
 
-            // ÖØÖÃÊ±ÖÓ£¬±£ÁôÓàÊıÒÔ±£³Ö¶¯»­Á÷³©
+            // é‡ç½®æ—¶é’Ÿï¼Œä¿ç•™ä½™æ•°ä»¥ä¿æŒåŠ¨ç”»æµç•…
             TimeClock -= (float)AnimeSpeed / 60f;
         }
     }
 
     /// <summary>
-    /// ²¥·Å×óÒÆ¶¯»­
-    /// °´Ö¡¼ì²âÊ±¼ä£¬Ã¿¸ôAnimeSpeedÖ¡ÇĞ»»Ò»´Î¶¯»­
+    /// æ’­æ”¾å·¦ç§»åŠ¨ç”»
+    /// æŒ‰å¸§æ£€æµ‹æ—¶é—´ï¼Œæ¯éš”AnimeSpeedå¸§åˆ‡æ¢ä¸€æ¬¡åŠ¨ç”»
     /// </summary>
     private void PlayLeftAnime()
     {
-        // Ôö¼ÓÊ±ÖÓ¼ÆÊı
+        // å¢åŠ æ—¶é’Ÿè®¡æ•°
         TimeClock += Time.deltaTime;
 
-        // ¼ÆËãµ±Ç°Ó¦¸ÃÏÔÊ¾µÄÖ¡Êı
+        // è®¡ç®—å½“å‰åº”è¯¥æ˜¾ç¤ºçš„å¸§æ•°
         int currentFrame = Mathf.FloorToInt(TimeClock * 60f);
 
-        // ¼ì²éÊÇ·ñĞèÒªÇĞ»»¶¯»­Ö¡
+        // æ£€æŸ¥æ˜¯å¦éœ€è¦åˆ‡æ¢åŠ¨ç”»å¸§
         if (currentFrame >= AnimeSpeed)
         {
-            // ÇĞ»»µ½ÏÂÒ»Ö¡
+            // åˆ‡æ¢åˆ°ä¸‹ä¸€å¸§
             _currentIndex ++;
             if(_currentIndex >= LeftSprites.Count)
             {
                 _currentIndex = LeftSprites.Count - 3;
             }
             spriteRenderer.sprite = LeftSprites[_currentIndex];
-            // ÖØÖÃÊ±ÖÓ£¬±£ÁôÓàÊıÒÔ±£³Ö¶¯»­Á÷³©
+            // é‡ç½®æ—¶é’Ÿï¼Œä¿ç•™ä½™æ•°ä»¥ä¿æŒåŠ¨ç”»æµç•…
             TimeClock -= (float)AnimeSpeed / 60f;
         }
     }
 
     /// <summary>
-    /// ²¥·ÅÓÒÒÆ¶¯»­
-    /// °´Ö¡¼ì²âÊ±¼ä£¬Ã¿¸ôAnimeSpeedÖ¡ÇĞ»»Ò»´Î¶¯»­
+    /// æ’­æ”¾å³ç§»åŠ¨ç”»
+    /// æŒ‰å¸§æ£€æµ‹æ—¶é—´ï¼Œæ¯éš”AnimeSpeedå¸§åˆ‡æ¢ä¸€æ¬¡åŠ¨ç”»
     /// </summary>
     private void PlayRightAnime()
     {
-        // Ôö¼ÓÊ±ÖÓ¼ÆÊı
+        // å¢åŠ æ—¶é’Ÿè®¡æ•°
         TimeClock += Time.deltaTime;
 
-        // ¼ÆËãµ±Ç°Ó¦¸ÃÏÔÊ¾µÄÖ¡Êı
+        // è®¡ç®—å½“å‰åº”è¯¥æ˜¾ç¤ºçš„å¸§æ•°
         int currentFrame = Mathf.FloorToInt(TimeClock * 60f);
 
-        // ¼ì²éÊÇ·ñĞèÒªÇĞ»»¶¯»­Ö¡
+        // æ£€æŸ¥æ˜¯å¦éœ€è¦åˆ‡æ¢åŠ¨ç”»å¸§
         if (currentFrame >= AnimeSpeed)
         {
-            // ÇĞ»»µ½ÏÂÒ»Ö¡
+            // åˆ‡æ¢åˆ°ä¸‹ä¸€å¸§
             _currentIndex ++;
             if(_currentIndex >= RightSprites.Count)
             {
                 _currentIndex = RightSprites.Count - 3;
             }
             spriteRenderer.sprite = RightSprites[_currentIndex];
-            // ÖØÖÃÊ±ÖÓ£¬±£ÁôÓàÊıÒÔ±£³Ö¶¯»­Á÷³©
+            // é‡ç½®æ—¶é’Ÿï¼Œä¿ç•™ä½™æ•°ä»¥ä¿æŒåŠ¨ç”»æµç•…
             TimeClock -= (float)AnimeSpeed / 60f;
         }
     }
 
     /// <summary>
-    /// ÉèÖÃIdle¶¯»­£¨¹©Íâ²¿µ÷ÓÃÇĞ»»µ½Idle×´Ì¬£©
+    /// è®¾ç½®IdleåŠ¨ç”»ï¼ˆä¾›å¤–éƒ¨è°ƒç”¨åˆ‡æ¢åˆ°IdleçŠ¶æ€ï¼‰
     /// </summary>
     public void SetIdleAnime()
     {
-        // Èç¹ûµ±Ç°²»ÊÇIdle×´Ì¬£¬ÇĞ»»µ½Idle×´Ì¬
+        // å¦‚æœå½“å‰ä¸æ˜¯IdleçŠ¶æ€ï¼Œåˆ‡æ¢åˆ°IdleçŠ¶æ€
         if (_currentAnimeType != AnimeType.Idle)
         {
             _currentAnimeType = AnimeType.Idle;
-            _currentIndex = 0;// ÖØÖÃ¶¯»­Ë÷Òı
-            TimeClock = 0f;// ÖØÖÃÊ±ÖÓ
+            _currentIndex = 0;// é‡ç½®åŠ¨ç”»ç´¢å¼•
+            TimeClock = 0f;// é‡ç½®æ—¶é’Ÿ
             
-            // Á¢¼´ÏÔÊ¾µÚÒ»Ö¡
+            // ç«‹å³æ˜¾ç¤ºç¬¬ä¸€å¸§
             if (spriteRenderer != null && IdleSprites.Count > 0)
             {
                 spriteRenderer.sprite = IdleSprites[0];
@@ -431,25 +429,25 @@ public class PlayerAnime : MonoBehaviour
     }
 
     /// <summary>
-    /// ÉèÖÃ×óÒÆ¶¯»­£¨¹©Íâ²¿µ÷ÓÃÇĞ»»µ½Left×´Ì¬£©
+    /// è®¾ç½®å·¦ç§»åŠ¨ç”»ï¼ˆä¾›å¤–éƒ¨è°ƒç”¨åˆ‡æ¢åˆ°LeftçŠ¶æ€ï¼‰
     /// </summary>
     public void SetLeftAnime()
     {
-        // ¼ì²éLeftSpritesÁĞ±íÊÇ·ñÎª¿Õ
+        // æ£€æŸ¥LeftSpritesåˆ—è¡¨æ˜¯å¦ä¸ºç©º
         if (LeftSprites == null || LeftSprites.Count == 0)
         {
-            Debug.LogWarning("PlayerAnime: LeftSpritesÁĞ±íÎª¿Õ£¬ÎŞ·¨ÇĞ»»µ½Left×´Ì¬£¡");
+            Debug.LogWarning("PlayerAnime: LeftSpritesåˆ—è¡¨ä¸ºç©ºï¼Œæ— æ³•åˆ‡æ¢åˆ°LeftçŠ¶æ€ï¼");
             return;
         }
 
-        // Èç¹ûµ±Ç°²»ÊÇLeft×´Ì¬£¬ÇĞ»»µ½Left×´Ì¬
+        // å¦‚æœå½“å‰ä¸æ˜¯LeftçŠ¶æ€ï¼Œåˆ‡æ¢åˆ°LeftçŠ¶æ€
         if (_currentAnimeType != AnimeType.Left)
         {
             _currentAnimeType = AnimeType.Left;
-            _currentIndex = 0;// ÖØÖÃ¶¯»­Ë÷Òı
-            TimeClock = 0f;// ÖØÖÃÊ±ÖÓ
+            _currentIndex = 0;// é‡ç½®åŠ¨ç”»ç´¢å¼•
+            TimeClock = 0f;// é‡ç½®æ—¶é’Ÿ
             
-            // Á¢¼´ÏÔÊ¾µÚÒ»Ö¡
+            // ç«‹å³æ˜¾ç¤ºç¬¬ä¸€å¸§
             if (spriteRenderer != null && LeftSprites.Count > 0)
             {
                 spriteRenderer.sprite = LeftSprites[0];
@@ -458,25 +456,25 @@ public class PlayerAnime : MonoBehaviour
     }
 
     /// <summary>
-    /// ÉèÖÃÓÒÒÆ¶¯»­£¨¹©Íâ²¿µ÷ÓÃÇĞ»»µ½Right×´Ì¬£©
+    /// è®¾ç½®å³ç§»åŠ¨ç”»ï¼ˆä¾›å¤–éƒ¨è°ƒç”¨åˆ‡æ¢åˆ°RightçŠ¶æ€ï¼‰
     /// </summary>
     public void SetRightAnime()
     {
-        // ¼ì²éRightSpritesÁĞ±íÊÇ·ñÎª¿Õ
+        // æ£€æŸ¥RightSpritesåˆ—è¡¨æ˜¯å¦ä¸ºç©º
         if (RightSprites == null || RightSprites.Count == 0)
         {
-            Debug.LogWarning("PlayerAnime: RightSpritesÁĞ±íÎª¿Õ£¬ÎŞ·¨ÇĞ»»µ½Right×´Ì¬£¡");
+            Debug.LogWarning("PlayerAnime: RightSpritesåˆ—è¡¨ä¸ºç©ºï¼Œæ— æ³•åˆ‡æ¢åˆ°RightçŠ¶æ€ï¼");
             return;
         }
 
-        // Èç¹ûµ±Ç°²»ÊÇRight×´Ì¬£¬ÇĞ»»µ½Right×´Ì¬
+        // å¦‚æœå½“å‰ä¸æ˜¯RightçŠ¶æ€ï¼Œåˆ‡æ¢åˆ°RightçŠ¶æ€
         if (_currentAnimeType != AnimeType.Right)
         {
             _currentAnimeType = AnimeType.Right;
-            _currentIndex = 0;// ÖØÖÃ¶¯»­Ë÷Òı
-            TimeClock = 0f;// ÖØÖÃÊ±ÖÓ
+            _currentIndex = 0;// é‡ç½®åŠ¨ç”»ç´¢å¼•
+            TimeClock = 0f;// é‡ç½®æ—¶é’Ÿ
             
-            // Á¢¼´ÏÔÊ¾µÚÒ»Ö¡
+            // ç«‹å³æ˜¾ç¤ºç¬¬ä¸€å¸§
             if (spriteRenderer != null && RightSprites.Count > 0)
             {
                 spriteRenderer.sprite = RightSprites[0];
@@ -485,22 +483,22 @@ public class PlayerAnime : MonoBehaviour
     }
 
     /// <summary>
-    /// Ç¿ĞĞÍ£Ö¹Íæ¼ÒÒÆ¶¯
-    /// ¼´Ê¹Íæ¼Ò»¹°´×Å·½Ïò¼ü£¬Ò²»áÁ¢¼´Í£Ö¹
-    /// ²¢ÖØÖÃ°´¼ü×´Ì¬ºÍ¶¯»­
+    /// å¼ºè¡Œåœæ­¢ç©å®¶ç§»åŠ¨
+    /// å³ä½¿ç©å®¶è¿˜æŒ‰ç€æ–¹å‘é”®ï¼Œä¹Ÿä¼šç«‹å³åœæ­¢
+    /// å¹¶é‡ç½®æŒ‰é”®çŠ¶æ€å’ŒåŠ¨ç”»
     /// </summary>
     public void StopMove()
     {
-        // ÖØÖÃ°´¼ü×´Ì¬
+        // é‡ç½®æŒ‰é”®çŠ¶æ€
         leftKeyPressed = false;
         rightKeyPressed = false;
         upKeyPressed = false;
         downKeyPressed = false;
         
-        // ÇĞ»»µ½Idle¶¯»­
+        // åˆ‡æ¢åˆ°IdleåŠ¨ç”»
         SetIdleAnime();
         
-        // µ÷ÓÃÅö×²½Å±¾µÄStopMove·½·¨Í£Ö¹ÎïÀíÒÆ¶¯
+        // è°ƒç”¨ç¢°æ’è„šæœ¬çš„StopMoveæ–¹æ³•åœæ­¢ç‰©ç†ç§»åŠ¨
         if (playerCollision != null)
         {
             playerCollision.StopMove();
@@ -513,7 +511,7 @@ public class PlayerAnime : MonoBehaviour
     }
 
     /// <summary>
-    /// ²¥·ÅºçÈË»·¶¯»­
+    /// æ’­æ”¾è™¹äººç¯åŠ¨ç”»
     /// </summary>
     private void CircleAnime()
     {
@@ -525,7 +523,7 @@ public class PlayerAnime : MonoBehaviour
         StopPandingAnime();
         SetIdleAnime();
         
-        // Á¢¿Ì½«Íæ¼Ò×ø±êÉèÖÃÎª(-3,-6)£¬Í¸Ã÷¶ÈÉèÎª0
+        // ç«‹åˆ»å°†ç©å®¶åæ ‡è®¾ç½®ä¸º(-3,-6)ï¼Œé€æ˜åº¦è®¾ä¸º0
         this.transform.position = new Vector3(-3f, -6f, 0f);
         if (spriteRenderer != null)
         {
@@ -534,12 +532,12 @@ public class PlayerAnime : MonoBehaviour
             spriteRenderer.color = color;
         }
         
-        // ¿ªÊ¼ÖØÉú¶¯»­Ğ­³Ì
+        // å¼€å§‹é‡ç”ŸåŠ¨ç”»åç¨‹
         StartCoroutine(ReincarnationAnimation());
     }
     
     /// <summary>
-    /// ÖØÉú¶¯»­Ğ­³Ì
+    /// é‡ç”ŸåŠ¨ç”»åç¨‹
     /// </summary>
     private IEnumerator ReincarnationAnimation()
     {
@@ -553,9 +551,9 @@ public class PlayerAnime : MonoBehaviour
         while (elapsedTime < duration)
         {
             float t = elapsedTime / duration;
-            // ÒÆ¶¯Î»ÖÃ
+            // ç§»åŠ¨ä½ç½®
             transform.position = Vector3.Lerp(startPosition, endPosition, t);
-            // ½¥±äÍ¸Ã÷¶È
+            // æ¸å˜é€æ˜åº¦
             if (spriteRenderer != null)
             {
                 Color color = spriteRenderer.color;
@@ -567,7 +565,7 @@ public class PlayerAnime : MonoBehaviour
             yield return null;
         }
         
-        // È·±£×îÖÕÎ»ÖÃºÍÍ¸Ã÷¶ÈÕıÈ·
+        // ç¡®ä¿æœ€ç»ˆä½ç½®å’Œé€æ˜åº¦æ­£ç¡®
         transform.position = endPosition;
         if (spriteRenderer != null)
         {
@@ -576,14 +574,14 @@ public class PlayerAnime : MonoBehaviour
             spriteRenderer.color = color;
         }
         
-        // 1ÃëºóÇĞ»»µ½ÎŞµĞ×´Ì¬
+        // 1ç§’ååˆ‡æ¢åˆ°æ— æ•ŒçŠ¶æ€
         ReincarnationEnd();
     }
 
     private void ReincarnationEnd()
     {
         Global_GameManager.Instance.state = State.NoDead;
-        if(Input.GetKey(KeyCode.LeftShift))
+        if (ReplayManager.Input.GetKey(LogicalKey.Slow))
         {
             movespeed = MoveSpeed * 0.5f;
         }
@@ -591,7 +589,7 @@ public class PlayerAnime : MonoBehaviour
         {
             movespeed = MoveSpeed;
         }
-        Invoke(nameof(NoDeadEnd),1f);
+        Invoke(nameof(NoDeadEnd), 1f); // Invoke æš‚æœªè¿ tick è°ƒåº¦å™¨ï¼Œåç»­æ­¥éª¤å¤„ç†
     }
 
     private void NoDeadEnd()
@@ -605,25 +603,23 @@ public class PlayerAnime : MonoBehaviour
     }
 
     /// <summary>
-    /// ´¦Àí¶³½á×´Ì¬µÄQTE
+    /// å¤„ç†å†»ç»“çŠ¶æ€çš„QTE
     /// </summary>
     private void HandleFrozenQTE()
     {
         if (!isQteActive) return;
-        
-        float currentTime = Time.time;
-        
-        // ¼ì²â×óÓÒ¼ü°´ÏÂ
-        if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow))
+
+        float currentTime = SimClock.SimTime;
+
+        // æ£€æµ‹å·¦å³é”®è¾¹æ²¿
+        var inp = ReplayManager.Input;
+        if (inp.GetKeyDown(LogicalKey.Left) || inp.GetKeyDown(LogicalKey.Right))
         {
-            // ¼ì²éÊÇ·ñÔÚÊ±¼äÏŞÖÆÄÚ
             if (qteLastPressTime < 0 || (currentTime - qteLastPressTime) <= QTE_TIME_LIMIT)
             {
-                // ÓĞĞ§°´¼ü
                 qteCurrentCount++;
                 qteLastPressTime = currentTime;
-                
-                // ¼ì²éÊÇ·ñÍê³ÉQTE
+
                 if (qteCurrentCount >= QTE_TARGET_COUNT)
                 {
                     CompleteQTE();
@@ -631,7 +627,6 @@ public class PlayerAnime : MonoBehaviour
             }
             else
             {
-                // ³¬Ê±£¬ÖØÖÃ¼ÆÊı
                 qteCurrentCount = 1;
                 qteLastPressTime = currentTime;
             }
@@ -639,7 +634,7 @@ public class PlayerAnime : MonoBehaviour
     }
 
     /// <summary>
-    /// ¼¤»î¶³½áQTE
+    /// æ¿€æ´»å†»ç»“QTE
     /// </summary>
     public void ActivateFrozenQTE()
     {
@@ -647,7 +642,7 @@ public class PlayerAnime : MonoBehaviour
         qteCurrentCount = 0;
         qteLastPressTime = -1f;
         
-        // ¼¤»îIceÎïÌå
+        // æ¿€æ´»Iceç‰©ä½“
         if (Ice != null)
         {
             Ice.SetActive(true);
@@ -655,25 +650,25 @@ public class PlayerAnime : MonoBehaviour
     }
 
     /// <summary>
-    /// Íê³ÉQTE
+    /// å®ŒæˆQTE
     /// </summary>
     public void CompleteQTE()
     {
         isQteActive = false;
         
-        // ½ûÓÃIceÎïÌå
+        // ç¦ç”¨Iceç‰©ä½“
         if (Ice != null)
         {
             Ice.SetActive(false);
         }
         
-        // ÖØÖÃ¶³½áÏµÍ³
+        // é‡ç½®å†»ç»“ç³»ç»Ÿ
         if (freezeSystem != null)
         {
             freezeSystem.ResetFreeze();
         }
         
-        // »Ö¸´ÓÎÏ·×´Ì¬
+        // æ¢å¤æ¸¸æˆçŠ¶æ€
         Global_GameManager.Instance.state = State.Gaming;
     }
 }

@@ -1,18 +1,19 @@
 using UnityEngine;
 using System.Collections.Generic;
+using ReplaySystem;
 
 /// <summary>
-/// ²»¿É¼û×Óµ¯Invisible
-/// µ±¿¿½ü×Ô»úÊ±²Å»áÏÔÏÖ
-/// ÖĞÓñ£¬´óÓñ
+/// ä¸å¯è§å­å¼¹Invisible
+/// å½“é è¿‘è‡ªæœºæ—¶æ‰ä¼šæ˜¾ç°
+/// ä¸­ç‰ï¼Œå¤§ç‰
 /// </summary>
 public class Invisible : MonoBehaviour
 {
     public bool isVisible = true;
     public float Speed = 5f;
-    public float ShowDistance = 1.2f;// ¿¿½üÏÔĞÎ¾àÀë
-    public float ShowTime = 1f;// µ­ÈëÊ±¼ä
-    public List<Sprite> spriteVariants = new List<Sprite>(); // ×Óµ¯ÑÕÉ«±äÌå
+    public float ShowDistance = 1.2f;// é è¿‘æ˜¾å½¢è·ç¦»
+    public float ShowTime = 1f;// æ·¡å…¥æ—¶é—´
+    public List<Sprite> spriteVariants = new List<Sprite>(); // å­å¼¹é¢œè‰²å˜ä½“
     private GameObject player;
     
     private bool isShowing = false;
@@ -22,7 +23,7 @@ public class Invisible : MonoBehaviour
     private Rigidbody2D rb2D;
     private float distance;
     
-    // ±ß½ç·¶Î§
+    // è¾¹ç•ŒèŒƒå›´
     private readonly float minX = -11f;
     private readonly float maxX = 5f;
     private readonly float minY = -7.5f;
@@ -30,33 +31,33 @@ public class Invisible : MonoBehaviour
     
     void Start()
     {
-        // »ñÈ¡¾«ÁéäÖÈ¾Æ÷
+        // è·å–ç²¾çµæ¸²æŸ“å™¨
         spriteRenderer = GetComponent<SpriteRenderer>();
         if (spriteRenderer != null)
         {
             originalColor = spriteRenderer.color;
         }
         
-        // »ñÈ¡¸ÕÌå×é¼ş
+        // è·å–åˆšä½“ç»„ä»¶
         rb2D = GetComponent<Rigidbody2D>();
         
-        // Èç¹ûÃ»ÓĞÍæ¼Ò¶ÔÏó£¬³¢ÊÔ»ñÈ¡
+        // å¦‚æœæ²¡æœ‰ç©å®¶å¯¹è±¡ï¼Œå°è¯•è·å–
         if (player == null)
         {
-            Debug.LogError("ÒşĞÎµ¯Íæ¼Ò¶ÔÏóÎ´ÉèÖÃ");
+            Debug.LogError("éšå½¢å¼¹ç©å®¶å¯¹è±¡æœªè®¾ç½®");
             player = GameObject.FindGameObjectWithTag("Player");
         }
     }
     
     void OnEnable()
     {
-        // È·±£¸ÕÌå×é¼ş´æÔÚ
+        // ç¡®ä¿åˆšä½“ç»„ä»¶å­˜åœ¨
         if (rb2D == null)
         {
             rb2D = GetComponent<Rigidbody2D>();
         }
         
-        // È·±£¾«ÁéäÖÈ¾Æ÷´æÔÚ
+        // ç¡®ä¿ç²¾çµæ¸²æŸ“å™¨å­˜åœ¨
         if (spriteRenderer == null)
         {
             spriteRenderer = GetComponent<SpriteRenderer>();
@@ -65,47 +66,47 @@ public class Invisible : MonoBehaviour
         isVisible = false;
         isShowing = false;
         
-        // Ëæ»úÑ¡ÔñÒ»¸ösprite±äÌå
+        // éšæœºé€‰æ‹©ä¸€ä¸ªspriteå˜ä½“
         if (spriteRenderer != null && spriteVariants.Count > 0)
         {
             int randomIndex = Random.Range(0, spriteVariants.Count);
             spriteRenderer.sprite = spriteVariants[randomIndex];
         }
         
-        // ³õÊ¼Ê±²»¿É¼û
+        // åˆå§‹æ—¶ä¸å¯è§
         if (spriteRenderer != null)
         {
             spriteRenderer.color = new Color(1, 1, 1, 0f);
         }
         
-        // ÉèÖÃ¸ÕÌåËÙ¶È
+        // è®¾ç½®åˆšä½“é€Ÿåº¦
         if (rb2D != null)
         {
             Vector2 direction = transform.up;
             rb2D.velocity = direction * Speed;
-            // È·±£¸ÕÌå²»ÊÇÔË¶¯Ñ§µÄ
+            // ç¡®ä¿åˆšä½“ä¸æ˜¯è¿åŠ¨å­¦çš„
             rb2D.isKinematic = false;
         }
     }
     
-    void Update()
+    void FixedUpdate()
     {
-        // ¼ì²éÊÇ·ñĞèÒªÏÔÏÖ
+        // æ£€æŸ¥æ˜¯å¦éœ€è¦æ˜¾ç°
         if (!isVisible && !isShowing && player != null)
         {
             distance = Vector2.Distance(transform.position, player.transform.position);
             if (distance <= ShowDistance)
             {
-                // ¿ªÊ¼ÏÔÏÖ
+                // å¼€å§‹æ˜¾ç°
                 isShowing = true;
                 showTimer = 0f;
             }
         }
         
-        // µ­ÈëĞ§¹û
+        // æ·¡å…¥æ•ˆæœ
         if (isShowing)
         {
-            showTimer += Time.deltaTime;
+            showTimer += SimClock.FixedTickDt;
             float alpha = Mathf.Clamp01(showTimer / ShowTime);
             
             if (spriteRenderer != null)
@@ -113,7 +114,7 @@ public class Invisible : MonoBehaviour
                 spriteRenderer.color = new Color(1, 1, 1, alpha);
             }
             
-            // µ­ÈëÍê³É
+            // æ·¡å…¥å®Œæˆ
             if (alpha >= 1f)
             {
                 isShowing = false;
@@ -121,19 +122,19 @@ public class Invisible : MonoBehaviour
             }
         }
         
-        // ±ß½ç¼ì²â
+        // è¾¹ç•Œæ£€æµ‹
         CheckBounds();
     }
     
     /// <summary>
-    /// ¼ì²é±ß½ç£¬³¬³ö±ß½çÔò»ØÊÕ
+    /// æ£€æŸ¥è¾¹ç•Œï¼Œè¶…å‡ºè¾¹ç•Œåˆ™å›æ”¶
     /// </summary>
     private void CheckBounds()
     {
         Vector2 position = transform.position;
         if (position.x < minX || position.x > maxX || position.y < minY || position.y > maxY)
         {
-            // ³¬³ö±ß½ç£¬»ØÊÕ×Óµ¯
+            // è¶…å‡ºè¾¹ç•Œï¼Œå›æ”¶å­å¼¹
             if (Global_ObjectPool.Instance != null)
             {
                 Global_ObjectPool.Instance.Recycle(gameObject);

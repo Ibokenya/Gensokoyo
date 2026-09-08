@@ -2,108 +2,105 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using static ShootMode;
+using ReplaySystem;
 
-// ÒÆ¶¯Ä£Ê½Ã¶¾Ù
+// ç§»åŠ¨æ¨¡å¼æšä¸¾
 public enum MoveMode
 {
-    Path,       // Â·¾¶µãÒÆ¶¯
-    Track,      // ×·×ÙÊ½ÒÆ¶¯
-    Flicker,    // ÉÁË¸Ä£Ê½
-    Gravity     // ÖØÁ¦ÒÆ¶¯
+    Path,       // è·¯å¾„ç‚¹ç§»åŠ¨
+    Track,      // è¿½è¸ªå¼ç§»åŠ¨
+    Flicker,    // é—ªçƒæ¨¡å¼
+    Gravity     // é‡åŠ›ç§»åŠ¨
 }
 
-// ¶ş¶ÎÒÆ¶¯Ä£Ê½Ã¶¾Ù
+// äºŒæ®µç§»åŠ¨æ¨¡å¼æšä¸¾
 public enum SecondaryMode
 {
-    Track,      // ×·×ÙÊ½ÒÆ¶¯
-    FlickerOut, // ÉÁË¸µ­³öÄ£Ê½
-    Gravity,    // ÖØÁ¦ÒÆ¶¯
-    Stationary  // ²»ÒÆ¶¯
+    Track,      // è¿½è¸ªå¼ç§»åŠ¨
+    FlickerOut, // é—ªçƒæ·¡å‡ºæ¨¡å¼
+    Gravity,    // é‡åŠ›ç§»åŠ¨
+    Stationary  // ä¸ç§»åŠ¨
 }
 
 public class CreateEnemy : MonoBehaviour
 {
-    [Header("µĞÈËÉú³ÉÅäÖÃ")]
-    public List<EnemySpawnConfig> spawnConfigs;// µĞÈËÉú³ÉÅäÖÃÁĞ±í
+    [Header("æ•Œäººç”Ÿæˆé…ç½®")]
+    public List<EnemySpawnConfig> spawnConfigs;// æ•Œäººç”Ÿæˆé…ç½®åˆ—è¡¨
     
-    [Header("µĞÈËÔ¤ÖÆÌå")]
-    public GameObject normalEnemyPrefab;// ÆÕÍ¨µĞÈËÔ¤ÖÆÌå
-    public GameObject ballEnemyPrefab;   // ÇòµĞÈËÔ¤ÖÆÌå
-    public GameObject eliteEnemyPrefab;  // ¾«Ó¢µĞÈËÔ¤ÖÆÌå
+    [Header("æ•Œäººé¢„åˆ¶ä½“")]
+    public GameObject normalEnemyPrefab;// æ™®é€šæ•Œäººé¢„åˆ¶ä½“
+    public GameObject ballEnemyPrefab;   // çƒæ•Œäººé¢„åˆ¶ä½“
+    public GameObject eliteEnemyPrefab;  // ç²¾è‹±æ•Œäººé¢„åˆ¶ä½“
     
-    [Header("×Óµ¯Ô¤ÖÆÌå")]
-    public GameObject LittleJade;// Ğ¡ÓñÔ¤ÖÆÌå
-    public GameObject MidJade;   // ÖĞÓñÔ¤ÖÆÌå
-    public GameObject LargeJade;    // ´óÓñÔ¤ÖÆÌå
-    public GameObject LittleRice;   // Ğ¡Ã×Ô¤ÖÆÌå
-    public GameObject LargeRice;    // ´óÃ×Ô¤ÖÆÌå
-    public GameObject Dhratarastra;  // ³Ö¹úÌìÔ¤ÖÆÌå
-    public GameObject talisman; // ·û¹‚Ô¤ÖÆÌå
-    public GameObject arrow; // ¼ıÍ·Ô¤ÖÆÌå
-    public GameObject dart; // ·ÉïÚÔ¤ÖÆÌå
-    public GameObject LittleStar; // Ğ¡ĞÇÔ¤ÖÆÌå
-    public GameObject LargeStar; // ´óĞÇÔ¤ÖÆÌå
-    public GameObject TailBullet; // ÍÏÎ²×Óµ¯Ô¤ÖÆÌå
+    [Header("å­å¼¹é¢„åˆ¶ä½“")]
+    public GameObject LittleJade;// å°ç‰é¢„åˆ¶ä½“
+    public GameObject MidJade;   // ä¸­ç‰é¢„åˆ¶ä½“
+    public GameObject LargeJade;    // å¤§ç‰é¢„åˆ¶ä½“
+    public GameObject LittleRice;   // å°ç±³é¢„åˆ¶ä½“
+    public GameObject LargeRice;    // å¤§ç±³é¢„åˆ¶ä½“
+    public GameObject Dhratarastra;  // æŒå›½å¤©é¢„åˆ¶ä½“
+    public GameObject talisman; // ç¬¦ç®“é¢„åˆ¶ä½“
+    public GameObject arrow; // ç®­å¤´é¢„åˆ¶ä½“
+    public GameObject dart; // é£é•–é¢„åˆ¶ä½“
+    public GameObject LittleStar; // å°æ˜Ÿé¢„åˆ¶ä½“
+    public GameObject LargeStar; // å¤§æ˜Ÿé¢„åˆ¶ä½“
+    public GameObject TailBullet; // æ‹–å°¾å­å¼¹é¢„åˆ¶ä½“
     
-    [Header("¶ÔÏó³ØÉèÖÃ")]
-    public int normalEnemyPoolSize = 30;// ÆÕÍ¨µĞÈË¶ÔÏó³Ø´óĞ¡
-    public int ballEnemyPoolSize = 30;  // ÇòµĞÈË¶ÔÏó³Ø´óĞ¡
-    public int eliteEnemyPoolSize = 5;  // ¾«Ó¢µĞÈË¶ÔÏó³Ø´óĞ¡
+    [Header("å¯¹è±¡æ± è®¾ç½®")]
+    public int normalEnemyPoolSize = 30;// æ™®é€šæ•Œäººå¯¹è±¡æ± å¤§å°
+    public int ballEnemyPoolSize = 30;  // çƒæ•Œäººå¯¹è±¡æ± å¤§å°
+    public int eliteEnemyPoolSize = 5;  // ç²¾è‹±æ•Œäººå¯¹è±¡æ± å¤§å°
 
-    public int LittleJadePoolSize = 30;   // Ğ¡Óñ¶ÔÏó³Ø´óĞ¡(³£¹æ)
-    public int MidJadePoolSize = 30;    // ÖĞÓñ¶ÔÏó³Ø´óĞ¡(ÒşĞÎ)
-    public int LargeJadePoolSize = 20;    // ´óÓñ¶ÔÏó³Ø´óĞ¡(ÒşĞÎ)
-    public int LittleRicePoolSize = 30;   // Ğ¡Ã×¶ÔÏó³Ø´óĞ¡(³£¹æ)
-    public int LargeRicePoolSize = 30;    // ´óÃ×¶ÔÏó³Ø´óĞ¡(³£¹æ)
-    public int DhratarastraPoolSize = 30;    // ³Ö¹úÌì¶ÔÏó³Ø´óĞ¡(³£¹æ)
-    public int talismanPoolSize = 20; // ·û¸å¶ÔÏó³Ø´óĞ¡(×·×Ù)
-    public int arrowPoolSize = 20; // ¼ıÍ·¶ÔÏó³Ø´óĞ¡(×·×Ù)
-    public int dartPoolSize = 20; // ·ÉïÚ¶ÔÏó³Ø´óĞ¡(×·×Ù)
-    public int LittleStarPoolSize = 20; // Ğ¡ĞÇ¶ÔÏó³Ø´óĞ¡(ÖÍÁô)
-    public int LargeStarPoolSize = 20; // ´óĞÇ¶ÔÏó³Ø´óĞ¡(ÖÍÁô)
-    public int TailBulletPoolSize = 50; // ÍÏÎ²×Óµ¯¶ÔÏó³Ø´óĞ¡(ÍÏÎ²)
+    public int LittleJadePoolSize = 30;   // å°ç‰å¯¹è±¡æ± å¤§å°(å¸¸è§„)
+    public int MidJadePoolSize = 30;    // ä¸­ç‰å¯¹è±¡æ± å¤§å°(éšå½¢)
+    public int LargeJadePoolSize = 20;    // å¤§ç‰å¯¹è±¡æ± å¤§å°(éšå½¢)
+    public int LittleRicePoolSize = 30;   // å°ç±³å¯¹è±¡æ± å¤§å°(å¸¸è§„)
+    public int LargeRicePoolSize = 30;    // å¤§ç±³å¯¹è±¡æ± å¤§å°(å¸¸è§„)
+    public int DhratarastraPoolSize = 30;    // æŒå›½å¤©å¯¹è±¡æ± å¤§å°(å¸¸è§„)
+    public int talismanPoolSize = 20; // ç¬¦ç¨¿å¯¹è±¡æ± å¤§å°(è¿½è¸ª)
+    public int arrowPoolSize = 20; // ç®­å¤´å¯¹è±¡æ± å¤§å°(è¿½è¸ª)
+    public int dartPoolSize = 20; // é£é•–å¯¹è±¡æ± å¤§å°(è¿½è¸ª)
+    public int LittleStarPoolSize = 20; // å°æ˜Ÿå¯¹è±¡æ± å¤§å°(æ»ç•™)
+    public int LargeStarPoolSize = 20; // å¤§æ˜Ÿå¯¹è±¡æ± å¤§å°(æ»ç•™)
+    public int TailBulletPoolSize = 50; // æ‹–å°¾å­å¼¹å¯¹è±¡æ± å¤§å°(æ‹–å°¾)
     
-    [Header("ÒôÆµ¹ÜÀí")]
-    private Global_AudioManager audioManager;// ÒôÆµ¹ÜÀíµ¥Àı
+    [Header("éŸ³é¢‘ç®¡ç†")]
+    private Global_AudioManager audioManager;// éŸ³é¢‘ç®¡ç†å•ä¾‹
     
-    [Header("Éú³É×´Ì¬")]
-    public float currentMusicTime = 0f;// µ±Ç°ÒôÀÖ²¥·ÅÊ±¼ä
-    private int CurrentSpawn = 0;//µÚ0²¨´Î
-    public GameObject player;// Íæ¼Ò¶ÔÏóÒıÓÃ
+    [Header("ç”ŸæˆçŠ¶æ€")]
+    public float currentMusicTime = 0f;// å½“å‰éŸ³ä¹æ’­æ”¾æ—¶é—´
+    private int CurrentSpawn = 0;//ç¬¬0æ³¢æ¬¡
+    public GameObject player;// ç©å®¶å¯¹è±¡å¼•ç”¨
 
 
     void OnEnable()
     {
-        // ³õÊ¼»¯¶ÔÏó³Ø
+        // åˆå§‹åŒ–å¯¹è±¡æ± 
         InitializeObjectPools();
         
-        // »ñÈ¡ÒôÆµ¹ÜÀíµ¥Àı
+        // è·å–éŸ³é¢‘ç®¡ç†å•ä¾‹
         audioManager = Global_AudioManager.Instance;
         
-        // ÖØÖÃÉú³É×´Ì¬
+        // é‡ç½®ç”ŸæˆçŠ¶æ€
         CurrentSpawn = 0;
-        
-        // ÖØÖÃÒôÀÖÊ±¼ä£¬È·±£µÚÒ»²¨µĞÈËÄÜÕıÈ·Éú³É
-        if (audioManager != null)
-        {
-            audioManager.CurrentBGMTime = 0f;
-        }
+        // æ³¨æ„ï¼šä¸å†æ‰‹åŠ¨å†™ audioManager.CurrentBGMTime = 0f
+        // CurrentBGMTime å·²æ”¹ä¸ºè¿”å› SimClock.SimTimeï¼Œç”± ReplayManager.BeginRecord()/BeginPlayback() æ—¶ Reset æ—¶é’Ÿ
     }
 
-    void Update()
+    void FixedUpdate()
     {
-        // »ñÈ¡µ±Ç°ÒôÀÖ²¥·ÅÊ±¼ä
+        // è·å–å½“å‰éŸ³ä¹æ’­æ”¾æ—¶é—´
         if (audioManager != null)
         {
             currentMusicTime = audioManager.CurrentBGMTime;
         }
 
-        // ¼ì²éÊÇ·ñĞèÒªÉú³ÉµĞÈË
+        // æ£€æŸ¥æ˜¯å¦éœ€è¦ç”Ÿæˆæ•Œäºº
         CheckSpawnEnemies();
     }
     
     /// <summary>
-    /// ³õÊ¼»¯¶ÔÏó³Ø
+    /// åˆå§‹åŒ–å¯¹è±¡æ± 
     /// </summary>
     private void InitializeObjectPools()
     {
@@ -113,25 +110,25 @@ public class CreateEnemy : MonoBehaviour
             return;
         }
         
-        // ³õÊ¼»¯ÆÕÍ¨µĞÈË¶ÔÏó³Ø
+        // åˆå§‹åŒ–æ™®é€šæ•Œäººå¯¹è±¡æ± 
         if (normalEnemyPrefab != null)
         {
             Global_ObjectPool.Instance.InitPool(normalEnemyPrefab, normalEnemyPoolSize);
         }
         
-        // ³õÊ¼»¯ÇòµĞÈË¶ÔÏó³Ø
+        // åˆå§‹åŒ–çƒæ•Œäººå¯¹è±¡æ± 
         if (ballEnemyPrefab != null)
         {
             Global_ObjectPool.Instance.InitPool(ballEnemyPrefab, ballEnemyPoolSize);
         }
         
-        // ³õÊ¼»¯¾«Ó¢µĞÈË¶ÔÏó³Ø
+        // åˆå§‹åŒ–ç²¾è‹±æ•Œäººå¯¹è±¡æ± 
         if (eliteEnemyPrefab != null)
         {
             Global_ObjectPool.Instance.InitPool(eliteEnemyPrefab, eliteEnemyPoolSize);
         }
         
-        // ³õÊ¼»¯×Óµ¯¶ÔÏó³Ø
+        // åˆå§‹åŒ–å­å¼¹å¯¹è±¡æ± 
         if (LittleJade != null)
         {
             Global_ObjectPool.Instance.InitPool(LittleJade, LittleJadePoolSize);
@@ -183,7 +180,7 @@ public class CreateEnemy : MonoBehaviour
     }
     
     /// <summary>
-    /// ¼ì²éÊÇ·ñĞèÒªÉú³ÉµĞÈË
+    /// æ£€æŸ¥æ˜¯å¦éœ€è¦ç”Ÿæˆæ•Œäºº
     /// </summary>
     private void CheckSpawnEnemies()
     {
@@ -199,26 +196,26 @@ public class CreateEnemy : MonoBehaviour
     }
     
     /// <summary>
-    /// Éú³ÉµĞÈË
+    /// ç”Ÿæˆæ•Œäºº
     /// </summary>
-    /// <param name="config">Éú³ÉÅäÖÃ</param>
+    /// <param name="config">ç”Ÿæˆé…ç½®</param>
     private void SpawnEnemy(EnemySpawnConfig config)
     {
-        // ¿ªÊ¼Éú³É¶à¸öµĞÈË
+        // å¼€å§‹ç”Ÿæˆå¤šä¸ªæ•Œäºº
         StartCoroutine(SpawnEnemiesCoroutine(config));
     }
     
     /// <summary>
-    /// Éú³É¶à¸öµĞÈËµÄĞ­³Ì
+    /// ç”Ÿæˆå¤šä¸ªæ•Œäººçš„åç¨‹
     /// </summary>
-    /// <param name="config">Éú³ÉÅäÖÃ</param>
+    /// <param name="config">ç”Ÿæˆé…ç½®</param>
     private IEnumerator SpawnEnemiesCoroutine(EnemySpawnConfig config)
     {
         for (int i = 0; i < config.spawnCount; i++)
         {
             GameObject enemyPrefab = null;
             
-            // ¸ù¾İµĞÈËÀàĞÍÑ¡ÔñÔ¤ÖÆÌå
+            // æ ¹æ®æ•Œäººç±»å‹é€‰æ‹©é¢„åˆ¶ä½“
             switch (config.enemyType)
             {
                 case EnemySpawnConfig.EnemyType.Normal:
@@ -238,21 +235,21 @@ public class CreateEnemy : MonoBehaviour
                 yield break;
             }
             
-            // ´Ó¶ÔÏó³Ø»ñÈ¡µĞÈË
+            // ä»å¯¹è±¡æ± è·å–æ•Œäºº
             GameObject enemy = Global_ObjectPool.Instance.GetObject(enemyPrefab, transform.position, transform.rotation);
             if (enemy == null)
             {
-                // ¶ÔÏó³Ø²»×ã£¬ÊµÀı»¯ĞÂµĞÈË
+                // å¯¹è±¡æ± ä¸è¶³ï¼Œå®ä¾‹åŒ–æ–°æ•Œäºº
                 enemy = Instantiate(enemyPrefab);
             }
             
-            // È·±£µĞÈË¶ÔÏó´¦ÓÚÎ´¼¤»î×´Ì¬£¬ÒÔ±ãÔÚÉèÖÃ²ÎÊıºóÔÙ´¥·¢OnEnable
+            // ç¡®ä¿æ•Œäººå¯¹è±¡å¤„äºæœªæ¿€æ´»çŠ¶æ€ï¼Œä»¥ä¾¿åœ¨è®¾ç½®å‚æ•°åå†è§¦å‘OnEnable
             enemy.SetActive(false);
             
-            // ¼ì²éÂ·¾¶µãÊıÁ¿
+            // æ£€æŸ¥è·¯å¾„ç‚¹æ•°é‡
             CheckMovePointsCount(config);
             
-            // ÉèÖÃµĞÈËÎ»ÖÃ
+            // è®¾ç½®æ•Œäººä½ç½®
             if (config.movePoints != null && config.movePoints.Count > 0)
             {
                 int movePointsCount = config.movePoints.Count;
@@ -260,17 +257,17 @@ public class CreateEnemy : MonoBehaviour
                 
                 if (movePointsCount == 1)
                 {
-                    // ËùÓĞµĞÈË´ÓÍ¬Ò»¸öÂ·¾¶µãÉú³É
+                    // æ‰€æœ‰æ•Œäººä»åŒä¸€ä¸ªè·¯å¾„ç‚¹ç”Ÿæˆ
                     enemy.transform.position = config.movePoints[0].transform.position;
                 }
                 else if (movePointsCount == spawnCount)
                 {
-                    // Ã¿¸öµĞÈË´Ó²»Í¬µÄÂ·¾¶µãÉú³É
+                    // æ¯ä¸ªæ•Œäººä»ä¸åŒçš„è·¯å¾„ç‚¹ç”Ÿæˆ
                     enemy.transform.position = config.movePoints[i].transform.position;
                 }
                 else
                 {
-                    // Ä¬ÈÏÊ¹ÓÃµÚÒ»¸öÂ·¾¶µã
+                    // é»˜è®¤ä½¿ç”¨ç¬¬ä¸€ä¸ªè·¯å¾„ç‚¹
                     enemy.transform.position = config.movePoints[0].transform.position;
                 }
             }
@@ -279,19 +276,19 @@ public class CreateEnemy : MonoBehaviour
                 enemy.transform.position = transform.position;
             }
 
-            // ÉèÖÃµĞÈË²ÎÊı£¨Ê¹ÓÃ»ùÀàEnemyÍ³Ò»ÉèÖÃ£©
+            // è®¾ç½®æ•Œäººå‚æ•°ï¼ˆä½¿ç”¨åŸºç±»Enemyç»Ÿä¸€è®¾ç½®ï¼‰
             SetupEnemy(enemy, config, i);
             
-            // ¼¤»îµĞÈË
+            // æ¿€æ´»æ•Œäºº
             enemy.SetActive(true);
             
-            // ½«µĞÈËÌí¼Óµ½Global_GameManagerµÄEnemyListÖĞ
+            // å°†æ•Œäººæ·»åŠ åˆ°Global_GameManagerçš„EnemyListä¸­
             if (Global_GameManager.Instance != null)
             {
                 Global_GameManager.Instance.AddEnemy(enemy);
             }
             
-            // Èç¹û²»ÊÇ×îºóÒ»¸öµĞÈË£¬µÈ´ıÉú³É¼ä¸ô
+            // å¦‚æœä¸æ˜¯æœ€åä¸€ä¸ªæ•Œäººï¼Œç­‰å¾…ç”Ÿæˆé—´éš”
             if (i < config.spawnCount - 1 && config.spawnInterval > 0f)
             {
                 yield return new WaitForSeconds(config.spawnInterval);
@@ -300,45 +297,45 @@ public class CreateEnemy : MonoBehaviour
     }
     
     /// <summary>
-    /// ÉèÖÃµĞÈË²ÎÊı£¨Ê¹ÓÃ»ùÀàEnemyÍ³Ò»ÉèÖÃ£©
+    /// è®¾ç½®æ•Œäººå‚æ•°ï¼ˆä½¿ç”¨åŸºç±»Enemyç»Ÿä¸€è®¾ç½®ï¼‰
     /// </summary>
     private void SetupEnemy(GameObject enemy, EnemySpawnConfig config, int enemyIndex)
     {
         Enemy enemyComponent = enemy.GetComponent<Enemy>();
         if (enemyComponent != null)
         {
-            // ÉèÖÃ»ù´¡ÊôĞÔ
+            // è®¾ç½®åŸºç¡€å±æ€§
             enemyComponent.Hp = config.hp;
             enemyComponent.MoveSpeed = config.moveSpeed;
             enemyComponent.gravityScale = config.gravityScale;
             enemyComponent.FlickerLifeTime = config.flickerLifeTime;
             enemyComponent.fadeTime = config.fadeTime;
 
-            // ÉèÖÃÒÆ¶¯Ä£Ê½
+            // è®¾ç½®ç§»åŠ¨æ¨¡å¼
             enemyComponent.moveMode = config.moveMode;
 
-            // ÉèÖÃ¶ş¶ÎÒÆ¶¯Ä£Ê½
+            // è®¾ç½®äºŒæ®µç§»åŠ¨æ¨¡å¼
             enemyComponent.secondaryMoveMode = config.secondaryMoveMode;
 
-            // ÉèÖÃÂ·¾¶µã
+            // è®¾ç½®è·¯å¾„ç‚¹
             if (config.movePoints != null && config.movePoints.Count > 0)
             {
                 enemyComponent.SetMovePoints(config.movePoints);
             }
 
-            // ÉèÖÃÍæ¼Ò¶ÔÏó
+            // è®¾ç½®ç©å®¶å¯¹è±¡
             if (player != null)
             {
                 enemyComponent.SetPlayer(player);
             }
 
-            // ÉèÖÃµôÂäÎïÅäÖÃ
+            // è®¾ç½®æ‰è½ç‰©é…ç½®
             if (config.itemDrops != null)
             {
                 enemyComponent.SetItemDrops(config.itemDrops);
             }
 
-            // ÉèÖÃÉä»÷ÅäÖÃ
+            // è®¾ç½®å°„å‡»é…ç½®
             EnemyShoot enemyShoot = enemy.GetComponent<EnemyShoot>();
             if (enemyShoot != null)
             {
@@ -353,9 +350,9 @@ public class CreateEnemy : MonoBehaviour
     }
     
     /// <summary>
-    /// ¼ì²éÂ·¾¶µãÊıÁ¿ÊÇ·ñÕıÈ·
+    /// æ£€æŸ¥è·¯å¾„ç‚¹æ•°é‡æ˜¯å¦æ­£ç¡®
     /// </summary>
-    /// <param name="config">Éú³ÉÅäÖÃ</param>
+    /// <param name="config">ç”Ÿæˆé…ç½®</param>
     private void CheckMovePointsCount(EnemySpawnConfig config)
     {
         int movePointsCount = config.movePoints != null ? config.movePoints.Count : 0;
@@ -365,7 +362,7 @@ public class CreateEnemy : MonoBehaviour
             case MoveMode.Path:
                 if (movePointsCount < 1)
                 {
-                    Debug.LogWarning($"Â·¾¶µãÒÆ¶¯Ä£Ê½ĞèÒªÖÁÉÙ1¸öÂ·¾¶µã£¬µ±Ç°ÊıÁ¿: {movePointsCount}");
+                    Debug.LogWarning($"è·¯å¾„ç‚¹ç§»åŠ¨æ¨¡å¼éœ€è¦è‡³å°‘1ä¸ªè·¯å¾„ç‚¹ï¼Œå½“å‰æ•°é‡: {movePointsCount}");
                 }
                 break;
             case MoveMode.Track:
@@ -373,7 +370,7 @@ public class CreateEnemy : MonoBehaviour
             case MoveMode.Gravity:
                 if (movePointsCount != 1 && movePointsCount != config.spawnCount)
                 {
-                    Debug.LogWarning($"{config.moveMode}Ä£Ê½ĞèÒªÓĞÇÒ½öÓĞ1¸öÂ·¾¶µã£¬»òÓëµĞÈËÊıÁ¿ÏàÍ¬µÄÂ·¾¶µã£¬µ±Ç°ÊıÁ¿: {movePointsCount}");
+                    Debug.LogWarning($"{config.moveMode}æ¨¡å¼éœ€è¦æœ‰ä¸”ä»…æœ‰1ä¸ªè·¯å¾„ç‚¹ï¼Œæˆ–ä¸æ•Œäººæ•°é‡ç›¸åŒçš„è·¯å¾„ç‚¹ï¼Œå½“å‰æ•°é‡: {movePointsCount}");
                 }
                 break;
         }

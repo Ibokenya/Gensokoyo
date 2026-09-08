@@ -168,11 +168,13 @@ MonoBehaviour:
   Score: 0
   HighestScore: 0
   SceneLevel: 0
+  SpeedScale: 1
   state: 5
   EnemyList: []
   PowerUpClip: {fileID: 8300000, guid: 22dba936c8fb6b3469845b60956d5865, type: 3}
   HpUpClip: {fileID: 8300000, guid: 53cd5919d7ff1064dbd0948e972de57a, type: 3}
   BombUpClip: {fileID: 8300000, guid: 236a9e0913ae73047b9e402b12e6272c, type: 3}
+  isCheheat: 0
 --- !u!114 &20293397
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5239,6 +5241,50 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &699318377
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 699318379}
+  - component: {fileID: 699318378}
+  m_Layer: 0
+  m_Name: Replay_System
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &699318378
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 699318377}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f31e3a46e8b59774c869e0c63aff55a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &699318379
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 699318377}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 911.074, y: 600.0151, z: -7.405689}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1374815883
 GameObject:
   m_ObjectHideFlags: 0
@@ -6001,3 +6047,4 @@ SceneRoots:
   - {fileID: 2018891382}
   - {fileID: 158519814}
   - {fileID: 20293400}
+  - {fileID: 699318379}

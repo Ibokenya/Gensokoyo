@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -6,11 +6,11 @@ using UnityEngine.UI;
 
 
 /// <summary>
-/// ´Ë×´Ì¬Ó¦¸ÃÔÚModeChoose×´Ì¬ÏÂ
+/// æ­¤çŠ¶æ€åº”è¯¥åœ¨ModeChooseçŠ¶æ€ä¸‹
 /// </summary>
 public class ModeChooseButton : MonoBehaviour
 {
-    [Header("¹ÜÀíËÄ¸öÄÑ¶È°´Å¥")]
+    [Header("ç®¡ç†å››ä¸ªéš¾åº¦æŒ‰é’®")]
     public List<Button> buttons;
 
     public int defaultButtonIndex;
@@ -27,9 +27,9 @@ public class ModeChooseButton : MonoBehaviour
         ButtonAnime.ButtonBeChoose(buttons[currentButtonIndex]);
         text.color = buttons[currentButtonIndex].GetComponentInChildren<TMP_Text>().color;
         text.text =
-                    "Easy ÄÑ¶È\r\nÒ²¾ÍÊÇ×î¼òµ¥£¬ÇáËÉÎŞ±ÈµÄÄÇÖÖ\r\nÒ»°ãÀ´½²ÊÊºÏÏëÒªÍêÕûÍ¨¹ØµÄ¼Ò»ïÃÇ\r\n" +
-                    "È»¶øÒ²ÓĞ¹ı²»È¥µÄ\r\nÄÇÑù¿ÉÕæÃ»Ê²Ã´ºÃËµµÄÁË\r\n\r\n" +
-                    "ÔõÃ´°ìÄØ£¿\r\nÄÇ¾ÍÖ»ÄÜ¶à¼ÓÁ·Ï°ºÃºÃÅ¬Á¦ÁË\r\n×£ÎäÔË²ıÂ¡";
+                    "Easy éš¾åº¦\r\nä¹Ÿå°±æ˜¯æœ€ç®€å•ï¼Œè½»æ¾æ— æ¯”çš„é‚£ç§\r\nä¸€èˆ¬æ¥è®²é€‚åˆæƒ³è¦å®Œæ•´é€šå…³çš„å®¶ä¼™ä»¬\r\n" +
+                    "ç„¶è€Œä¹Ÿæœ‰è¿‡ä¸å»çš„\r\né‚£æ ·å¯çœŸæ²¡ä»€ä¹ˆå¥½è¯´çš„äº†\r\n\r\n" +
+                    "æ€ä¹ˆåŠå‘¢ï¼Ÿ\r\né‚£å°±åªèƒ½å¤šåŠ ç»ƒä¹ å¥½å¥½åŠªåŠ›äº†\r\nç¥æ­¦è¿æ˜Œéš†";
     }
     private void OnDisable()
     {
@@ -45,22 +45,22 @@ public class ModeChooseButton : MonoBehaviour
 
     private void CheckButtonSwitch()
     {
-        if (Input.GetKeyDown(KeyCode.UpArrow))// °´ÏÂ¡ü¼ü
+        if (Input.GetKeyDown(KeyCode.UpArrow))// æŒ‰ä¸‹â†‘é”®
         {
             ButtonAnime.ButtonBeMoveoff(buttons[currentButtonIndex]);
             currentButtonIndex--;
-            if (currentButtonIndex < 0)// ×îÉÏ·½Ñ­»·µ½µ×²ã
+            if (currentButtonIndex < 0)// æœ€ä¸Šæ–¹å¾ªç¯åˆ°åº•å±‚
             {
                 currentButtonIndex = buttons.Count - 1;
             }
             ButtonAnime.ButtonBeChoose(buttons[currentButtonIndex]);
             ChangeText(currentButtonIndex);
         }
-        if (Input.GetKeyDown(KeyCode.DownArrow))// °´ÏÂ¡ı¼ü
+        if (Input.GetKeyDown(KeyCode.DownArrow))// æŒ‰ä¸‹â†“é”®
         {
             ButtonAnime.ButtonBeMoveoff(buttons[currentButtonIndex]);
             currentButtonIndex++;
-            if (currentButtonIndex > buttons.Count - 1)// ×îÏÂ·½Ñ­»·µ½¶¥²ã
+            if (currentButtonIndex > buttons.Count - 1)// æœ€ä¸‹æ–¹å¾ªç¯åˆ°é¡¶å±‚
             {
                 currentButtonIndex = 0;
             }
@@ -81,43 +81,43 @@ public class ModeChooseButton : MonoBehaviour
             }
             else
             {
-                Debug.LogWarning("ÎªÊ²Ã´»áÔÚÄÑ¶ÈÑ¡Ôñ½çÃæÖ®ºó»¹ÊÇExÄÑ¶È°¡£¿");
+                Debug.LogWarning("ä¸ºä»€ä¹ˆä¼šåœ¨éš¾åº¦é€‰æ‹©ç•Œé¢ä¹‹åè¿˜æ˜¯Exéš¾åº¦å•Šï¼Ÿ");
             }
         }
     }
 
     /// <summary>
-    /// °´ÕÕµ±Ç°Ñ¡ÖĞ°´Å¥µÄË÷Òı¸Ä±äÃèÊöÎÄ±¾µÄÄÚÈİ
+    /// æŒ‰ç…§å½“å‰é€‰ä¸­æŒ‰é’®çš„ç´¢å¼•æ”¹å˜æè¿°æ–‡æœ¬çš„å†…å®¹
     /// </summary>
     /// <param name="index"></param>
     private void ChangeText(int index)
     {
-        text.color = buttons[currentButtonIndex].GetComponentInChildren<TMP_Text>().color;// ÏÈ±äÉ«
+        text.color = buttons[currentButtonIndex].GetComponentInChildren<TMP_Text>().color;// å…ˆå˜è‰²
         switch (index)
         {
             case 0:// Easy
                 text.text =
-                    "Easy ÄÑ¶È\r\nÒ²¾ÍÊÇ×î¼òµ¥£¬ÇáËÉÎŞ±ÈµÄÄÇÖÖ\r\nÒ»°ãÀ´½²ÊÊºÏÏëÒªÍêÕûÍ¨¹ØµÄ¼Ò»ïÃÇ\r\n" +
-                    "È»¶øÒ²ÓĞ¹ı²»È¥µÄ\r\nÕâÖÖ¿ÉÕæÃ»Ê²Ã´ºÃËµµÄÁË\r\n\r\n" +
-                    "ÔõÃ´°ìÄØ£¿\r\nÄÇ¾ÍÖ»ÄÜ¶à¼ÓÁ·Ï°ºÃºÃÅ¬Á¦ÁË\r\n×£ÎäÔË²ıÂ¡";
+                    "Easy éš¾åº¦\r\nä¹Ÿå°±æ˜¯æœ€ç®€å•ï¼Œè½»æ¾æ— æ¯”çš„é‚£ç§\r\nä¸€èˆ¬æ¥è®²é€‚åˆæƒ³è¦å®Œæ•´é€šå…³çš„å®¶ä¼™ä»¬\r\n" +
+                    "ç„¶è€Œä¹Ÿæœ‰è¿‡ä¸å»çš„\r\nè¿™ç§å¯çœŸæ²¡ä»€ä¹ˆå¥½è¯´çš„äº†\r\n\r\n" +
+                    "æ€ä¹ˆåŠå‘¢ï¼Ÿ\r\né‚£å°±åªèƒ½å¤šåŠ ç»ƒä¹ å¥½å¥½åŠªåŠ›äº†\r\nç¥æ­¦è¿æ˜Œéš†";
                 break;
             case 1:// Normal
-                text.text = "Normal ÄÑ¶È\r\nºÜ±ê×¼µÄÕâÖÖÓÎÏ·µÄÄÑ¶È\r\nËùÎ½¡°ÖĞÓ¹Ö®µÀ¡±\r\n" +
-                    "¾ÍÊÇÔÚ×îÄÑºÍ×î¼òµ¥Ö®¼äÕÛÖĞ\r\nÏñºº±¤»òÕßÈıÃ÷ÖÎÒ»Ñù\r\n" +
-                    "ÖĞ¼äµÄÈâ±ı²Å×îÃÀÎ¶¶Ô°É\r\n\r\nËùÒÔ¿ÉÒÔ¾¡ÇéÏíÊÜÁË\r\nĞèÒª°ïÖúµÄ»°\r\nËÆºõÒ²Ã»Ê²Ã´°ì·¨£¿";
+                text.text = "Normal éš¾åº¦\r\nå¾ˆæ ‡å‡†çš„è¿™ç§æ¸¸æˆçš„éš¾åº¦\r\næ‰€è°“â€œä¸­åº¸ä¹‹é“â€\r\n" +
+                    "å°±æ˜¯åœ¨æœ€éš¾å’Œæœ€ç®€å•ä¹‹é—´æŠ˜ä¸­\r\nåƒæ±‰å ¡æˆ–è€…ä¸‰æ˜æ²»ä¸€æ ·\r\n" +
+                    "ä¸­é—´çš„è‚‰é¥¼æ‰æœ€ç¾å‘³å¯¹å§\r\n\r\næ‰€ä»¥å¯ä»¥å°½æƒ…äº«å—äº†\r\néœ€è¦å¸®åŠ©çš„è¯\r\nä¼¼ä¹ä¹Ÿæ²¡ä»€ä¹ˆåŠæ³•ï¼Ÿ";
                 break;
             case 2:// Hard
-                text.text = "Hard ÄÑ¶È\r\nÔã¸â£¬ÓĞµã³ÔÁ¦ÁË\r\nÈç¹û²»¼¯ÖĞ¾«ÉñµÄ»°¡£¡£¡£\r\n" +
-                    "ÉîåäµÄÓîÖæÀïÎŞÒÉÊÇÓĞ²»¿ÉÃû×´´æÔÚµÄ\r\nÄãÏÖÔÚÒª¶ÔÉÏÍ¢´ïÂŞË¹ÁÔÈ®ÁË\r\n" +
-                    "ºÃÔÚ»¹²»ÊÇ¾ÉÈÕÖ§ÅäÕßµÄ³Ì¶È\r\n\r\nÎªÓÂÆøÏ×ÉÏÔŞ¸è£¡\r\nViva Laghent'an!";
+                text.text = "Hard éš¾åº¦\r\nç³Ÿç³•ï¼Œæœ‰ç‚¹åƒåŠ›äº†\r\nå¦‚æœä¸é›†ä¸­ç²¾ç¥çš„è¯ã€‚ã€‚ã€‚\r\n" +
+                    "æ·±é‚ƒçš„å®‡å®™é‡Œæ— ç–‘æ˜¯æœ‰ä¸å¯åçŠ¶å­˜åœ¨çš„\r\nä½ ç°åœ¨è¦å¯¹ä¸Šå»·è¾¾ç½—æ–¯çŒçŠ¬äº†\r\n" +
+                    "å¥½åœ¨è¿˜ä¸æ˜¯æ—§æ—¥æ”¯é…è€…çš„ç¨‹åº¦\r\n\r\nä¸ºå‹‡æ°”çŒ®ä¸Šèµæ­Œï¼\r\nViva Laghent'an!";
                 break;
             case 3:// Lunatic
-                text.text = "Lunatic ÄÑ¶È\r\nßË¡£ßË¡£ ¡£ßË ¡£ ¡£\r\nÄã¿´µ½Ò»ÂÖÔ²ÔÂÉıÆğ\r\n" +
-                    "ÕâÓîÖæÖĞÓĞ¶àÉÙĞÇÌå\r\n¶àÉÙÉúÃü\r\nÄã²»Çå³ş\r\nµ«ÕâÂÖÔÂÁÁÏÔÈ»ÓëÄãÒÔÍùËù¼û²»Í¬\r\n" +
-                    "Õâ¾Ş´óµÄ±ä»¯\r\n×ãÒÔ³¹µ×µØ»÷À£ÁËÄã\r\nÄãËÀÔÚÁËĞéÎŞÓë´íÂÒÖĞ\r\nÕâ¾ÍÊÇ£¬¡°ÔÂ¿ñ¡±¡£";
+                text.text = "Lunatic éš¾åº¦\r\nå’šã€‚å’šã€‚ ã€‚å’š ã€‚ ã€‚\r\nä½ çœ‹åˆ°ä¸€è½®åœ†æœˆå‡èµ·\r\n" +
+                    "è¿™å®‡å®™ä¸­æœ‰å¤šå°‘æ˜Ÿä½“\r\nå¤šå°‘ç”Ÿå‘½\r\nä½ ä¸æ¸…æ¥š\r\nä½†è¿™è½®æœˆäº®æ˜¾ç„¶ä¸ä½ ä»¥å¾€æ‰€è§ä¸åŒ\r\n" +
+                    "è¿™å·¨å¤§çš„å˜åŒ–\r\nè¶³ä»¥å½»åº•åœ°å‡»æºƒäº†ä½ \r\nä½ æ­»åœ¨äº†è™šæ— ä¸é”™ä¹±ä¸­\r\nè¿™å°±æ˜¯ï¼Œâ€œæœˆç‹‚â€ã€‚";
                 break;
-            default:// °´Àí²»¸ÃÓĞÕâÑ¡ÏîµÄ
-                Debug.LogWarning("ÔÚÑ¡ÄÑ¶È½çÃæ³öÏÖÁËÒâÁÏÖ®ÍâµÄÑ¡ÏîË÷Òı");
+            default:// æŒ‰ç†ä¸è¯¥æœ‰è¿™é€‰é¡¹çš„
+                Debug.LogWarning("åœ¨é€‰éš¾åº¦ç•Œé¢å‡ºç°äº†æ„æ–™ä¹‹å¤–çš„é€‰é¡¹ç´¢å¼•");
                 break;
         }
     }

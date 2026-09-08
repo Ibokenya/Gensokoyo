@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using ReplaySystem;
 using UnityEngine;
 using TMPro;
 using System.IO;
@@ -15,22 +16,22 @@ public class DialogData
 
 public class AboutDialog : MonoBehaviour
 {
-    [Header("¶Ô»°¿òÏà¹ØÎïÌåÒıÓÃ")]
+    [Header("å¯¹è¯æ¡†ç›¸å…³ç‰©ä½“å¼•ç”¨")]
     public GameObject RoleFace;
     public GameObject DialogBox;
     private TextMeshProUGUI dialogText;
     private Image roleFaceImage;
-    [Header("Íæ¼Ò½Å±¾ÒıÓÃ")]
+    [Header("ç©å®¶è„šæœ¬å¼•ç”¨")]
     public PlayerAnime playerAnime;
 
-    [Header("½ÇÉ«Á³ÁĞ±í")]
+    [Header("è§’è‰²è„¸åˆ—è¡¨")]
     public List<Sprite> ReimuFace;
     public List<Sprite> MarisaFace;
     public List<Sprite> ChirnoFace;
 
-    [Header("¶Ô»°ÎÄ¼şÂ·¾¶")]
-    public string ReimuDialogPath = "Touho/¶Ô»°/ReimuDialog.csv";
-    public string MarisaDialogPath = "Touho/¶Ô»°/MarisaDialog.csv";
+    [Header("å¯¹è¯æ–‡ä»¶è·¯å¾„")]
+    public string ReimuDialogPath = "Touho/å¯¹è¯/ReimuDialog.csv";
+    public string MarisaDialogPath = "Touho/å¯¹è¯/MarisaDialog.csv";
 
     private Vector2 Face_left = new (-442.98f, 0);
     private Vector2 Face_right = new (442.98f, 0);
@@ -41,9 +42,9 @@ public class AboutDialog : MonoBehaviour
     private int currentDialogIndex = 0;
     private bool isDialogActive = false;
 
-    public ContinueBG continueBG;// ¼ÌĞø±³¾°½Å±¾
-    public Game1 game1;// ÓÎÏ·1½Å±¾
-    public GameObject Boss;// µĞÈËÎïÌå
+    public ContinueBG continueBG;// ç»§ç»­èƒŒæ™¯è„šæœ¬
+    public Game1 game1;// æ¸¸æˆ1è„šæœ¬
+    public GameObject Boss;// æ•Œäººç‰©ä½“
 
 
     private void Awake()
@@ -54,20 +55,20 @@ public class AboutDialog : MonoBehaviour
 
     private void OnEnable()
     {
-        // ¿ªÊ¼µ­³ö±³¾°ÒôÀÖ
+        // å¼€å§‹æ·¡å‡ºèƒŒæ™¯éŸ³ä¹
         StartCoroutine(FadeOutBGM());
         Global_GameManager.Instance.state = State.Dialog;
         playerAnime.StopMove();
         currentDialogIndex = 0;
         isDialogActive = true;
         
-        // ÉèÖÃ³õÊ¼Î»ÖÃ£º½ÇÉ«Á³×ó²à£¬¶Ô»°¿òÓÒ²à
+        // è®¾ç½®åˆå§‹ä½ç½®ï¼šè§’è‰²è„¸å·¦ä¾§ï¼Œå¯¹è¯æ¡†å³ä¾§
         SetDialogPosition(false);
         
-        // ¸ù¾İ½ÇÉ«ÀàĞÍÑ¡Ôñ¶ÔÓ¦µÄ¶Ô»°
+        // æ ¹æ®è§’è‰²ç±»å‹é€‰æ‹©å¯¹åº”çš„å¯¹è¯
         LoadDialog();
         
-        // ÏÔÊ¾µÚÒ»Ìõ¶Ô»°
+        // æ˜¾ç¤ºç¬¬ä¸€æ¡å¯¹è¯
         if (currentDialogList.Count > 0)
         {
             ShowDialog(currentDialogList[currentDialogIndex]);
@@ -76,7 +77,7 @@ public class AboutDialog : MonoBehaviour
 
     private int frameCount = 0;
 
-    private void Update()
+    private void FixedUpdate()
     {
         if(Global_GameManager.Instance.state != State.Dialog)
         {
@@ -87,13 +88,13 @@ public class AboutDialog : MonoBehaviour
             return;
         }
 
-        // °´Z¼üÇĞ»»µ½ÏÂÒ»Ìõ¶Ô»°
-        if (Input.GetKeyDown(KeyCode.Z))
+        // æŒ‰Zé”®åˆ‡æ¢åˆ°ä¸‹ä¸€æ¡å¯¹è¯
+        if (ReplayManager.Input.GetKeyDown(LogicalKey.Fire))
         {
             NextDialog();
         }
         
-        // °´×¡×óCtrl¼ü¿ìËÙÌø¹ı¶Ô»°£¨Ã¿30Ö¡Ìø¹ıÒ»´Î£©
+        // æŒ‰ä½å·¦Ctrlé”®å¿«é€Ÿè·³è¿‡å¯¹è¯ï¼ˆæ¯30å¸§è·³è¿‡ä¸€æ¬¡ï¼‰
         if (Input.GetKey(KeyCode.LeftControl))
         {
             frameCount++;
@@ -113,7 +114,7 @@ public class AboutDialog : MonoBehaviour
     {
         string dialogPath = "";
         
-        // ¸ù¾İ½ÇÉ«ÀàĞÍÑ¡Ôñ¶Ô»°ÎÄ¼ş
+        // æ ¹æ®è§’è‰²ç±»å‹é€‰æ‹©å¯¹è¯æ–‡ä»¶
         if (Global_GameManager.Instance.character == Character.Reimu)
         {
             dialogPath = ReimuDialogPath;
@@ -123,7 +124,7 @@ public class AboutDialog : MonoBehaviour
             dialogPath = MarisaDialogPath;
         }
 
-        // ¶ÁÈ¡CSVÎÄ¼ş
+        // è¯»å–CSVæ–‡ä»¶
         currentDialogList = ReadCSV(dialogPath);
     }
 
@@ -131,21 +132,21 @@ public class AboutDialog : MonoBehaviour
     {
         List<DialogData> dialogList = new List<DialogData>();
         
-        // ´ÓResourcesÎÄ¼ş¼Ğ¼ÓÔØCSVÎÄ¼ş
+        // ä»Resourcesæ–‡ä»¶å¤¹åŠ è½½CSVæ–‡ä»¶
         TextAsset csvFile = Resources.Load<TextAsset>(path.Replace(".csv", ""));
         
         if (csvFile == null)
         {
-            Debug.LogError("ÎŞ·¨ÕÒµ½¶Ô»°ÎÄ¼ş: " + path);
+            Debug.LogError("æ— æ³•æ‰¾åˆ°å¯¹è¯æ–‡ä»¶: " + path);
             return dialogList;
         }
 
-        // ¶ÁÈ¡CSVÄÚÈİ²¢ÕıÈ·´¦Àí¶àĞĞÎÄ±¾
+        // è¯»å–CSVå†…å®¹å¹¶æ­£ç¡®å¤„ç†å¤šè¡Œæ–‡æœ¬
         string csvContent = csvFile.text;
-        Debug.Log($"CSVÄÚÈİ: {csvContent}");
+        Debug.Log($"CSVå†…å®¹: {csvContent}");
         List<string> dialogLines = ParseCSVContent(csvContent);
         
-        // Ìø¹ı±êÌâĞĞ
+        // è·³è¿‡æ ‡é¢˜è¡Œ
         for (int i = 1; i < dialogLines.Count; i++)
         {
             string line = dialogLines[i].Trim();
@@ -154,7 +155,7 @@ public class AboutDialog : MonoBehaviour
                 continue;
             }
 
-            // ½âÎöCSVĞĞ£¬Ö§³Ö¶àĞĞtext
+            // è§£æCSVè¡Œï¼Œæ”¯æŒå¤šè¡Œtext
             DialogData dialog = ParseCSVLine(line);
             if (dialog != null)
             {
@@ -166,16 +167,16 @@ public class AboutDialog : MonoBehaviour
     }
     
     /// <summary>
-    /// ½âÎöCSVÄÚÈİ£¬Ö§³Ö¶àĞĞÎÄ±¾
-    /// °ÑÃ¿´Î¶Ô»°µÄËùÓĞÄÚÈİ(ID,Role,Text,Emotion)½âÎöÎªÒ»¸ö¸ö×Ö·û´®´æÈëÁĞ±íÖĞ
+    /// è§£æCSVå†…å®¹ï¼Œæ”¯æŒå¤šè¡Œæ–‡æœ¬
+    /// æŠŠæ¯æ¬¡å¯¹è¯çš„æ‰€æœ‰å†…å®¹(ID,Role,Text,Emotion)è§£æä¸ºä¸€ä¸ªä¸ªå­—ç¬¦ä¸²å­˜å…¥åˆ—è¡¨ä¸­
     /// </summary>
-    /// <param name="content">CSVÄÚÈİ×Ö·û´®</param>
-    /// <returns>°üº¬Ã¿ĞĞÎÄ±¾µÄÁĞ±í</returns>
+    /// <param name="content">CSVå†…å®¹å­—ç¬¦ä¸²</param>
+    /// <returns>åŒ…å«æ¯è¡Œæ–‡æœ¬çš„åˆ—è¡¨</returns>
     private List<string> ParseCSVContent(string content)
     {
         List<string> lines = new List<string>();
         string currentLine = "";
-        bool inQuotes = false;// ÊÇ·ñÔÚÒıºÅÖĞ
+        bool inQuotes = false;// æ˜¯å¦åœ¨å¼•å·ä¸­
         
         for (int i = 0; i < content.Length; i++)
         {
@@ -185,7 +186,7 @@ public class AboutDialog : MonoBehaviour
             {
                 inQuotes = !inQuotes;
             }
-            else if (c == '\n' && !inQuotes)// »»ĞĞ·ûÇÒ²»ÔÚÒıºÅÖĞ£¬´æ´¢µ±Ç°ĞĞÄÚÈİ
+            else if (c == '\n' && !inQuotes)// æ¢è¡Œç¬¦ä¸”ä¸åœ¨å¼•å·ä¸­ï¼Œå­˜å‚¨å½“å‰è¡Œå†…å®¹
             {
                 lines.Add(currentLine);
                 currentLine = "";
@@ -196,7 +197,7 @@ public class AboutDialog : MonoBehaviour
             }
         }
         
-        // Ìí¼Ó×îºóÒ»ĞĞ
+        // æ·»åŠ æœ€åä¸€è¡Œ
         if (!string.IsNullOrEmpty(currentLine))
         {
             lines.Add(currentLine);
@@ -206,14 +207,14 @@ public class AboutDialog : MonoBehaviour
     }
 
     /// <summary>
-    /// ½âÎöCSVĞĞ£¬Ö§³Ö¶àĞĞÎÄ±¾
+    /// è§£æCSVè¡Œï¼Œæ”¯æŒå¤šè¡Œæ–‡æœ¬
     /// </summary>
-    /// <param name="line">CSVĞĞ×Ö·û´®</param>
-    /// <returns>½âÎöºóµÄ¶Ô»°Êı¾İ</returns>
+    /// <param name="line">CSVè¡Œå­—ç¬¦ä¸²</param>
+    /// <returns>è§£æåçš„å¯¹è¯æ•°æ®</returns>
     private DialogData ParseCSVLine(string line)
     {
-        // CSV¸ñÊ½£ºID,Role,Text,Emotion
-        // ĞèÒªÕıÈ·´¦Àí°üº¬¶ººÅµÄÎÄ±¾
+        // CSVæ ¼å¼ï¼šID,Role,Text,Emotion
+        // éœ€è¦æ­£ç¡®å¤„ç†åŒ…å«é€—å·çš„æ–‡æœ¬
         string[] parts = SplitCSVLine(line);
         
         if (parts.Length < 4)
@@ -231,16 +232,16 @@ public class AboutDialog : MonoBehaviour
     }
 
     /// <summary>
-    /// ·Ö¸îCSVĞĞ£¬Ö§³Ö¶àĞĞÎÄ±¾
+    /// åˆ†å‰²CSVè¡Œï¼Œæ”¯æŒå¤šè¡Œæ–‡æœ¬
     /// </summary>
-    /// <param name="line">CSVĞĞ×Ö·û´®</param>
-    /// <returns>°üº¬Ã¿¸ö×Ö¶ÎµÄ×Ö·û´®Êı×é</returns>
+    /// <param name="line">CSVè¡Œå­—ç¬¦ä¸²</param>
+    /// <returns>åŒ…å«æ¯ä¸ªå­—æ®µçš„å­—ç¬¦ä¸²æ•°ç»„</returns>
     private string[] SplitCSVLine(string line)
     {
-        // ´¦ÀíCSVÖĞµÄÒıºÅ£¬Ö§³Ö¶àĞĞtext
+        // å¤„ç†CSVä¸­çš„å¼•å·ï¼Œæ”¯æŒå¤šè¡Œtext
         List<string> parts = new List<string>();
         string currentPart = "";
-        bool inQuotes = false;// ÊÇ·ñÔÚÒıºÅÖĞ
+        bool inQuotes = false;// æ˜¯å¦åœ¨å¼•å·ä¸­
 
         for (int i = 0; i < line.Length; i++)
         {
@@ -267,10 +268,10 @@ public class AboutDialog : MonoBehaviour
 
     private void ShowDialog(DialogData dialog)
     {
-        // ÉèÖÃ¶Ô»°¿òÎÄ±¾
+        // è®¾ç½®å¯¹è¯æ¡†æ–‡æœ¬
         dialogText.text = dialog.Text;
         
-        // ¸ù¾İ½ÇÉ«ÀàĞÍÑ¡ÔñÁ³
+        // æ ¹æ®è§’è‰²ç±»å‹é€‰æ‹©è„¸
         Sprite faceSprite = null;
                
         if (dialog.Role == "Reimu")
@@ -298,7 +299,7 @@ public class AboutDialog : MonoBehaviour
             SetDialogPosition(true);
         }
         
-        // ÉèÖÃ½ÇÉ«Á³
+        // è®¾ç½®è§’è‰²è„¸
         if (faceSprite != null)
         {
             roleFaceImage.sprite = faceSprite;
@@ -309,14 +310,14 @@ public class AboutDialog : MonoBehaviour
     {
         if (isEnemy)
         {
-            // µĞÈË£ºRoleFaceµ½ÓÒ²à²¢xÖá·­×ª£¬¶Ô»°¿òµ½×ó²à
+            // æ•Œäººï¼šRoleFaceåˆ°å³ä¾§å¹¶xè½´ç¿»è½¬ï¼Œå¯¹è¯æ¡†åˆ°å·¦ä¾§
             RoleFace.transform.localPosition = Face_right;
             RoleFace.transform.localScale = new Vector3(-1, 1, 1);
             DialogBox.transform.localPosition = Dialog_left;
         }
         else
         {
-            // Íæ¼Ò£ºRoleFace×ó²à£¬¶Ô»°¿òÓÒ²à
+            // ç©å®¶ï¼šRoleFaceå·¦ä¾§ï¼Œå¯¹è¯æ¡†å³ä¾§
             RoleFace.transform.localPosition = Face_left;
             RoleFace.transform.localScale = new Vector3(1, 1, 1);
             DialogBox.transform.localPosition = Dialog_right;
@@ -329,51 +330,51 @@ public class AboutDialog : MonoBehaviour
         
         if (currentDialogIndex >= currentDialogList.Count)
         {
-            // ¶Ô»°½áÊø£¬½ûÓÃ¶Ô»°¿ò
+            // å¯¹è¯ç»“æŸï¼Œç¦ç”¨å¯¹è¯æ¡†
             isDialogActive = false;
             Global_GameManager.Instance.state = State.Gaming;
             continueBG.StartRecovery();
             
-            // ´¦ÀíÒôÀÖÇĞ»»
+            // å¤„ç†éŸ³ä¹åˆ‡æ¢
             HandleMusicSwitch();
             
             gameObject.SetActive(false);
         }
         else
         {
-            // ÏÔÊ¾ÏÂÒ»Ìõ¶Ô»°
+            // æ˜¾ç¤ºä¸‹ä¸€æ¡å¯¹è¯
             ShowDialog(currentDialogList[currentDialogIndex]);
         }
     }
     
     /// <summary>
-    /// µ­³ö±³¾°ÒôÀÖĞ­³Ì
+    /// æ·¡å‡ºèƒŒæ™¯éŸ³ä¹åç¨‹
     /// </summary>
     private IEnumerator FadeOutBGM()
     {
         if (Global_AudioManager.Instance != null)
         {
-            // Ê¹ÓÃGlobal_AudioManagerµÄµ­³ö·½·¨
+            // ä½¿ç”¨Global_AudioManagerçš„æ·¡å‡ºæ–¹æ³•
             Global_AudioManager.Instance.FadeOutMusic(10f);
         }
         yield return null;
     }
     
     /// <summary>
-    /// ´¦ÀíÒôÀÖÇĞ»»
+    /// å¤„ç†éŸ³ä¹åˆ‡æ¢
     /// </summary>
     private void HandleMusicSwitch()
     {
         if (Global_AudioManager.Instance != null)
         {
-            // Í£Ö¹µ­³öĞ­³Ì²¢ÇåÀí±³¾°ÒôÀÖ
+            // åœæ­¢æ·¡å‡ºåç¨‹å¹¶æ¸…ç†èƒŒæ™¯éŸ³ä¹
             Global_AudioManager.Instance.StopFadeOutAndClearBGM();
             
-            // ²¥·ÅBoss BGM
+            // æ’­æ”¾Boss BGM
             Global_AudioManager.Instance.PlayBGM("Boss");
         }
         
-        // ¼¤»îBoss¶ÔÏó
+        // æ¿€æ´»Bosså¯¹è±¡
         Boss.SetActive(true);
     }
 

@@ -7,117 +7,117 @@ using UnityEngine.SceneManagement;
 
 
 /// <summary>
-/// È«¾Ö³¡¾°¹ÜÀíµ¥ÀıÀà
-/// ¹ÜÀí³¡¾°Ö®¼äµÄÇĞ»»£¬»ØÍË£¬¼ÓÔØÓëÉ¾³ı
-/// ÒÔ¼°ÇĞ»»³¡¾°µÄ¶¯»­£¨Èç¹ûÓĞµÄ»°£©
+/// å…¨å±€åœºæ™¯ç®¡ç†å•ä¾‹ç±»
+/// ç®¡ç†åœºæ™¯ä¹‹é—´çš„åˆ‡æ¢ï¼Œå›é€€ï¼ŒåŠ è½½ä¸åˆ é™¤
+/// ä»¥åŠåˆ‡æ¢åœºæ™¯çš„åŠ¨ç”»ï¼ˆå¦‚æœæœ‰çš„è¯ï¼‰
 /// </summary>
-/// ¸ÃÀàÄ¿Ç°Ìá¹©µÄ¶ÔÍâº¯ÊıÓĞ£º
-/// IntoNextScene£¨½øÈëÏÂÒ»¸ö³¡¾°£¬º¯ÊıÄÚ²¿»á×Ô¶¯´¦ÀíÉ¾³ı¾É³¡¾°£¬ÖØÖÃÊı¾İµÈ²Ù×÷£©
+/// è¯¥ç±»ç›®å‰æä¾›çš„å¯¹å¤–å‡½æ•°æœ‰ï¼š
+/// IntoNextSceneï¼ˆè¿›å…¥ä¸‹ä¸€ä¸ªåœºæ™¯ï¼Œå‡½æ•°å†…éƒ¨ä¼šè‡ªåŠ¨å¤„ç†åˆ é™¤æ—§åœºæ™¯ï¼Œé‡ç½®æ•°æ®ç­‰æ“ä½œï¼‰
 public class Global_SceneManager : Singleton<Global_SceneManager>
 {
-    private bool _isAllSceneLoaded = false;// È«²¿³¡¾°Ô¤¼ÓÔØÍê³ÉµÄ±êÖ¾Î»
-    public bool IsAllSceneLoaded => _isAllSceneLoaded;// Íâ½ç¿ÉÒÔÖ»¶Á·ÃÎÊ_isAllSceneLoaded
+    private bool _isAllSceneLoaded = false;// å…¨éƒ¨åœºæ™¯é¢„åŠ è½½å®Œæˆçš„æ ‡å¿—ä½
+    public bool IsAllSceneLoaded => _isAllSceneLoaded;// å¤–ç•Œå¯ä»¥åªè¯»è®¿é—®_isAllSceneLoaded
 
-    public string CurrentSceneName = "GameStartLoading";// µ±Ç°³¡¾°Ãû³Æ(³õÊ¼ÎªÊ×¸ö³¡¾°)
+    public string CurrentSceneName = "GameStartLoading";// å½“å‰åœºæ™¯åç§°(åˆå§‹ä¸ºé¦–ä¸ªåœºæ™¯)
 
-    private List<string> _LoadedSceneNames = new ();// ´æ´¢ÒÑ¼ÓÔØ³¡¾°µÄÃû³ÆÓÃÓÚ¼ìË÷ÒÔ¼°»ØÍË
+    private List<string> _LoadedSceneNames = new ();// å­˜å‚¨å·²åŠ è½½åœºæ™¯çš„åç§°ç”¨äºæ£€ç´¢ä»¥åŠå›é€€
 
-    [Header("µÚ¶ş³¡¾°ÅäÖÃ£¨Menu£©")]// ÓÎÏ·Æô¶¯ºóÄ¬ÈÏÌø×ªµÄ²Ëµ¥³¡¾°Ãû³Æ£¨InspectorÃæ°å¿ÉÅäÖÃ£©
+    [Header("ç¬¬äºŒåœºæ™¯é…ç½®ï¼ˆMenuï¼‰")]// æ¸¸æˆå¯åŠ¨åé»˜è®¤è·³è½¬çš„èœå•åœºæ™¯åç§°ï¼ˆInspectoré¢æ¿å¯é…ç½®ï¼‰
     [SerializeField] private string _menuSceneName = "GameStartMenu";
 
     [SerializeField]
-    private List<string> _sceneToPreload = new ()// ËùÓĞĞèÒªÔ¤¼ÓÔØµÄ³¡¾°Ãû³Æ
+    private List<string> _sceneToPreload = new ()// æ‰€æœ‰éœ€è¦é¢„åŠ è½½çš„åœºæ™¯åç§°
     {
         "GameStartMenu","Game1","Game2","GameOver"
     };
 
 
-    [Header("ĞèÒªÖØÖÃÊı¾İ£¬ÇÒ²»Ğ¶ÔØµÄ³¡¾°")]// ±ê¼ÇĞèÒªÖØÖÃÒµÎñÊı¾İµÄ³¡¾°£¨Ä¿Ç°Ö»ÓĞ£º²Ëµ¥£©
+    [Header("éœ€è¦é‡ç½®æ•°æ®ï¼Œä¸”ä¸å¸è½½çš„åœºæ™¯")]// æ ‡è®°éœ€è¦é‡ç½®ä¸šåŠ¡æ•°æ®çš„åœºæ™¯ï¼ˆç›®å‰åªæœ‰ï¼šèœå•ï¼‰
     [SerializeField] private List<string> _needResetScenes = new () { "GameStartMenu" };
 
     protected override void Awake()
     {
-        base.Awake(); // µ÷ÓÃ»ùÀàµÄAwake£¬±£Ö¤µ¥ÀıÉúĞ§
+        base.Awake(); // è°ƒç”¨åŸºç±»çš„Awakeï¼Œä¿è¯å•ä¾‹ç”Ÿæ•ˆ
 
-        // ¼ì²âµ±Ç°Êµ¼Ê³¡¾°£¬¸üĞÂ CurrentSceneName
+        // æ£€æµ‹å½“å‰å®é™…åœºæ™¯ï¼Œæ›´æ–° CurrentSceneName
         Scene currentScene = SceneManager.GetActiveScene();
         if (currentScene.IsValid())
         {
             CurrentSceneName = currentScene.name;
         }
         
-        // Ö»ÓĞµ±µ±Ç°³¡¾°ÊÇ GameStartLoading Ê±²ÅÔ¤¼ÓÔØ³¡¾°
-        // ÕâÑùÖ±½ÓÔËĞĞÆäËû³¡¾°Ê±²»»áÖØ¸´Ô¤¼ÓÔØ
+        // åªæœ‰å½“å½“å‰åœºæ™¯æ˜¯ GameStartLoading æ—¶æ‰é¢„åŠ è½½åœºæ™¯
+        // è¿™æ ·ç›´æ¥è¿è¡Œå…¶ä»–åœºæ™¯æ—¶ä¸ä¼šé‡å¤é¢„åŠ è½½
         if (CurrentSceneName == "GameStartLoading")
         {
             StartCoroutine(PreLoadAllScenes());
         }
         else
         {
-            _isAllSceneLoaded = true; // ±ê¼ÇÎªÒÑ¼ÓÔØ£¬±ÜÃâÓ°ÏìºóĞø²Ù×÷
+            _isAllSceneLoaded = true; // æ ‡è®°ä¸ºå·²åŠ è½½ï¼Œé¿å…å½±å“åç»­æ“ä½œ
         }
     }
 
     /// <summary>
-    /// Òì²½Ô¤¼ÓÔØËùÓĞµÄ³¡¾°
+    /// å¼‚æ­¥é¢„åŠ è½½æ‰€æœ‰çš„åœºæ™¯
     /// </summary>
     /// <returns></returns>
     private IEnumerator PreLoadAllScenes()
     {
-        _LoadedSceneNames.Clear();// Çå¿ÕÒÑ¼ÓÔØ³¡¾°ÁĞ±íÃûµ¥£¨±Ï¾¹»¹Ã»¿ªÊ¼¼ÓÔØ¶Ô°É£¿£©
-        _isAllSceneLoaded = false;// ÖÃ¼ÓÔØÍê±Ï±êÖ¾Î»Îªfalse
+        _LoadedSceneNames.Clear();// æ¸…ç©ºå·²åŠ è½½åœºæ™¯åˆ—è¡¨åå•ï¼ˆæ¯•ç«Ÿè¿˜æ²¡å¼€å§‹åŠ è½½å¯¹å§ï¼Ÿï¼‰
+        _isAllSceneLoaded = false;// ç½®åŠ è½½å®Œæ¯•æ ‡å¿—ä½ä¸ºfalse
 
-        // Öğ¸ö¼ÓÔØÅäÖÃµÄ³¡¾°£¨²»¼¤»î£©
+        // é€ä¸ªåŠ è½½é…ç½®çš„åœºæ™¯ï¼ˆä¸æ¿€æ´»ï¼‰
         foreach (string sceneName in _sceneToPreload)
         {
-            // Ìø¹ıÒÑ¼ÓÔØµÄ³¡¾°£¨°´ÀíËµ²»¸Ã³öÏÖÕâÖÖÇé¿ö£©
+            // è·³è¿‡å·²åŠ è½½çš„åœºæ™¯ï¼ˆæŒ‰ç†è¯´ä¸è¯¥å‡ºç°è¿™ç§æƒ…å†µï¼‰
             if (SceneManager.GetSceneByName(sceneName).isLoaded)
             {
                 _LoadedSceneNames.Add(sceneName);
-                Debug.LogWarning("³¡¾°" + sceneName + "ÒÑ¼ÓÔØ£¬Ìø¹ıÅúÁ¿Ô¤¼ÓÔØ»·½Ú¡£»°Ëµ²»¸ÃÕâÑùµÄ");
-                continue;// Ö±½ÓÌøµ½ÏÂÒ»¸öforeachÑ­»·
+                Debug.LogWarning("åœºæ™¯" + sceneName + "å·²åŠ è½½ï¼Œè·³è¿‡æ‰¹é‡é¢„åŠ è½½ç¯èŠ‚ã€‚è¯è¯´ä¸è¯¥è¿™æ ·çš„");
+                continue;// ç›´æ¥è·³åˆ°ä¸‹ä¸€ä¸ªforeachå¾ªç¯
             }
 
-            // Òì²½¼ÓÔØ³¡¾°£¨¾ÍÕâÁ½ĞĞ¹»Ñ§µÄÁË£©
+            // å¼‚æ­¥åŠ è½½åœºæ™¯ï¼ˆå°±è¿™ä¸¤è¡Œå¤Ÿå­¦çš„äº†ï¼‰
             AsyncOperation asyncOp = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
             asyncOp.allowSceneActivation = false;
 
-            // µÈ´ı¼ÓÔØÍê³É£¨UnityÖĞ½ø¶Èµ½0.9¼´±íÊ¾×ÊÔ´¼ÓÔØÍê±Ï£©
+            // ç­‰å¾…åŠ è½½å®Œæˆï¼ˆUnityä¸­è¿›åº¦åˆ°0.9å³è¡¨ç¤ºèµ„æºåŠ è½½å®Œæ¯•ï¼‰
             while (asyncOp.progress < 0.9f)
             {
                 yield return null;
             }
 
-            // ¹Ø¼ü£ºÔÊĞí³¡¾°¼¤»î²¢µÈ´ıÍêÈ«¼ÓÔØ
+            // å…³é”®ï¼šå…è®¸åœºæ™¯æ¿€æ´»å¹¶ç­‰å¾…å®Œå…¨åŠ è½½
             asyncOp.allowSceneActivation = true;
             while (!asyncOp.isDone)
             {
                 yield return null;
             }
             
-            // ³¡¾°¸Õ¼ÓÔØÍê³É£¬Á¢¼´½ûÓÃËùÓĞ¸ùÎïÌå£¨ÔÚÍ¬Ò»Ö¡ÄÚ£©
+            // åœºæ™¯åˆšåŠ è½½å®Œæˆï¼Œç«‹å³ç¦ç”¨æ‰€æœ‰æ ¹ç‰©ä½“ï¼ˆåœ¨åŒä¸€å¸§å†…ï¼‰
             DisableAllRootObjects(sceneName);
 
             _LoadedSceneNames.Add(sceneName);
-        }//foreachÑ­»·Î²
+        }//foreachå¾ªç¯å°¾
 
-        // ËùÓĞ³¡¾°¾ù¼ÓÔØÍê±ÏÁË
+        // æ‰€æœ‰åœºæ™¯å‡åŠ è½½å®Œæ¯•äº†
         _isAllSceneLoaded = true;
 
-    // Ö»ÓĞµ±µ±Ç°³¡¾°ÊÇ GameStartLoading Ê±²Å×Ô¶¯ÇĞ»»µ½ menu ³¡¾°
-    // ÕâÑùÖ±½ÓÔËĞĞ menu ³¡¾°Ê±¾Í²»»á×Ô¶¯ÇĞ»»»Ø menu ³¡¾°
+    // åªæœ‰å½“å½“å‰åœºæ™¯æ˜¯ GameStartLoading æ—¶æ‰è‡ªåŠ¨åˆ‡æ¢åˆ° menu åœºæ™¯
+    // è¿™æ ·ç›´æ¥è¿è¡Œ menu åœºæ™¯æ—¶å°±ä¸ä¼šè‡ªåŠ¨åˆ‡æ¢å› menu åœºæ™¯
     if (CurrentSceneName == "GameStartLoading" && !string.IsNullOrEmpty(_menuSceneName))
     {
-        // ÕâÀïÉèÖÃÄ¬ÈÏµÄ×îĞ¡¼ÓÔØÊ±¼ä£¬È·±£³¡¾°ÇĞ»»Ê±ÓĞ×ã¹»µÄ¹ı¶ÉÊ±¼ä
-        IntoNextScene(_menuSceneName, false, 3f); // 3ÃëµÄ×îĞ¡¼ÓÔØÊ±¼ä       
+        // è¿™é‡Œè®¾ç½®é»˜è®¤çš„æœ€å°åŠ è½½æ—¶é—´ï¼Œç¡®ä¿åœºæ™¯åˆ‡æ¢æ—¶æœ‰è¶³å¤Ÿçš„è¿‡æ¸¡æ—¶é—´
+        IntoNextScene(_menuSceneName, false, 3f); // 3ç§’çš„æœ€å°åŠ è½½æ—¶é—´       
     }
     }
 
-    /// µ¥¶À¼ÓÔØÏÂÒ»¸ö³¡¾°
+    /// å•ç‹¬åŠ è½½ä¸‹ä¸€ä¸ªåœºæ™¯
     /// </summary>
-    /// <param name="nextSceneName">ĞèÒª¼ÓÔØµÄÏÂÒ»³¡¾°µÄÃû³Æ</param>
-    /// <param name="isActiveNow">ÊÇ·ñÔÚ¼ÓÔØºóÁ¢¿Ì¼¤»î£¬trueÎªÁ¢¿Ì¼¤»îÑ¡Ïî</param>
-    /// <param name="minLoadTime">×îĞ¡¼ÓÔØÊ±¼ä£¨Ãë£©£¬È·±£¼ÓÔØ¹ı³ÌÖÁÉÙ³ÖĞøÖ¸¶¨Ê±¼ä</param>
+    /// <param name="nextSceneName">éœ€è¦åŠ è½½çš„ä¸‹ä¸€åœºæ™¯çš„åç§°</param>
+    /// <param name="isActiveNow">æ˜¯å¦åœ¨åŠ è½½åç«‹åˆ»æ¿€æ´»ï¼Œtrueä¸ºç«‹åˆ»æ¿€æ´»é€‰é¡¹</param>
+    /// <param name="minLoadTime">æœ€å°åŠ è½½æ—¶é—´ï¼ˆç§’ï¼‰ï¼Œç¡®ä¿åŠ è½½è¿‡ç¨‹è‡³å°‘æŒç»­æŒ‡å®šæ—¶é—´</param>
     /// <returns></returns>
     public IEnumerator LoadNextScene(string nextSceneName, bool isActiveNow, float minLoadTime = 0.1f)
     {
@@ -126,50 +126,50 @@ public class Global_SceneManager : Singleton<Global_SceneManager>
 
         if (SceneManager.GetSceneByName(nextSceneName).isLoaded)
         {
-            Debug.LogWarning($"³¡¾°{nextSceneName}ÒÑ¾­¼ÓÔØ¹ıÁËÑ½£¡");
+            Debug.LogWarning($"åœºæ™¯{nextSceneName}å·²ç»åŠ è½½è¿‡äº†å‘€ï¼");
             if (isActiveNow)
             {
-                ActivateSceneWithReset(nextSceneName);// Á¬¼ÓÔØ´øÖØÖÃ
+                ActivateSceneWithReset(nextSceneName);// è¿åŠ è½½å¸¦é‡ç½®
             }
             
-            // È·±£×îĞ¡¼ÓÔØÊ±¼ä
+            // ç¡®ä¿æœ€å°åŠ è½½æ—¶é—´
             float elapsedTime = Time.time - startTime;
             if (elapsedTime < minLoadTime)
             {
                 yield return new WaitForSeconds(minLoadTime - elapsedTime);
             }
             
-            yield break;// Èç¹û³¡¾°ÒÑ¼ÓÔØÔòÖ±½Ó¼¤»î²¢Ìø³ö¸ÃĞ­³Ì
+            yield break;// å¦‚æœåœºæ™¯å·²åŠ è½½åˆ™ç›´æ¥æ¿€æ´»å¹¶è·³å‡ºè¯¥åç¨‹
         }
 
-        // Òì²½¼ÓÔØµ¥¸ö³¡¾°
+        // å¼‚æ­¥åŠ è½½å•ä¸ªåœºæ™¯
         asyncOp = SceneManager.LoadSceneAsync(nextSceneName, LoadSceneMode.Additive);
-        asyncOp.allowSceneActivation = false; // ²»¼¤»î³¡¾°
+        asyncOp.allowSceneActivation = false; // ä¸æ¿€æ´»åœºæ™¯
 
-        // µÈ´ı¼ÓÔØÍê³É - µ±allowSceneActivation=falseÊ±£¬isDoneÓÀÔ¶²»»áÎªtrue
-        // ËùÒÔ¸ÄÎª¼ì²é½ø¶ÈÊÇ·ñ´ïµ½0.9f£¨UnityÖĞ0.9±íÊ¾×ÊÔ´¼ÓÔØÍê³É£©
+        // ç­‰å¾…åŠ è½½å®Œæˆ - å½“allowSceneActivation=falseæ—¶ï¼ŒisDoneæ°¸è¿œä¸ä¼šä¸ºtrue
+        // æ‰€ä»¥æ”¹ä¸ºæ£€æŸ¥è¿›åº¦æ˜¯å¦è¾¾åˆ°0.9fï¼ˆUnityä¸­0.9è¡¨ç¤ºèµ„æºåŠ è½½å®Œæˆï¼‰
         while (asyncOp.progress < 0.9f)
         {
             yield return null;
         }
 
-        // ¹Ø¼ü£ºÔÊĞí³¡¾°¼¤»î²¢µÈ´ıÍêÈ«¼ÓÔØ
-        // Èç¹û²»ÕâÑù×ö£¬SceneManager.SetActiveScene»áÊ§°Ü£¬ÒòÎª³¡¾°»¹Ã»ÓĞÍêÈ«¼ÓÔØ
+        // å…³é”®ï¼šå…è®¸åœºæ™¯æ¿€æ´»å¹¶ç­‰å¾…å®Œå…¨åŠ è½½
+        // å¦‚æœä¸è¿™æ ·åšï¼ŒSceneManager.SetActiveSceneä¼šå¤±è´¥ï¼Œå› ä¸ºåœºæ™¯è¿˜æ²¡æœ‰å®Œå…¨åŠ è½½
         asyncOp.allowSceneActivation = true;
         
-        // µÈ´ı³¡¾°ÍêÈ«¼ÓÔØ
+        // ç­‰å¾…åœºæ™¯å®Œå…¨åŠ è½½
         while (!asyncOp.isDone)
         {
             yield return null;
         }
 
-        // ½«¸Ã³¡¾°¼ÇÂ¼ÈëÒÑ¼ÓÔØ³¡¾°ÁĞ±í
+        // å°†è¯¥åœºæ™¯è®°å½•å…¥å·²åŠ è½½åœºæ™¯åˆ—è¡¨
         if (!_LoadedSceneNames.Contains(nextSceneName))
         {
             _LoadedSceneNames.Add(nextSceneName);
         }
 
-        // ¼¤»î/½ûÓÃ¿ØÖÆ
+        // æ¿€æ´»/ç¦ç”¨æ§åˆ¶
         if (isActiveNow)
         {
             ActivateSceneWithReset(nextSceneName);
@@ -179,7 +179,7 @@ public class Global_SceneManager : Singleton<Global_SceneManager>
             DisableAllRootObjects(nextSceneName);
         }
 
-        // È·±£×îĞ¡¼ÓÔØÊ±¼ä
+        // ç¡®ä¿æœ€å°åŠ è½½æ—¶é—´
         float totalElapsedTime = Time.time - startTime;
         if (totalElapsedTime < minLoadTime)
         {
@@ -188,36 +188,36 @@ public class Global_SceneManager : Singleton<Global_SceneManager>
     }
 
     /// <summary>
-    /// É¾³ı/Òş²Øµ±Ç°³¡¾°
+    /// åˆ é™¤/éšè—å½“å‰åœºæ™¯
     /// </summary>
-    /// <param name="sceneName">Òª´¦ÀíµÄ³¡¾°µÄÃû³Æ£¨Í¨³£ÊÇµ±Ç°³¡¾°Ãû³Æ£©</param>
-    /// <param name="isHide">ÊÇ·ñÒş²Ø£¬µ±¸ÃÖµÎªtrueÊ±Ö»Òş²Ø¸Õµ±Ç°³¡¾°£¨¿ÉÄÜ»ØÍË£©£¬ÎªfalseÊ±É¾³ı</param>
+    /// <param name="sceneName">è¦å¤„ç†çš„åœºæ™¯çš„åç§°ï¼ˆé€šå¸¸æ˜¯å½“å‰åœºæ™¯åç§°ï¼‰</param>
+    /// <param name="isHide">æ˜¯å¦éšè—ï¼Œå½“è¯¥å€¼ä¸ºtrueæ—¶åªéšè—åˆšå½“å‰åœºæ™¯ï¼ˆå¯èƒ½å›é€€ï¼‰ï¼Œä¸ºfalseæ—¶åˆ é™¤</param>
     public void DeleteCurrentScene(string sceneName, bool isHide)
     {
         Scene scene = SceneManager.GetSceneByName(sceneName);
         if (!scene.IsValid())
         {
-            Debug.LogWarning($"³¡¾°{sceneName}²»´æÔÚ£¡Á¢¿Ì×Ô¼ì£¡");
-            return; // ³¡¾°²»´æÔÚÖ±½Ó·µ»Ø£¬±ÜÃâºóĞø±¨´í
+            Debug.LogWarning($"åœºæ™¯{sceneName}ä¸å­˜åœ¨ï¼ç«‹åˆ»è‡ªæ£€ï¼");
+            return; // åœºæ™¯ä¸å­˜åœ¨ç›´æ¥è¿”å›ï¼Œé¿å…åç»­æŠ¥é”™
         }
 
-        if (!isHide)// °Ñ³¡¾°Ğ¶ÔØµô
+        if (!isHide)// æŠŠåœºæ™¯å¸è½½æ‰
         {
             SceneManager.UnloadSceneAsync(sceneName);
             _LoadedSceneNames.Remove(sceneName);
         }
-        else// isHide=trueÊ±£¬Òş²Ø³¡¾°£¨½ûÓÃËùÓĞ¸ùÎïÌå£©
+        else// isHide=trueæ—¶ï¼Œéšè—åœºæ™¯ï¼ˆç¦ç”¨æ‰€æœ‰æ ¹ç‰©ä½“ï¼‰
         {
             DisableAllRootObjects(sceneName);
         }
     }
 
     /// <summary>
-    /// Ìø×ªÏÂÒ»¸ö³¡¾°£¨¸Ãº¯ÊıÆô¶¯Ğ­³Ì£¬Ğ­³ÌÄÚ²¿ÔòÔÙµ÷ÓÃÉ¾³ı/Òş²Øµ±Ç°³¡¾°µÄÂß¼­£©
+    /// è·³è½¬ä¸‹ä¸€ä¸ªåœºæ™¯ï¼ˆè¯¥å‡½æ•°å¯åŠ¨åç¨‹ï¼Œåç¨‹å†…éƒ¨åˆ™å†è°ƒç”¨åˆ é™¤/éšè—å½“å‰åœºæ™¯çš„é€»è¾‘ï¼‰
     /// </summary>
-    /// <param name="NextSceneName">Ìø×ªµÄÄ¿±ê³¡¾°Ãû³Æ</param>
-    /// <param name="isHide">´¦Àíµ±Ç°³¡¾°Ê±ÊÇ·ñÒş²Øµ±Ç°³¡¾°£¨»òÕßÉ¾³ı£©</param>
-    /// <param name="minLoadTime">×îĞ¡¼ÓÔØÊ±¼ä£¨Ãë£©£¬È·±£¼ÓÔØ¹ı³ÌÖÁÉÙ³ÖĞøÖ¸¶¨Ê±¼ä</param>
+    /// <param name="NextSceneName">è·³è½¬çš„ç›®æ ‡åœºæ™¯åç§°</param>
+    /// <param name="isHide">å¤„ç†å½“å‰åœºæ™¯æ—¶æ˜¯å¦éšè—å½“å‰åœºæ™¯ï¼ˆæˆ–è€…åˆ é™¤ï¼‰</param>
+    /// <param name="minLoadTime">æœ€å°åŠ è½½æ—¶é—´ï¼ˆç§’ï¼‰ï¼Œç¡®ä¿åŠ è½½è¿‡ç¨‹è‡³å°‘æŒç»­æŒ‡å®šæ—¶é—´</param>
     public void IntoNextScene(string NextSceneName, bool isHide, float minLoadTime = 0f)
     {
         StartCoroutine(IntoNextSceneCoroutine(NextSceneName, isHide, minLoadTime));
@@ -226,18 +226,18 @@ public class Global_SceneManager : Singleton<Global_SceneManager>
     private IEnumerator IntoNextSceneCoroutine(string NextSceneName, bool isHide, float minLoadTime = 0.1f)
     {
         float startTime = Time.time;
-        Debug.Log($"¡¾³¡¾°ÇĞ»»¡¿¿ªÊ¼£º´Ó{CurrentSceneName}µ½{NextSceneName}£¬isHide={isHide}");
+        Debug.Log($"ã€åœºæ™¯åˆ‡æ¢ã€‘å¼€å§‹ï¼šä»{CurrentSceneName}åˆ°{NextSceneName}ï¼ŒisHide={isHide}");
 
-        SimpleWaitingAnime(CurrentSceneName, NextSceneName);// ²¥·Å¶¯»­
+        SimpleWaitingAnime(CurrentSceneName, NextSceneName);// æ’­æ”¾åŠ¨ç”»
 
-        // ÏÈÈ·±£ĞÂ³¡¾°ÒÑ¼ÓÔØ
-        if (!SceneManager.GetSceneByName(NextSceneName).isLoaded)// Î´¼ÓÔØ
+        // å…ˆç¡®ä¿æ–°åœºæ™¯å·²åŠ è½½
+        if (!SceneManager.GetSceneByName(NextSceneName).isLoaded)// æœªåŠ è½½
         {
             yield return StartCoroutine(LoadNextScene(NextSceneName, false, minLoadTime));
         }
         else
         {
-            // È·±£×îĞ¡¼ÓÔØÊ±¼ä
+            // ç¡®ä¿æœ€å°åŠ è½½æ—¶é—´
             float elapsedTime = Time.time - startTime;
             if (elapsedTime < minLoadTime)
             {
@@ -245,30 +245,48 @@ public class Global_SceneManager : Singleton<Global_SceneManager>
             }
         }
 
-        // µÈ´ı×îĞ¡¼ÓÔØÊ±¼ä
+        // ç­‰å¾…æœ€å°åŠ è½½æ—¶é—´
         float totalElapsedTime = Time.time - startTime;
         if (totalElapsedTime < minLoadTime)
         {
             yield return new WaitForSeconds(minLoadTime - totalElapsedTime);
         }
 
-        // ¼¤»îÏÂÒ»³¡¾°²¢ÖØÖÃ×´Ì¬
+        // æ¿€æ´»ä¸‹ä¸€åœºæ™¯å¹¶é‡ç½®çŠ¶æ€
         ActivateSceneWithReset(NextSceneName);
 
-        // ´¦Àí¾É³¡¾°£¨É¾³ı/Òş²Ø£©
+        // å¤„ç†æ—§åœºæ™¯ï¼ˆåˆ é™¤/éšè—ï¼‰
         if (!string.IsNullOrEmpty(CurrentSceneName))
         {
             DeleteCurrentScene(CurrentSceneName, isHide);
         }
 
-        // Çå³ı¶ÔÏó³ØÖĞµÄËùÓĞÔªËØ£¨ÏÈ½ûÓÃ²¢»ØÊÕ»îÔ¾¶ÔÏó£¬ÔÙÇå¿Õ³Ø£©
+        // æ¸…é™¤å¯¹è±¡æ± ä¸­çš„æ‰€æœ‰å…ƒç´ ï¼ˆå…ˆç¦ç”¨å¹¶å›æ”¶æ´»è·ƒå¯¹è±¡ï¼Œå†æ¸…ç©ºæ± ï¼‰
         if (Global_ObjectPool.Instance != null)
         {
             Global_ObjectPool.Instance.ClearAllPools();
         }
 
-        // ¸üĞÂµ±Ç°³¡¾°Ãû³Æ
+        // æ›´æ–°å½“å‰åœºæ™¯åç§°
         CurrentSceneName = NextSceneName;
+
+        // ğŸ”´ å…³é”®ï¼šåœ¨ Game1 æ¿€æ´» PlayBGM ä¹‹å‰å¯åŠ¨ ReplayManager çš„ BeginRecordã€‚
+        // è¿™æ · Game1 åœºæ™¯å†…ä»»ä½• MonoBehaviour çš„ Awake/Startï¼ˆå¦‚ CreateEnemy è¯» CurrentBGMTimeï¼‰
+        // éƒ½èƒ½è¯»åˆ° CurrentMode=Record â†’ è¿”å› SimClock.SimTime=0ï¼Œè€Œä¸æ˜¯ bgmSource.timeã€‚
+        if (CurrentSceneName == "Game1")
+        {
+            ReplaySystem.ReplayManager.BeginRecord();
+        }
+        else if (CurrentSceneName == "GameStartMenu")
+        {
+            // å›èœå•ç¡®ä¿åœ SimClock
+            if (ReplaySystem.ReplayManager.Instance != null &&
+                ReplaySystem.ReplayManager.Instance.CurrentMode != ReplaySystem.ReplayManager.Mode.Idle)
+            {
+                ReplaySystem.ReplayManager.DiscardRecording();
+            }
+        }
+
         switch(CurrentSceneName)
         {
             case "GameStartMenu":
@@ -281,40 +299,40 @@ public class Global_SceneManager : Singleton<Global_SceneManager>
                 Global_AudioManager.Instance.PlayBGM("Over");
                 break;
             default:
-                Debug.LogWarning($"Î´ÅäÖÃ³¡¾°{CurrentSceneName}µÄ±³¾°ÒôÀÖ");
+                Debug.LogWarning($"æœªé…ç½®åœºæ™¯{CurrentSceneName}çš„èƒŒæ™¯éŸ³ä¹");
                 break;
         }
     }
 
     /// <summary>
-    /// ¼¤»î³¡¾° + ÖØÖÃ³¡¾°Êı¾İ
+    /// æ¿€æ´»åœºæ™¯ + é‡ç½®åœºæ™¯æ•°æ®
     /// </summary>
     private void ActivateSceneWithReset(string sceneName)
     {
         Scene scene = SceneManager.GetSceneByName(sceneName);
         if (!scene.IsValid() || !scene.isLoaded)
         {
-            Debug.LogWarning($"³¡¾° {sceneName} Î´¼ÓÔØ£¬ÎŞ·¨ÉèÖÃÎª»î¶¯³¡¾°£¡");
+            Debug.LogWarning($"åœºæ™¯ {sceneName} æœªåŠ è½½ï¼Œæ— æ³•è®¾ç½®ä¸ºæ´»åŠ¨åœºæ™¯ï¼");
             return;
         }
 
-        // ÔÚĞ´ÁËJSONÎÄ¼şºó£¬¼¤»îÎïÌåÒÔ¼°Êı¾İÖØÖÃ¶¼Ó¦¸Ã²ÎÕÕJSONÄÚÈİ½øĞĞ
-        // ÏÈ¼¤»î³¡¾°ÖĞµÄËùÓĞ¸ùÎïÌå
+        // åœ¨å†™äº†JSONæ–‡ä»¶åï¼Œæ¿€æ´»ç‰©ä½“ä»¥åŠæ•°æ®é‡ç½®éƒ½åº”è¯¥å‚ç…§JSONå†…å®¹è¿›è¡Œ
+        // å…ˆæ¿€æ´»åœºæ™¯ä¸­çš„æ‰€æœ‰æ ¹ç‰©ä½“
         foreach (GameObject rootObj in scene.GetRootGameObjects())
         {
             rootObj.SetActive(true);
         }
         
-        // È»ºóÉèÖÃÎª»î¶¯³¡¾°
+        // ç„¶åè®¾ç½®ä¸ºæ´»åŠ¨åœºæ™¯
         SceneManager.SetActiveScene(scene);
         
-        // ¶ÔĞèÒªÖØÖÃµÄ³¡¾°´ÓJSONÎÄ¼ş¶ÁÈ¡Êı¾İ½øĞĞÖØÖÃ
+        // å¯¹éœ€è¦é‡ç½®çš„åœºæ™¯ä»JSONæ–‡ä»¶è¯»å–æ•°æ®è¿›è¡Œé‡ç½®
         if (_needResetScenes.Contains(sceneName))
         {
             ResetSceneFromJson(sceneName);
         }
         
-        // ÇĞ»»µ½Game1³¡¾°Ê±ÖØÖÃÓÎÏ·Êı¾İ
+        // åˆ‡æ¢åˆ°Game1åœºæ™¯æ—¶é‡ç½®æ¸¸æˆæ•°æ®
         if (sceneName == "Game1" && Global_GameManager.Instance != null)
         {
             Global_GameManager.Instance.ResetGameDate();
@@ -322,59 +340,59 @@ public class Global_SceneManager : Singleton<Global_SceneManager>
     }
 
     /// <summary>
-    /// ´ÓJSONÎÄ¼ş¶ÁÈ¡³¡¾°Êı¾İ²¢½øĞĞÖØÖÃ
+    /// ä»JSONæ–‡ä»¶è¯»å–åœºæ™¯æ•°æ®å¹¶è¿›è¡Œé‡ç½®
     /// </summary>
-    /// <param name="sceneName">ĞèÒªÖØÖÃµÄ³¡¾°Ãû³Æ</param>
+    /// <param name="sceneName">éœ€è¦é‡ç½®çš„åœºæ™¯åç§°</param>
     private void ResetSceneFromJson(string sceneName)
     {
-        // 1. Æ´½ÓResourcesÂ·¾¶£¨Ê¹ÓÃResources.Load·½Ê½£¬¼æÈİ±à¼­Æ÷ºÍ´ò°üºó»·¾³£©
+        // 1. æ‹¼æ¥Resourcesè·¯å¾„ï¼ˆä½¿ç”¨Resources.Loadæ–¹å¼ï¼Œå…¼å®¹ç¼–è¾‘å™¨å’Œæ‰“åŒ…åç¯å¢ƒï¼‰
         string jsonFileName = sceneName == "GameStartMenu" ? "MenuScene_ResetConfig" : $"{sceneName}_ResetConfig";
         string resourcePath = $"Touho/JSON/{jsonFileName}";
 
-        // 2. Ê¹ÓÃResources.Load¶ÁÈ¡JSONÎÄ¼ş£¨´ò°üºóResourcesÎÄ¼ş¼Ğ»á±»Ñ¹Ëõ£¬±ØĞëÓÃ´Ë·½Ê½£©
+        // 2. ä½¿ç”¨Resources.Loadè¯»å–JSONæ–‡ä»¶ï¼ˆæ‰“åŒ…åResourcesæ–‡ä»¶å¤¹ä¼šè¢«å‹ç¼©ï¼Œå¿…é¡»ç”¨æ­¤æ–¹å¼ï¼‰
         TextAsset jsonAsset = Resources.Load<TextAsset>(resourcePath);
         
         if (jsonAsset == null)
         {
-            Debug.LogWarning($"Î´ÕÒµ½JSON×ÊÔ´ÎÄ¼ş£º{resourcePath}");
+            Debug.LogWarning($"æœªæ‰¾åˆ°JSONèµ„æºæ–‡ä»¶ï¼š{resourcePath}");
             return;
         }
 
-        // 3. ¶ÁÈ¡JSONÎÄ¼şÄÚÈİ
+        // 3. è¯»å–JSONæ–‡ä»¶å†…å®¹
         string jsonContent = jsonAsset.text;
 
-        // 4. ·´ĞòÁĞ»¯ÎªC#¶ÔÏó£¨ĞŞ¸´JSON¸ñÊ½¼æÈİÎÊÌâ£©
+        // 4. ååºåˆ—åŒ–ä¸ºC#å¯¹è±¡ï¼ˆä¿®å¤JSONæ ¼å¼å…¼å®¹é—®é¢˜ï¼‰
         SceneResetConfig config = JsonUtility.FromJson<SceneResetConfig>(jsonContent);
         if (config == null || config.objectStates == null)
         {
-            Debug.LogError($"Menu³¡¾°ÖØÖÃJSONÎÄ¼ş¸ñÊ½´íÎó£¬ÎŞ·¨½âÎö");
+            Debug.LogError($"Menuåœºæ™¯é‡ç½®JSONæ–‡ä»¶æ ¼å¼é”™è¯¯ï¼Œæ— æ³•è§£æ");
             return;
         }
 
-        // 5. »ñÈ¡Ä¿±ê³¡¾°
+        // 5. è·å–ç›®æ ‡åœºæ™¯
         Scene targetScene = SceneManager.GetSceneByName(sceneName);
         if (!targetScene.IsValid())
         {
-            Debug.LogError($"³¡¾° {sceneName} ÎŞĞ§£¡");
+            Debug.LogError($"åœºæ™¯ {sceneName} æ— æ•ˆï¼");
             return;
         }
 
-        // 6. ±éÀúÅäÖÃ£¬ÉèÖÃÎïÌå¼¤»î×´Ì¬£¨ĞŞ¸´TransformÃüÃû³åÍ»£©
+        // 6. éå†é…ç½®ï¼Œè®¾ç½®ç‰©ä½“æ¿€æ´»çŠ¶æ€ï¼ˆä¿®å¤Transformå‘½åå†²çªï¼‰
         foreach (ObjectState objState in config.objectStates)
         {
             GameObject targetObj = FindObjectByPath(targetScene, objState.objectPath);
             if (targetObj != null)
             {
                 targetObj.SetActive(objState.isActive);
-                // Debug.Log($"ÒÑÉèÖÃ {objState.objectPath} Îª {(objState.isActive ? "¼¤»î" : "Òş²Ø")}");
+                // Debug.Log($"å·²è®¾ç½® {objState.objectPath} ä¸º {(objState.isActive ? "æ¿€æ´»" : "éšè—")}");
             }
             else
             {
-                Debug.LogWarning($"³¡¾° {sceneName} ÖĞÎ´ÕÒµ½ÎïÌå£º{objState.objectPath}");
+                Debug.LogWarning($"åœºæ™¯ {sceneName} ä¸­æœªæ‰¾åˆ°ç‰©ä½“ï¼š{objState.objectPath}");
             }
         }
 
-        // 7. ÉèÖÃÄ¬ÈÏÑ¡ÖĞ°´Å¥
+        // 7. è®¾ç½®é»˜è®¤é€‰ä¸­æŒ‰é’®
         if (config.resetData != null && !string.IsNullOrEmpty(config.resetData.defaultSelectedButton))
         {
             GameObject defaultBtn = FindObjectByPath(targetScene, config.resetData.defaultSelectedButton);
@@ -386,14 +404,14 @@ public class Global_SceneManager : Singleton<Global_SceneManager>
     }
 
     /// <summary>
-    /// ¸¨Öú·½·¨£º¸ù¾İ²ã¼¶Â·¾¶ÔÚÖ¸¶¨³¡¾°ÖĞ²éÕÒÎïÌå
+    /// è¾…åŠ©æ–¹æ³•ï¼šæ ¹æ®å±‚çº§è·¯å¾„åœ¨æŒ‡å®šåœºæ™¯ä¸­æŸ¥æ‰¾ç‰©ä½“
     /// </summary>
     private GameObject FindObjectByPath(Scene scene, string objectPath)
     {
         string[] pathParts = objectPath.Split('/');
         if (pathParts.Length == 0) return null;
 
-        // ²éÕÒ¸ùÎïÌå
+        // æŸ¥æ‰¾æ ¹ç‰©ä½“
         GameObject rootObj = null;
         foreach (GameObject root in scene.GetRootGameObjects())
         {
@@ -405,7 +423,7 @@ public class Global_SceneManager : Singleton<Global_SceneManager>
         }
         if (rootObj == null) return null;
 
-        // µİ¹é²éÕÒ×ÓÎïÌå£¨Ã÷È·Ö¸¶¨UnityEngine.Transform£¬±ÜÃâÃüÃû³åÍ»£©
+        // é€’å½’æŸ¥æ‰¾å­ç‰©ä½“ï¼ˆæ˜ç¡®æŒ‡å®šUnityEngine.Transformï¼Œé¿å…å‘½åå†²çªï¼‰
         UnityEngine.Transform currentTrans = rootObj.transform;
         for (int i = 1; i < pathParts.Length; i++)
         {
@@ -417,14 +435,14 @@ public class Global_SceneManager : Singleton<Global_SceneManager>
     }
 
     /// <summary>
-    /// ½ûÓÃ³¡¾°ËùÓĞ¸ùÎïÌå£¨Ô¤¼ÓÔØ/Òş²ØÊ±ÓÃ£©
+    /// ç¦ç”¨åœºæ™¯æ‰€æœ‰æ ¹ç‰©ä½“ï¼ˆé¢„åŠ è½½/éšè—æ—¶ç”¨ï¼‰
     /// </summary>
     private void DisableAllRootObjects(string sceneName)
     {
         Scene scene = SceneManager.GetSceneByName(sceneName);
         if (!scene.IsValid()) return;
 
-        // ½ûÓÃËùÓĞ¸ùÎïÌå
+        // ç¦ç”¨æ‰€æœ‰æ ¹ç‰©ä½“
         foreach (GameObject rootObj in scene.GetRootGameObjects())
         {
             rootObj.SetActive(false);
@@ -432,52 +450,52 @@ public class Global_SceneManager : Singleton<Global_SceneManager>
     }
 
     /// <summary>
-    /// ³¡¾°ÇĞ»»Ö®¼äµÄ¼òÒ×Ğ¡¶¯»­£¨ÎÒ»¹µÃ×ö¼¼ÃÀ£¿£¿£¡£©
-    /// °´ÕÕ²»Í¬³¡¾°½øĞĞ²»Í¬µÄ¶¯»­Éè¼Æ
-    /// 1.¼ÓÔØ×ª²Ëµ¥¡ª¡ª¡ª
-    /// 2.¹Ø¿¨Ìø×ª¡ª¡ª¡ª½ØÆÁ£¬Ëõ·Å£¬ÌåÏÖ·ÖÊı£¬Ï¨ÆÁ£¬ÉÙÅ®Æíµ»ÖĞ
-    /// 3.¹Ø¿¨·µ»Ø²Ëµ¥¡ª¡ª¡ª
+    /// åœºæ™¯åˆ‡æ¢ä¹‹é—´çš„ç®€æ˜“å°åŠ¨ç”»ï¼ˆæˆ‘è¿˜å¾—åšæŠ€ç¾ï¼Ÿï¼Ÿï¼ï¼‰
+    /// æŒ‰ç…§ä¸åŒåœºæ™¯è¿›è¡Œä¸åŒçš„åŠ¨ç”»è®¾è®¡
+    /// 1.åŠ è½½è½¬èœå•â€”â€”â€”
+    /// 2.å…³å¡è·³è½¬â€”â€”â€”æˆªå±ï¼Œç¼©æ”¾ï¼Œä½“ç°åˆ†æ•°ï¼Œç†„å±ï¼Œå°‘å¥³ç¥ˆç¥·ä¸­
+    /// 3.å…³å¡è¿”å›èœå•â€”â€”â€”
     /// </summary>
     public void SimpleWaitingAnime(string currentSceneName, string nextSceneName)
     {
         switch (currentSceneName)
         {
-            case "GameStartLoading":// ½øÈëÓÎÏ·²Ëµ¥£¬×î³õÊ¼µÄ¶¯»­
+            case "GameStartLoading":// è¿›å…¥æ¸¸æˆèœå•ï¼Œæœ€åˆå§‹çš„åŠ¨ç”»
                 break;
             case "GameStartMenu":
                 break;
             case "Game1":
-                if (nextSceneName == "Game2")// ¹Ø¿¨Ìø×ª
+                if (nextSceneName == "Game2")// å…³å¡è·³è½¬
                 {
 
                 }
-                else if (nextSceneName == "GameStartMenu")// »ØÍË²Ëµ¥
+                else if (nextSceneName == "GameStartMenu")// å›é€€èœå•
                 {
 
                 }
                 break;
             case "Game2":
                 break;
-            default:// ÆäËû
-                Debug.LogWarning("³öÁËÎÊÌâ£¬¶¨Î»ÔÚ-È«¾Ö³¡¾°µ¥ÀıÀàµÄ¼òÒ×¶¯»­º¯Êı");
+            default:// å…¶ä»–
+                Debug.LogWarning("å‡ºäº†é—®é¢˜ï¼Œå®šä½åœ¨-å…¨å±€åœºæ™¯å•ä¾‹ç±»çš„ç®€æ˜“åŠ¨ç”»å‡½æ•°");
                 break;
         }
     }
 
     /// <summary>
-    /// ÖØĞÂ¿ªÊ¼ÓÎÏ·
-    /// ÖØĞÂ¿ªÊ¼ÓÎÏ·±Ø¶¨ÊÇÖØ¼ÓÔØGame1³¡¾°
-    /// ÖØĞÂ¿ªÊ¼Ê±ÅĞ¶Ïµ±Ç°³¡¾°£¬Èô²»ÎªGame1ÔòÖ±½ÓLoadScene("Game1")£¬Èôµ±Ç°³¡¾°¾ÍÊÇGame1ÔòLoadScene(SceneManager.GetActiveScene().buildIndex)
+    /// é‡æ–°å¼€å§‹æ¸¸æˆ
+    /// é‡æ–°å¼€å§‹æ¸¸æˆå¿…å®šæ˜¯é‡åŠ è½½Game1åœºæ™¯
+    /// é‡æ–°å¼€å§‹æ—¶åˆ¤æ–­å½“å‰åœºæ™¯ï¼Œè‹¥ä¸ä¸ºGame1åˆ™ç›´æ¥LoadScene("Game1")ï¼Œè‹¥å½“å‰åœºæ™¯å°±æ˜¯Game1åˆ™LoadScene(SceneManager.GetActiveScene().buildIndex)
     /// </summary>
     public void RestartGame()
     {
-        // »ØÊÕËùÓĞµĞÈË
+        // å›æ”¶æ‰€æœ‰æ•Œäºº
         if (Global_GameManager.Instance != null)
         {
             Global_GameManager.Instance.RecycleAllEnemies();
         }
 
-        // »ØÊÕ³¡¾°ÖĞËùÓĞµÄµÀ¾ß
+        // å›æ”¶åœºæ™¯ä¸­æ‰€æœ‰çš„é“å…·
         AboutItem[] items = FindObjectsOfType<AboutItem>();
         foreach (AboutItem item in items)
         {
@@ -494,39 +512,39 @@ public class Global_SceneManager : Singleton<Global_SceneManager>
             }
         }
 
-        // Çå³ı¶ÔÏó³ØÖĞµÄËùÓĞÔªËØ
+        // æ¸…é™¤å¯¹è±¡æ± ä¸­çš„æ‰€æœ‰å…ƒç´ 
         if (Global_ObjectPool.Instance != null)
         {
             Global_ObjectPool.Instance.ClearAllPools();
         }
 
-        // ÖØÖÃÓÎÏ·Êı¾İ
+        // é‡ç½®æ¸¸æˆæ•°æ®
         if (Global_GameManager.Instance != null)
         {
             Global_GameManager.Instance.ResetGameDate();
         }
 
-        // ÖØÖÃ³¡¾°Êı¾İ
+        // é‡ç½®åœºæ™¯æ•°æ®
         ResetSceneFromJson("Game1");
 
-        // ÅĞ¶Ïµ±Ç°³¡¾°
+        // åˆ¤æ–­å½“å‰åœºæ™¯
         if (CurrentSceneName != "Game1")
         {
-            // Èô²»ÎªGame1ÔòÖ±½Ó¼ÓÔØGame1³¡¾°
+            // è‹¥ä¸ä¸ºGame1åˆ™ç›´æ¥åŠ è½½Game1åœºæ™¯
             IntoNextScene("Game1", false);
         }
         else
         {
-            // Èôµ±Ç°³¡¾°¾ÍÊÇGame1ÔòÖØĞÂ¼ÓÔØµ±Ç°³¡¾°
+            // è‹¥å½“å‰åœºæ™¯å°±æ˜¯Game1åˆ™é‡æ–°åŠ è½½å½“å‰åœºæ™¯
             Scene currentScene = SceneManager.GetActiveScene();
             if (currentScene.IsValid())
             {
-                // Ê¹ÓÃ³¡¾°Ë÷ÒıÖØĞÂ¼ÓÔØ
+                // ä½¿ç”¨åœºæ™¯ç´¢å¼•é‡æ–°åŠ è½½
                 SceneManager.LoadScene(currentScene.buildIndex);
             }
             else
             {
-                // Èô³¡¾°ÎŞĞ§£¬Ö±½Ó¼ÓÔØGame1
+                // è‹¥åœºæ™¯æ— æ•ˆï¼Œç›´æ¥åŠ è½½Game1
                 IntoNextScene("Game1", false);
             }
         }

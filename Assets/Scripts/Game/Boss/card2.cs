@@ -1,96 +1,96 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class card2 : MonoBehaviour
 {
-    [Header("¶ş·û²ÎÊı")]
-    public GameObject snowFlakePrefab; // Ñ©»¨×Óµ¯Ô¤ÖÆ¼ş
-    public GameObject iceCloudPrefab; // ±ùÔÆÔ¤ÖÆ¼ş
+    [Header("äºŒç¬¦å‚æ•°")]
+    public GameObject snowFlakePrefab; // é›ªèŠ±å­å¼¹é¢„åˆ¶ä»¶
+    public GameObject iceCloudPrefab; // å†°äº‘é¢„åˆ¶ä»¶
 
-    [Header("½Å±¾ÒıÓÃ")]
-    public BossShootSystem bossShootSystem; // Éä»÷ÏµÍ³ÒıÓÃ
-    public UIManager uiManager; // UIManager½Å±¾ÒıÓÃ
-    public BossBase bossBase; // Boss»ù´¡ÊôĞÔÒıÓÃ
+    [Header("è„šæœ¬å¼•ç”¨")]
+    public BossShootSystem bossShootSystem; // å°„å‡»ç³»ç»Ÿå¼•ç”¨
+    public UIManager uiManager; // UIManagerè„šæœ¬å¼•ç”¨
+    public BossBase bossBase; // BossåŸºç¡€å±æ€§å¼•ç”¨
 
-    [Header("·û¿¨ÊÕÈ¡½±Àø")]
-    public List<ItemDropConfig> card2ClearRewards; // ·û¿¨2ÊÕÈ¡³É¹¦Ê±µÄµôÂäÎïÅäÖÃ
+    [Header("ç¬¦å¡æ”¶å–å¥–åŠ±")]
+    public List<ItemDropConfig> card2ClearRewards; // ç¬¦å¡2æ”¶å–æˆåŠŸæ—¶çš„æ‰è½ç‰©é…ç½®
 
-    [Header("Ñ©»¨¹¥»÷²ÎÊı")]
-    public int snowFlakeCount = 50; // Ñ©»¨Éú³É×ÜÊı
-    public float attackInterval = 4f; // ¹¥»÷¼ä¸ô£¨Ã¿¸ô¶à¾Ã·¢¶¯Ò»´ÎÑ©»¨¹¥»÷£©
+    [Header("é›ªèŠ±æ”»å‡»å‚æ•°")]
+    public int snowFlakeCount = 50; // é›ªèŠ±ç”Ÿæˆæ€»æ•°
+    public float attackInterval = 4f; // æ”»å‡»é—´éš”ï¼ˆæ¯éš”å¤šä¹…å‘åŠ¨ä¸€æ¬¡é›ªèŠ±æ”»å‡»ï¼‰
 
-    [Header("±ùÔÆ¹¥»÷²ÎÊı")]
-    public FreezeSystem freezeSystem; // ¶³½áÏµÍ³ÒıÓÃ
-    public int iceCloudCount = 10; // ±ùÔÆÉú³ÉÊıÁ¿
-    public float iceCloudFloatSpeed = 0.5f; // ±ùÔÆÆ®¸¡ËÙ¶È
-    public Vector2 cloudSpawnMin = new Vector2(-10f, -4f); // ±ùÔÆÉú³É·¶Î§×óÏÂ½Ç
-    public Vector2 cloudSpawnMax = new Vector2(4f, 4f); // ±ùÔÆÉú³É·¶Î§ÓÒÉÏ½Ç
+    [Header("å†°äº‘æ”»å‡»å‚æ•°")]
+    public FreezeSystem freezeSystem; // å†»ç»“ç³»ç»Ÿå¼•ç”¨
+    public int iceCloudCount = 10; // å†°äº‘ç”Ÿæˆæ•°é‡
+    public float iceCloudFloatSpeed = 0.5f; // å†°äº‘é£˜æµ®é€Ÿåº¦
+    public Vector2 cloudSpawnMin = new Vector2(-10f, -4f); // å†°äº‘ç”ŸæˆèŒƒå›´å·¦ä¸‹è§’
+    public Vector2 cloudSpawnMax = new Vector2(4f, 4f); // å†°äº‘ç”ŸæˆèŒƒå›´å³ä¸Šè§’
 
-    [Header("åçĞÇ¹¥»÷²ÎÊı")]
-    public GameObject cometPrefab; // åçĞÇÔ¤ÖÆ¼ş
-    public GameObject linePrefab; // Á¬ÏßÔ¤ÖÆ¼ş
-    public float cometAttackInterval = 5f; // åçĞÇ¹¥»÷¼ä¸ô
-    public float cometSpawnY = 6f; // åçĞÇÉú³Éy×ø±ê
-    public float cometStartDelay = 3f; // åçĞÇ¹¥»÷Æô¶¯ÑÓ³ÙÊ±¼ä
+    [Header("å½—æ˜Ÿæ”»å‡»å‚æ•°")]
+    public GameObject cometPrefab; // å½—æ˜Ÿé¢„åˆ¶ä»¶
+    public GameObject linePrefab; // è¿çº¿é¢„åˆ¶ä»¶
+    public float cometAttackInterval = 5f; // å½—æ˜Ÿæ”»å‡»é—´éš”
+    public float cometSpawnY = 6f; // å½—æ˜Ÿç”Ÿæˆyåæ ‡
+    public float cometStartDelay = 3f; // å½—æ˜Ÿæ”»å‡»å¯åŠ¨å»¶è¿Ÿæ—¶é—´
 
     private void OnEnable()
     {
-        // ³õÊ¼»¯µ¯Ä»³Ø
+        // åˆå§‹åŒ–å¼¹å¹•æ± 
         if (snowFlakePrefab != null)
         {
             Global_ObjectPool.Instance.InitPool(snowFlakePrefab, 80);
         }
 
-        // ³õÊ¼»¯±ùÔÆ¶ÔÏó³Ø
+        // åˆå§‹åŒ–å†°äº‘å¯¹è±¡æ± 
         if (iceCloudPrefab != null)
         {
             Global_ObjectPool.Instance.InitPool(iceCloudPrefab, iceCloudCount);
         }
 
-        // ³õÊ¼»¯åçĞÇ¶ÔÏó³Ø
+        // åˆå§‹åŒ–å½—æ˜Ÿå¯¹è±¡æ± 
         if (cometPrefab != null)
         {
             Global_ObjectPool.Instance.InitPool(cometPrefab, 3);
         }
 
-        // ³õÊ¼»¯Á¬Ïß¶ÔÏó³Ø
+        // åˆå§‹åŒ–è¿çº¿å¯¹è±¡æ± 
         if (linePrefab != null)
         {
             Global_ObjectPool.Instance.InitPool(linePrefab, 3);
         }
         bossShootSystem.ShowColdAir();
 
-        // ÉèÖÃ¶³½áËõ·Å±ÈÀıÎª1.5f
+        // è®¾ç½®å†»ç»“ç¼©æ”¾æ¯”ä¾‹ä¸º1.5f
         if (freezeSystem != null)
         {
             freezeSystem.SetFrozenScale(1.5f);
         }
 
-        // ¿ªÊ¼¹¥»÷
+        // å¼€å§‹æ”»å‡»
         StartAttacks();
     }
 
     private void OnDisable()
     {
-        // Í£Ö¹ËùÓĞĞ­³Ì
+        // åœæ­¢æ‰€æœ‰åç¨‹
         StopAllCoroutines();
 
-        // È¡ÏûËùÓĞ Invoke µ÷ÓÃ
+        // å–æ¶ˆæ‰€æœ‰ Invoke è°ƒç”¨
         CancelInvoke();
         bossShootSystem.HideColdAir();
 
-        // Í£Ö¹ BossShootSystem ÖĞµÄËùÓĞÉä»÷Ğ­³Ì
+        // åœæ­¢ BossShootSystem ä¸­çš„æ‰€æœ‰å°„å‡»åç¨‹
         if (bossShootSystem != null)
         {
             bossShootSystem.StopAllShooting();
-            // Çå³ıËùÓĞ×Óµ¯
+            // æ¸…é™¤æ‰€æœ‰å­å¼¹
             bossShootSystem.ClearBullet();
         }
 
         bossBase.isLockingHP = false;
         
-        // »Ö¸´¶³½áËõ·Å±ÈÀıÎª1
+        // æ¢å¤å†»ç»“ç¼©æ”¾æ¯”ä¾‹ä¸º1
         FreezeSystem freezeSystem = FindObjectOfType<FreezeSystem>();
         if (freezeSystem != null)
         {
@@ -100,19 +100,19 @@ public class card2 : MonoBehaviour
 
     private void StartAttacks()
     {
-        // ÒÆ¶¯µ½Ä¿±êÎ»ÖÃ
+        // ç§»åŠ¨åˆ°ç›®æ ‡ä½ç½®
         StartCoroutine(MoveToHerPos());
 
-        // Æô¶¯Ñ©»¨¹¥»÷Ğ­³Ì
+        // å¯åŠ¨é›ªèŠ±æ”»å‡»åç¨‹
         StartCoroutine(SnowFlakeAttackLoop());
 
-        // Éú³É±ùÔÆ
+        // ç”Ÿæˆå†°äº‘
         if (bossShootSystem != null && iceCloudPrefab != null)
         {
             bossShootSystem.CreateCloud(iceCloudPrefab, cloudSpawnMin, cloudSpawnMax, iceCloudCount);
         }
 
-        // Æô¶¯åçĞÇ¹¥»÷£¨´øÑÓ³Ù£©
+        // å¯åŠ¨å½—æ˜Ÿæ”»å‡»ï¼ˆå¸¦å»¶è¿Ÿï¼‰
         if (bossShootSystem != null && cometPrefab != null && linePrefab != null)
         {
             StartCoroutine(StartCometAttackWithDelay());
@@ -120,49 +120,49 @@ public class card2 : MonoBehaviour
     }
 
     /// <summary>
-    /// ´øÑÓ³ÙÆô¶¯åçĞÇ¹¥»÷
+    /// å¸¦å»¶è¿Ÿå¯åŠ¨å½—æ˜Ÿæ”»å‡»
     /// </summary>
     private IEnumerator StartCometAttackWithDelay()
     {
-        // µÈ´ıÆô¶¯ÑÓ³ÙÊ±¼ä
+        // ç­‰å¾…å¯åŠ¨å»¶è¿Ÿæ—¶é—´
         yield return new WaitForSeconds(cometStartDelay);
 
-        // Æô¶¯åçĞÇ¹¥»÷
+        // å¯åŠ¨å½—æ˜Ÿæ”»å‡»
         bossShootSystem.StartCometAttack(cometPrefab, linePrefab, cometAttackInterval, cometSpawnY);
     }
 
     private IEnumerator MoveToHerPos()
     {
         Vector2 targetPos = new(-3f, 3f);
-        // ÒÆ¶¯µ½Ä¿±êÎ»ÖÃ
+        // ç§»åŠ¨åˆ°ç›®æ ‡ä½ç½®
         transform.position = Vector3.Lerp(transform.position, targetPos, 1f);
         yield return null;
     }
 
     /// <summary>
-    /// Ñ©»¨¹¥»÷Ñ­»·
+    /// é›ªèŠ±æ”»å‡»å¾ªç¯
     /// </summary>
     private IEnumerator SnowFlakeAttackLoop()
     {
-        // µÈ´ıÒÆ¶¯µ½Ä¿±êÎ»ÖÃ
+        // ç­‰å¾…ç§»åŠ¨åˆ°ç›®æ ‡ä½ç½®
         yield return new WaitForSeconds(1f);
 
         while (true)
         {
-            // ·¢¶¯Ñ©»¨¹¥»÷
+            // å‘åŠ¨é›ªèŠ±æ”»å‡»
             if (bossShootSystem != null)
             {
                 bossShootSystem.SnowFlakeAttack(snowFlakePrefab, snowFlakeCount);
             }
 
-            // µÈ´ı¹¥»÷¼ä¸ô
+            // ç­‰å¾…æ”»å‡»é—´éš”
             yield return new WaitForSeconds(attackInterval);
         }
     }
 
     /// <summary>
-    /// ¼ì²ébossÊÇ·ñÒÑ¾­ËÀÍö»ò´¦ÓÚËøÑª×´Ì¬
-    /// Èç¹ûboss´¦ÓÚËøÑª×´Ì¬£¬ËµÃ÷Íæ¼Ò³É¹¦ÌÖ·¥µ±Ç°½×¶Î
+    /// æ£€æŸ¥bossæ˜¯å¦å·²ç»æ­»äº¡æˆ–å¤„äºé”è¡€çŠ¶æ€
+    /// å¦‚æœbosså¤„äºé”è¡€çŠ¶æ€ï¼Œè¯´æ˜ç©å®¶æˆåŠŸè®¨ä¼å½“å‰é˜¶æ®µ
     /// </summary>
     public void CheckOver()
     {
@@ -171,23 +171,23 @@ public class card2 : MonoBehaviour
             bool isDefeated = bossBase.CheckOver();
             if (isDefeated)
             {
-                // ±ê¼ÇÎª»ñÈ¡ÁË·û¿¨2
+                // æ ‡è®°ä¸ºè·å–äº†ç¬¦å¡2
                 uiManager.isCard2Get = true;
-                Debug.Log("card2½×¶Î£ºÍæ¼Ò³É¹¦ÌÖ·¥Boss£¡");
-                // ·¢·Å·û¿¨ÊÕÈ¡½±Àø
+                Debug.Log("card2é˜¶æ®µï¼šç©å®¶æˆåŠŸè®¨ä¼Bossï¼");
+                // å‘æ”¾ç¬¦å¡æ”¶å–å¥–åŠ±
                 SpawnClearRewards();
             }
             else
             {
-                Debug.Log("card2½×¶Î£ºBossÈÔÈ»´æ»î£¬Ê±¼äµ½");
-                // ±ê¼ÇÎªÎ´»ñÈ¡·û¿¨2
+                Debug.Log("card2é˜¶æ®µï¼šBossä»ç„¶å­˜æ´»ï¼Œæ—¶é—´åˆ°");
+                // æ ‡è®°ä¸ºæœªè·å–ç¬¦å¡2
                 uiManager.isCard2Get = false;
             }
         }
     }
 
     /// <summary>
-    /// Éú³É·û¿¨ÊÕÈ¡½±Àø
+    /// ç”Ÿæˆç¬¦å¡æ”¶å–å¥–åŠ±
     /// </summary>
     private void SpawnClearRewards()
     {
@@ -195,7 +195,7 @@ public class card2 : MonoBehaviour
             card2ClearRewards != null && card2ClearRewards.Count > 0)
         {
             CreateItem.Instance.SpawnItems(bossShootSystem.boss.transform.position, card2ClearRewards);
-            Debug.Log("card2·û¿¨ÊÕÈ¡³É¹¦£¬ÒÑ·¢·Å½±Àø");
+            Debug.Log("card2ç¬¦å¡æ”¶å–æˆåŠŸï¼Œå·²å‘æ”¾å¥–åŠ±");
         }
     }
 }

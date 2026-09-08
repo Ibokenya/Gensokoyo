@@ -1,62 +1,63 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ReplaySystem;
 
 /// <summary>
-/// ·û¿¨Ğ§¹û¹ÜÀíÆ÷
-/// ¸ºÔğ¹ÜÀí4ÖÖ·û¿¨¼¼ÄÜµÄÊÍ·ÅºÍĞ­µ÷
+/// ç¬¦å¡æ•ˆæœç®¡ç†å™¨
+/// è´Ÿè´£ç®¡ç†4ç§ç¬¦å¡æŠ€èƒ½çš„é‡Šæ”¾å’Œåè°ƒ
 /// </summary>
 public class SpellCardEffect : MonoBehaviour
 {
-    [Header("4ÖÖ·û¿¨¹¥»÷ÉèÖÃ")]
-    public List<GameObject> effects;// ×Ü¹²ËÄÖÖ·û¿¨ÌØĞ§¡ª¡ªÁéÃÎ³£¹æ£¬ÁéÃÎ¾öËÀ£¬Ä§ÀíÉ³³£¹æ£¬Ä§ÀíÉ³¾öËÀ
+    [Header("4ç§ç¬¦å¡æ”»å‡»è®¾ç½®")]
+    public List<GameObject> effects;// æ€»å…±å››ç§ç¬¦å¡ç‰¹æ•ˆâ€”â€”çµæ¢¦å¸¸è§„ï¼Œçµæ¢¦å†³æ­»ï¼Œé­”ç†æ²™å¸¸è§„ï¼Œé­”ç†æ²™å†³æ­»
 
-    [Header("4¸ö×Ó½Å±¾ÒıÓÃ")]
-    public ReimuNormal reimuNormal; // ÁéÃÎ³£¹æ¼¼ÄÜ½Å±¾
-    public ReimuSuper reimuSuper;   // ÁéÃÎ¾öËÀ¼¼ÄÜ½Å±¾
-    public MarisaNormal marisaNormal; // Ä§ÀíÉ³³£¹æ¼¼ÄÜ½Å±¾
-    public MarisaSuper marisaSuper;   // Ä§ÀíÉ³¾öËÀ¼¼ÄÜ½Å±¾
+    [Header("4ä¸ªå­è„šæœ¬å¼•ç”¨")]
+    public ReimuNormal reimuNormal; // çµæ¢¦å¸¸è§„æŠ€èƒ½è„šæœ¬
+    public ReimuSuper reimuSuper;   // çµæ¢¦å†³æ­»æŠ€èƒ½è„šæœ¬
+    public MarisaNormal marisaNormal; // é­”ç†æ²™å¸¸è§„æŠ€èƒ½è„šæœ¬
+    public MarisaSuper marisaSuper;   // é­”ç†æ²™å†³æ­»æŠ€èƒ½è„šæœ¬
     
-    [Header("4¸ö¼¼ÄÜ¿ÕÎïÌåÒıÓÃ")]
-    public GameObject reimuNormalObject; // ÁéÃÎ³£¹æ¼¼ÄÜ¿ÕÎïÌå
-    public GameObject reimuSuperObject;   // ÁéÃÎ¾öËÀ¼¼ÄÜ¿ÕÎïÌå
-    public GameObject marisaNormalObject; // Ä§ÀíÉ³³£¹æ¼¼ÄÜ¿ÕÎïÌå
-    public GameObject marisaSuperObject;   // Ä§ÀíÉ³¾öËÀ¼¼ÄÜ¿ÕÎïÌå
+    [Header("4ä¸ªæŠ€èƒ½ç©ºç‰©ä½“å¼•ç”¨")]
+    public GameObject reimuNormalObject; // çµæ¢¦å¸¸è§„æŠ€èƒ½ç©ºç‰©ä½“
+    public GameObject reimuSuperObject;   // çµæ¢¦å†³æ­»æŠ€èƒ½ç©ºç‰©ä½“
+    public GameObject marisaNormalObject; // é­”ç†æ²™å¸¸è§„æŠ€èƒ½ç©ºç‰©ä½“
+    public GameObject marisaSuperObject;   // é­”ç†æ²™å†³æ­»æŠ€èƒ½ç©ºç‰©ä½“
 
-    [Header("ÒôĞ§ÉèÖÃ")]
-    public AudioClip BeHitClip;//ÖĞµ¯ÒôĞ§clip
-    public AudioClip DelayClip;//¾öËÀÑÓ³ÙÒôĞ§clip
+    [Header("éŸ³æ•ˆè®¾ç½®")]
+    public AudioClip BeHitClip;//ä¸­å¼¹éŸ³æ•ˆclip
+    public AudioClip DelayClip;//å†³æ­»å»¶è¿ŸéŸ³æ•ˆclip
 
-    [Header("½Å±¾ÒıÓÃ")]
+    [Header("è„šæœ¬å¼•ç”¨")]
     public ClearAllBullet clearAllBullet;
-    public CardsRotate cardsRotate; // ÒıÓÃCardsRotate½Å±¾
-    public Graze graze; // ÒıÓÃGraze½Å±¾
-    public PlayerAnime playerAnime; // ÒıÓÃPlayerAnime½Å±¾
-    public EvilEyeAttack evilEyeAttack; // ÒıÓÃEvilEyeAttack½Å±¾
-    public EvilShadow evilShadow; // ÒıÓÃEvilShadow½Å±¾
-    public FreezeSystem freezeSystem; // ÒıÓÃ¶³½áÏµÍ³½Å±¾
+    public CardsRotate cardsRotate; // å¼•ç”¨CardsRotateè„šæœ¬
+    public Graze graze; // å¼•ç”¨Grazeè„šæœ¬
+    public PlayerAnime playerAnime; // å¼•ç”¨PlayerAnimeè„šæœ¬
+    public EvilEyeAttack evilEyeAttack; // å¼•ç”¨EvilEyeAttackè„šæœ¬
+    public EvilShadow evilShadow; // å¼•ç”¨EvilShadowè„šæœ¬
+    public FreezeSystem freezeSystem; // å¼•ç”¨å†»ç»“ç³»ç»Ÿè„šæœ¬
 
-    [Header("ÎïÌåÒıÓÃ")]
-    public GameObject player;// Íæ¼ÒÎïÌå
+    [Header("ç‰©ä½“å¼•ç”¨")]
+    public GameObject player;// ç©å®¶ç‰©ä½“
 
-    private bool isHitDelayActive = false; // ÊÇ·ñ´¦ÓÚÊÜ»÷ÑÓ³Ù×´Ì¬
-    private readonly float hitDelayTime = 1f; // ÊÜ»÷ÑÓ³ÙÊ±¼ä£¨ÏÖÊµÊ±¼ä£©
+    private bool isHitDelayActive = false; // æ˜¯å¦å¤„äºå—å‡»å»¶è¿ŸçŠ¶æ€
+    private readonly float hitDelayTime = 1f; // å—å‡»å»¶è¿Ÿæ—¶é—´ï¼ˆç°å®æ—¶é—´ï¼‰
     private Coroutine hitDelayCoroutine;
-    private bool isAnimating = false; // ÊÇ·ñÕıÔÚ²¥·Å¶¯»­
+    private bool isAnimating = false; // æ˜¯å¦æ­£åœ¨æ’­æ”¾åŠ¨ç”»
     
-    // ´æ´¢ÒôÀÖ×´Ì¬
+    // å­˜å‚¨éŸ³ä¹çŠ¶æ€
     private string currentBGMName = "";
     private float currentBGMPosition = 0f;
     
-    // ´æ´¢Ä§ÀíÉ³¾öËÀÇ°µÄ×´Ì¬
-    private bool wasEvilEyeActive = false; // ¶ñÄ§Ö®ÑÛÊÇ·ñ¼¤»î
-    private bool wasEvilShadowActive = false; // °µÓ°ÊÓ½çÊÇ·ñ¼¤»î
+    // å­˜å‚¨é­”ç†æ²™å†³æ­»å‰çš„çŠ¶æ€
+    private bool wasEvilEyeActive = false; // æ¶é­”ä¹‹çœ¼æ˜¯å¦æ¿€æ´»
+    private bool wasEvilShadowActive = false; // æš—å½±è§†ç•Œæ˜¯å¦æ¿€æ´»
 
-    private bool isFrozen = false; // ÊÇ·ñ¶³½á
+    private bool isFrozen = false; // æ˜¯å¦å†»ç»“
 
     void OnDisable()
     {
-        // È·±£ÔÚ½ûÓÃÊ±È¡ÏûÊÜ»÷ÑÓ³Ù
+        // ç¡®ä¿åœ¨ç¦ç”¨æ—¶å–æ¶ˆå—å‡»å»¶è¿Ÿ
         if (hitDelayCoroutine != null)
         {
             StopCoroutine(hitDelayCoroutine);
@@ -66,46 +67,46 @@ public class SpellCardEffect : MonoBehaviour
         isFrozen = false;
     }
 
-    void Update()
+    void FixedUpdate()
     {
         if (Global_GameManager.Instance.state == State.Pause)
         {
             return;
         }
 
-        // ´¦Àí¼¼ÄÜÊÍ·Å
-        if (Input.GetKeyDown(KeyCode.X))
+        // å¤„ç†æŠ€èƒ½é‡Šæ”¾
+        if (ReplayManager.Input.GetKeyDown(LogicalKey.Spell))
         {
             if (isFrozen)
             {
-                Debug.Log("·û¿¨ÒÑ¶³½á");
+                Debug.Log("ç¬¦å¡å·²å†»ç»“");
                 return;
             }
-            if (Global_GameManager.Instance.BombCount <= 0)// ¼ì²éÊÇ·ñÓĞ·û¿¨¿ÉÓÃ
+            if (Global_GameManager.Instance.BombCount <= 0)// æ£€æŸ¥æ˜¯å¦æœ‰ç¬¦å¡å¯ç”¨
             {
-                Debug.Log("Ã»ÓĞ·û¿¨¿ÉÓÃ");
+                Debug.Log("æ²¡æœ‰ç¬¦å¡å¯ç”¨");
                 return;
             }
             if (isAnimating)
             {
-                Debug.Log("ÕıÔÚ²¥·Å¶¯»­");
+                Debug.Log("æ­£åœ¨æ’­æ”¾åŠ¨ç”»");
                 return;
             }
 
-            Global_GameManager.Instance.SubBomb(1);// ¼õÉÙ·û¿¨ÊıÁ¿
+            Global_GameManager.Instance.SubBomb(1);// å‡å°‘ç¬¦å¡æ•°é‡
             
-            // ¼ì²éÊÇ·ñ´¦ÓÚ¶³½á×´Ì¬£¨°üÀ¨¶³½á¶¯»­ÆÚ¼ä£©
+            // æ£€æŸ¥æ˜¯å¦å¤„äºå†»ç»“çŠ¶æ€ï¼ˆåŒ…æ‹¬å†»ç»“åŠ¨ç”»æœŸé—´ï¼‰
             bool isInFrozenState = Global_GameManager.Instance.state == State.Frozen;
             bool isFreezing = freezeSystem != null && freezeSystem.IsFrozen;
             
             if (isInFrozenState || isFreezing)
             {
-                // ÖØÖÃ¶³½áÏµÍ³£¨½â³ı±ù¶³×´Ì¬£©
+                // é‡ç½®å†»ç»“ç³»ç»Ÿï¼ˆè§£é™¤å†°å†»çŠ¶æ€ï¼‰
                 if (freezeSystem != null)
                 {
                     freezeSystem.ResetFreeze();
                 }
-                // Íê³ÉQTE£¨½ûÓÃIceÎïÌå£©
+                // å®ŒæˆQTEï¼ˆç¦ç”¨Iceç‰©ä½“ï¼‰
                 if (playerAnime != null)
                 {
                     playerAnime.CompleteQTE();
@@ -115,46 +116,46 @@ public class SpellCardEffect : MonoBehaviour
             if (isHitDelayActive)
             {
                 isAnimating = true;
-                // ÊÜ»÷Ê±ÊÍ·ÅÌØÊâ¼¼ÄÜ
+                // å—å‡»æ—¶é‡Šæ”¾ç‰¹æ®ŠæŠ€èƒ½
                 ReleaseSpecialSpellCard();
             }
             else
             {
                 isAnimating = true;
-                // Õı³£ÊÍ·Å¼¼ÄÜ
+                // æ­£å¸¸é‡Šæ”¾æŠ€èƒ½
                 ReleaseNormalSpellCard();
             }
         }
     }
 
-    #region ÊÍ·Å¼¼ÄÜÏà¹Ø
+    #region é‡Šæ”¾æŠ€èƒ½ç›¸å…³
 
     /// <summary>
-    /// Õı³£ÊÍ·Å¼¼ÄÜ
+    /// æ­£å¸¸é‡Šæ”¾æŠ€èƒ½
     /// </summary>
     public void ReleaseNormalSpellCard()
     {
-        // Í£Ö¹²Áµ¯ÒôĞ§²¢Çå¿Õ²Áµ¯ÁĞ±í
+        // åœæ­¢æ“¦å¼¹éŸ³æ•ˆå¹¶æ¸…ç©ºæ“¦å¼¹åˆ—è¡¨
         if (graze != null)
         {
             graze.ForceStopGrazeSound();
         }
         
-        // ÊÕÈ¡³¡ÉÏËùÓĞµÀ¾ß£¨Óë»ØÊÕÏßÊÕÈ¡Âß¼­Ò»ÖÂ£©
+        // æ”¶å–åœºä¸Šæ‰€æœ‰é“å…·ï¼ˆä¸å›æ”¶çº¿æ”¶å–é€»è¾‘ä¸€è‡´ï¼‰
         CollectAllItems();
         
-        // ÉèÖÃÎŞµĞ×´Ì¬
+        // è®¾ç½®æ— æ•ŒçŠ¶æ€
         Global_GameManager.Instance.state = State.NoDead;
 
         if (Global_GameManager.Instance.character == Character.Reimu)
         {
-            Debug.Log("ÊÍ·ÅÁéÃÎ³£¹æ¼¼ÄÜ");
-            // ¼¤»îÁéÃÎ³£¹æ¼¼ÄÜ¿ÕÎïÌå
+            Debug.Log("é‡Šæ”¾çµæ¢¦å¸¸è§„æŠ€èƒ½");
+            // æ¿€æ´»çµæ¢¦å¸¸è§„æŠ€èƒ½ç©ºç‰©ä½“
             if (reimuNormalObject != null)
             {
                 reimuNormalObject.SetActive(true);
             }
-            // ¼¤»îÁéÃÎ³£¹æ¼¼ÄÜ½Å±¾
+            // æ¿€æ´»çµæ¢¦å¸¸è§„æŠ€èƒ½è„šæœ¬
             if (reimuNormal != null)
             {
                 reimuNormal.IsAnime = true;
@@ -162,13 +163,13 @@ public class SpellCardEffect : MonoBehaviour
         }
         else if (Global_GameManager.Instance.character == Character.Marisa)
         {
-            Debug.Log("ÊÍ·ÅÄ§ÀíÉ³³£¹æ¼¼ÄÜ");
-            // ¼¤»îÄ§ÀíÉ³³£¹æ¼¼ÄÜ¿ÕÎïÌå
+            Debug.Log("é‡Šæ”¾é­”ç†æ²™å¸¸è§„æŠ€èƒ½");
+            // æ¿€æ´»é­”ç†æ²™å¸¸è§„æŠ€èƒ½ç©ºç‰©ä½“
             if (marisaNormalObject != null)
             {
                 marisaNormalObject.SetActive(true);
             }
-            // ¼¤»îÄ§ÀíÉ³³£¹æ¼¼ÄÜ½Å±¾
+            // æ¿€æ´»é­”ç†æ²™å¸¸è§„æŠ€èƒ½è„šæœ¬
             if (marisaNormal != null)
             {
                 marisaNormal.IsAnime = true;
@@ -177,17 +178,17 @@ public class SpellCardEffect : MonoBehaviour
     }
 
     /// <summary>
-    /// ÊÜ»÷Ê±ÊÍ·ÅÌØÊâ·û¿¨
+    /// å—å‡»æ—¶é‡Šæ”¾ç‰¹æ®Šç¬¦å¡
     /// </summary>
     public void ReleaseSpecialSpellCard()
     {
-        Debug.Log("ÊÍ·ÅÌØÊâ·û¿¨");
-        // Ç¿ÖÆÍ£Ö¹²Áµ¯Ğ§¹û
+        Debug.Log("é‡Šæ”¾ç‰¹æ®Šç¬¦å¡");
+        // å¼ºåˆ¶åœæ­¢æ“¦å¼¹æ•ˆæœ
         if (graze != null)
         {
             graze.ForceStopGrazeSound();
         }
-        // È¡ÏûÊÜ»÷ÑÓ³Ù
+        // å–æ¶ˆå—å‡»å»¶è¿Ÿ
         if (hitDelayCoroutine != null)
         {
             StopCoroutine(hitDelayCoroutine);
@@ -195,7 +196,7 @@ public class SpellCardEffect : MonoBehaviour
         isHitDelayActive = false;
         Time.timeScale = 1f;
         
-        // Í£Ö¹ÒôÀÖ²¢¼ÇÂ¼×´Ì¬
+        // åœæ­¢éŸ³ä¹å¹¶è®°å½•çŠ¶æ€
         if(Global_AudioManager.Instance != null)
         {
             currentBGMName = Global_AudioManager.Instance.GetCurrentBGMName();
@@ -205,36 +206,36 @@ public class SpellCardEffect : MonoBehaviour
             Global_AudioManager.Instance.StopAllSFX();
         }
         
-        // ÊÕÈ¡³¡ÉÏËùÓĞµÀ¾ß£¨Óë»ØÊÕÏßÊÕÈ¡Âß¼­Ò»ÖÂ£©
+        // æ”¶å–åœºä¸Šæ‰€æœ‰é“å…·ï¼ˆä¸å›æ”¶çº¿æ”¶å–é€»è¾‘ä¸€è‡´ï¼‰
         CollectAllItems();
 
-        // ´æ´¢Ä§ÀíÉ³¾öËÀÇ°µÄ×´Ì¬
+        // å­˜å‚¨é­”ç†æ²™å†³æ­»å‰çš„çŠ¶æ€
         if (Global_GameManager.Instance.character == Character.Marisa)
         {
-            // ¼ì²é¶ñÄ§Ö®ÑÛÊÇ·ñ¼¤»î
+            // æ£€æŸ¥æ¶é­”ä¹‹çœ¼æ˜¯å¦æ¿€æ´»
             if (evilEyeAttack != null)
             {
                 wasEvilEyeActive = evilEyeAttack.isFadeInComplete;
             }
-            // ¼ì²é°µÓ°ÊÓ½çÊÇ·ñ¼¤»î
+            // æ£€æŸ¥æš—å½±è§†ç•Œæ˜¯å¦æ¿€æ´»
             if (evilShadow != null && evilShadow.GetComponent<SpriteRenderer>() != null)
             {
                 wasEvilShadowActive = evilShadow.isStartFadeIn;
             }
         }
 
-        // ÉèÖÃÎŞµĞ×´Ì¬
+        // è®¾ç½®æ— æ•ŒçŠ¶æ€
         Global_GameManager.Instance.state = State.NoDead;
 
         if (Global_GameManager.Instance.character == Character.Reimu)
         {
-            Debug.Log("ÊÍ·ÅÁËÁéÃÎ¾öËÀ¼¼ÄÜ");
-            // ¼¤»îÁéÃÎ¾öËÀ¼¼ÄÜ¿ÕÎïÌå
+            Debug.Log("é‡Šæ”¾äº†çµæ¢¦å†³æ­»æŠ€èƒ½");
+            // æ¿€æ´»çµæ¢¦å†³æ­»æŠ€èƒ½ç©ºç‰©ä½“
             if (reimuSuperObject != null)
             {
                 reimuSuperObject.SetActive(true);
             }
-            // ¼¤»îÁéÃÎ¾öËÀ¼¼ÄÜ½Å±¾
+            // æ¿€æ´»çµæ¢¦å†³æ­»æŠ€èƒ½è„šæœ¬
             if (reimuSuper != null)
             {
                 reimuSuper.IsAnime = true;
@@ -242,13 +243,13 @@ public class SpellCardEffect : MonoBehaviour
         }
         else if (Global_GameManager.Instance.character == Character.Marisa)
         {
-            Debug.Log("ÊÍ·ÅÁËÄ§ÀíÉ³¾öËÀ¼¼ÄÜ");
-            // ¼¤»îÄ§ÀíÉ³¾öËÀ¼¼ÄÜ¿ÕÎïÌå
+            Debug.Log("é‡Šæ”¾äº†é­”ç†æ²™å†³æ­»æŠ€èƒ½");
+            // æ¿€æ´»é­”ç†æ²™å†³æ­»æŠ€èƒ½ç©ºç‰©ä½“
             if (marisaSuperObject != null)
             {
                 marisaSuperObject.SetActive(true);
             }
-            // ¼¤»îÄ§ÀíÉ³¾öËÀ¼¼ÄÜ½Å±¾
+            // æ¿€æ´»é­”ç†æ²™å†³æ­»æŠ€èƒ½è„šæœ¬
             if (marisaSuper != null)
             {
                 marisaSuper.IsAnime = true;
@@ -257,24 +258,24 @@ public class SpellCardEffect : MonoBehaviour
     }
 
     /// <summary>
-    /// ¿ªÊ¼ÊÜ»÷ÑÓ³Ù
+    /// å¼€å§‹å—å‡»å»¶è¿Ÿ
     /// </summary>
     public void StartHitDelay()
     {
-        // Ö»ÓĞÔÚµÍËÙÒÆ¶¯£¨°´ÏÂshift£©ÇÒÓĞ·û¿¨Ê±²Å´¥·¢ÑÓ³Ù
-        if (Input.GetKey(KeyCode.LeftShift) && Global_GameManager.Instance.BombCount > 0)
+        // åªæœ‰åœ¨ä½é€Ÿç§»åŠ¨ï¼ˆæŒ‰ä¸‹shiftï¼‰ä¸”æœ‰ç¬¦å¡æ—¶æ‰è§¦å‘å»¶è¿Ÿ
+        if (ReplayManager.Input.GetKey(LogicalKey.Slow) && Global_GameManager.Instance.BombCount > 0)
         {
             isHitDelayActive = true;
             Time.timeScale = 0f;
-            Debug.Log("½øÈë¾öËÀÔ¤±¸×´Ì¬");
+            Debug.Log("è¿›å…¥å†³æ­»é¢„å¤‡çŠ¶æ€");
             if (DelayClip != null)
             {
-                // ²¥·Å¾öËÀÑÓ³ÙÒôĞ§
+                // æ’­æ”¾å†³æ­»å»¶è¿ŸéŸ³æ•ˆ
                 Global_AudioManager.Instance.PlaySFX(DelayClip);
             }
             else
             {
-                Debug.Log("Ã»ÓĞ¾öËÀÑÓ³ÙÒôĞ§");
+                Debug.Log("æ²¡æœ‰å†³æ­»å»¶è¿ŸéŸ³æ•ˆ");
             }
             hitDelayCoroutine = StartCoroutine(HitDelayCoroutine());
         }
@@ -282,16 +283,16 @@ public class SpellCardEffect : MonoBehaviour
         {
             if (BeHitClip != null)
             {
-                // ²¥·ÅÖĞµ¯ÒôĞ§
+                // æ’­æ”¾ä¸­å¼¹éŸ³æ•ˆ
                 Global_AudioManager.Instance.PlaySFX(BeHitClip);
             }
-            // Ã»ÓĞ°´shift»òÃ»ÓĞ·û¿¨Ê±£¬Ö±½ÓÖ´ĞĞËÀÍöÂß¼­
+            // æ²¡æœ‰æŒ‰shiftæˆ–æ²¡æœ‰ç¬¦å¡æ—¶ï¼Œç›´æ¥æ‰§è¡Œæ­»äº¡é€»è¾‘
             Global_GameManager.Instance.SubLeftLife();
         }
     }
 
     /// <summary>
-    /// ÊÜ»÷ÑÓ³ÙĞ­³Ì
+    /// å—å‡»å»¶è¿Ÿåç¨‹
     /// </summary>
     private IEnumerator HitDelayCoroutine()
     {
@@ -302,11 +303,11 @@ public class SpellCardEffect : MonoBehaviour
             Time.timeScale = 1f;
             if (BeHitClip != null)
             {
-                // ²¥·ÅÖĞµ¯ÒôĞ§
+                // æ’­æ”¾ä¸­å¼¹éŸ³æ•ˆ
                 Global_AudioManager.Instance.PlaySFX(BeHitClip);
             }
             isHitDelayActive = false;
-            // Ö´ĞĞÕı³£ËÀÍöÂß¼­
+            // æ‰§è¡Œæ­£å¸¸æ­»äº¡é€»è¾‘
             Global_GameManager.Instance.SubLeftLife();
         }
     }
@@ -314,61 +315,61 @@ public class SpellCardEffect : MonoBehaviour
     #endregion
 
     /// <summary>
-    /// ×Ó½Å±¾¶¯»­½áÊø»Øµ÷
+    /// å­è„šæœ¬åŠ¨ç”»ç»“æŸå›è°ƒ
     /// </summary>
-    /// <param name="skillType">¼¼ÄÜÀàĞÍ£º1-ÁéÃÎ³£¹æ£¬2-ÁéÃÎ¾öËÀ£¬3-Ä§ÀíÉ³³£¹æ£¬4-Ä§ÀíÉ³¾öËÀ</param>
+    /// <param name="skillType">æŠ€èƒ½ç±»å‹ï¼š1-çµæ¢¦å¸¸è§„ï¼Œ2-çµæ¢¦å†³æ­»ï¼Œ3-é­”ç†æ²™å¸¸è§„ï¼Œ4-é­”ç†æ²™å†³æ­»</param>
     public void OnChildAnimationEnd(int skillType)
     {
         isAnimating = false;
 
-        // ½â³ıÎŞµĞ×´Ì¬
+        // è§£é™¤æ— æ•ŒçŠ¶æ€
         Global_GameManager.Instance.state = State.Gaming;
 
-        // ¼ì²âÍæ¼Ò°´¼ü×´Ì¬²¢ÖØÖÃ¶¯»­×´Ì¬
+        // æ£€æµ‹ç©å®¶æŒ‰é”®çŠ¶æ€å¹¶é‡ç½®åŠ¨ç”»çŠ¶æ€
         ResetPlayerAnimationState();
 
-        // ½ûÓÃ¶ÔÓ¦¼¼ÄÜ¿ÕÎïÌå
+        // ç¦ç”¨å¯¹åº”æŠ€èƒ½ç©ºç‰©ä½“
         switch (skillType)
         {
-            case 1: // ÁéÃÎ³£¹æ
+            case 1: // çµæ¢¦å¸¸è§„
                 if (reimuNormalObject != null)
                 {
                     reimuNormalObject.SetActive(false);
                 }
                 break;
-            case 2: // ÁéÃÎ¾öËÀ
+            case 2: // çµæ¢¦å†³æ­»
                 if (reimuSuperObject != null)
                 {
                     reimuSuperObject.SetActive(false);
                 }
-                // »Ö¸´ÒôÀÖ
+                // æ¢å¤éŸ³ä¹
                 ResumeMusic();
                 break;
-            case 3: // Ä§ÀíÉ³³£¹æ
+            case 3: // é­”ç†æ²™å¸¸è§„
                 if (marisaNormalObject != null)
                 {
                     marisaNormalObject.SetActive(false);
                 }
                 break;
-            case 4: // Ä§ÀíÉ³¾öËÀ
+            case 4: // é­”ç†æ²™å†³æ­»
                 if (marisaSuperObject != null)
                 {
                     marisaSuperObject.SetActive(false);
                 }
-                // »Ö¸´ÒôÀÖ
+                // æ¢å¤éŸ³ä¹
                 ResumeMusic();
                 break;
         }
 
-        Debug.Log($"¼¼ÄÜ {skillType} ¶¯»­½áÊø");
+        Debug.Log($"æŠ€èƒ½ {skillType} åŠ¨ç”»ç»“æŸ");
     }
     
     /// <summary>
-    /// »Ö¸´ÒôÀÖ²¥·Å
+    /// æ¢å¤éŸ³ä¹æ’­æ”¾
     /// </summary>
     private void ResumeMusic()
     {
-        // »Ö¸´Ö®Ç°µÄBGM
+        // æ¢å¤ä¹‹å‰çš„BGM
         if(Global_AudioManager.Instance != null && !string.IsNullOrEmpty(currentBGMName))
         {
             Global_AudioManager.Instance.PlayBGM(currentBGMName);
@@ -377,8 +378,8 @@ public class SpellCardEffect : MonoBehaviour
     }
 
     /// <summary>
-    /// ÖØÖÃÍæ¼Ò¶¯»­×´Ì¬
-    /// ¼ì²âµ±Ç°°´¼ü×´Ì¬²¢¸üĞÂÍæ¼Ò¶¯»­
+    /// é‡ç½®ç©å®¶åŠ¨ç”»çŠ¶æ€
+    /// æ£€æµ‹å½“å‰æŒ‰é”®çŠ¶æ€å¹¶æ›´æ–°ç©å®¶åŠ¨ç”»
     /// </summary>
     private void ResetPlayerAnimationState()
     {
@@ -389,85 +390,85 @@ public class SpellCardEffect : MonoBehaviour
             
             if (playerAnime != null)
             {
-                // ¼ì²â×óshift°´¼ü×´Ì¬
-                bool isShiftPressed = Input.GetKey(KeyCode.LeftShift);
-                // ¸ù¾İshift°´¼ü×´Ì¬ÉèÖÃÒÆËÙºÍ¶¯»­
+                // æ£€æµ‹å·¦shiftæŒ‰é”®çŠ¶æ€
+                bool isShiftPressed = ReplayManager.Input.GetKey(LogicalKey.Slow);
+                // æ ¹æ®shiftæŒ‰é”®çŠ¶æ€è®¾ç½®ç§»é€Ÿå’ŒåŠ¨ç”»
                 if (isShiftPressed)
                 {
-                    // µÍËÙÌ¬
+                    // ä½é€Ÿæ€
                     playerAnime.SetMoveSpeed(playerAnime.MoveSpeed * 0.4f);
                     playerAnime.StartPandingAnime();
                 }
                 else
                 {
-                    // ¿ìËÙÌ¬
+                    // å¿«é€Ÿæ€
                     playerAnime.SetMoveSpeed(playerAnime.MoveSpeed);
                     playerAnime.StopPandingAnime();
                 }
-                // ÖØÖÃÄ§ÀíÉ³µÄÒÆËÙºÍ¶¯»­×´Ì¬
+                // é‡ç½®é­”ç†æ²™çš„ç§»é€Ÿå’ŒåŠ¨ç”»çŠ¶æ€
                 if (Global_GameManager.Instance.character == Character.Marisa)
                 {
-                    // ÖØÖÃ¼¼ÄÜ¼õËÙ×´Ì¬
+                    // é‡ç½®æŠ€èƒ½å‡é€ŸçŠ¶æ€
                     MarisaNormal.IsSkillSlowDown = false;
                     
-                    // ÖØÖÃ¶ñÄ§Ö®ÑÛºÍ°µÓ°ÊÓ½ç
+                    // é‡ç½®æ¶é­”ä¹‹çœ¼å’Œæš—å½±è§†ç•Œ
                     ResetEvilEffects();
                 }
             }
             
-            // ÖØÖÃGunAnime×´Ì¬
+            // é‡ç½®GunAnimeçŠ¶æ€
             if (gunAnime != null && Global_GameManager.Instance.character == Character.Marisa)
             {
-                // ¼ì²â×óshift°´¼ü×´Ì¬
-                bool isShiftPressed = Input.GetKey(KeyCode.LeftShift);
+                // æ£€æµ‹å·¦shiftæŒ‰é”®çŠ¶æ€
+                bool isShiftPressed = ReplayManager.Input.GetKey(LogicalKey.Slow);
                 
-                // ÖØÖÃÄ§·¨×´Ì¬
+                // é‡ç½®é­”æ³•çŠ¶æ€
                 gunAnime.isExitingMagic = false;
                 
-                // ¸ù¾İshift°´¼ü×´Ì¬ÇĞ»»ÎäÆ÷
+                // æ ¹æ®shiftæŒ‰é”®çŠ¶æ€åˆ‡æ¢æ­¦å™¨
                 if (isShiftPressed)
                 {
-                    // °´ÏÂshift£¬ÇĞ»»µ½Æßê×Ä§·¨Ì¬
+                    // æŒ‰ä¸‹shiftï¼Œåˆ‡æ¢åˆ°ä¸ƒæ›œé­”æ³•æ€
                     gunAnime.Index = 2;
                 }
                 else
                 {
-                    // Î´°´ÏÂshift£¬ÇĞ»»µ½Ä§ÀíÉ³³£Ì¬
+                    // æœªæŒ‰ä¸‹shiftï¼Œåˆ‡æ¢åˆ°é­”ç†æ²™å¸¸æ€
                     gunAnime.Index = 1;
                 }
             }           
-            // Ö´ĞĞÎäÆ÷ÇĞ»»
+            // æ‰§è¡Œæ­¦å™¨åˆ‡æ¢
             gunAnime.SwitchGun();
             gunAnime.UpdateGunPos();
         }
     }
     
     /// <summary>
-    /// ÖØÖÃ¶ñÄ§Ö®ÑÛºÍ°µÓ°ÊÓ½çĞ§¹û
+    /// é‡ç½®æ¶é­”ä¹‹çœ¼å’Œæš—å½±è§†ç•Œæ•ˆæœ
     /// </summary>
     private void ResetEvilEffects()
     {
-        // ¼ì²éÊÇ·ñĞèÒªÖØÖÃ¶ñÄ§Ö®ÑÛ
+        // æ£€æŸ¥æ˜¯å¦éœ€è¦é‡ç½®æ¶é­”ä¹‹çœ¼
         if (evilEyeAttack != null && wasEvilEyeActive)
         {
-            // ¿ªÊ¼¶ñÄ§Ö®ÑÛµ­³ö
+            // å¼€å§‹æ¶é­”ä¹‹çœ¼æ·¡å‡º
             evilEyeAttack.StartFadeOut();
         }
         
-        // ¼ì²éÊÇ·ñĞèÒªÖØÖÃ°µÓ°ÊÓ½ç
+        // æ£€æŸ¥æ˜¯å¦éœ€è¦é‡ç½®æš—å½±è§†ç•Œ
         if (evilShadow != null && wasEvilShadowActive)
         {
-            // ¿ªÊ¼°µÓ°ÊÓ½çµ­³ö
+            // å¼€å§‹æš—å½±è§†ç•Œæ·¡å‡º
             evilShadow.StartFadeOut();
         }
         
-        // ÖØÖÃ´æ´¢µÄ×´Ì¬
+        // é‡ç½®å­˜å‚¨çš„çŠ¶æ€
         wasEvilEyeActive = false;
         wasEvilShadowActive = false;
     }
 
     /// <summary>
-    /// Çå³ıÆÁÄ»×Óµ¯£¨¹©×Ó½Å±¾µ÷ÓÃ£©
+    /// æ¸…é™¤å±å¹•å­å¼¹ï¼ˆä¾›å­è„šæœ¬è°ƒç”¨ï¼‰
     /// </summary>
     public void ClearAllBullet()
     {
@@ -483,23 +484,23 @@ public class SpellCardEffect : MonoBehaviour
     }
 
     /// <summary>
-    /// ÊÕÈ¡³¡ÉÏËùÓĞµÀ¾ß£¨Óë»ØÊÕÏßÊÕÈ¡Âß¼­Ò»ÖÂ£©
+    /// æ”¶å–åœºä¸Šæ‰€æœ‰é“å…·ï¼ˆä¸å›æ”¶çº¿æ”¶å–é€»è¾‘ä¸€è‡´ï¼‰
     /// </summary>
     private void CollectAllItems()
     {
-        // ²éÕÒ³¡¾°ÖĞËùÓĞµÄAboutItem×é¼ş
+        // æŸ¥æ‰¾åœºæ™¯ä¸­æ‰€æœ‰çš„AboutItemç»„ä»¶
         AboutItem[] allItems = FindObjectsOfType<AboutItem>();
         
         foreach (AboutItem item in allItems)
         {
-            // Ö»ÓĞÎ´ÔÚÊÕ¼¯×´Ì¬ÇÒÎ´ÔÚ×Ô¶¯·ÉĞĞµÄµÀ¾ß²Å»á±»ÊÕÈ¡
+            // åªæœ‰æœªåœ¨æ”¶é›†çŠ¶æ€ä¸”æœªåœ¨è‡ªåŠ¨é£è¡Œçš„é“å…·æ‰ä¼šè¢«æ”¶å–
             if (!item.IsCollecting && !item.IsAutoFlying)
             {
-                // ´¥·¢·ÉÏòÍæ¼ÒµÄÊÕ¼¯Âß¼­£¨Óë»ØÊÕÏß´¥·¢Ò»ÖÂ£©
+                // è§¦å‘é£å‘ç©å®¶çš„æ”¶é›†é€»è¾‘ï¼ˆä¸å›æ”¶çº¿è§¦å‘ä¸€è‡´ï¼‰
                 item.FlyToPlayer(player.transform, true);
             }
         }
         
-        Debug.Log($"·û¿¨ÊÍ·ÅÊ±ÊÕÈ¡ÁË {allItems.Length} ¸öµÀ¾ß");
+        Debug.Log($"ç¬¦å¡é‡Šæ”¾æ—¶æ”¶å–äº† {allItems.Length} ä¸ªé“å…·");
     }
 }

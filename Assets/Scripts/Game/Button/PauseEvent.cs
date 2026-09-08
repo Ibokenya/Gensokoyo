@@ -1,321 +1,409 @@
-using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using ReplaySystem;
 
 public class PauseEvent : MonoBehaviour
 {
-    [Header("ÔİÍ£½çÃæ°´Å¥")]
+    [Header("æš‚åœç•Œé¢æŒ‰é’®")]
     public List<TextMeshProUGUI> pauseButtons = new();
-    public GameObject Really;// ´æ´¢È·ÈÏ¼üµÄ¿ÕÎïÌå
-    public TextMeshProUGUI Yes;// È·ÈÏ¼üµÄÎÄ±¾×é¼ş
-    public TextMeshProUGUI No;// È¡Ïû¼üµÄÎÄ±¾×é¼ş
-    public PauseUI pauseUI;// ÔİÍ£½çÃæµÄ½Å±¾×é¼şÒıÓÃ
-    public AudioClip Choose;// Ñ¡ÔñÒôĞ§
-    public AudioClip Click;// µã»÷ÒôĞ§
-    public AudioClip Stop;// Í£Ö¹ÒôĞ§
+    public GameObject Really; // Yes/No çˆ¶ç‰©ä½“ï¼ˆä¸¤ä¸ªçŠ¶æ€å…±ç”¨åŒä¸€ä¸ªé¢æ¿ï¼Œé ä½ç½®åŒºåˆ†ï¼šç¡®è®¤æ‰§è¡Œâ†’æŒ‰é’®åŸä½ï¼›ä¿å­˜å›æ”¾â†’pos ä¸‹æ–¹ï¼‰
+    public TextMeshProUGUI Yes;
+    public TextMeshProUGUI No;
+    public TextMeshProUGUI DescriptionText;
+    public PauseUI pauseUI;
+    public AudioClip Choose;
+    public AudioClip Click;
+    public AudioClip Stop;
 
-    public GameObject pausePanel1;// ÔİÍ£½çÃæµÄ¸ùÎïÌå
-    public GameObject pausePanel2;// ÔİÍ£½çÃæµÄ¸ùÎïÌå
-    public GameObject pausePanel3;// ÔİÍ£½çÃæµÄ¸ùÎïÌå
+    public GameObject pausePanel1;
+    public GameObject pausePanel2;
+    public GameObject pausePanel3;
 
-    [Header("ËµÃ÷ÊéÏà¹Ø")]
-    public List<TextMeshProUGUI> manualTexts = new();// ËµÃ÷ÊéÄ¿Â¼
-    public List<TextMeshProUGUI> manualPanels = new();// ËµÃ÷ÊéÒ³Ãæ
-    public GameObject manualPanel;// ËµÃ÷Êé±¾Éí
-    public GameObject manual;// ËµÃ÷Êélogo
-    public GameObject shadel;// ÕÚÕÖÎïÌå
+    [Header("è¯´æ˜ä¹¦ç›¸å…³")]
+    public List<TextMeshProUGUI> manualTexts = new();
+    public List<TextMeshProUGUI> manualPanels = new();
+    public GameObject manualPanel;
+    public GameObject manual;
+    public GameObject shadel;
 
-    private readonly float NoneAlpha = 0.3f;
-    private readonly float FullAlpha = 1f;
-    private int index = 0;// µ±Ç°Ñ¡ÖĞµÄ°´Å¥Ë÷Òı
-    private bool isReally = false;// ÊÇ·ñÊÇ¡°È·ÈÏ²Ù×÷¡±»·½Ú
-    private bool YesOrNo = false;// ÊÇ»ò·ñ£¿
+    private readonly Color CancelAlphaColor = new (1,1,1,0.3f);
+    private readonly Color FullAlphaColor = new (1,1,1,1f);
 
-    // ËµÃ÷ÊéÏà¹Ø±äÁ¿
-    private Color darkColor = new (0.5f, 0.5f, 0.5f);
-    private Color lightColor = new (1f, 1f, 1f);
+    private int  index = 0;        // å½“å‰é€‰ä¸­çš„ pauseButton ç´¢å¼•
+    private bool isReally = false; // æ˜¯å¦å¤„äº"ç¡®è®¤æ‰§è¡ŒæŒ‰é’®æ“ä½œ"ç¯èŠ‚ï¼ˆç¬¬ä¸€å±‚ï¼‰
+    private bool isRecording = false; // æ˜¯å¦å¤„äº"ä¿å­˜å›æ”¾ç¡®è®¤"ç¯èŠ‚ï¼ˆç¬¬äºŒå±‚ï¼‰
+    private bool YesOrNo = false;  // é»˜è®¤é€‰ No
+
+    // è¯´æ˜ä¹¦ç›¸å…³å˜é‡
+    private readonly Color darkColor = new(0.5f, 0.5f, 0.5f);
+    private readonly Color lightColor = new(1f, 1f, 1f);
+    private readonly Vector3 savePanelPos = new(0, -300, 0); // ä¿å­˜å›æ”¾ç¡®è®¤é¢æ¿ä½ç½®
     private readonly float PanelAlpha = 0.7f;
-    private int manualIndex = 0;
-    private int lastManualIndex = 0;
-    private bool isManualIndex = true;// ÊÇ·ñÊÇË÷ÒıÒ³
-    private bool isManualActive = false;// ËµÃ÷ÊéÊÇ·ñ¼¤»î
+    private int  manualIndex = 0;
+    private int  lastManualIndex = 0;
+    private bool isManualIndex = true;
+    private bool isManualActive = false;
+
+    // ---- ç”Ÿå‘½å‘¨æœŸ ----
 
     void OnEnable()
     {
         index = 0;
-        BeChoose(index,true);
+        BeChoose(index, true);
         Really.SetActive(false);
         isReally = false;
-        
-        // ³õÊ¼»¯ËµÃ÷Êé×´Ì¬
+        isRecording = false;
+
+        // åˆå§‹åŒ–è¯´æ˜ä¹¦çŠ¶æ€
         manualIndex = 0;
         isManualIndex = true;
         isManualActive = false;
-        if (manual != null)
-        {
-            manual.SetActive(false);
-        }
-        if (manualPanel != null)
-        {
-            manualPanel.SetActive(false);
-        }
-        if (shadel != null)
-        {
-            shadel.SetActive(false);
-        }
-        // ³õÊ¼»¯ËµÃ÷ÊéÄ¿Â¼ÑÕÉ«
-        foreach (TextMeshProUGUI text in manualTexts)
-        {
-            text.color = darkColor;
-        }
-        if (manualTexts.Count > 0)
-        {
-            manualTexts[0].color = lightColor;
-        }
-        // ³õÊ¼»¯ËµÃ÷ÊéÒ³ÃæÍ¸Ã÷¶È
-        foreach (TextMeshProUGUI panel in manualPanels)
-        {
-            panel.alpha = 0;
-        }
+        if (manual != null) manual.SetActive(false);
+        if (manualPanel != null) manualPanel.SetActive(false);
+        if (shadel != null) shadel.SetActive(false);
+
+        foreach (TextMeshProUGUI text in manualTexts) text.color = darkColor;
+        if (manualTexts.Count > 0 && manualTexts[0] != null) manualTexts[0].color = lightColor;
+        foreach (TextMeshProUGUI panel in manualPanels) panel.alpha = 0;
     }
 
     void OnDisable()
     {
-        BeChooseCancel(index);
+        // é€€å‡ºæš‚åœèœå•ï¼šæ¸…æ‰æ‰€æœ‰é«˜äº®
+        foreach (var btn in pauseButtons) btn.color = CancelAlphaColor;
+        pauseButtons[0].color = FullAlphaColor;
+        Really.SetActive(false);
+        isReally = false;
+        isRecording = false;
     }
 
+    // æš‚åœèœå•å¯¼èˆªåœ¨ Updateï¼štimeScale=0 åä¹Ÿè¦èƒ½ç»§ç»­
     void Update()
     {
         CheckChoose();
     }
 
+    // ---- ä¸»è°ƒåº¦ ----
+
     private void CheckChoose()
     {
-        // ËµÃ÷Êé¼¤»îÊ±µÄ´¦Àí
+        // è¯´æ˜ä¹¦æ¿€æ´»æ—¶ä¼˜å…ˆå¤„ç†ï¼ˆä¸ç»è¿‡ isReally/isRecordingï¼‰
         if (isManualActive)
         {
-            if (Input.GetKeyDown(KeyCode.UpArrow))
-            {
-                lastManualIndex = manualIndex;
-                manualIndex = (manualIndex - 1 + manualTexts.Count) % manualTexts.Count;
-                UpdateManual();
-            }
-            else if (Input.GetKeyDown(KeyCode.DownArrow))
-            {
-                lastManualIndex = manualIndex;
-                manualIndex = (manualIndex + 1) % manualTexts.Count;
-                UpdateManual();
-            }
-            else if (Input.GetKeyDown(KeyCode.Z) && isManualIndex)
-            {
-                // ½øÈëÒ³Ì¬
-                Global_AudioManager.Instance.PlaySFX(Click);
-                isManualIndex = false;
-                shadel.SetActive(true);
-                if (manual != null)
-                {
-                    manual.SetActive(false);
-                }
-                foreach (TextMeshProUGUI text in manualTexts)
-                {
-                    text.alpha = 0;
-                }
-                manualPanels[manualIndex].alpha = PanelAlpha;
-            }
-            else if (Input.GetKeyDown(KeyCode.X))
-            {
-                if (!isManualIndex)
-                {
-                    // »ØÍËµ½Ë÷ÒıÌ¬
-                    isManualIndex = true;
-                    shadel.SetActive(false);
-                    if (manual != null)
-                    {
-                        manual.SetActive(true);
-                    }
-                    foreach (TextMeshProUGUI text in manualTexts)
-                    {
-                        text.alpha = 1;
-                    }
-                    manualPanels[manualIndex].alpha = 0;
-                    // ÖØÖÃÄ¿Â¼ÑÕÉ«
-                    foreach (TextMeshProUGUI text in manualTexts)
-                    {
-                        text.color = darkColor;
-                    }
-                    manualTexts[manualIndex].color = lightColor;
-                }
-                else
-                {
-                    // ¹Ø±ÕËµÃ÷Êé£¬·µ»ØÔİÍ£²Ëµ¥
-                    isManualActive = false;
-                    if (manual != null)
-                    {
-                        manual.SetActive(false);
-                    }
-                    if (manualPanel != null)
-                    {
-                        manualPanel.SetActive(false);
-                    }
-                    if (shadel != null)
-                    {
-                        shadel.SetActive(false);
-                    }
-                    pausePanel1.SetActive(true);
-                    pausePanel2.SetActive(true);
-                    pausePanel3.SetActive(true);
-                }
-            }
-            else if (Input.GetKeyDown(KeyCode.Escape))
-            {
-                // ¹Ø±ÕËµÃ÷Êé£¬·µ»ØÔİÍ£²Ëµ¥
-                isManualActive = false;
-                if (manual != null)
-                {
-                    manual.SetActive(false);
-                }
-                if (manualPanel != null)
-                {
-                    manualPanel.SetActive(false);
-                }
-                if (shadel != null)
-                {
-                    shadel.SetActive(false);
-                }
-                pausePanel1.SetActive(true);
-                pausePanel2.SetActive(true);
-                pausePanel3.SetActive(true);
-            }
+            HandleManual();
             return;
         }
 
-        if (isReally)// ÊÇÈ·ÈÏ»·½Ú£¬¼ì²â×óÓÒ£¬Z£¬X£¬ESC¼ü
+        if (isRecording)
         {
-            if(Input.GetKeyDown(KeyCode.LeftArrow)||Input.GetKeyDown(KeyCode.RightArrow))
+            HandleRecordingConfirm(); // ç¬¬äºŒå±‚ï¼šä¿å­˜å›æ”¾ç¡®è®¤
+        }
+        else if (isReally)
+        {
+            HandleActionConfirm();    // ç¬¬ä¸€å±‚ï¼šç¡®è®¤æ‰§è¡ŒæŒ‰é’®æ“ä½œ
+        }
+        else
+        {
+            HandleMenuNavigation();   // éç¡®è®¤ï¼šæŒ‰é’®å¯¼èˆª
+        }
+    }
+
+    // ---- è¯´æ˜ä¹¦ï¼ˆä¿æŒåŸæ ·ï¼‰ ----
+
+    private void HandleManual()
+    {
+        if (Input.GetKeyDown(KeyCode.UpArrow))
+        {
+            lastManualIndex = manualIndex;
+            manualIndex = (manualIndex - 1 + manualTexts.Count) % manualTexts.Count;
+            UpdateManual();
+        }
+        else if (Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            lastManualIndex = manualIndex;
+            manualIndex = (manualIndex + 1) % manualTexts.Count;
+            UpdateManual();
+        }
+        else if (ReplayManager.Input.GetKeyDown(LogicalKey.Fire) && isManualIndex)
+        {
+            Global_AudioManager.Instance.PlaySFX(Click);
+            isManualIndex = false;
+            shadel.SetActive(true);
+            if (manual != null) manual.SetActive(false);
+            foreach (TextMeshProUGUI text in manualTexts) text.alpha = 0;
+            manualPanels[manualIndex].alpha = PanelAlpha;
+        }
+        else if (Input.GetKeyDown(KeyCode.X))
+        {
+            if (!isManualIndex)
             {
-                YesOrNo = !YesOrNo;
-                if(YesOrNo)// YES
+                isManualIndex = true;
+                shadel.SetActive(false);
+                if (manual != null) manual.SetActive(true);
+                foreach (TextMeshProUGUI text in manualTexts) text.alpha = 1;
+                manualPanels[manualIndex].alpha = 0;
+                foreach (TextMeshProUGUI text in manualTexts) text.color = darkColor;
+                manualTexts[manualIndex].color = lightColor;
+            }
+            else
+            {
+                CloseManual();
+            }
+        }
+        else if (ReplayManager.Input.GetKeyDown(LogicalKey.Cancel))
+        {
+            CloseManual();
+        }
+    }
+
+    private void CloseManual()
+    {
+        isManualActive = false;
+        if (manual != null) manual.SetActive(false);
+        if (manualPanel != null) manualPanel.SetActive(false);
+        if (shadel != null) shadel.SetActive(false);
+        pausePanel1.SetActive(true);
+        pausePanel2.SetActive(true);
+        pausePanel3.SetActive(true);
+        BeChoose(index, true);
+    }
+
+    private void UpdateManual()
+    {
+        Global_AudioManager.Instance.PlaySFX(Choose);
+        if (isManualIndex)
+        {
+            manualTexts[lastManualIndex].color = darkColor;
+            manualTexts[manualIndex].color = lightColor;
+        }
+        else
+        {
+            manualPanels[lastManualIndex].alpha = 0;
+            manualPanels[manualIndex].alpha = PanelAlpha;
+        }
+    }
+
+    // ---- ç¬¬ä¸€å±‚ç¡®è®¤ï¼šç¡®è®¤æ‰§è¡ŒæŒ‰é’®æ“ä½œ ----
+
+    private void HandleActionConfirm()
+    {
+        if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow))
+        {
+            YesOrNo = !YesOrNo;
+            UpdateConfirmColor();
+            Global_AudioManager.Instance.PlaySFX(Choose);
+        }
+        else if (ReplayManager.Input.GetKeyDown(LogicalKey.Fire))
+        {
+            if (YesOrNo)
+            {
+                // ç¡®è®¤æ‰§è¡Œ â€”â€” å¦‚æœæ˜¯éœ€è¦ç¦»å¼€æ¸¸æˆçš„æ“ä½œï¼ˆå›èœå•/é‡å¼€ï¼‰ï¼Œå…ˆé—®"ä¿å­˜å›æ”¾ï¼Ÿ"
+                if (NeedsSaveConfirm(index) && IsRecording())
                 {
-                    Yes.alpha = FullAlpha;
-                    No.alpha = NoneAlpha;
+                    EnterRecordingConfirm();
                 }
-                else// NO
+                else
                 {
-                    Yes.alpha = NoneAlpha;
-                    No.alpha = FullAlpha;
+                    CommitAndExecute(index);
                 }
             }
-            else if(Input.GetKeyDown(KeyCode.Z))
-            {
-                if(YesOrNo)// YES
-                {
-                    switch(index)
-                    {
-                        case 0:
-                            pauseUI.Resume();
-                            break;
-                        case 1:
-                            // »ØÊÕËùÓĞµĞÈË
-                            if (Global_GameManager.Instance != null)
-                            {
-                                Global_GameManager.Instance.RecycleAllEnemies();
-                            }
-                            Global_SceneManager.Instance.IntoNextScene("GameStartMenu",false);
-                            // ·µ»ØÓÎÏ·²Ëµ¥
-                            break;
-                        case 2:
-                            // ´ò¿ªËµÃ÷Êé
-                            OpenManual();
-                            break;
-                        case 3:
-                            // ÖØ¿ªÓÎÏ·
-                            Global_SceneManager.Instance.RestartGame();
-                            break;
-                        default:
-                            break;
-                    }
-                }
-                else// NO
-                {
-                    BackToPause();
-                }
-            }
-            else if (Input.GetKeyDown(KeyCode.X)||Input.GetKeyDown(KeyCode.Escape))
+            else
             {
                 BackToPause();
             }
         }
-        else// ²»ÊÇÈ·ÈÏ»·½Ú£¬¼ì²âÉÏÏÂ£¬Z£¬X£¬ESC¼ü
+        else if (Input.GetKeyDown(KeyCode.X) || ReplayManager.Input.GetKeyDown(LogicalKey.Cancel))
         {
-            if (Input.GetKeyDown(KeyCode.UpArrow))
-            {
-                BeChooseCancel(index);
-                if(index==0) index = pauseButtons.Count-1;
-                else index--;
-                BeChoose(index);
-            }
-            else if (Input.GetKeyDown(KeyCode.DownArrow))
-            {
-                BeChooseCancel(index);
-                if(index==pauseButtons.Count-1) index = 0;
-                else index++;
-                BeChoose(index);
-            }
-            else if (Input.GetKeyDown(KeyCode.Z))
-            {
-                BeClick(index);
-            }
-            else if (Input.GetKeyDown(KeyCode.X)||Input.GetKeyDown(KeyCode.Escape))
-            {
-                pauseUI.Resume();
-            }
+            BackToPause();
         }
     }
 
-    private void BeChoose(int index,bool isOnEnable = false)
+    /// <summary>æ˜¯å¦æ˜¯"éœ€è¦ç¦»å¼€æ¸¸æˆ"ã€å› è€Œåº”è¯¢é—®å›æ”¾å»ç•™çš„æŒ‰é’®</summary>
+    private static bool NeedsSaveConfirm(int buttonIndex) =>
+        buttonIndex == 1 || // å›èœå•
+        buttonIndex == 3;   // é‡å¼€
+
+    private static bool IsRecording() =>
+        ReplayManager.Instance != null &&
+        ReplayManager.Instance.CurrentMode == ReplayManager.Mode.Record;
+
+    /// <summary>
+    /// è¿›å…¥"æ˜¯å¦ä¿å­˜å›æ”¾"ç¡®è®¤ï¼ˆç¬¬äºŒå±‚ï¼‰ã€‚
+    /// Really é¢æ¿ä»æŒ‰é’®ä½ç½®ç§»åˆ° savePanelPosï¼ˆ0, -210, 0ï¼‰ï¼Œ
+    /// DescriptionText æ˜¾å¼è¯¢é—®ï¼ŒæŒ‰é’®æ–‡æœ¬ Yes/No å¯¹åº”ä¿å­˜/ä¸ä¿å­˜ã€‚
+    /// </summary>
+    private void EnterRecordingConfirm()
     {
-        if(isOnEnable)
+        isRecording = true;
+        Really.transform.position = DescriptionText.transform.position + savePanelPos;
+        Really.SetActive(true);
+        YesOrNo = false; // é»˜è®¤é€‰ No
+        if (DescriptionText != null) DescriptionText.text = "æ˜¯å¦ä¿å­˜å›æ”¾ï¼Ÿ";
+        UpdateConfirmColor();
+        Global_AudioManager.Instance.PlaySFX(Choose);
+    }
+
+    /// <summary>å¤„ç†ä¿å­˜å›æ”¾ç¡®è®¤ç¯èŠ‚çš„æŒ‰é”®</summary>
+    private void HandleRecordingConfirm()
+    {
+        if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow))
+        {
+            YesOrNo = !YesOrNo;
+            UpdateConfirmColor();
+            Global_AudioManager.Instance.PlaySFX(Choose);
+        }
+        else if (ReplayManager.Input.GetKeyDown(LogicalKey.Fire))
+        {
+            // å…ˆå¤„ç†å›æ”¾æ–‡ä»¶ï¼Œå†çœŸæ­£æ‰§è¡ŒæŒ‰é’®æ“ä½œ
+            if (YesOrNo)
+            {
+                string path = ReplayManager.SaveRecording();
+                Debug.Log($"[ReplayManager] PauseEvent ä¿å­˜å›æ”¾: {path}");
+            }
+            else
+            {
+                ReplayManager.DiscardRecording();
+                Debug.Log("[ReplayManager] PauseEvent ä¸¢å¼ƒå›æ”¾");
+            }
+
+            // å›åˆ° isReally ç¯èŠ‚ï¼Œæ‰§è¡ŒçœŸæ­£çš„æŒ‰é’®æ“ä½œ
+            isRecording = false;
+            CommitAndExecute(index);
+        }
+        else if (Input.GetKeyDown(KeyCode.X) || ReplayManager.Input.GetKeyDown(LogicalKey.Cancel))
+        {
+            // å›é€€åˆ°ä¸Šä¸€å±‚ï¼ˆç¡®è®¤æ‰§è¡Œç¯èŠ‚ï¼‰â€”â€” DescriptionText æ¢å¤ä¸ºæŒ‰é’®ç¡®è®¤æ–‡æœ¬
+            ExitRecordingConfirm();
+        }
+    }
+
+    private void ExitRecordingConfirm()
+    {
+        isRecording = false;
+        YesOrNo = false; // å›åˆ°ä¸Šä¸€å±‚æ—¶ï¼Œé»˜è®¤ä»é€‰ Noï¼ˆä¸æ‰§è¡Œï¼‰
+        UpdateConfirmColor();
+        Global_AudioManager.Instance.PlaySFX(Choose);
+    }
+
+    /// <summary>ä¿å­˜æˆ–ä¸¢å¼ƒå›æ”¾åï¼Œæ‰§è¡Œ pauseButtons[index] çœŸæ­£çš„æ“ä½œ</summary>
+    private void CommitAndExecute(int btnIndex)
+    {
+        // æ— è®ºä¸Šä¸€å±‚æ˜¯ç¡®è®¤æ‰§è¡Œè¿˜æ˜¯ä¸­é€”è·³è¿‡ä¿å­˜ç¡®è®¤é¢æ¿ï¼Œè¿™é‡Œç»Ÿä¸€æ”¶å°¾
+        isReally = false;
+        isRecording = false;
+        Really.SetActive(false);
+
+        switch (btnIndex)
+        {
+            case 0:
+                pauseUI.Resume();
+                break;
+            case 1:
+                // å›èœå•
+                if (Global_GameManager.Instance != null)
+                    Global_GameManager.Instance.RecycleAllEnemies();
+                Global_SceneManager.Instance.IntoNextScene("GameStartMenu", false);
+                break;
+            case 2:
+                OpenManual();
+                break;
+            case 3:
+                // é‡å¼€
+                Global_SceneManager.Instance.RestartGame();
+                break;
+        }
+    }
+
+    // ---- éç¡®è®¤ï¼šæš‚åœèœå•æŒ‰é’®å¯¼èˆª ----
+
+    private void HandleMenuNavigation()
+    {
+        if (Input.GetKeyDown(KeyCode.UpArrow))
+        {
+            BeChooseCancel(index);
+            if (index == 0) index = pauseButtons.Count - 1;
+            else index--;
+            BeChoose(index);
+        }
+        else if (Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            BeChooseCancel(index);
+            if (index == pauseButtons.Count - 1) index = 0;
+            else index++;
+            BeChoose(index);
+        }
+        else if (ReplayManager.Input.GetKeyDown(LogicalKey.Fire))
+        {
+            BeClick(index);
+        }
+        else if (Input.GetKeyDown(KeyCode.X) || ReplayManager.Input.GetKeyDown(LogicalKey.Cancel))
+        {
+            pauseUI.Resume();
+        }
+    }
+
+    // ---- UI è¾…åŠ© ----
+
+    private void BeChoose(int i, bool isOnEnable = false)
+    {
+        if (isOnEnable)
         {
             Global_AudioManager.Instance.PlaySFX(Stop);
             return;
         }
         Global_AudioManager.Instance.PlaySFX(Choose);
-        pauseButtons[index].alpha = FullAlpha;
+        pauseButtons[i].color = FullAlphaColor;
     }
-    private void BeChooseCancel(int index)
+
+    private void BeChooseCancel(int i)
     {
-        pauseButtons[index].alpha = NoneAlpha;
+        pauseButtons[i].color = CancelAlphaColor;
     }
-    private void BeClick(int index)// Ä¬ÈÏ²»ÊÇÈ·ÈÏ»·½Ú
+
+    private void BeClick(int i)
     {
         Global_AudioManager.Instance.PlaySFX(Click);
         isReally = true;
-        Really.SetActive(true);
-        MakeReally(index);
+        MakeReally(i);
     }
 
-    private void MakeReally(int index)
+    private void MakeReally(int i)
     {
-        pauseButtons[index].alpha = 0f;
-        Really.transform.position = pauseButtons[index].transform.position;
+        // ç¬¬ä¸€å±‚ç¡®è®¤ï¼šæŠŠ Really æ”¾åˆ°æŒ‰é’®åŸä½ï¼ˆä¸è¯¥æŒ‰é’®é‡å ï¼‰ï¼ŒYes/No å·¦å³å¹¶æ’
+        pauseButtons[i].alpha = 0f;
+        Really.transform.position = pauseButtons[i].transform.position;
+        Really.SetActive(true);
         YesOrNo = false;
-        Yes.alpha = NoneAlpha;
-        No.alpha = FullAlpha;
+        UpdateConfirmColor();
     }
 
     private void BackToPause()
     {
+        isReally = false;
+        isRecording = false;
         BeChoose(index);
         Really.SetActive(false);
-        isReally = false;
+        if (DescriptionText != null) DescriptionText.text = "";
     }
 
-    /// <summary>
-    /// ´ò¿ªËµÃ÷Êé
-    /// </summary>
+    private void UpdateConfirmColor()
+    {
+        if (YesOrNo)
+        {
+            Yes.color = lightColor;
+            No.color  = darkColor;
+        }
+        else
+        {
+            Yes.color = darkColor;
+            No.color  = lightColor;
+        }
+    }
+
     private void OpenManual()
     {
+        pauseButtons[2].color = FullAlphaColor;
         isManualActive = true;
         isManualIndex = true;
         manualIndex = 0;
@@ -324,57 +412,18 @@ public class PauseEvent : MonoBehaviour
         pausePanel1.SetActive(false);
         pausePanel2.SetActive(false);
         pausePanel3.SetActive(false);
-        
-        // ÏÔÊ¾ËµÃ÷Êé
-        if (manualPanel != null)
-        {
-            manualPanel.SetActive(true);
-        }
-        if (manual != null)
-        {
-            manual.SetActive(true);
-        }
-        if (shadel != null)
-        {
-            shadel.SetActive(false);
-        }
-        
-        // ÖØÖÃÄ¿Â¼ÑÕÉ«
+
+        if (manualPanel != null) manualPanel.SetActive(true);
+        if (manual != null) manual.SetActive(true);
+        if (shadel != null) shadel.SetActive(false);
+
         foreach (TextMeshProUGUI text in manualTexts)
         {
             text.color = darkColor;
             text.alpha = 1;
         }
-        if (manualTexts.Count > 0)
-        {
-            manualTexts[0].color = lightColor;
-        }
-        
-        // ÖØÖÃÒ³ÃæÍ¸Ã÷¶È
-        foreach (TextMeshProUGUI panel in manualPanels)
-        {
-            panel.alpha = 0;
-        }
-    }
+        if (manualTexts.Count > 0) manualTexts[0].color = lightColor;
 
-    /// <summary>
-    /// ¸üĞÂËµÃ÷Êé×´Ì¬
-    /// </summary>
-    private void UpdateManual()
-    {
-        Global_AudioManager.Instance.PlaySFX(Choose);
-        if (isManualIndex)
-        {
-            // Ë÷ÒıÌ¬£¬¸üĞÂÄ¿Â¼ÑÕÉ«
-            manualTexts[lastManualIndex].color = darkColor;
-            manualTexts[manualIndex].color = lightColor;
-        }
-        else
-        {
-            // Ò³Ì¬£¬¸üĞÂÒ³ÃæÏÔÊ¾
-            manualPanels[lastManualIndex].alpha = 0;
-            manualPanels[manualIndex].alpha = PanelAlpha;
-        }
+        foreach (TextMeshProUGUI panel in manualPanels) panel.alpha = 0;
     }
-
 }

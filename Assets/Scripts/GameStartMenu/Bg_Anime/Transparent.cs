@@ -1,4 +1,4 @@
-using System.Collections;
+锘縰sing System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class Transparent : MonoBehaviour
 {
     public GameObject myself;
-    public float TransSpeed = 0.001f;// 按照1->255来计算，最大值是1
+    public float TransSpeed = 0.001f;// 鎸夌収1->255鏉ヨ绠楋紝鏈�澶у�兼槸1
     private bool isAdd = false;
     private Color InitColor;
 

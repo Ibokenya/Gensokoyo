@@ -1,17 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
+using ReplaySystem;
 using UnityEngine;
 
 public class BossBeheve : MonoBehaviour
 {
-    [Header("½×¶Î½Å±¾")]
-    public none1 none1Script; // µÚÒ»½×¶ÎÆÕÍ¨¹¥»÷½Å±¾
-    public card1 card1Script; // µÚÒ»½×¶Î·û¿¨½Å±¾
-    public none2 none2Script; // µÚ¶ş½×¶ÎÆÕÍ¨¹¥»÷½Å±¾
-    public card2 card2Script; // µÚ¶ş½×¶Î·û¿¨½Å±¾
-    public FinalCard finalCardScript; // ×îÖÕ·û¿¨½Å±¾
+    [Header("é˜¶æ®µè„šæœ¬")]
+    public none1 none1Script; // ç¬¬ä¸€é˜¶æ®µæ™®é€šæ”»å‡»è„šæœ¬
+    public card1 card1Script; // ç¬¬ä¸€é˜¶æ®µç¬¦å¡è„šæœ¬
+    public none2 none2Script; // ç¬¬äºŒé˜¶æ®µæ™®é€šæ”»å‡»è„šæœ¬
+    public card2 card2Script; // ç¬¬äºŒé˜¶æ®µç¬¦å¡è„šæœ¬
+    public FinalCard finalCardScript; // æœ€ç»ˆç¬¦å¡è„šæœ¬
     
-    [Header("ÒıÓÃ")]
+    [Header("å¼•ç”¨")]
     public UIManager uiManager;
 
     public GameObject UI;
@@ -29,7 +30,7 @@ public class BossBeheve : MonoBehaviour
     public SpriteRenderer IcePinion_left;
     public SpriteRenderer IcePinion_right;
     public Animator animator;
-    public BossBase bossBase; // Boss»ù´¡ÊôĞÔÒıÓÃ
+    public BossBase bossBase; // BossåŸºç¡€å±æ€§å¼•ç”¨
     
     private float currentTime = 0f;
     private bool hasPlayedCharacterAnimation = false;
@@ -48,26 +49,26 @@ public class BossBeheve : MonoBehaviour
     private bool hasCalledFinalCardCheckOver = false;
 
     private bool hasEndedFinalCard = false;
-    public AudioClip finalOverSound;// ×îÖÕ»÷ÆÆÒôĞ§£¨Peng~~£©
+    public AudioClip finalOverSound;// æœ€ç»ˆå‡»ç ´éŸ³æ•ˆï¼ˆPeng~~ï¼‰
     
-    private void Update()
+    private void FixedUpdate()
     {
-        // »ñÈ¡µ±Ç°ÒôÀÖÊ±¼ä
+        // è·å–å½“å‰éŸ³ä¹æ—¶é—´
         if (Global_AudioManager.Instance != null)
         {
             currentTime = Global_AudioManager.Instance.CurrentBGMTime;
         }
         
-        // ´¦ÀíÊ±¼äÊÂ¼ş
+        // å¤„ç†æ—¶é—´äº‹ä»¶
         HandleTimeEvents();
     }
     
     /// <summary>
-    /// ´¦ÀíÊ±¼äÊÂ¼ş
+    /// å¤„ç†æ—¶é—´äº‹ä»¶
     /// </summary>
     private void HandleTimeEvents()
     {
-        // Ê±¼äÎª0ÃëÊ±£¬²¥·Å½ÇÉ«¶¯»­
+        // æ—¶é—´ä¸º0ç§’æ—¶ï¼Œæ’­æ”¾è§’è‰²åŠ¨ç”»
         if (currentTime >= 0f && currentTime < 1f && !hasPlayedCharacterAnimation)
         {
             BossBG.SetActive(true);
@@ -86,30 +87,30 @@ public class BossBeheve : MonoBehaviour
             hasActivatedUI = true;
         }
 
-        // Ê±¼äÎª5ÃëÊ±£¬¼¤»înone1
+        // æ—¶é—´ä¸º5ç§’æ—¶ï¼Œæ¿€æ´»none1
         if (currentTime >= 5f && currentTime < 6f && !hasActivatedNone1)
         {
             boss.GetComponent<Collider2D>().enabled = true;
-            // ÉèÖÃnone1½×¶ÎÑªÁ¿£¬×ÜÊ±³¤16Ãë£¨5Ãë¼¤»î£¬21Ãë½áÊø£©
+            // è®¾ç½®none1é˜¶æ®µè¡€é‡ï¼Œæ€»æ—¶é•¿16ç§’ï¼ˆ5ç§’æ¿€æ´»ï¼Œ21ç§’ç»“æŸï¼‰
             if (bossBase != null)
             {
                 bossBase.SetPhaseHP_Time(0, 16f);
-                Debug.Log("ÉèÖÃnone1½×¶ÎÑªÁ¿");
+                Debug.Log("è®¾ç½®none1é˜¶æ®µè¡€é‡");
             }
             if (none1Script != null)
             {
                 none1Script.enabled = true;
                 cardUI.SetCard(0);
-                cardUI.SetCardName_1("-170¡æ");
+                cardUI.SetCardName_1("-170â„ƒ");
                 cardUI.SetCardName_2("");
                 cardUI.SetCardColor(0.8f);
                 changeBG.ShowBg("none1", 0.3f);
-                Debug.Log("¼¤»înone1");
+                Debug.Log("æ¿€æ´»none1");
             }
             hasActivatedNone1 = true;
         }
         
-        // Ê±¼äÎª21ÃëÊ±£¬µ÷ÓÃNone1µÄCheckOver()·½·¨
+        // æ—¶é—´ä¸º21ç§’æ—¶ï¼Œè°ƒç”¨None1çš„CheckOver()æ–¹æ³•
         if (currentTime >= 21f && currentTime < 22f && !hasCalledNone1CheckOver)
         {
             if (none1Script != null)
@@ -117,10 +118,10 @@ public class BossBeheve : MonoBehaviour
                 none1Script.CheckOver();
             }
             animator.SetBool("isAnime", true);
-            Debug.Log("µ÷ÓÃnone1.CheckOver()");
+            Debug.Log("è°ƒç”¨none1.CheckOver()");
             changeBG.HideBg();
             bossUI.SetCardTime(23f);
-            // Êä³önone1½×¶ÎÊÜµ½µÄÉËº¦
+            // è¾“å‡ºnone1é˜¶æ®µå—åˆ°çš„ä¼¤å®³
             if (bossBase != null)
             {
                 bossBase.LogPhaseDamage("none1");
@@ -129,34 +130,34 @@ public class BossBeheve : MonoBehaviour
             bossUI.SubLife();
         }
         
-        // Ê±¼äÎª22ÃëÊ±£¬½ûÓÃnone1¼¤»îcard1
+        // æ—¶é—´ä¸º22ç§’æ—¶ï¼Œç¦ç”¨none1æ¿€æ´»card1
         if (currentTime >= 22f && currentTime < 23f && !hasActivatedCard1)
         {
             if (none1Script != null)
             {               
                 none1Script.enabled = false;
-                Debug.Log("½ûÓÃnone1");
+                Debug.Log("ç¦ç”¨none1");
             }
-            // ÉèÖÃcard1½×¶ÎÑªÁ¿£¬×ÜÊ±³¤23Ãë£¨22Ãë¼¤»î£¬45Ãë½áÊø£©
+            // è®¾ç½®card1é˜¶æ®µè¡€é‡ï¼Œæ€»æ—¶é•¿23ç§’ï¼ˆ22ç§’æ¿€æ´»ï¼Œ45ç§’ç»“æŸï¼‰
             if (bossBase != null)
             {
                 bossBase.SetPhaseHP_Time(1, 23f);
-                Debug.Log("ÉèÖÃcard1½×¶ÎÑªÁ¿");
+                Debug.Log("è®¾ç½®card1é˜¶æ®µè¡€é‡");
             }
             if (card1Script != null)
             {
                 card1Script.enabled = true;
                 cardUI.SetCard(1);
-                cardUI.SetCardName_1("-220¡æ");
-                cardUI.SetCardName_2("±ùÀäåçĞÇ´ø");
+                cardUI.SetCardName_1("-220â„ƒ");
+                cardUI.SetCardName_2("å†°å†·å½—æ˜Ÿå¸¦");
                 cardUI.SetCardColor(0.6f);
                 changeBG.ShowBg("card1", 0.3f);
-                Debug.Log("¼¤»îcard1");
+                Debug.Log("æ¿€æ´»card1");
             }
             hasActivatedCard1 = true;
         }
         
-        // Ê±¼äÎª45ÃëÊ±£¬µ÷ÓÃcard1µÄcheckover
+        // æ—¶é—´ä¸º45ç§’æ—¶ï¼Œè°ƒç”¨card1çš„checkover
         if (currentTime >= 45f && currentTime < 46f && !hasCalledCard1CheckOver)
         {
             if (card1Script != null)
@@ -164,10 +165,10 @@ public class BossBeheve : MonoBehaviour
                 card1Script.CheckOver();
             }
             animator.SetBool("isAnime", true);
-            Debug.Log("µ÷ÓÃcard1.CheckOver()");
+            Debug.Log("è°ƒç”¨card1.CheckOver()");
             changeBG.HideBg();
             bossUI.SetCardTime(12f);
-            // Êä³öcard1½×¶ÎÊÜµ½µÄÉËº¦
+            // è¾“å‡ºcard1é˜¶æ®µå—åˆ°çš„ä¼¤å®³
             if (bossBase != null)
             {
                 bossBase.LogPhaseDamage("card1");
@@ -176,34 +177,34 @@ public class BossBeheve : MonoBehaviour
             bossUI.SubLife();
         }
         
-        // Ê±¼äÎª46Ãë£¬½ûÓÃcard1¼¤»înone2
+        // æ—¶é—´ä¸º46ç§’ï¼Œç¦ç”¨card1æ¿€æ´»none2
         if (currentTime >= 46f && currentTime < 47f && !hasActivatedNone2)
         {
             if (card1Script != null)
             {
                 card1Script.enabled = false;
-                Debug.Log("½ûÓÃcard1");
+                Debug.Log("ç¦ç”¨card1");
             }
-            // ÉèÖÃnone2½×¶ÎÑªÁ¿£¬×ÜÊ±³¤12Ãë£¨46Ãë¼¤»î£¬58Ãë½áÊø£©
+            // è®¾ç½®none2é˜¶æ®µè¡€é‡ï¼Œæ€»æ—¶é•¿12ç§’ï¼ˆ46ç§’æ¿€æ´»ï¼Œ58ç§’ç»“æŸï¼‰
             if (bossBase != null)
             {
                 bossBase.SetPhaseHP_Time(2, 12f);
-                Debug.Log("ÉèÖÃnone2½×¶ÎÑªÁ¿");
+                Debug.Log("è®¾ç½®none2é˜¶æ®µè¡€é‡");
             }
             if (none2Script != null)
             {
                 none2Script.enabled = true;
                 cardUI.SetCard(2);
-                cardUI.SetCardName_1("-260¡æ");
+                cardUI.SetCardName_1("-260â„ƒ");
                 cardUI.SetCardName_2("");
                 cardUI.SetCardColor(0.4f);
                 changeBG.ShowBg("none2", 0.3f);
-                Debug.Log("¼¤»înone2");
+                Debug.Log("æ¿€æ´»none2");
             }
             hasActivatedNone2 = true;
         }
         
-        // Ê±¼äÎª58Ãë£¬µ÷ÓÃnone2µÄcheckover
+        // æ—¶é—´ä¸º58ç§’ï¼Œè°ƒç”¨none2çš„checkover
         if (currentTime >= 58f && currentTime < 59f && !hasCalledNone2CheckOver)
         {
             if (none2Script != null)
@@ -211,10 +212,10 @@ public class BossBeheve : MonoBehaviour
                 none2Script.CheckOver();
             }
             animator.SetBool("isAnime", true);
-            Debug.Log("µ÷ÓÃnone2.CheckOver()");
+            Debug.Log("è°ƒç”¨none2.CheckOver()");
             changeBG.HideBg();
             bossUI.SetCardTime(24f);
-            // Êä³önone2½×¶ÎÊÜµ½µÄÉËº¦
+            // è¾“å‡ºnone2é˜¶æ®µå—åˆ°çš„ä¼¤å®³
             if (bossBase != null)
             {
                 bossBase.LogPhaseDamage("none2");
@@ -223,34 +224,34 @@ public class BossBeheve : MonoBehaviour
             bossUI.SubLife();
         }
         
-        // Ê±¼äÎª59Ãë£¬½ûÓÃnone2¼¤»îcard2
+        // æ—¶é—´ä¸º59ç§’ï¼Œç¦ç”¨none2æ¿€æ´»card2
         if (currentTime >= 59f && currentTime < 60f && !hasActivatedCard2)
         {
             if (none2Script != null)
             {
                 none2Script.enabled = false;
-                Debug.Log("½ûÓÃnone2");
+                Debug.Log("ç¦ç”¨none2");
             }
-            // ÉèÖÃcard2½×¶ÎÑªÁ¿£¬×ÜÊ±³¤24Ãë£¨59Ãë¼¤»î£¬83Ãë½áÊø£©
+            // è®¾ç½®card2é˜¶æ®µè¡€é‡ï¼Œæ€»æ—¶é•¿24ç§’ï¼ˆ59ç§’æ¿€æ´»ï¼Œ83ç§’ç»“æŸï¼‰
             if (bossBase != null)
             {
                 bossBase.SetPhaseHP_Time(3, 24f);
-                Debug.Log("ÉèÖÃcard2½×¶ÎÑªÁ¿");
+                Debug.Log("è®¾ç½®card2é˜¶æ®µè¡€é‡");
             }
             if (card2Script != null)
             {
                 card2Script.enabled = true;
                 cardUI.SetCard(3);
-                cardUI.SetCardName_1("-270¡æ");
-                cardUI.SetCardName_2("ÓîÖæÎ¢²¨·øÉä");
+                cardUI.SetCardName_1("-270â„ƒ");
+                cardUI.SetCardName_2("å®‡å®™å¾®æ³¢è¾å°„");
                 cardUI.SetCardColor(0.2f);
                 changeBG.ShowBg("card2", 0.1f);
-                Debug.Log("¼¤»îcard2");
+                Debug.Log("æ¿€æ´»card2");
             }
             hasActivatedCard2 = true;
         }
         
-        // Ê±¼äÎª83Ãë£¬µ÷ÓÃcard2µÄcheckover
+        // æ—¶é—´ä¸º83ç§’ï¼Œè°ƒç”¨card2çš„checkover
         if (currentTime >= 83f && currentTime < 84f && !hasCalledCard2CheckOver)
         {
             if (card2Script != null)
@@ -258,14 +259,14 @@ public class BossBeheve : MonoBehaviour
                 card2Script.CheckOver();
             }
             animator.SetBool("isAnime", true);
-            Debug.Log("µ÷ÓÃcard2.CheckOver()");
+            Debug.Log("è°ƒç”¨card2.CheckOver()");
             changeBG.HideBg();
-            // Êä³öcard2½×¶ÎÊÜµ½µÄÉËº¦
+            // è¾“å‡ºcard2é˜¶æ®µå—åˆ°çš„ä¼¤å®³
             if (bossBase != null)
             {
                 bossBase.LogPhaseDamage("card2");
             }
-            // ÖØÉèÑªÁ¿Ìõ£¨´Ó1%»Øµ½100%£©£¬ÎªfinalCard×ö×¼±¸
+            // é‡è®¾è¡€é‡æ¡ï¼ˆä»1%å›åˆ°100%ï¼‰ï¼Œä¸ºfinalCardåšå‡†å¤‡
             if (bossAnime != null)
             {
                 bossAnime.SetHpBar(10000, 10000);
@@ -274,35 +275,35 @@ public class BossBeheve : MonoBehaviour
             bossUI.SubLife();
         }
         
-        // Ê±¼äÎª84Ãë£¬½ûÓÃcard2²¢µ÷ÓÃBgAndBallon·½·¨
+        // æ—¶é—´ä¸º84ç§’ï¼Œç¦ç”¨card2å¹¶è°ƒç”¨BgAndBallonæ–¹æ³•
         if (currentTime >= 84f && currentTime < 85f && !hasCalledBgAndBallon)
         {
             if (card2Script != null)
             {
                 card2Script.enabled = false;
-                Debug.Log("½ûÓÃcard2");
+                Debug.Log("ç¦ç”¨card2");
             }
-            // ÖØÖÃÎŞµĞ×´Ì¬
+            // é‡ç½®æ— æ•ŒçŠ¶æ€
             bossBase.isNoDead = true;
             bossBase.DefenseRealm.SetActive(true);
             BgAndBallon();
-            Debug.Log("µ÷ÓÃBgAndBallon·½·¨");
+            Debug.Log("è°ƒç”¨BgAndBallonæ–¹æ³•");
             changeBG.ShowBg("balloon", 0.5f);
             hasCalledBgAndBallon = true;
             freezeSystem.IsStop = true;
         }
         
-        // Ê±¼äÎª88Ãë£¬µ÷ÓÃFinalAnime·½·¨
+        // æ—¶é—´ä¸º88ç§’ï¼Œè°ƒç”¨FinalAnimeæ–¹æ³•
         if (currentTime >= 88f && currentTime < 89f && !hasCalledFinalAnime)
         {
             FinalAnime();
             cardUI.SetCard(4);
-            cardUI.SetCardName_1("-273.15¡æ");
-            cardUI.SetCardName_2("È»ºó·Ö×Ó±ã²»ÔÙÔË¶¯ÁË");
+            cardUI.SetCardName_1("-273.15â„ƒ");
+            cardUI.SetCardName_2("ç„¶ååˆ†å­ä¾¿ä¸å†è¿åŠ¨äº†");
             cardUI.SetCardColor(0f);
-            Debug.Log("µ÷ÓÃFinalAnime·½·¨");
+            Debug.Log("è°ƒç”¨FinalAnimeæ–¹æ³•");
             changeBG.HideBg();
-            // µ÷ÓÃConceal·½·¨£¬ÔÚ1ÃëÄÚ½«BossÍ¸Ã÷¶Èµ­³öÎª0.5f²¢Òş²ØÑªÌõ
+            // è°ƒç”¨Concealæ–¹æ³•ï¼Œåœ¨1ç§’å†…å°†Bossé€æ˜åº¦æ·¡å‡ºä¸º0.5få¹¶éšè—è¡€æ¡
             if (bossAnime != null)
             {
                 bossAnime.Conceal();
@@ -312,48 +313,48 @@ public class BossBeheve : MonoBehaviour
             hasCalledFinalAnime = true;
         }
         
-        // Ê±¼äÎª90Ãë£¬¼¤»îfinalcard
+        // æ—¶é—´ä¸º90ç§’ï¼Œæ¿€æ´»finalcard
         if (currentTime >= 90f && currentTime < 91f && !hasActivatedFinalCard)
         {
             if (finalCardScript != null)
             {
-                // ÖØÖÃËøÑª×´Ì¬£¬ÎªFinalCardµÚÈı½×¶Î×ö×¼±¸
+                // é‡ç½®é”è¡€çŠ¶æ€ï¼Œä¸ºFinalCardç¬¬ä¸‰é˜¶æ®µåšå‡†å¤‡
                 bossBase.isLockingHP = false;
-                // ÖØÖÃÎŞµĞ×´Ì¬
+                // é‡ç½®æ— æ•ŒçŠ¶æ€
                 bossBase.isNoDead = false;
                 bossBase.DefenseRealm.SetActive(false);
                 finalCardScript.enabled = true;
                 ShowPinion();         
                 bossUI.SetCardTime(48f);
-                Debug.Log("¼¤»îfinalCard");
+                Debug.Log("æ¿€æ´»finalCard");
                 changeBG.ShowBg("finalCard", 0.4f);
             }
             hasActivatedFinalCard = true;
             freezeSystem.IsStop = false;
         }
         
-        // Ê±¼äÎª138Ãë£¬µ÷ÓÃfinalcardµÄcheckover·½·¨
+        // æ—¶é—´ä¸º138ç§’ï¼Œè°ƒç”¨finalcardçš„checkoveræ–¹æ³•
         if (currentTime >= 138f && currentTime < 139f && !hasCalledFinalCardCheckOver)
         {
             hasCalledFinalCardCheckOver = true;
         }
 
-        // Ê±¼äÎª139Ãë£¬½ûÓÃfinalcard£¬²¢µ÷ÓÃAllOver·½·¨
+        // æ—¶é—´ä¸º139ç§’ï¼Œç¦ç”¨finalcardï¼Œå¹¶è°ƒç”¨AllOveræ–¹æ³•
         if (currentTime >= 139f && currentTime < 140f && !hasEndedFinalCard)
         {
             if (finalCardScript != null)
             {
                 finalCardScript.enabled = false;
-                Debug.Log("½ûÓÃfinalCard");
+                Debug.Log("ç¦ç”¨finalCard");
             }
             AllOver();
-            Debug.Log("Ò»ÇĞ¶¼½áÊøÁË");
+            Debug.Log("ä¸€åˆ‡éƒ½ç»“æŸäº†");
             hasEndedFinalCard = true;
         }
     }
     
     /// <summary>
-    /// ²¥·Å½ÇÉ«¶¯»­
+    /// æ’­æ”¾è§’è‰²åŠ¨ç”»
     /// </summary>
     private void PlayCharacterAnimation()
     {
@@ -361,7 +362,7 @@ public class BossBeheve : MonoBehaviour
     }
     
     /// <summary>
-    /// BgAndBallon·½·¨
+    /// BgAndBallonæ–¹æ³•
     /// </summary>
     private void BgAndBallon()
     {
@@ -369,40 +370,43 @@ public class BossBeheve : MonoBehaviour
     }
     
     /// <summary>
-    /// FinalAnime·½·¨
+    /// FinalAnimeæ–¹æ³•
     /// </summary>
     private void FinalAnime()
     {
-        // ¿Õ·½·¨£¬ÄÚ²¿²»ÊµÏÖ
-        Debug.Log("µ÷ÓÃFinalAnime·½·¨");
+        // ç©ºæ–¹æ³•ï¼Œå†…éƒ¨ä¸å®ç°
+        Debug.Log("è°ƒç”¨FinalAnimeæ–¹æ³•");
     }
     
     /// <summary>
-    /// AllOver·½·¨
-    /// Ê±·û½áÊøºó£¬Ê±¼äÁ÷ËÙ±ä»º£¬²¥·ÅĞÂĞÇ±¬Õ¨¶¯»­£¬Òş²Ø±³¾°£¬²¥·ÅÒôĞ§
+    /// AllOveræ–¹æ³•
+    /// æ—¶ç¬¦ç»“æŸåï¼Œæ—¶é—´æµé€Ÿå˜ç¼“ï¼Œæ’­æ”¾æ–°æ˜Ÿçˆ†ç‚¸åŠ¨ç”»ï¼Œéšè—èƒŒæ™¯ï¼Œæ’­æ”¾éŸ³æ•ˆ
     /// </summary>
     private void AllOver()
     {
-        Time.timeScale = 0.3f;// Ê±¼äÁ÷ËÙ±ä»º
-        changeBG.BeginDeadStarEffect(); // ĞÂĞÇ±¬Õ¨¶¯»­
-        changeBG.HideBg();// Òş²Ø×îÖÕ·û¿¨±³¾°
-        bossShootSystem.HideTerrain();// Òş²ØµØĞÎ
-        bossShootSystem.isAllowAreaLimit = false; // ½ûÓÃÇøÓòÏŞÖÆ¹¥»÷
+        Time.timeScale = 0.3f;// æ—¶é—´æµé€Ÿå˜ç¼“
+        changeBG.BeginDeadStarEffect(); // æ–°æ˜Ÿçˆ†ç‚¸åŠ¨ç”»
+        changeBG.HideBg();// éšè—æœ€ç»ˆç¬¦å¡èƒŒæ™¯
+        bossShootSystem.HideTerrain();// éšè—åœ°å½¢
+        bossShootSystem.isAllowAreaLimit = false; // ç¦ç”¨åŒºåŸŸé™åˆ¶æ”»å‡»
         
-        // µ­³ö±ùÁìÓò²¢½ûÓÃÅö×²Æ÷
+        // æ·¡å‡ºå†°é¢†åŸŸå¹¶ç¦ç”¨ç¢°æ’å™¨
         if (bossShootSystem.IceRealm != null)
         {
             bossShootSystem.IceRealm.StartFadeOut();
         }
 
-        Global_AudioManager.Instance.PlaySFX(finalOverSound);// Ê±·û»÷°ÜÒôĞ§
+        Global_AudioManager.Instance.PlaySFX(finalOverSound);// æ—¶ç¬¦å‡»è´¥éŸ³æ•ˆ
     }
 
     /// <summary>
-    /// ĞÂĞÇ±¬Õ¨½áÊø·½·¨
+    /// æ–°æ˜Ÿçˆ†ç‚¸ç»“æŸæ–¹æ³•
     /// </summary>
     public void ExplosionEnd()
     {
+        // æ¢å¤æ­£å¸¸èŠ‚å¥
+        SimClock.SetScale(1f);
+        // timeScale ä¹Ÿæ˜¾å¼é‡ç½®åˆ° 1ï¼Œç¡®ä¿ Pause/ç»“ç®—æ¢å¤æ—¶ä¸ä¼šè¢« 0.3 æ®‹ç•™å½±å“
         Time.timeScale = 1f;
         bossAnime.ChrinoAnimator.enabled = true;
         bossAnime.ChrinoAnimator.SetBool("IsDie", true);
@@ -416,15 +420,15 @@ public class BossBeheve : MonoBehaviour
     public void ShowFinalUI()
     {
         Time.timeScale = 0f;
-        Debug.Log("ÏÔÊ¾×îÖÕUI");
+        Debug.Log("æ˜¾ç¤ºæœ€ç»ˆUI");
         Global_GameManager.Instance.state=State.FinalUI;
         uiManager.ShowFinalUI();
     }
     
     /// <summary>
-    /// ´¥·¢BossÒÆ¶¯
+    /// è§¦å‘Bossç§»åŠ¨
     /// </summary>
-    /// <param name="direction">ÒÆ¶¯·½Ïò</param>
+    /// <param name="direction">ç§»åŠ¨æ–¹å‘</param>
     public void MoveBoss(BossAnimeType direction)
     {
         if (bossAnime != null)
@@ -434,7 +438,7 @@ public class BossBeheve : MonoBehaviour
     }
 
     /// <summary>
-    /// ÏÔÊ¾±ùÒí
+    /// æ˜¾ç¤ºå†°ç¿¼
     /// </summary>
     public void ShowPinion()
     {

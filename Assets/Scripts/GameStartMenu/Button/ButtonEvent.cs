@@ -1,34 +1,36 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using ReplaySystem;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class ButtonEvent : MonoBehaviour
 {
     /// <summary>
-    /// ĞòÁĞ»¯¸Ã³¡¾°ÄÚ²»Í¬°´Å¥¶ÔÓ¦µÄ·ÖÖ§µÄ´óÎïÌå
-    /// 0£¬¿ªÊ¼²Ëµ¥£¨Ä¬ÈÏ£©
-    /// 1£¬Ñ¡ÔñÄÑ¶È£¨Start£©
-    /// 2£¬Ñ¡ÔñÈËÎï (Start)
-    /// 3£¬ÀúÊ·Õ½¼¨£¨Result£©
-    /// 4£¬ÊÖ²á£¨Manual£©
-    /// 5£¬ÒôÀÖÊÒ£¨MusicRoom£©
-    /// 6£¬ÉèÖÃ£¨Option£©
-    /// <Ïà¹Ø×´Ì¬»ú>
-    /// ±¾³¡¾°ÖĞ´æÔÚ¡ª¡ª¡ª¡ªMenu,CharacterChoose£¬ModeChoose£¬Replay£¬Option£¬MusicRoom£¬ManualÕâĞ©×´Ì¬
-    /// </Ïà¹Ø×´Ì¬»ú>
+    /// åºåˆ—åŒ–è¯¥åœºæ™¯å†…ä¸åŒæŒ‰é’®å¯¹åº”çš„åˆ†æ”¯çš„å¤§ç‰©ä½“
+    /// 0ï¼Œå¼€å§‹èœå•ï¼ˆé»˜è®¤ï¼‰
+    /// 1ï¼Œé€‰æ‹©éš¾åº¦ï¼ˆStartï¼‰
+    /// 2ï¼Œé€‰æ‹©äººç‰© (Start)
+    /// 3ï¼Œå†å²æˆ˜ç»©ï¼ˆResultï¼‰
+    /// 4ï¼Œæ‰‹å†Œï¼ˆManualï¼‰
+    /// 5ï¼ŒéŸ³ä¹å®¤ï¼ˆMusicRoomï¼‰
+    /// 6ï¼Œè®¾ç½®ï¼ˆOptionï¼‰
+    /// <ç›¸å…³çŠ¶æ€æœº>
+    /// æœ¬åœºæ™¯ä¸­å­˜åœ¨â€”â€”â€”â€”Menu,CharacterChooseï¼ŒModeChooseï¼ŒReplayï¼ŒOptionï¼ŒMusicRoomï¼ŒManualè¿™äº›çŠ¶æ€
+    /// </ç›¸å…³çŠ¶æ€æœº>
     /// </summary>
-    [Header("0-²Ëµ¥,1-ÄÑ¶ÈÑ¡Ôñ,2-ÈËÎïÑ¡Ôñ,3-ÀúÊ·Õ½¼¨,4-ÊÖ²á,5-ÒôÀÖÊÒ,6-ÉèÖÃ")]
+    [Header("0-èœå•,1-éš¾åº¦é€‰æ‹©,2-äººç‰©é€‰æ‹©,3-å†å²æˆ˜ç»©,4-æ‰‹å†Œ,5-éŸ³ä¹å®¤,6-è®¾ç½®")]
     public List<GameObject> SceneObjects;
 
-    private bool IsStart = false;// ±êÖ¾Î»£¬¼ÇÂ¼µ±Ç°µÄÑ¡Ôñ½ÇÉ«½çÃæÊÇÓÉStartÒıÆğµÄ£¬»¹ÊÇExStart
+    private bool IsStart = false;// æ ‡å¿—ä½ï¼Œè®°å½•å½“å‰çš„é€‰æ‹©è§’è‰²ç•Œé¢æ˜¯ç”±Startå¼•èµ·çš„ï¼Œè¿˜æ˜¯ExStart
     
-    private float inputCooldown = 0f; // ÊäÈëÀäÈ´Ê±¼ä£¬·ÀÖ¹Í¬Ò»Ö¡ÄÚÖØ¸´´¦ÀíÊäÈë
+    private float inputCooldown = 0f; // è¾“å…¥å†·å´æ—¶é—´ï¼Œé˜²æ­¢åŒä¸€å¸§å†…é‡å¤å¤„ç†è¾“å…¥
 
-    [Header("ÒôĞ§ÉèÖÃ")]
-    [SerializeField] private AudioClip ZSound;   // ZÒôĞ§
-    [SerializeField] private AudioClip XSound;   // XÒôĞ§
-    [SerializeField] private AudioClip ErrorSound;// ²»¿ÉÑ¡ÒôĞ§
+    [Header("éŸ³æ•ˆè®¾ç½®")]
+    [SerializeField] private AudioClip ZSound;   // ZéŸ³æ•ˆ
+    [SerializeField] private AudioClip XSound;   // XéŸ³æ•ˆ
+    [SerializeField] private AudioClip ErrorSound;// ä¸å¯é€‰éŸ³æ•ˆ
 
     void Awake()
     {
@@ -43,15 +45,15 @@ public class ButtonEvent : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // ¸üĞÂÊäÈëÀäÈ´Ê±¼ä
+        // æ›´æ–°è¾“å…¥å†·å´æ—¶é—´
         if (inputCooldown > 0f)
         {
             inputCooldown -= Time.deltaTime;
         }
         if(Global_GameManager.Instance.state!=State.Menu && Global_GameManager.Instance.state != State.Manual
         && Global_GameManager.Instance.state != State.Option)
-            // Èç¹ûÊÇ²Ëµ¥Ì¬Ôò²»¼àÌıÊäÈë,²»ÊÇ²Ëµ¥Ì¬²Å¼àÌıÊäÈë(ManualÌ¬£¬OptionÌ¬ÓĞÄÚ²¿ÍË³öÇé¿ö)
-            //ÎªÊ²Ã´ÄØ£¬ÒòÎªÖ»ÓĞ²Ëµ¥Ì¬Ê±µã»÷X¼ü²»ÊÇÇĞ»»Ğ¡³¡¾°¶øÊÇÑ¡ÖĞ¸ÃĞ¡³¡¾°ÏÂµÄ×îºóÒ»¸ö°´Å¥¡£ÆäËûÇé¿öÏÂ°´X¶¼ÊÇÍË³öĞ¡³¡¾°
+            // å¦‚æœæ˜¯èœå•æ€åˆ™ä¸ç›‘å¬è¾“å…¥,ä¸æ˜¯èœå•æ€æ‰ç›‘å¬è¾“å…¥(Manualæ€ï¼ŒOptionæ€æœ‰å†…éƒ¨é€€å‡ºæƒ…å†µ)
+            //ä¸ºä»€ä¹ˆå‘¢ï¼Œå› ä¸ºåªæœ‰èœå•æ€æ—¶ç‚¹å‡»Xé”®ä¸æ˜¯åˆ‡æ¢å°åœºæ™¯è€Œæ˜¯é€‰ä¸­è¯¥å°åœºæ™¯ä¸‹çš„æœ€åä¸€ä¸ªæŒ‰é’®ã€‚å…¶ä»–æƒ…å†µä¸‹æŒ‰Xéƒ½æ˜¯é€€å‡ºå°åœºæ™¯
         {
             CheckUpDate();
         }
@@ -61,22 +63,22 @@ public class ButtonEvent : MonoBehaviour
     {
         switch(Global_GameManager.Instance.state)
         {
-            case State.CharacterChoose:// Ñ¡½ÇÉ«½çÃæ
+            case State.CharacterChoose:// é€‰è§’è‰²ç•Œé¢
                 CharacterChoose();
                 break;
-            case State.ModeChoose:// Ñ¡ÄÑ¶È½çÃæ
+            case State.ModeChoose:// é€‰éš¾åº¦ç•Œé¢
                 ModeChoose();
                 break;
-            case State.Replay:// »Ø·Å½çÃæ
+            case State.Replay:// å›æ”¾ç•Œé¢
                 Replay();
                 break;
-            case State.MusicRoom:// ÒôÀÖÊÒ½çÃæ
+            case State.MusicRoom:// éŸ³ä¹å®¤ç•Œé¢
                 MusicRoom();
                 break;
         }
     }
 
-    public void Strat_Event()// ½øÈëÑ¡ÔñÄÑ¶È½çÃæ
+    public void Strat_Event()// è¿›å…¥é€‰æ‹©éš¾åº¦ç•Œé¢
     {
         IsStart = true;
         SceneObjects[0].SetActive(false);
@@ -84,7 +86,7 @@ public class ButtonEvent : MonoBehaviour
         Global_GameManager.Instance.state = State.ModeChoose;
     }
 
-    public void ExStart_Event()// ½øÈëÑ¡ÔñÈËÎï½çÃæ
+    public void ExStart_Event()// è¿›å…¥é€‰æ‹©äººç‰©ç•Œé¢
     {
         IsStart = false;
         SceneObjects[0].SetActive(false);
@@ -92,8 +94,8 @@ public class ButtonEvent : MonoBehaviour
         Global_GameManager.Instance.state = State.CharacterChoose;
         Global_GameManager.Instance.gameMode=GameMode.Extra;
         
-        // ÉèÖÃÊäÈëÀäÈ´Ê±¼ä£¬·ÀÖ¹Í¬Ò»Ö¡ÄÚÖØ¸´´¦Àí Z ¼ü
-        inputCooldown = 0.2f; // 0.2ÃëÀäÈ´Ê±¼ä
+        // è®¾ç½®è¾“å…¥å†·å´æ—¶é—´ï¼Œé˜²æ­¢åŒä¸€å¸§å†…é‡å¤å¤„ç† Z é”®
+        inputCooldown = 0.2f; // 0.2ç§’å†·å´æ—¶é—´
     }
 
     public void Result_Event()
@@ -126,7 +128,7 @@ public class ButtonEvent : MonoBehaviour
 
     public void Quit_Event()
     {
-        // ²¥·ÅXÒôĞ§
+        // æ’­æ”¾XéŸ³æ•ˆ
         if (XSound != null)
         {
             Global_AudioManager.Instance.PlaySFX(XSound, false);
@@ -134,7 +136,7 @@ public class ButtonEvent : MonoBehaviour
         Application.Quit();
     }
 
-    public void StartPharse2()// ¿ªÊ¼°´Å¥µÄµÚ¶ş½×¶Î¡ª¡ª¡ª¡ªÑ¡ÔñÍêÄÑ¶Èºó¸ÃÑ¡ÔñÈËÎïÁË
+    public void StartPharse2()// å¼€å§‹æŒ‰é’®çš„ç¬¬äºŒé˜¶æ®µâ€”â€”â€”â€”é€‰æ‹©å®Œéš¾åº¦åè¯¥é€‰æ‹©äººç‰©äº†
     {
         SceneObjects[1].SetActive(false);
         SceneObjects[2].SetActive(true);
@@ -143,7 +145,7 @@ public class ButtonEvent : MonoBehaviour
 
     private void CharacterChoose()
     {
-        // ¼ì²éÊäÈëÀäÈ´£¬·ÀÖ¹Í¬Ò»Ö¡ÄÚÖØ¸´´¦Àí
+        // æ£€æŸ¥è¾“å…¥å†·å´ï¼Œé˜²æ­¢åŒä¸€å¸§å†…é‡å¤å¤„ç†
         if (inputCooldown > 0f)
         {
             return;
@@ -151,12 +153,12 @@ public class ButtonEvent : MonoBehaviour
         
         if (Input.GetKeyDown(KeyCode.X))
         {
-            // ²¥·ÅXÒôĞ§
+            // æ’­æ”¾XéŸ³æ•ˆ
             if (XSound != null)
             {
                 Global_AudioManager.Instance.PlaySFX(XSound, false);
             }
-            if (IsStart)// ÊÇStartµÄ¶ş½×¶Î
+            if (IsStart)// æ˜¯Startçš„äºŒé˜¶æ®µ
             {
                 SceneObjects[2].SetActive(false);
                 SceneObjects[1].SetActive(true);
@@ -173,16 +175,16 @@ public class ButtonEvent : MonoBehaviour
         {
             if(Global_GameManager.Instance.gameMode==GameMode.Extra)
             {
-                // ²¥·ÅZÒôĞ§
+                // æ’­æ”¾ZéŸ³æ•ˆ
                 if (ErrorSound != null)
                 {
                     Global_AudioManager.Instance.PlaySFX(ErrorSound, false);
                 }
-                Debug.Log("ÔİÎ´Êµ×°£¡");
+                Debug.Log("æš‚æœªå®è£…ï¼");
             }
             else
             {
-                // ²¥·ÅZÒôĞ§
+                // æ’­æ”¾ZéŸ³æ•ˆ
                 if (XSound != null)
                 {
                     Global_AudioManager.Instance.PlaySFX(ZSound, false);
@@ -197,7 +199,7 @@ public class ButtonEvent : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.X))
         {
-            // ²¥·ÅXÒôĞ§
+            // æ’­æ”¾XéŸ³æ•ˆ
             if (XSound != null)
             {
                 Global_AudioManager.Instance.PlaySFX(XSound, false);
@@ -209,15 +211,18 @@ public class ButtonEvent : MonoBehaviour
         }
     }
 
+    private List<string> replayFiles = new();
+
+    /// <summary>
+    /// æ—§å›æ”¾é¢æ¿å…¥å£ â€”â€” å·²ç”± ReplayMenu.cs æ¥ç®¡ã€‚
+    /// æ­¤æ–¹æ³•ç•™ç©ºï¼Œé¿å…ä¸ ReplayMenu æŠ¢æŒ‰é”®è¾¹æ²¿ã€‚
+    /// </summary>
     private void Replay()
     {
-        if (Input.GetKeyDown(KeyCode.X))
+        // ReplayMenu ç»„ä»¶ï¼ˆç»‘å®šåœ¨ SceneObjects[3] ä¸Šï¼‰è´Ÿè´£å…¨éƒ¨ UI å’Œè¾“å…¥ã€‚
+        // å¦‚æœ ReplayMenu æ²¡æŒ‚ï¼Œé€€å›åˆ°æ—§é€»è¾‘ï¼ˆDebug æ—¥å¿— + X é€€å‡ºï¼‰
+        if (Input.GetKeyDown(KeyCode.X) || Input.GetKeyDown(KeyCode.Escape))
         {
-            // ²¥·ÅXÒôĞ§
-            if (XSound != null)
-            {
-                Global_AudioManager.Instance.PlaySFX(XSound, false);
-            }
             SceneObjects[3].SetActive(false);
             SceneObjects[0].SetActive(true);
             Global_GameManager.Instance.state = State.Menu;
@@ -235,7 +240,7 @@ public class ButtonEvent : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.X))
         {
-            // ²¥·ÅXÒôĞ§
+            // æ’­æ”¾XéŸ³æ•ˆ
             if (XSound != null)
             {
                 Global_AudioManager.Instance.PlaySFX(XSound, false);

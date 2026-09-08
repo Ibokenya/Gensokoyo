@@ -1,20 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ReplaySystem;
 
 /// <summary>
-/// ±ùÖé×Óµ¯½Å±¾(×Ô´øĞı×ªĞ§¹û)
+/// å†°ç å­å¼¹è„šæœ¬(è‡ªå¸¦æ—‹è½¬æ•ˆæœ)
 /// </summary>
 public class IcePearl : MonoBehaviour
 {
-    public GameObject icePoint; // ±ùµã¶ÔÏó
-    public float rotationSpeed; // Ğı×ªËÙ¶È£¨¶È/Ãë£©
-    public float moveSpeed; // ÒÆ¶¯ËÙ¶È
-    private Vector2 initialDirection; // ³õÊ¼ÒÆ¶¯·½Ïò
-    private float angle; // µ±Ç°Ğı×ª½Ç¶È
-    private float distance; // ¾àÀë±ùµãµÄ¾àÀë
+    public GameObject icePoint; // å†°ç‚¹å¯¹è±¡
+    public float rotationSpeed; // æ—‹è½¬é€Ÿåº¦ï¼ˆåº¦/ç§’ï¼‰
+    public float moveSpeed; // ç§»åŠ¨é€Ÿåº¦
+    private Vector2 initialDirection; // åˆå§‹ç§»åŠ¨æ–¹å‘
+    private float angle; // å½“å‰æ—‹è½¬è§’åº¦
+    private float distance; // è·ç¦»å†°ç‚¹çš„è·ç¦»
     
-    // ±ß½ç·¶Î§
+    // è¾¹ç•ŒèŒƒå›´
     private readonly float minX = -11f;
     private readonly float maxX = 5f;
     private readonly float minY = -7.5f;
@@ -22,47 +23,47 @@ public class IcePearl : MonoBehaviour
     
     void Start()
     {
-        // ¼ÆËã³õÊ¼·½Ïò£¨»ùÓÚµ±Ç°Ğı×ª£©
+        // è®¡ç®—åˆå§‹æ–¹å‘ï¼ˆåŸºäºå½“å‰æ—‹è½¬ï¼‰
         initialDirection = transform.right;
         
-        // ³õÊ¼¾àÀëÎª0
+        // åˆå§‹è·ç¦»ä¸º0
         distance = 0f;
         
-        // ³õÊ¼½Ç¶ÈÎª0
+        // åˆå§‹è§’åº¦ä¸º0
         angle = 0f;
     }
     
-    void Update()
+    void FixedUpdate()
     {
         if (icePoint != null)
         {
-            // ¼ÆËãĞı×ª½Ç¶È
-            angle += rotationSpeed * Time.deltaTime;
+            // è®¡ç®—æ—‹è½¬è§’åº¦
+            angle += rotationSpeed * SimClock.FixedTickDt;
             
-            // ¼ÆËã¾àÀë£¨³ÖĞøÔö¼Ó£©
-            distance += moveSpeed * Time.deltaTime;
+            // è®¡ç®—è·ç¦»ï¼ˆæŒç»­å¢åŠ ï¼‰
+            distance += moveSpeed * SimClock.FixedTickDt;
             
-            // ¼ÆËãĞı×ªºóµÄ·½Ïò
+            // è®¡ç®—æ—‹è½¬åçš„æ–¹å‘
             Vector2 rotatedDirection = Quaternion.Euler(0, 0, angle) * initialDirection;
             
-            // ¼ÆËãĞÂÎ»ÖÃ
+            // è®¡ç®—æ–°ä½ç½®
             Vector2 newPosition = (Vector2)icePoint.transform.position + rotatedDirection * distance;
             
-            // ¸üĞÂÎ»ÖÃ
+            // æ›´æ–°ä½ç½®
             transform.position = newPosition;
             
-            // ¸üĞÂĞı×ª£¨Ê¹×Óµ¯Ê¼ÖÕ³¯ÏòÒÆ¶¯·½Ïò£©
+            // æ›´æ–°æ—‹è½¬ï¼ˆä½¿å­å¼¹å§‹ç»ˆæœå‘ç§»åŠ¨æ–¹å‘ï¼‰
             float angleRad = Mathf.Atan2(rotatedDirection.y, rotatedDirection.x);
             float angleDeg = angleRad * Mathf.Rad2Deg;
             transform.rotation = Quaternion.Euler(0, 0, angleDeg);
         }
         
-        // ¼ì²é±ß½ç
+        // æ£€æŸ¥è¾¹ç•Œ
         CheckBounds();
     }
     
     /// <summary>
-    /// ¼ì²é±ß½ç£¬³¬³ö·¶Î§Ôò»ØÊÕ
+    /// æ£€æŸ¥è¾¹ç•Œï¼Œè¶…å‡ºèŒƒå›´åˆ™å›æ”¶
     /// </summary>
     private void CheckBounds()
     {
@@ -82,20 +83,20 @@ public class IcePearl : MonoBehaviour
     
     void OnEnable()
     {
-        // µ±×Óµ¯±»¼¤»îÊ±£¬ÖØÖÃ²ÎÊı
-        // ¼ÆËã³õÊ¼·½Ïò£¨»ùÓÚµ±Ç°Ğı×ª£©
+        // å½“å­å¼¹è¢«æ¿€æ´»æ—¶ï¼Œé‡ç½®å‚æ•°
+        // è®¡ç®—åˆå§‹æ–¹å‘ï¼ˆåŸºäºå½“å‰æ—‹è½¬ï¼‰
         initialDirection = transform.right;
         
-        // ³õÊ¼¾àÀëÎª0
+        // åˆå§‹è·ç¦»ä¸º0
         distance = 0f;
         
-        // ³õÊ¼½Ç¶ÈÎª0
+        // åˆå§‹è§’åº¦ä¸º0
         angle = 0f;
     }
     
     void OnDisable()
     {
-        // µ±×Óµ¯±»»ØÊÕÊ±£¬ÖØÖÃ²ÎÊı
+        // å½“å­å¼¹è¢«å›æ”¶æ—¶ï¼Œé‡ç½®å‚æ•°
         icePoint = null;
         rotationSpeed = 0f;
         moveSpeed = 0f;

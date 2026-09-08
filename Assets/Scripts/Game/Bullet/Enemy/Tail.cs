@@ -1,29 +1,30 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ReplaySystem;
 
 /// <summary>
-/// ÍÏÎ²µ¯Tail
-/// ÒÆ¶¯Ê±»á²»¶ÏÒÔ¸üµÍµÄËÙ¶È¸´ÖÆ×Ô¼º
-/// ¼§³æ°Ù°ÙÊÀÍ¬¿î
-/// Ã¿´Î¸´ÖÆÁîËÙ¶È-1Ö±µ½Îª0
-/// ×Óµ¯
+/// æ‹–å°¾å¼¹Tail
+/// ç§»åŠ¨æ—¶ä¼šä¸æ–­ä»¥æ›´ä½çš„é€Ÿåº¦å¤åˆ¶è‡ªå·±
+/// å§¬è™«ç™¾ç™¾ä¸–åŒæ¬¾
+/// æ¯æ¬¡å¤åˆ¶ä»¤é€Ÿåº¦-1ç›´åˆ°ä¸º0
+/// å­å¼¹
 /// </summary>
 public class Tail : MonoBehaviour
 {
-    public bool CanClone = true;// ÊÇ·ñ¿ÉÒÔ×ÔÎÒ¸´ÖÆ£¨½öÄ¸µ¯¿ÉÒÔ£©
-    public float Speed = 3f;// ÒÆ¶¯ËÙ¶È
-    public float CloneSpeed = 0.2f;// ¸´ÖÆ¼ä¸ô
-    public float attenuation = 0.5f;// Ë¥¼õÏµÊı
-    public float MinSpeed = 1f;// ×îĞ¡ËÙ¶È(Ğ¡ÓÚ¸ÃÖµ½«²»ÔÙ¸´ÖÆ)
-    public List<Sprite> spriteVariants = new List<Sprite>(); // ×Óµ¯ÑÕÉ«±äÌå
+    public bool CanClone = true;// æ˜¯å¦å¯ä»¥è‡ªæˆ‘å¤åˆ¶ï¼ˆä»…æ¯å¼¹å¯ä»¥ï¼‰
+    public float Speed = 3f;// ç§»åŠ¨é€Ÿåº¦
+    public float CloneSpeed = 0.2f;// å¤åˆ¶é—´éš”
+    public float attenuation = 0.5f;// è¡°å‡ç³»æ•°
+    public float MinSpeed = 1f;// æœ€å°é€Ÿåº¦(å°äºè¯¥å€¼å°†ä¸å†å¤åˆ¶)
+    public List<Sprite> spriteVariants = new List<Sprite>(); // å­å¼¹é¢œè‰²å˜ä½“
     private float cloneTimer = 0f;
-    private float initialSpeed;// Ä¸µ¯³õÊ¼ËÙ¶È
-    private int cloneCount = 0;// ¸´ÖÆ´ÎÊı
+    private float initialSpeed;// æ¯å¼¹åˆå§‹é€Ÿåº¦
+    private int cloneCount = 0;// å¤åˆ¶æ¬¡æ•°
     private Rigidbody2D rb2D;
     public SpriteRenderer spriteRenderer;
     
-    // ±ß½ç·¶Î§
+    // è¾¹ç•ŒèŒƒå›´
     private readonly float minX = -11f;
     private readonly float maxX = 5f;
     private readonly float minY = -7.5f;
@@ -31,39 +32,39 @@ public class Tail : MonoBehaviour
     
     void Start()
     {
-        // »ñÈ¡¸ÕÌå×é¼ş
+        // è·å–åˆšä½“ç»„ä»¶
         rb2D = GetComponent<Rigidbody2D>();
-        // »ñÈ¡¾«ÁéäÖÈ¾Æ÷
+        // è·å–ç²¾çµæ¸²æŸ“å™¨
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
     
     void OnEnable()
     {
-        // È·±£¸ÕÌå×é¼ş´æÔÚ
+        // ç¡®ä¿åˆšä½“ç»„ä»¶å­˜åœ¨
         if (rb2D == null)
         {
             rb2D = GetComponent<Rigidbody2D>();
         }
         
-        // È·±£¾«ÁéäÖÈ¾Æ÷´æÔÚ
+        // ç¡®ä¿ç²¾çµæ¸²æŸ“å™¨å­˜åœ¨
         if (spriteRenderer == null)
         {
             spriteRenderer = GetComponent<SpriteRenderer>();
         }
         
-        // ¼ÇÂ¼³õÊ¼ËÙ¶È
+        // è®°å½•åˆå§‹é€Ÿåº¦
         initialSpeed = Speed;
         
-        // ÉèÖÃ¸ÕÌåËÙ¶È
+        // è®¾ç½®åˆšä½“é€Ÿåº¦
         if (rb2D != null)
         {
             Vector2 direction = transform.up;
             rb2D.velocity = direction * Speed;
-            // È·±£¸ÕÌå²»ÊÇÔË¶¯Ñ§µÄ
+            // ç¡®ä¿åˆšä½“ä¸æ˜¯è¿åŠ¨å­¦çš„
             rb2D.isKinematic = false;
         }
         
-        // Ëæ»úÑ¡ÔñÒ»¸ösprite±äÌå
+        // éšæœºé€‰æ‹©ä¸€ä¸ªspriteå˜ä½“
         if (spriteRenderer != null && spriteVariants.Count > 0)
         {
             int randomIndex = Random.Range(0, spriteVariants.Count);
@@ -71,12 +72,12 @@ public class Tail : MonoBehaviour
         }
     }
     
-    void Update()
+    void FixedUpdate()
     {
-        // Èç¹û¿ÉÒÔ¸´ÖÆ£¬¼ÆÊ±²¢´´½¨¿ËÂ¡Ìå
+        // å¦‚æœå¯ä»¥å¤åˆ¶ï¼Œè®¡æ—¶å¹¶åˆ›å»ºå…‹éš†ä½“
         if (CanClone)
         {
-            cloneTimer += Time.deltaTime;
+            cloneTimer += SimClock.FixedTickDt;
             if (cloneTimer >= CloneSpeed)
             {
                 cloneTimer = 0f;
@@ -84,27 +85,27 @@ public class Tail : MonoBehaviour
             }
         }
         
-        // ±ß½ç¼ì²â
+        // è¾¹ç•Œæ£€æµ‹
         CheckBounds();
     }
     
     /// <summary>
-    /// ´´½¨¿ËÂ¡Ìå
+    /// åˆ›å»ºå…‹éš†ä½“
     /// </summary>
     private void CreateClone()
     {
-        // ¼ÆËã¿ËÂ¡ÌåµÄËÙ¶È
+        // è®¡ç®—å…‹éš†ä½“çš„é€Ÿåº¦
         cloneCount++;
         float cloneSpeed = initialSpeed - (cloneCount * attenuation);
         
-        // Èç¹û¿ËÂ¡ÌåËÙ¶ÈĞ¡ÓÚµÈÓÚ×îĞ¡ËÙ¶È£¬²»ÔÙ´´½¨
+        // å¦‚æœå…‹éš†ä½“é€Ÿåº¦å°äºç­‰äºæœ€å°é€Ÿåº¦ï¼Œä¸å†åˆ›å»º
         if (cloneSpeed <= MinSpeed)
         {
             CanClone = false;
             return;
         }
         
-        // ´´½¨¿ËÂ¡Ìå
+        // åˆ›å»ºå…‹éš†ä½“
         if (Global_ObjectPool.Instance != null)
         {
             GameObject clone = Global_ObjectPool.Instance.GetObject(gameObject, transform.position, transform.rotation);
@@ -112,49 +113,49 @@ public class Tail : MonoBehaviour
             
             if (cloneTail != null)
             {
-                // ÉèÖÃ¿ËÂ¡Ìå²ÎÊı
-                cloneTail.CanClone = false; // ¿ËÂ¡Ìå²»¿É¸´ÖÆ
-                cloneTail.Speed = cloneSpeed; // ¿ËÂ¡ÌåËÙ¶È
+                // è®¾ç½®å…‹éš†ä½“å‚æ•°
+                cloneTail.CanClone = false; // å…‹éš†ä½“ä¸å¯å¤åˆ¶
+                cloneTail.Speed = cloneSpeed; // å…‹éš†ä½“é€Ÿåº¦
                 cloneTail.CloneSpeed = CloneSpeed;
                 cloneTail.attenuation = attenuation;
                 cloneTail.MinSpeed = MinSpeed;
             }
             else
             {
-                Debug.LogError("´´½¨¿ËÂ¡ÌåÊ§°Ü£¬×é¼şÎ´ÕÒµ½");
+                Debug.LogError("åˆ›å»ºå…‹éš†ä½“å¤±è´¥ï¼Œç»„ä»¶æœªæ‰¾åˆ°");
             }
         }
         else
         {
-            // ºó±¸·½°¸£ºÖ±½ÓÊµÀı»¯
+            // åå¤‡æ–¹æ¡ˆï¼šç›´æ¥å®ä¾‹åŒ–
             GameObject clone = Instantiate(gameObject, transform.position, transform.rotation);
             Tail cloneTail = clone.GetComponent<Tail>();
             
             if (cloneTail != null)
             {
-                // ÉèÖÃ¿ËÂ¡Ìå²ÎÊı
-                cloneTail.CanClone = false; // ¿ËÂ¡Ìå²»¿É¸´ÖÆ
-                cloneTail.Speed = cloneSpeed; // ¿ËÂ¡ÌåËÙ¶È
+                // è®¾ç½®å…‹éš†ä½“å‚æ•°
+                cloneTail.CanClone = false; // å…‹éš†ä½“ä¸å¯å¤åˆ¶
+                cloneTail.Speed = cloneSpeed; // å…‹éš†ä½“é€Ÿåº¦
                 cloneTail.CloneSpeed = CloneSpeed;
                 cloneTail.attenuation = attenuation;
                 cloneTail.MinSpeed = MinSpeed;
             }
             else
             {
-                Debug.LogError("´´½¨¿ËÂ¡ÌåÊ§°Ü£¬×é¼şÎ´ÕÒµ½");
+                Debug.LogError("åˆ›å»ºå…‹éš†ä½“å¤±è´¥ï¼Œç»„ä»¶æœªæ‰¾åˆ°");
             }
         }
     }
     
     /// <summary>
-    /// ¼ì²é±ß½ç£¬³¬³ö±ß½çÔò»ØÊÕ
+    /// æ£€æŸ¥è¾¹ç•Œï¼Œè¶…å‡ºè¾¹ç•Œåˆ™å›æ”¶
     /// </summary>
     private void CheckBounds()
     {
         Vector2 position = transform.position;
         if (position.x < minX || position.x > maxX || position.y < minY || position.y > maxY)
         {
-            // ³¬³ö±ß½ç£¬»ØÊÕ×Óµ¯
+            // è¶…å‡ºè¾¹ç•Œï¼Œå›æ”¶å­å¼¹
             if (Global_ObjectPool.Instance != null)
             {
                 Global_ObjectPool.Instance.Recycle(gameObject);

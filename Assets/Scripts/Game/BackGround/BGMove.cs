@@ -1,62 +1,62 @@
-using System.Collections;
+ï»¿using System.Collections;
 using UnityEngine;
 
 public class BGMove : MonoBehaviour
 {
-    [Header("±³¾°Í¼Æ¬ÎïÌåÒıÓÃ")]
-    public GameObject Star;// ÈºĞÇ
-    public GameObject DarkStar;// ºÚ°µÈºĞÇ
-    public GameObject DreamRoad;// »±°²´óµÀ
+    [Header("èƒŒæ™¯å›¾ç‰‡ç‰©ä½“å¼•ç”¨")]
+    public GameObject Star;// ç¾¤æ˜Ÿ
+    public GameObject DarkStar;// é»‘æš—ç¾¤æ˜Ÿ
+    public GameObject DreamRoad;// æ§å®‰å¤§é“
     
-    public GameObject DarkCloud;// ºÚ°µÎïÖÊ
+    public GameObject DarkCloud;// é»‘æš—ç‰©è´¨
 
-    [Header("Á£×ÓÏµÍ³ÒıÓÃ")]
-    public ParticleSystem SpaceDust;// ÓîÖæ³¾°£Á£×ÓÏµÍ³
+    [Header("ç²’å­ç³»ç»Ÿå¼•ç”¨")]
+    public ParticleSystem SpaceDust;// å®‡å®™å°˜åŸƒç²’å­ç³»ç»Ÿ
 
-    [Header("ÄñÃùÒôĞ§")]
-    public AudioClip BirdSound;// ÄñÃùÒôĞ§
-    [Header("½Å±¾ÒıÓÃ")]
-    public ContinueBG continueBG;// ¼ÌĞø±³¾°½Å±¾
+    [Header("é¸Ÿé¸£éŸ³æ•ˆ")]
+    public AudioClip BirdSound;// é¸Ÿé¸£éŸ³æ•ˆ
+    [Header("è„šæœ¬å¼•ç”¨")]
+    public ContinueBG continueBG;// ç»§ç»­èƒŒæ™¯è„šæœ¬
 
-    // Ä¿±êËÙ¶È³£Á¿
-    private const float STAR_TARGET_SPEED = 1.0f; // ÈºĞÇÄ¿±êËÙ¶È
-    private const float DARKSTAR_TARGET_SPEED = 1.2f; // ºÚ°µÈºĞÇÄ¿±êËÙ¶È
-    private const float DREAMROAD_TARGET_SPEED = -10f; // »±°²´óµÀÄ¿±êËÙ¶È
+    // ç›®æ ‡é€Ÿåº¦å¸¸é‡
+    private const float STAR_TARGET_SPEED = 1.0f; // ç¾¤æ˜Ÿç›®æ ‡é€Ÿåº¦
+    private const float DARKSTAR_TARGET_SPEED = 1.2f; // é»‘æš—ç¾¤æ˜Ÿç›®æ ‡é€Ÿåº¦
+    private const float DREAMROAD_TARGET_SPEED = -10f; // æ§å®‰å¤§é“ç›®æ ‡é€Ÿåº¦
 
-    // ´æ´¢Ô­Ê¼ËÙ¶È
+    // å­˜å‚¨åŸå§‹é€Ÿåº¦
     private Vector2 starOriginalSpeed;
     private Vector2 darkstarOriginalSpeed;
     private Vector2 dreamroadOriginalSpeed;
     private Vector2 darkcloudOriginalSpeed;
 
-    // ´æ´¢Ô­Ê¼Á£×Ó×î´óÊıÁ¿
+    // å­˜å‚¨åŸå§‹ç²’å­æœ€å¤§æ•°é‡
     private int originalMaxParticles;
     
-    // ´æ´¢Ğ­³ÌÒıÓÃ
+    // å­˜å‚¨åç¨‹å¼•ç”¨
     private Coroutine controlStarSpeedCoroutine;
     private Coroutine controlDarkCloudCoroutine;
     private Coroutine controlParticleSystemCoroutine;
 
-    // ¶¯»­ÊÂ¼ş´¥·¢·½·¨£¨48sÊ±´¥·¢£©
+    // åŠ¨ç”»äº‹ä»¶è§¦å‘æ–¹æ³•ï¼ˆ48sæ—¶è§¦å‘ï¼‰
     public void StartAnimationEvents()
     {
-        // 48sÊ±Æô¶¯µÚÒ»¸öĞ­³Ì£º¿ØÖÆstar¡¢darkstar¡¢dreamroadµÄËÙ¶È
+        // 48sæ—¶å¯åŠ¨ç¬¬ä¸€ä¸ªåç¨‹ï¼šæ§åˆ¶starã€darkstarã€dreamroadçš„é€Ÿåº¦
         controlStarSpeedCoroutine = StartCoroutine(ControlStarSpeed());
-        // 48sÊ±Æô¶¯µÚ¶ş¸öĞ­³Ì£º¿ØÖÆdarkcloudµÄÍ¸Ã÷¶ÈºÍËÙ¶È
+        // 48sæ—¶å¯åŠ¨ç¬¬äºŒä¸ªåç¨‹ï¼šæ§åˆ¶darkcloudçš„é€æ˜åº¦å’Œé€Ÿåº¦
         controlDarkCloudCoroutine = StartCoroutine(ControlDarkCloud());
-        // 48sÊ±Æô¶¯µÚÈı¸öĞ­³Ì£º¿ØÖÆÁ£×ÓÏµÍ³×î´óÊıÁ¿
+        // 48sæ—¶å¯åŠ¨ç¬¬ä¸‰ä¸ªåç¨‹ï¼šæ§åˆ¶ç²’å­ç³»ç»Ÿæœ€å¤§æ•°é‡
         controlParticleSystemCoroutine = StartCoroutine(ControlParticleSystem());
     }
 
-    // µÚÒ»¸öĞ­³Ì£º¿ØÖÆstar¡¢darkstar¡¢dreamroadµÄËÙ¶ÈÆ½»¬¹ı¶É
+    // ç¬¬ä¸€ä¸ªåç¨‹ï¼šæ§åˆ¶starã€darkstarã€dreamroadçš„é€Ÿåº¦å¹³æ»‘è¿‡æ¸¡
     private IEnumerator ControlStarSpeed()
     {
-        // »ñÈ¡Ô­Ê¼ËÙ¶È
+        // è·å–åŸå§‹é€Ÿåº¦
         if (Star != null) starOriginalSpeed = Star.GetComponent<BGImageScroll>().scrollSpeed;
         if (DarkStar != null) darkstarOriginalSpeed = DarkStar.GetComponent<BGImageScroll>().scrollSpeed;
         if (DreamRoad != null) dreamroadOriginalSpeed = DreamRoad.GetComponent<BGImageScroll>().scrollSpeed;
 
-        // 35ÃëÄÚÆ½»¬¹ı¶Éµ½Ä¿±êËÙ¶È
+        // 35ç§’å†…å¹³æ»‘è¿‡æ¸¡åˆ°ç›®æ ‡é€Ÿåº¦
         float duration = 35f;
         float elapsedTime = 0f;
 
@@ -89,10 +89,10 @@ public class BGMove : MonoBehaviour
             yield return null;
         }
 
-        // µÈ´ı35Ãë
+        // ç­‰å¾…35ç§’
         yield return new WaitForSeconds(35f);
 
-        // 35ÃëÄÚÆ½»¬»Øµ½Ô­ËÙ¶È
+        // 35ç§’å†…å¹³æ»‘å›åˆ°åŸé€Ÿåº¦
         elapsedTime = 0f;
         while (elapsedTime < duration)
         {
@@ -122,20 +122,20 @@ public class BGMove : MonoBehaviour
             elapsedTime += Time.deltaTime;
             yield return null;
         }
-        Debug.Log("ControlStarSpeedĞ­³ÌÍê³É");
+        Debug.Log("ControlStarSpeedåç¨‹å®Œæˆ");
     }
 
-    // µÚ¶ş¸öĞ­³Ì£º¿ØÖÆdarkcloudµÄÍ¸Ã÷¶ÈºÍËÙ¶È±ä»¯
+    // ç¬¬äºŒä¸ªåç¨‹ï¼šæ§åˆ¶darkcloudçš„é€æ˜åº¦å’Œé€Ÿåº¦å˜åŒ–
     private IEnumerator ControlDarkCloud()
     {
-        // »ñÈ¡Ô­Ê¼ËÙ¶È
+        // è·å–åŸå§‹é€Ÿåº¦
         if (DarkCloud != null) darkcloudOriginalSpeed = DarkCloud.GetComponent<BGImageScroll>().scrollSpeed;
 
-        // 35ÃëÄÚÆ½»¬½«Í¸Ã÷¶ÈÉÏÉıµ½1f
+        // 35ç§’å†…å¹³æ»‘å°†é€æ˜åº¦ä¸Šå‡åˆ°1f
         float duration = 35f;
         float elapsedTime = 0f;
         float startAlpha = DarkCloud != null ? DarkCloud.GetComponent<BGImageScroll>().Alpha : 0f;
-        float targetAlpha = 0.3f; // ¿É¸ù¾İ²âÊÔĞèÒªĞŞ¸Ä´ËÖµ
+        float targetAlpha = 0.3f; // å¯æ ¹æ®æµ‹è¯•éœ€è¦ä¿®æ”¹æ­¤å€¼
 
         while (elapsedTime < duration)
         {
@@ -143,13 +143,13 @@ public class BGMove : MonoBehaviour
             
             if (DarkCloud != null)
             {
-                // È·±£ËÙ¶È±£³ÖÎªÔ­Ê¼ËÙ¶È
+                // ç¡®ä¿é€Ÿåº¦ä¿æŒä¸ºåŸå§‹é€Ÿåº¦
                 DarkCloud.GetComponent<BGImageScroll>().scrollSpeed = darkcloudOriginalSpeed;
                                
-                // Æ½»¬µ÷ÕûÍ¸Ã÷¶È
+                // å¹³æ»‘è°ƒæ•´é€æ˜åº¦
                 float currentAlpha = Mathf.Lerp(startAlpha, targetAlpha, t);
                 DarkCloud.GetComponent<BGImageScroll>().Alpha = currentAlpha;
-                // ¸üĞÂ²ÄÖÊÍ¸Ã÷¶È
+                // æ›´æ–°æè´¨é€æ˜åº¦
                 DarkCloud.GetComponent<BGImageScroll>().GetMaterialInstance().SetFloat("_Alpha", currentAlpha);
             }
             
@@ -157,10 +157,10 @@ public class BGMove : MonoBehaviour
             yield return null;
         }
 
-        // µÈ´ı35Ãë
+        // ç­‰å¾…35ç§’
         yield return new WaitForSeconds(35f);
 
-        // 35ÃëÄÚÆ½»¬½«ËÙ¶È½µµÍÖÁ0
+        // 35ç§’å†…å¹³æ»‘å°†é€Ÿåº¦é™ä½è‡³0
         elapsedTime = 0f;
         while (elapsedTime < duration)
         {
@@ -175,27 +175,27 @@ public class BGMove : MonoBehaviour
             elapsedTime += Time.deltaTime;
             yield return null;
         }
-        Debug.Log("ControlDarkCloudĞ­³ÌÍê³É");
+        Debug.Log("ControlDarkCloudåç¨‹å®Œæˆ");
     }
 
-    // µÚÈı¸öĞ­³Ì£º¿ØÖÆÁ£×ÓÏµÍ³×î´óÊıÁ¿
+    // ç¬¬ä¸‰ä¸ªåç¨‹ï¼šæ§åˆ¶ç²’å­ç³»ç»Ÿæœ€å¤§æ•°é‡
     private IEnumerator ControlParticleSystem()
     {
-        // ´æ´¢Ô­Ê¼×î´óÁ£×ÓÊı
+        // å­˜å‚¨åŸå§‹æœ€å¤§ç²’å­æ•°
         if (SpaceDust != null)
         {
             ParticleSystem.MainModule mainModule = SpaceDust.main;
             originalMaxParticles = (int)mainModule.maxParticles;
         }
 
-        // 35ÃëÆÚ¼ä£¬Ã¿ÃëÁî×î´óÁ£×ÓÊı+1
+        // 35ç§’æœŸé—´ï¼Œæ¯ç§’ä»¤æœ€å¤§ç²’å­æ•°+1
         float duration = 35f;
         float elapsedTime = 0f;
         int currentMaxParticles = originalMaxParticles;
 
         while (elapsedTime < duration)
         {
-            // Ã¿ÃëµİÔöÒ»´Î
+            // æ¯ç§’é€’å¢ä¸€æ¬¡
             if (SpaceDust != null)
             {
                 ParticleSystem.MainModule mainModule = SpaceDust.main;
@@ -203,7 +203,7 @@ public class BGMove : MonoBehaviour
                 mainModule.maxParticles = currentMaxParticles;
             }
             
-            // µÈ´ı1Ãë
+            // ç­‰å¾…1ç§’
             yield return new WaitForSeconds(1f);
             elapsedTime += 1f;
         }
@@ -216,7 +216,7 @@ public class BGMove : MonoBehaviour
 
     public void StartContinueBG()
     {
-        // Í£Ö¹×ÔÉíµÄËÙ¶È¿ØÖÆĞ­³Ì£¬±ÜÃâÓëContinueBGµÄ¿ØÖÆ³åÍ»
+        // åœæ­¢è‡ªèº«çš„é€Ÿåº¦æ§åˆ¶åç¨‹ï¼Œé¿å…ä¸ContinueBGçš„æ§åˆ¶å†²çª
         if (controlStarSpeedCoroutine != null)
         {
             StopCoroutine(controlStarSpeedCoroutine);
@@ -226,7 +226,7 @@ public class BGMove : MonoBehaviour
             StopCoroutine(controlDarkCloudCoroutine);
         }
         
-        // µ÷ÓÃContinueBGµÄStartTransition·½·¨
+        // è°ƒç”¨ContinueBGçš„StartTransitionæ–¹æ³•
         continueBG.StartTransition();
     }
 }

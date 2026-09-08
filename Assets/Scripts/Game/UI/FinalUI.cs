@@ -3,60 +3,61 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using System.IO;
+using ReplaySystem;
 
 public class FinalUI : MonoBehaviour
 {
-    [Header("½Å±¾ÒıÓÃ")]
-    public UIManager uiManager; // UIManager½Å±¾ÒıÓÃ
-    [Header("CSVÎÄ¼şÂ·¾¶")]
-    public string csvFilePath = "Touho/¶Ô»°/FinalUI_1"; // ResourcesÂ·¾¶
-    [Header("×îÖÕµÃ·ÖUIÏà¹ØÈ«²¿ÔªËØ")]
-    public GameObject Chrino;               // ç÷Â¶ÅµµÄ´óÍ·ÕÕ
-    public GameObject FeatedBoss;           // ¡¾ÒÑ»÷°ÜµĞÈË¡¿
-    public GameObject ChrinoName;           // ç÷Â¶ÅµµÄĞÕÃû
-    public GameObject Msg;                  // ¡¾Çé±¨¡¿
-    public TextMeshProUGUI MsgDesc;         // Çé±¨ÃèÊö
-    public GameObject FinalGradeIs;         // ¡¾×îÖÕµÃ·Ö¡¿
-    public TextMeshProUGUI FinalGradeCalu;  // µÃ·Ö¼ÆËã¹ı³Ì
-    public TextMeshProUGUI FinalGrade;      // ×îÖÕµÃ·Ö
-    public GameObject Graze;                // ¡¾²Áµ¯Êı¡¿
-    public TextMeshProUGUI GrazeText;       // ²Áµ¯Êı
-    public GameObject Miss;                 // ¡¾ÖĞµ¯Êı¡¿
-    public TextMeshProUGUI MissText;        // ÖĞµ¯Êı
-    public GameObject SpentTime;            // ¡¾ºÄÊ±¡¿
-    public TextMeshProUGUI SpentTimeText;   // ºÄÊ±
-    public GameObject RemainRoad;           // ¡¾Ê£ÓàÂÃ³Ì¡¿
-    public TextMeshProUGUI RemainRoadText;  // Ê£ÓàÂÃ³Ì
-    public TextMeshProUGUI LaterText;       // ºóĞøÔ¤¸æ
-    public GameObject Shadow;               // ¡¾·û¿¨Ãæ°åÄ»²¼¡¿
-    public GameObject ShadowText;           // ¡¾ÒÑÊÕÈ¡·û¿¨¡¿
-    public GameObject Card1;                // ¡¾·û¿¨1¡¿
-    public TextMeshProUGUI Card1GetStatus;  // ·û¿¨1»ñÈ¡×´Ì¬
-    public TextMeshProUGUI Card1Text;       // ·û¿¨1ÃèÊö
-    public GameObject Card2;                // ¡¾·û¿¨2¡¿
-    public TextMeshProUGUI Card2GetStatus;  // ·û¿¨2»ñÈ¡×´Ì¬
-    public TextMeshProUGUI Card2Text;       // ·û¿¨2ÃèÊö
-    public GameObject Card3;                // ¡¾·û¿¨3¡¿
-    public TextMeshProUGUI Card3GetStatus;  // ·û¿¨3»ñÈ¡×´Ì¬
-    public TextMeshProUGUI Card3Text;       // ·û¿¨3ÃèÊö
-    [Header("ç÷Â¶ÅµµÄ¿É°®¶¯»­")]
-    public Animator ChrinoAnim;             // ç÷Â¶ÅµµÄ¶¯»­×é¼ş
+    [Header("è„šæœ¬å¼•ç”¨")]
+    public UIManager uiManager; // UIManagerè„šæœ¬å¼•ç”¨
+    [Header("CSVæ–‡ä»¶è·¯å¾„")]
+    public string csvFilePath = "Touho/å¯¹è¯/FinalUI_1"; // Resourcesè·¯å¾„
+    [Header("æœ€ç»ˆå¾—åˆ†UIç›¸å…³å…¨éƒ¨å…ƒç´ ")]
+    public GameObject Chrino;               // çªéœ²è¯ºçš„å¤§å¤´ç…§
+    public GameObject FeatedBoss;           // ã€å·²å‡»è´¥æ•Œäººã€‘
+    public GameObject ChrinoName;           // çªéœ²è¯ºçš„å§“å
+    public GameObject Msg;                  // ã€æƒ…æŠ¥ã€‘
+    public TextMeshProUGUI MsgDesc;         // æƒ…æŠ¥æè¿°
+    public GameObject FinalGradeIs;         // ã€æœ€ç»ˆå¾—åˆ†ã€‘
+    public TextMeshProUGUI FinalGradeCalu;  // å¾—åˆ†è®¡ç®—è¿‡ç¨‹
+    public TextMeshProUGUI FinalGrade;      // æœ€ç»ˆå¾—åˆ†
+    public GameObject Graze;                // ã€æ“¦å¼¹æ•°ã€‘
+    public TextMeshProUGUI GrazeText;       // æ“¦å¼¹æ•°
+    public GameObject Miss;                 // ã€ä¸­å¼¹æ•°ã€‘
+    public TextMeshProUGUI MissText;        // ä¸­å¼¹æ•°
+    public GameObject SpentTime;            // ã€è€—æ—¶ã€‘
+    public TextMeshProUGUI SpentTimeText;   // è€—æ—¶
+    public GameObject RemainRoad;           // ã€å‰©ä½™æ—…ç¨‹ã€‘
+    public TextMeshProUGUI RemainRoadText;  // å‰©ä½™æ—…ç¨‹
+    public TextMeshProUGUI LaterText;       // åç»­é¢„å‘Š
+    public GameObject Shadow;               // ã€ç¬¦å¡é¢æ¿å¹•å¸ƒã€‘
+    public GameObject ShadowText;           // ã€å·²æ”¶å–ç¬¦å¡ã€‘
+    public GameObject Card1;                // ã€ç¬¦å¡1ã€‘
+    public TextMeshProUGUI Card1GetStatus;  // ç¬¦å¡1è·å–çŠ¶æ€
+    public TextMeshProUGUI Card1Text;       // ç¬¦å¡1æè¿°
+    public GameObject Card2;                // ã€ç¬¦å¡2ã€‘
+    public TextMeshProUGUI Card2GetStatus;  // ç¬¦å¡2è·å–çŠ¶æ€
+    public TextMeshProUGUI Card2Text;       // ç¬¦å¡2æè¿°
+    public GameObject Card3;                // ã€ç¬¦å¡3ã€‘
+    public TextMeshProUGUI Card3GetStatus;  // ç¬¦å¡3è·å–çŠ¶æ€
+    public TextMeshProUGUI Card3Text;       // ç¬¦å¡3æè¿°
+    [Header("çªéœ²è¯ºçš„å¯çˆ±åŠ¨ç”»")]
+    public Animator ChrinoAnim;             // çªéœ²è¯ºçš„åŠ¨ç”»ç»„ä»¶
     
-    // Chrino¶¯»­¿ØÖÆ±äÁ¿
-    private bool isStand = true;            // ÊÇ·ñ´¦ÓÚÕ¾Á¢×´Ì¬
-    private const float ANIMATION_CHECK_INTERVAL = 1f; // Ã¿Ãë¼ì²âÒ»´Î
-    private const float ANIMATION_COOLDOWN_TIME = 2.5f; // ÀäÈ´Ê±¼ä£¨Ãë£©£¬²»ÊÜÊ±¼äËõ·ÅÓ°Ïì
+    // ChrinoåŠ¨ç”»æ§åˆ¶å˜é‡
+    private bool isStand = true;            // æ˜¯å¦å¤„äºç«™ç«‹çŠ¶æ€
+    private const float ANIMATION_CHECK_INTERVAL = 1f; // æ¯ç§’æ£€æµ‹ä¸€æ¬¡
+    private const float ANIMATION_COOLDOWN_TIME = 2.5f; // å†·å´æ—¶é—´ï¼ˆç§’ï¼‰ï¼Œä¸å—æ—¶é—´ç¼©æ”¾å½±å“
     private float animationTimer = 0f;
-    private float cooldownTimer = 0f;       // ÀäÈ´¼ÆÊ±Æ÷£¨Ê¹ÓÃÕæÊµÊ±¼ä£©
+    private float cooldownTimer = 0f;       // å†·å´è®¡æ—¶å™¨ï¼ˆä½¿ç”¨çœŸå®æ—¶é—´ï¼‰
     
-    // ¶¯»­´¥·¢¸ÅÂÊ (0-1)
-    [Header("¶¯»­´¥·¢¸ÅÂÊ")]
+    // åŠ¨ç”»è§¦å‘æ¦‚ç‡ (0-1)
+    [Header("åŠ¨ç”»è§¦å‘æ¦‚ç‡")]
     [Range(0f, 1f)]
-    public float rotateTriggerChance = 0.4f;    // Ğı×ª´¥·¢¸ÅÂÊ
+    public float rotateTriggerChance = 0.4f;    // æ—‹è½¬è§¦å‘æ¦‚ç‡
     [Range(0f, 1f)]
-    public float standUpTriggerChance = 0.6f;   // ÆğÉí´¥·¢¸ÅÂÊ
+    public float standUpTriggerChance = 0.6f;   // èµ·èº«è§¦å‘æ¦‚ç‡
     
-    // Öğ×ÖÊä³öÏà¹Ø±äÁ¿
+    // é€å­—è¾“å‡ºç›¸å…³å˜é‡
     private TextMeshProUGUI currentPrintTarget;
     private string currentPrintText;
     private int currentCharIndex;
@@ -64,63 +65,70 @@ public class FinalUI : MonoBehaviour
     private int printInterval;
     private bool isPrinting;
     
-    // Ë³ĞòÏÔÊ¾UIÏà¹Ø±äÁ¿
+    // é¡ºåºæ˜¾ç¤ºUIç›¸å…³å˜é‡
     private List<UIElement> currentUIList;
     private int currentUIIndex;
     private int uiFrameCounter;
     private int uiInterval;
     private bool isShowingUI;
     
-    // Ğ­³ÌÒıÓÃ
+    // åç¨‹å¼•ç”¨
     private Coroutine printCoroutine;
     private Coroutine showUICoroutine;
     private Coroutine calculateScoreCoroutine;
     
-    // µÃ·Ö¼ÆËã³£Á¿
-    private const int GRAZE_SCORE_CONSTANT = 325; // ²Áµ¯µÃ·Ö³£Êı
-    private const int BONUS_SCORE_CONSTANT = 500; // BonusµÃ·Ö³£Á¿
+    // å¾—åˆ†è®¡ç®—å¸¸é‡
+    private const int GRAZE_SCORE_CONSTANT = 325; // æ“¦å¼¹å¾—åˆ†å¸¸æ•°
+    private const int BONUS_SCORE_CONSTANT = 500; // Bonuså¾—åˆ†å¸¸é‡
     
-    // µÃ·Ö¼ÆËãÖĞ¼ä±äÁ¿
+    // å¾—åˆ†è®¡ç®—ä¸­é—´å˜é‡
     private int finalScoreResult;
     private bool isCalculatingScore;
     
-    // UIÏÔÊ¾¼ä¸ô£¨Ö¡£©
+    // UIæ˜¾ç¤ºé—´éš”ï¼ˆå¸§ï¼‰
     private const int UI_INTERVAL = 30;
     
-    // CSVÎÄ±¾Êı¾İ´æ´¢
+    // CSVæ–‡æœ¬æ•°æ®å­˜å‚¨
     private Dictionary<int, string> csvTextData = new Dictionary<int, string>();
     
-    // ÎÄ±¾ID³£Á¿
-    private const int TEXT_ID_MSG_DESC = 1;      // Çé±¨ÃèÊö
-    private const int TEXT_ID_LATER_TEXT = 2;    // ºóĞøÔ¤¸æ
-    private const int TEXT_ID_CARD1_DESC = 3;    // ·û¿¨1ÃèÊö
-    private const int TEXT_ID_CARD2_DESC = 4;    // ·û¿¨2ÃèÊö
-    private const int TEXT_ID_CARD3_DESC = 5;    // ·û¿¨3ÃèÊö
-    private const int TEXT_ID_CARD_FAILED = 6;   // ·û¿¨Î´ÊÕÈ¡ÃèÊö
+    // æ–‡æœ¬IDå¸¸é‡
+    private const int TEXT_ID_MSG_DESC = 1;      // æƒ…æŠ¥æè¿°
+    private const int TEXT_ID_LATER_TEXT = 2;    // åç»­é¢„å‘Š
+    private const int TEXT_ID_CARD1_DESC = 3;    // ç¬¦å¡1æè¿°
+    private const int TEXT_ID_CARD2_DESC = 4;    // ç¬¦å¡2æè¿°
+    private const int TEXT_ID_CARD3_DESC = 5;    // ç¬¦å¡3æè¿°
+    private const int TEXT_ID_CARD_FAILED = 6;   // ç¬¦å¡æœªæ”¶å–æè¿°
     
     void OnEnable()
     {
-        // »ñÈ¡UIManagerÒıÓÃ
+        // é€šå…³æ—¶è‡ªåŠ¨ä¿å­˜å›æ”¾
+        if (ReplayManager.Instance != null && ReplayManager.Instance.CurrentMode == ReplayManager.Mode.Record)
+        {
+            string path = ReplayManager.SaveRecording();
+            Debug.Log($"[ReplayManager] é€šå…³å›æ”¾å·²ä¿å­˜: {path}");
+        }
+
+        // è·å–UIManagerå¼•ç”¨
         uiManager = FindObjectOfType<UIManager>();
         
-        // Í£Ö¹UIManagerÖĞµÄ¼ÆÊ±Æ÷
+        // åœæ­¢UIManagerä¸­çš„è®¡æ—¶å™¨
         if (uiManager != null)
         {
             uiManager.StopTimer();
         }
         
-        // ½âÎöCSVÎÄ¼ş
+        // è§£æCSVæ–‡ä»¶
         ParseCSVFile();
         
-        // ³õÊ¼»¯ËùÓĞUIÔªËØÎªÒş²Ø×´Ì¬
+        // åˆå§‹åŒ–æ‰€æœ‰UIå…ƒç´ ä¸ºéšè—çŠ¶æ€
         InitializeUIElements();
         
-        // ¿ªÊ¼°´ĞòÏÔÊ¾UIÔªËØ
+        // å¼€å§‹æŒ‰åºæ˜¾ç¤ºUIå…ƒç´ 
         StartCoroutine(ShowFinalUIElements());
     }
     
     /// <summary>
-    /// ½âÎöCSVÎÄ¼ş
+    /// è§£æCSVæ–‡ä»¶
     /// </summary>
     private void ParseCSVFile()
     {
@@ -129,13 +137,13 @@ public class FinalUI : MonoBehaviour
         TextAsset csvFile = Resources.Load<TextAsset>(csvFilePath);
         if (csvFile == null)
         {
-            Debug.LogError("ÎŞ·¨ÕÒµ½CSVÎÄ¼ş: " + csvFilePath);
+            Debug.LogError("æ— æ³•æ‰¾åˆ°CSVæ–‡ä»¶: " + csvFilePath);
             return;
         }
         
         StringReader reader = new StringReader(csvFile.text);
         string line;
-        bool isFirstLine = true; // Ìø¹ı±íÍ·
+        bool isFirstLine = true; // è·³è¿‡è¡¨å¤´
         
         while ((line = reader.ReadLine()) != null)
         {
@@ -153,7 +161,7 @@ public class FinalUI : MonoBehaviour
                 {
                     string text = parts[1].Trim();
                     csvTextData[id] = text;
-                    Debug.Log("¼ÓÔØÎÄ±¾ ID:" + id + " Text:" + text);
+                    Debug.Log("åŠ è½½æ–‡æœ¬ ID:" + id + " Text:" + text);
                 }
             }
         }
@@ -162,7 +170,7 @@ public class FinalUI : MonoBehaviour
     }
     
     /// <summary>
-    /// ¸ù¾İID»ñÈ¡ÎÄ±¾ÄÚÈİ
+    /// æ ¹æ®IDè·å–æ–‡æœ¬å†…å®¹
     /// </summary>
     private string GetTextById(int id)
     {
@@ -170,17 +178,17 @@ public class FinalUI : MonoBehaviour
         {
             return csvTextData[id];
         }
-        Debug.LogWarning("Î´ÕÒµ½ÎÄ±¾ ID:" + id);
-        return "Î´ÕÒµ½ÎÄ±¾";
+        Debug.LogWarning("æœªæ‰¾åˆ°æ–‡æœ¬ ID:" + id);
+        return "æœªæ‰¾åˆ°æ–‡æœ¬";
     }
     
     /// <summary>
-    /// ³õÊ¼»¯ËùÓĞUIÔªËØÎªÒş²Ø×´Ì¬
+    /// åˆå§‹åŒ–æ‰€æœ‰UIå…ƒç´ ä¸ºéšè—çŠ¶æ€
     /// </summary>
     private void InitializeUIElements()
     {
 
-        // Çå¿ÕËùÓĞÎÄ±¾
+        // æ¸…ç©ºæ‰€æœ‰æ–‡æœ¬
         MsgDesc?.SetText("");
         FinalGradeCalu?.SetText("");
         FinalGrade?.SetText("");
@@ -196,7 +204,7 @@ public class FinalUI : MonoBehaviour
         Card3GetStatus?.SetText("");
         Card3Text?.SetText("");
 
-        // Òş²ØËùÓĞGameObjectÀàĞÍµÄUIÔªËØ
+        // éšè—æ‰€æœ‰GameObjectç±»å‹çš„UIå…ƒç´ 
         Chrino?.SetActive(false);
         FeatedBoss?.SetActive(false);
         ChrinoName?.SetActive(false);
@@ -214,52 +222,52 @@ public class FinalUI : MonoBehaviour
     }
     
     /// <summary>
-    /// °´ĞòÏÔÊ¾ËùÓĞUIÔªËØ
+    /// æŒ‰åºæ˜¾ç¤ºæ‰€æœ‰UIå…ƒç´ 
     /// </summary>
     private IEnumerator ShowFinalUIElements()
     {
-        // 1. ¼¤»îç÷Â¶Åµ´óÍ·ÕÕ
+        // 1. æ¿€æ´»çªéœ²è¯ºå¤§å¤´ç…§
         yield return ActivateElementWithDelay(Chrino);
         
-        // 2. ¼¤»î¡¾ÒÑ»÷°ÜµĞÈË¡¿
+        // 2. æ¿€æ´»ã€å·²å‡»è´¥æ•Œäººã€‘
         yield return ActivateElementWithDelay(FeatedBoss);
         
-        // 3. ¼¤»îç÷Â¶ÅµĞÕÃû
+        // 3. æ¿€æ´»çªéœ²è¯ºå§“å
         yield return ActivateElementWithDelay(ChrinoName);
         
-        // 4. ¼¤»î¡¾Çé±¨¡¿
+        // 4. æ¿€æ´»ã€æƒ…æŠ¥ã€‘
         yield return ActivateElementWithDelay(Msg);
         
-        // 5. Öğ×ÖÊä³öÇé±¨ÃèÊö (´ÓCSV¶ÁÈ¡)
+        // 5. é€å­—è¾“å‡ºæƒ…æŠ¥æè¿° (ä»CSVè¯»å–)
         yield return PrintTextWithDelay(MsgDesc, GetTextById(TEXT_ID_MSG_DESC));
         
-        // 6. ¼¤»î¡¾×îÖÕµÃ·Ö¡¿
+        // 6. æ¿€æ´»ã€æœ€ç»ˆå¾—åˆ†ã€‘
         yield return ActivateElementWithDelay(FinalGradeIs);
         
-        // 7. ¼ÆËãµÃ·Ö£¨Öğ¸ö´ÊÌõÊä³ö£©
+        // 7. è®¡ç®—å¾—åˆ†ï¼ˆé€ä¸ªè¯æ¡è¾“å‡ºï¼‰
         yield return CalculateScoreWithDelay();
         
-        // 8. ÉèÖÃ×îÖÕµÃ·Ö
+        // 8. è®¾ç½®æœ€ç»ˆå¾—åˆ†
         if (FinalGrade != null)
         {
             FinalGrade.text = finalScoreResult.ToString();
         }
         yield return WaitForFrames(UI_INTERVAL);
         
-        // 9. ¼¤»î¡¾²Áµ¯Êı¡¿
+        // 9. æ¿€æ´»ã€æ“¦å¼¹æ•°ã€‘
         yield return ActivateElementWithDelay(Graze);
         
-        // 10. ÉèÖÃ²Áµ¯ÊıÎÄ±¾
+        // 10. è®¾ç½®æ“¦å¼¹æ•°æ–‡æœ¬
         if (GrazeText != null && uiManager != null)
         {
             GrazeText.text = Global_GameManager.Instance.Graze.ToString();
         }
         yield return WaitForFrames(UI_INTERVAL);
         
-        // 11. ¼¤»î¡¾ÖĞµ¯Êı¡¿
+        // 11. æ¿€æ´»ã€ä¸­å¼¹æ•°ã€‘
         yield return ActivateElementWithDelay(Miss);
         
-        // 12. ÉèÖÃÖĞµ¯ÊıÎÄ±¾£¨ĞèÒªÔÚUIManagerÖĞÌí¼ÓÖĞµ¯Êı±äÁ¿£©
+        // 12. è®¾ç½®ä¸­å¼¹æ•°æ–‡æœ¬ï¼ˆéœ€è¦åœ¨UIManagerä¸­æ·»åŠ ä¸­å¼¹æ•°å˜é‡ï¼‰
         if (MissText != null)
         {
             int missCount = uiManager.GetMissCount();
@@ -267,102 +275,102 @@ public class FinalUI : MonoBehaviour
         }
         yield return WaitForFrames(UI_INTERVAL);
         
-        // 13. ¼¤»î¡¾ºÄÊ±¡¿
+        // 13. æ¿€æ´»ã€è€—æ—¶ã€‘
         yield return ActivateElementWithDelay(SpentTime);
         
-        // 14. ÉèÖÃºÄÊ±ÎÄ±¾
+        // 14. è®¾ç½®è€—æ—¶æ–‡æœ¬
         if (SpentTimeText != null && uiManager != null)
         {
             SpentTimeText.text = uiManager.GetGameTimeString();
         }
         yield return WaitForFrames(UI_INTERVAL);
         
-        // 15. ¼¤»î¡¾Ê£ÓàÂÃ³Ì¡¿
+        // 15. æ¿€æ´»ã€å‰©ä½™æ—…ç¨‹ã€‘
         yield return ActivateElementWithDelay(RemainRoad);
         
-        // 16. ÉèÖÃÊ£ÓàÂÃ³ÌÎÄ±¾Îª"UnKnown"
+        // 16. è®¾ç½®å‰©ä½™æ—…ç¨‹æ–‡æœ¬ä¸º"UnKnown"
         if (RemainRoadText != null)
         {
             RemainRoadText.text = "UnKnown";
         }
         yield return WaitForFrames(UI_INTERVAL);
         
-        // 17. Öğ×ÖÊä³öºóĞøÔ¤¸æ (´ÓCSV¶ÁÈ¡)
+        // 17. é€å­—è¾“å‡ºåç»­é¢„å‘Š (ä»CSVè¯»å–)
         yield return PrintTextWithDelay(LaterText, GetTextById(TEXT_ID_LATER_TEXT));
         
-        // 18. ¼¤»î¡¾·û¿¨Ãæ°åÄ»²¼¡¿
+        // 18. æ¿€æ´»ã€ç¬¦å¡é¢æ¿å¹•å¸ƒã€‘
         yield return ActivateElementWithDelay(Shadow);
         
-        // 19. ¼¤»î¡¾ÒÑÊÕÈ¡·û¿¨¡¿
+        // 19. æ¿€æ´»ã€å·²æ”¶å–ç¬¦å¡ã€‘
         yield return ActivateElementWithDelay(ShadowText);
         
-        // 20. ÏÔÊ¾·û¿¨1
+        // 20. æ˜¾ç¤ºç¬¦å¡1
         yield return ShowCard(Card1, Card1GetStatus, Card1Text, uiManager?.isCard1Get ?? false, 
             GetTextById(TEXT_ID_CARD1_DESC), GetTextById(TEXT_ID_CARD_FAILED));
         
-        // 21. ÏÔÊ¾·û¿¨2
+        // 21. æ˜¾ç¤ºç¬¦å¡2
         yield return ShowCard(Card2, Card2GetStatus, Card2Text, uiManager?.isCard2Get ?? false, 
             GetTextById(TEXT_ID_CARD2_DESC), GetTextById(TEXT_ID_CARD_FAILED));
         
-        // 22. ÏÔÊ¾·û¿¨3£¨×îÖÕ·û¿¨£©
+        // 22. æ˜¾ç¤ºç¬¦å¡3ï¼ˆæœ€ç»ˆç¬¦å¡ï¼‰
         yield return ShowCard(Card3, Card3GetStatus, Card3Text, uiManager?.isFinalCardGet ?? false, 
             GetTextById(TEXT_ID_CARD3_DESC), GetTextById(TEXT_ID_CARD_FAILED));
         
-        // 23. ½«¼ÆËã³öµÄµÃ·Ö¼Óµ½×Ü·ÖÉÏ
+        // 23. å°†è®¡ç®—å‡ºçš„å¾—åˆ†åŠ åˆ°æ€»åˆ†ä¸Š
         AddFinalScoreToTotal();
         
-        // 24. µÈ´ı5ÃëºóÌø×ªµ½Game2³¡¾°
+        // 24. ç­‰å¾…5ç§’åè·³è½¬åˆ°Game2åœºæ™¯
         yield return new WaitForSecondsRealtime(5f);
         
-        // 25. ÖØÖÃGameManagerÊı¾İ²¢Ìø×ª³¡¾°
+        // 25. é‡ç½®GameManageræ•°æ®å¹¶è·³è½¬åœºæ™¯
         TransitionToGame2();
     }
     
     /// <summary>
-    /// ½«×îÖÕµÃ·Ö¼Óµ½×Ü·ÖÉÏ
+    /// å°†æœ€ç»ˆå¾—åˆ†åŠ åˆ°æ€»åˆ†ä¸Š
     /// </summary>
     private void AddFinalScoreToTotal()
     {
         if (Global_GameManager.Instance != null && uiManager != null)
         {
-            // »ñÈ¡µ±Ç°×Ü·Ö
+            // è·å–å½“å‰æ€»åˆ†
             int currentScore = Global_GameManager.Instance.Score;
             
-            // ½«×îÖÕµÃ·Ö¼Óµ½×Ü·ÖÉÏ
+            // å°†æœ€ç»ˆå¾—åˆ†åŠ åˆ°æ€»åˆ†ä¸Š
             int newTotalScore = currentScore + finalScoreResult;
             Global_GameManager.Instance.AddScore(finalScoreResult);
             
-            Debug.Log($"µÃ·ÖÀÛ¼ÓÍê³É - Ô­·ÖÊı: {currentScore}, ±¾¹ØµÃ·Ö: {finalScoreResult}, ĞÂ×Ü·Ö: {newTotalScore}");
+            Debug.Log($"å¾—åˆ†ç´¯åŠ å®Œæˆ - åŸåˆ†æ•°: {currentScore}, æœ¬å…³å¾—åˆ†: {finalScoreResult}, æ–°æ€»åˆ†: {newTotalScore}");
         }
     }
     
     /// <summary>
-    /// ÖØÖÃÊı¾İ²¢Ìø×ªµ½Game2³¡¾°
+    /// é‡ç½®æ•°æ®å¹¶è·³è½¬åˆ°Game2åœºæ™¯
     /// </summary>
     private void TransitionToGame2()
     {
-        // ÖØÖÃGameManagerÊı¾İ
+        // é‡ç½®GameManageræ•°æ®
         if (Global_GameManager.Instance != null)
         {
             Global_GameManager.Instance.ResetFor_Game2();
         }
         
-        // »Ö¸´Õı³£Ê±¼äÁ÷ËÙ
+        // æ¢å¤æ­£å¸¸æ—¶é—´æµé€Ÿ
         Time.timeScale = 1f;
         
-        // Ìø×ªµ½Game2³¡¾°£¨²»±£Áôµ±Ç°³¡¾°£©
+        // è·³è½¬åˆ°Game2åœºæ™¯ï¼ˆä¸ä¿ç•™å½“å‰åœºæ™¯ï¼‰
         if (Global_SceneManager.Instance != null)
         {
             Global_SceneManager.Instance.IntoNextScene("Game2", false);
         }
         else
         {
-            Debug.LogError("Global_SceneManager.Instance Îª null£¬ÎŞ·¨Ìø×ª³¡¾°");
+            Debug.LogError("Global_SceneManager.Instance ä¸º nullï¼Œæ— æ³•è·³è½¬åœºæ™¯");
         }
     }
     
     /// <summary>
-    /// ¼¤»îÔªËØ²¢µÈ´ı
+    /// æ¿€æ´»å…ƒç´ å¹¶ç­‰å¾…
     /// </summary>
     private IEnumerator ActivateElementWithDelay(GameObject element)
     {
@@ -371,7 +379,7 @@ public class FinalUI : MonoBehaviour
     }
     
     /// <summary>
-    /// Öğ×ÖÊä³öÎÄ±¾²¢µÈ´ıÍê³É
+    /// é€å­—è¾“å‡ºæ–‡æœ¬å¹¶ç­‰å¾…å®Œæˆ
     /// </summary>
     private IEnumerator PrintTextWithDelay(TextMeshProUGUI target, string text)
     {
@@ -391,13 +399,13 @@ public class FinalUI : MonoBehaviour
     }
     
     /// <summary>
-    /// ¼ÆËãµÃ·Ö²¢µÈ´ıÍê³É
+    /// è®¡ç®—å¾—åˆ†å¹¶ç­‰å¾…å®Œæˆ
     /// </summary>
     private IEnumerator CalculateScoreWithDelay()
     {
-        CalculateScore(5); // Ê¹ÓÃ½Ï¶ÌµÄ¼ä¸ô¼Ó¿ì¼ÆËã¹ı³Ì
+        CalculateScore(5); // ä½¿ç”¨è¾ƒçŸ­çš„é—´éš”åŠ å¿«è®¡ç®—è¿‡ç¨‹
         
-        // µÈ´ı¼ÆËãÍê³É
+        // ç­‰å¾…è®¡ç®—å®Œæˆ
         while (isCalculatingScore)
         {
             yield return new WaitForEndOfFrame();
@@ -407,32 +415,32 @@ public class FinalUI : MonoBehaviour
     }
     
     /// <summary>
-    /// ÏÔÊ¾·û¿¨ĞÅÏ¢
+    /// æ˜¾ç¤ºç¬¦å¡ä¿¡æ¯
     /// </summary>
     private IEnumerator ShowCard(GameObject cardObj, TextMeshProUGUI statusText, TextMeshProUGUI descText, 
         bool isGet, string successDesc, string failedDesc)
     {
-        // ¼¤»î·û¿¨ÎïÌå
+        // æ¿€æ´»ç¬¦å¡ç‰©ä½“
         cardObj?.SetActive(true);
         yield return WaitForFrames(UI_INTERVAL);
         
-        // ÉèÖÃÊÕÈ¡×´Ì¬
+        // è®¾ç½®æ”¶å–çŠ¶æ€
         if (statusText != null)
         {
             if (isGet)
             {
-                statusText.text = "¡¾ÊÕÈ¡³É¹¦¡¿";
+                statusText.text = "ã€æ”¶å–æˆåŠŸã€‘";
                 statusText.color = Color.yellow;
             }
             else
             {
-                statusText.text = "¡¾ÊÕÈ¡Ê§°Ü¡¿";
+                statusText.text = "ã€æ”¶å–å¤±è´¥ã€‘";
                 statusText.color = Color.red;
             }
         }
         yield return WaitForFrames(UI_INTERVAL);
         
-        // ÉèÖÃ·û¿¨ÃèÊö
+        // è®¾ç½®ç¬¦å¡æè¿°
         if (descText != null)
         {
             string text = isGet ? successDesc : failedDesc;
@@ -449,13 +457,13 @@ public class FinalUI : MonoBehaviour
     }
     
     /// <summary>
-    /// UIÔªËØ°ü×°Àà
+    /// UIå…ƒç´ åŒ…è£…ç±»
     /// </summary>
     public class UIElement
     {
         public GameObject gameObject;
         public TextMeshProUGUI textMeshPro;
-        public string text; // µ±ÀàĞÍÎªTextMeshProUGUIÊ±µÄÎÄ±¾ÄÚÈİ
+        public string text; // å½“ç±»å‹ä¸ºTextMeshProUGUIæ—¶çš„æ–‡æœ¬å†…å®¹
         
         public UIElement(GameObject go)
         {
@@ -473,17 +481,17 @@ public class FinalUI : MonoBehaviour
     }
     
     /// <summary>
-    /// Öğ×ÖÊä³öÎÄ±¾
+    /// é€å­—è¾“å‡ºæ–‡æœ¬
     /// </summary>
-    /// <param name="target">Ä¿±êTextMeshProUGUI×é¼ş</param>
-    /// <param name="text">ÒªÊä³öµÄÎÄ±¾</param>
-    /// <param name="interval">Êä³ö¼ä¸ô£¨Ö¡£©</param>
-    /// <returns>ÊÇ·ñÊä³öÍê±Ï</returns>
+    /// <param name="target">ç›®æ ‡TextMeshProUGUIç»„ä»¶</param>
+    /// <param name="text">è¦è¾“å‡ºçš„æ–‡æœ¬</param>
+    /// <param name="interval">è¾“å‡ºé—´éš”ï¼ˆå¸§ï¼‰</param>
+    /// <returns>æ˜¯å¦è¾“å‡ºå®Œæ¯•</returns>
     public bool PrintText(TextMeshProUGUI target, string text, int interval)
     {
         if (!isPrinting)
         {
-            // ¿ªÊ¼ĞÂµÄÖğ×ÖÊä³ö
+            // å¼€å§‹æ–°çš„é€å­—è¾“å‡º
             currentPrintTarget = target;
             currentPrintText = text;
             currentCharIndex = 0;
@@ -503,7 +511,7 @@ public class FinalUI : MonoBehaviour
     }
     
     /// <summary>
-    /// Öğ×ÖÊä³öĞ­³Ì
+    /// é€å­—è¾“å‡ºåç¨‹
     /// </summary>
     private IEnumerator PrintTextCoroutine()
     {
@@ -521,21 +529,21 @@ public class FinalUI : MonoBehaviour
             yield return null;
         }
         
-        // Êä³öÍê±Ï
+        // è¾“å‡ºå®Œæ¯•
         isPrinting = false;
         printCoroutine = null;
     }
     
     /// <summary>
-    /// °´Ë³ĞòÏÔÊ¾UIÔªËØ
+    /// æŒ‰é¡ºåºæ˜¾ç¤ºUIå…ƒç´ 
     /// </summary>
-    /// <param name="lists">UIÔªËØÁĞ±í</param>
-    /// <param name="interval">¼ä¸ô£¨Ö¡£©</param>
+    /// <param name="lists">UIå…ƒç´ åˆ—è¡¨</param>
+    /// <param name="interval">é—´éš”ï¼ˆå¸§ï¼‰</param>
     public void ShowUIOneByOne(List<UIElement> lists, int interval)
     {
         if (isShowingUI)
         {
-            // Èç¹ûÕıÔÚÏÔÊ¾£¬Í£Ö¹µ±Ç°Ğ­³Ì
+            // å¦‚æœæ­£åœ¨æ˜¾ç¤ºï¼Œåœæ­¢å½“å‰åç¨‹
             if (showUICoroutine != null)
             {
                 StopCoroutine(showUICoroutine);
@@ -552,7 +560,7 @@ public class FinalUI : MonoBehaviour
     }
     
     /// <summary>
-    /// Ë³ĞòÏÔÊ¾UIĞ­³Ì
+    /// é¡ºåºæ˜¾ç¤ºUIåç¨‹
     /// </summary>
     private IEnumerator ShowUIOneByOneCoroutine()
     {
@@ -568,12 +576,12 @@ public class FinalUI : MonoBehaviour
                 
                 if (element.gameObject != null)
                 {
-                    // ¼¤»îGameObject
+                    // æ¿€æ´»GameObject
                     element.gameObject.SetActive(true);
                 }
                 else if (element.textMeshPro != null && !string.IsNullOrEmpty(element.text))
                 {
-                    // Öğ×ÖÊä³öÎÄ±¾
+                    // é€å­—è¾“å‡ºæ–‡æœ¬
                     element.textMeshPro.text = "";
                     for (int i = 0; i < element.text.Length; i++)
                     {
@@ -588,13 +596,13 @@ public class FinalUI : MonoBehaviour
             yield return null;
         }
         
-        // ÏÔÊ¾Íê±Ï
+        // æ˜¾ç¤ºå®Œæ¯•
         isShowingUI = false;
         showUICoroutine = null;
     }
     
     /// <summary>
-    /// ¼ì²éÊÇ·ñÕıÔÚÖğ×ÖÊä³ö
+    /// æ£€æŸ¥æ˜¯å¦æ­£åœ¨é€å­—è¾“å‡º
     /// </summary>
     public bool IsPrinting()
     {
@@ -602,7 +610,7 @@ public class FinalUI : MonoBehaviour
     }
     
     /// <summary>
-    /// ¼ì²éÊÇ·ñÕıÔÚÏÔÊ¾UI
+    /// æ£€æŸ¥æ˜¯å¦æ­£åœ¨æ˜¾ç¤ºUI
     /// </summary>
     public bool IsShowingUI()
     {
@@ -610,7 +618,7 @@ public class FinalUI : MonoBehaviour
     }
     
     /// <summary>
-    /// Í£Ö¹ËùÓĞ¶¯»­
+    /// åœæ­¢æ‰€æœ‰åŠ¨ç”»
     /// </summary>
     public void StopAllAnimations()
     {
@@ -638,9 +646,9 @@ public class FinalUI : MonoBehaviour
     }
     
     /// <summary>
-    /// ¼ÆËã×îÖÕµÃ·Ö²¢ÖğÖ¡Êä³ö¼ÆËã¹ı³Ì
+    /// è®¡ç®—æœ€ç»ˆå¾—åˆ†å¹¶é€å¸§è¾“å‡ºè®¡ç®—è¿‡ç¨‹
     /// </summary>
-    /// <param name="interval">Êä³ö¼ä¸ô£¨Ö¡£©</param>
+    /// <param name="interval">è¾“å‡ºé—´éš”ï¼ˆå¸§ï¼‰</param>
     public void CalculateScore(int interval)
     {
         if (isCalculatingScore)
@@ -659,11 +667,11 @@ public class FinalUI : MonoBehaviour
     }
     
     /// <summary>
-    /// ¼ÆËãµÃ·ÖĞ­³Ì
+    /// è®¡ç®—å¾—åˆ†åç¨‹
     /// </summary>
     private IEnumerator CalculateScoreCoroutine(int interval)
     {
-        // »ñÈ¡Êı¾İ
+        // è·å–æ•°æ®
         int grade = Global_GameManager.Instance.Grade;
         GameMode difficulty = Global_GameManager.Instance.gameMode;
         int graze = Global_GameManager.Instance.Graze;
@@ -675,81 +683,81 @@ public class FinalUI : MonoBehaviour
         bool finalCardGet = uiManager != null ? uiManager.isFinalCardGet : false;
         int exScore = uiManager != null ? uiManager.ExScore : 0;
         
-        // »ñÈ¡ÄÑ¶ÈÏµÊı
+        // è·å–éš¾åº¦ç³»æ•°
         float difficultyMultiplier = GetDifficultyMultiplier(difficulty);
         string difficultyName = GetDifficultyName(difficulty);
         
-        // »ñÈ¡Ğø¹ØÏµÊı
+        // è·å–ç»­å…³ç³»æ•°
         float continueMultiplier = isContinueGame ? 0.6f : 1.0f;
-        string continueText = isContinueGame ? "Ğø¹Ø" : "ÎŞĞø¹Ø";
+        string continueText = isContinueGame ? "ç»­å…³" : "æ— ç»­å…³";
         
-        // ¼ÆËã·û¿¨ÊÕÈ¡ÊıÁ¿
+        // è®¡ç®—ç¬¦å¡æ”¶å–æ•°é‡
         int cardGetCount = 0;
         if (card1Get) cardGetCount++;
         if (card2Get) cardGetCount++;
         if (finalCardGet) cardGetCount++;
         
-        // Êä³ö»ù´¡µÃ·Ö
-        FinalGradeCalu.text = grade.ToString() + "(»ù´¡µÃ·Ö)";
+        // è¾“å‡ºåŸºç¡€å¾—åˆ†
+        FinalGradeCalu.text = grade.ToString() + "(åŸºç¡€å¾—åˆ†)";
         yield return WaitForFrames(interval);
         
-        // Êä³ö " x "
+        // è¾“å‡º " x "
         FinalGradeCalu.text += " x ";
         yield return WaitForFrames(interval);
         
-        // Êä³öÄÑ¶ÈÏµÊı
+        // è¾“å‡ºéš¾åº¦ç³»æ•°
         FinalGradeCalu.text += difficultyMultiplier.ToString("F1") + "(" + difficultyName + ")";
         yield return WaitForFrames(interval);
         
-        // Êä³ö " x "
+        // è¾“å‡º " x "
         FinalGradeCalu.text += " x ";
         yield return WaitForFrames(interval);
         
-        // Êä³öĞø¹ØÏµÊı
+        // è¾“å‡ºç»­å…³ç³»æ•°
         FinalGradeCalu.text += continueMultiplier.ToString("F1") + "(" + continueText + ")";
         yield return WaitForFrames(interval);
         
-        // »»ĞĞ + ²Áµ¯µÃ·Ö
+        // æ¢è¡Œ + æ“¦å¼¹å¾—åˆ†
         FinalGradeCalu.text += "\n+ " + GRAZE_SCORE_CONSTANT.ToString();
         yield return WaitForFrames(interval);
         
-        // Êä³ö " x "
+        // è¾“å‡º " x "
         FinalGradeCalu.text += " x ";
         yield return WaitForFrames(interval);
         
-        // Êä³ö²Áµ¯Êı
-        FinalGradeCalu.text += graze.ToString() + "(²Áµ¯µÃ·Ö)";
+        // è¾“å‡ºæ“¦å¼¹æ•°
+        FinalGradeCalu.text += graze.ToString() + "(æ“¦å¼¹å¾—åˆ†)";
         yield return WaitForFrames(interval);
         
-        // »»ĞĞ + BonusµÃ·Ö
+        // æ¢è¡Œ + Bonuså¾—åˆ†
         FinalGradeCalu.text += "\n+ " + BONUS_SCORE_CONSTANT.ToString();
         yield return WaitForFrames(interval);
         
-        // Êä³ö " x "
+        // è¾“å‡º " x "
         FinalGradeCalu.text += " x ";
         yield return WaitForFrames(interval);
         
-        // Êä³ö·û¿¨ÊÕÈ¡ÊıÁ¿
-        FinalGradeCalu.text += cardGetCount.ToString() + "(BonusµÃ·Ö)";
+        // è¾“å‡ºç¬¦å¡æ”¶å–æ•°é‡
+        FinalGradeCalu.text += cardGetCount.ToString() + "(Bonuså¾—åˆ†)";
         yield return WaitForFrames(interval);
         
-        // »»ĞĞ + ¶îÍâ×ª»¯µÃ·Ö
-        FinalGradeCalu.text += "\n+ " + exScore.ToString() +"(×ª»¯µÃ·Ö)";
+        // æ¢è¡Œ + é¢å¤–è½¬åŒ–å¾—åˆ†
+        FinalGradeCalu.text += "\n+ " + exScore.ToString() +"(è½¬åŒ–å¾—åˆ†)";
         yield return WaitForFrames(interval);
         
-        // Êä³ö " x "
+        // è¾“å‡º " x "
         FinalGradeCalu.text += " x ";
         yield return WaitForFrames(interval);
         
-        // Êä³öÄÑ¶ÈÏµÊı
+        // è¾“å‡ºéš¾åº¦ç³»æ•°
         FinalGradeCalu.text += difficultyMultiplier.ToString("F1") + "(" + difficultyName + ")";
         yield return WaitForFrames(interval);
         
-        // Êä³ö " = "
+        // è¾“å‡º " = "
         FinalGradeCalu.text += " = ";
         yield return WaitForFrames(interval);
         
-        // ¼ÆËã×îÖÕµÃ·Ö
+        // è®¡ç®—æœ€ç»ˆå¾—åˆ†
         int baseScore = Mathf.RoundToInt((float)grade * difficultyMultiplier * continueMultiplier);
         int grazeScore = GRAZE_SCORE_CONSTANT * graze;
         int bonusScore = BONUS_SCORE_CONSTANT * cardGetCount;
@@ -757,7 +765,7 @@ public class FinalUI : MonoBehaviour
         
         finalScoreResult = baseScore + grazeScore + bonusScore + exScoreTotal;
          
-        // ÉèÖÃ×îÖÕµÃ·ÖÏÔÊ¾
+        // è®¾ç½®æœ€ç»ˆå¾—åˆ†æ˜¾ç¤º
         FinalGrade.text = finalScoreResult.ToString();
         
         isCalculatingScore = false;
@@ -765,7 +773,7 @@ public class FinalUI : MonoBehaviour
     }
     
     /// <summary>
-    /// »ñÈ¡ÄÑ¶ÈÏµÊı
+    /// è·å–éš¾åº¦ç³»æ•°
     /// </summary>
     private float GetDifficultyMultiplier(GameMode mode)
     {
@@ -785,7 +793,7 @@ public class FinalUI : MonoBehaviour
     }
     
     /// <summary>
-    /// »ñÈ¡ÄÑ¶ÈÃû³Æ
+    /// è·å–éš¾åº¦åç§°
     /// </summary>
     private string GetDifficultyName(GameMode mode)
     {
@@ -805,7 +813,7 @@ public class FinalUI : MonoBehaviour
     }
     
     /// <summary>
-    /// µÈ´ıÖ¸¶¨Ö¡Êı
+    /// ç­‰å¾…æŒ‡å®šå¸§æ•°
     /// </summary>
     private IEnumerator WaitForFrames(int frames)
     {
@@ -816,7 +824,7 @@ public class FinalUI : MonoBehaviour
     }
     
     /// <summary>
-    /// »ñÈ¡×îÖÕµÃ·Ö½á¹û
+    /// è·å–æœ€ç»ˆå¾—åˆ†ç»“æœ
     /// </summary>
     public int GetFinalScore()
     {
@@ -824,63 +832,63 @@ public class FinalUI : MonoBehaviour
     }
     
     /// <summary>
-    /// ¼ì²éÊÇ·ñÕıÔÚ¼ÆËãµÃ·Ö
+    /// æ£€æŸ¥æ˜¯å¦æ­£åœ¨è®¡ç®—å¾—åˆ†
     /// </summary>
     public bool IsCalculatingScore()
     {
         return isCalculatingScore;
     }
     
-    void Update()
+    void FixedUpdate()
     {
-        // ¸üĞÂChrino¶¯»­×´Ì¬
+        // æ›´æ–°ChrinoåŠ¨ç”»çŠ¶æ€
         UpdateChrinoAnimation();
     }
     
     /// <summary>
-    /// ¸üĞÂChrino¶¯»­×´Ì¬
+    /// æ›´æ–°ChrinoåŠ¨ç”»çŠ¶æ€
     /// </summary>
     private void UpdateChrinoAnimation()
     {
         if (ChrinoAnim == null) return;
         
-        // Èç¹û´¦ÓÚÀäÈ´ÆÚ£¬¸üĞÂÀäÈ´¼ÆÊ±Æ÷£¨Ê¹ÓÃÕæÊµÊ±¼ä£©
+        // å¦‚æœå¤„äºå†·å´æœŸï¼Œæ›´æ–°å†·å´è®¡æ—¶å™¨ï¼ˆä½¿ç”¨çœŸå®æ—¶é—´ï¼‰
         if (cooldownTimer > 0)
         {
             cooldownTimer -= Time.unscaledDeltaTime;
             return;
         }
         
-        // ¸üĞÂ¼ÆÊ±Æ÷£¨Ê¹ÓÃÕæÊµÊ±¼ä£¬²»ÊÜTime.timeScaleÓ°Ïì£©
+        // æ›´æ–°è®¡æ—¶å™¨ï¼ˆä½¿ç”¨çœŸå®æ—¶é—´ï¼Œä¸å—Time.timeScaleå½±å“ï¼‰
         animationTimer += Time.unscaledDeltaTime;
         
-        // Ã¿Ãë¼ì²âÒ»´Î
+        // æ¯ç§’æ£€æµ‹ä¸€æ¬¡
         if (animationTimer >= ANIMATION_CHECK_INTERVAL)
         {
             animationTimer = 0f;
             
             if (isStand)
             {
-                // Õ¾Á¢×´Ì¬£ºÓĞ¼¸ÂÊ´¥·¢Ğı×ª
+                // ç«™ç«‹çŠ¶æ€ï¼šæœ‰å‡ ç‡è§¦å‘æ—‹è½¬
                 TryTriggerRotate();
             }
             else
             {
-                // ·ÇÕ¾Á¢×´Ì¬£ºÓĞ¼¸ÂÊ´¥·¢ÆğÉí
+                // éç«™ç«‹çŠ¶æ€ï¼šæœ‰å‡ ç‡è§¦å‘èµ·èº«
                 TryTriggerStandUp();
             }
         }
     }
     
     /// <summary>
-    /// ³¢ÊÔ´¥·¢Ğı×ª¶¯»­
+    /// å°è¯•è§¦å‘æ—‹è½¬åŠ¨ç”»
     /// </summary>
     private void TryTriggerRotate()
     {
-        float randomValue = Random.value;
+        float randomValue = GameRNG.value;
         if (randomValue <= rotateTriggerChance)
         {
-            // ´¥·¢Ğı×ª
+            // è§¦å‘æ—‹è½¬
             ChrinoAnim.SetBool("IsRotate", true);
             ChrinoAnim.SetBool("IsStandUp", false);
             isStand = false;
@@ -889,16 +897,16 @@ public class FinalUI : MonoBehaviour
     }
     
     /// <summary>
-    /// ³¢ÊÔ´¥·¢ÆğÉí¶¯»­
+    /// å°è¯•è§¦å‘èµ·èº«åŠ¨ç”»
     /// </summary>
     private void TryTriggerStandUp()
     {   
         if (!isStand)
         {
-            float randomValue = Random.value;
+            float randomValue = GameRNG.value;
             if (randomValue <= standUpTriggerChance)
             {
-                // ´¥·¢ÆğÉí
+                // è§¦å‘èµ·èº«
                 ChrinoAnim.SetBool("IsStandUp", true);
                 ChrinoAnim.SetBool("IsRotate", false);
                 isStand = true;
@@ -908,7 +916,7 @@ public class FinalUI : MonoBehaviour
     }
     
     /// <summary>
-    /// ÖØÖÃChrino¶¯»­×´Ì¬ÎªÕ¾Á¢
+    /// é‡ç½®ChrinoåŠ¨ç”»çŠ¶æ€ä¸ºç«™ç«‹
     /// </summary>
     public void ResetChrinoAnimation()
     {

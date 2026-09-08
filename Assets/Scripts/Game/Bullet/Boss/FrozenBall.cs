@@ -1,12 +1,12 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class FrozenBall : MonoBehaviour
 {
-    public int hp = 300; // ÉúÃüÖµ
-    public BossShootSystem bossShootSystem; // BossÉä»÷ÏµÍ³ÒıÓÃ
-    public GameObject icePearl; // ¶ÔÓ¦µÄ±ùÖéÒıÓÃ
+    public int hp = 300; // ç”Ÿå‘½å€¼
+    public BossShootSystem bossShootSystem; // Bosså°„å‡»ç³»ç»Ÿå¼•ç”¨
+    public GameObject icePearl; // å¯¹åº”çš„å†°ç å¼•ç”¨
     private Rigidbody2D rb2D;
 
     void Start()
@@ -15,9 +15,9 @@ public class FrozenBall : MonoBehaviour
     }
     
     /// <summary>
-    /// ÊÜÉË·½·¨
+    /// å—ä¼¤æ–¹æ³•
     /// </summary>
-    /// <param name="damage">ÉËº¦Öµ</param>
+    /// <param name="damage">ä¼¤å®³å€¼</param>
     public void TakeDamage(int damage)
     {
         hp -= damage;
@@ -28,18 +28,18 @@ public class FrozenBall : MonoBehaviour
     }
     
     /// <summary>
-    /// »ØÊÕ×Óµ¯
+    /// å›æ”¶å­å¼¹
     /// </summary>
     private void Recycle()
     {
-        // Í¨ÖªBossShootSystemÊÍ·Å±ùÖéºÍÉú³É±ù×¶
+        // é€šçŸ¥BossShootSystemé‡Šæ”¾å†°ç å’Œç”Ÿæˆå†°é”¥
         if (bossShootSystem != null)
         {
-            // Ò¡¶¯¾µÍ·
+            // æ‘‡åŠ¨é•œå¤´
             bossShootSystem.Shake(0.5f);
-            // ÊÍ·Å¶ÔÓ¦µÄ±ùÖé
+            // é‡Šæ”¾å¯¹åº”çš„å†°ç 
             bossShootSystem.ReleaseFrozenPearl(icePearl);
-            // Éú³É±ù×¶
+            // ç”Ÿæˆå†°é”¥
             bossShootSystem.SpawnIceSpikes(9);
         }
         

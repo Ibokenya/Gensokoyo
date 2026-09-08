@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ReplaySystem;
 
-// µôÂäÎïÀàĞÍÃ¶¾Ù
+// æ‰è½ç‰©ç±»å‹æšä¸¾
 public enum ItemType
 {
     HPPlus = 0,     // HP+
@@ -16,12 +17,12 @@ public enum ItemType
     GradeMinusMinus = 8 // Grade--
 }
 
-// µôÂäÎïÅäÖÃÀà
+// æ‰è½ç‰©é…ç½®ç±»
 [System.Serializable]
 public class ItemDropConfig
 {
-    public ItemType itemType; // µôÂäÎïÀàĞÍ
-    public int count;         // µôÂäÊıÁ¿
+    public ItemType itemType; // æ‰è½ç‰©ç±»å‹
+    public int count;         // æ‰è½æ•°é‡
 }
 
 public class CreateItem : MonoBehaviour
@@ -45,22 +46,22 @@ public class CreateItem : MonoBehaviour
         }
     }
 
-    [Header("ÎïÆ·Ô¤ÖÆÌåÁĞ±í")]
+    [Header("ç‰©å“é¢„åˆ¶ä½“åˆ—è¡¨")]
     public List<GameObject> ItemPrefabs;
-    [Header("³õÊ¼»¯ÎïÆ·ÊıÁ¿ÁĞ±í£¨¶ÔÓ¦ÎïÆ·Ô¤ÖÆÌåÁĞ±í£©")]
+    [Header("åˆå§‹åŒ–ç‰©å“æ•°é‡åˆ—è¡¨ï¼ˆå¯¹åº”ç‰©å“é¢„åˆ¶ä½“åˆ—è¡¨ï¼‰")]
     public List<int> ItemCount;
 
-    [Header("µôÂäÎïÉú³É²ÎÊı")]
-    public float spawnOffset = 0.8f; // µôÂäÎïÉú³ÉÎ»ÖÃµÄËæ»úÆ«ÒÆ·¶Î§
-    [Header("ÊÕ¼¯ÒôĞ§")]
+    [Header("æ‰è½ç‰©ç”Ÿæˆå‚æ•°")]
+    public float spawnOffset = 0.8f; // æ‰è½ç‰©ç”Ÿæˆä½ç½®çš„éšæœºåç§»èŒƒå›´
+    [Header("æ”¶é›†éŸ³æ•ˆ")]
     public AudioClip collectClip;
 
-    [Header("µÃ·Öµã²ÎÊı")]
-    public float scoreItemFlySpeed = 15f; // µÃ·Öµã·ÉÏòÍæ¼ÒµÄËÙ¶È
+    [Header("å¾—åˆ†ç‚¹å‚æ•°")]
+    public float scoreItemFlySpeed = 15f; // å¾—åˆ†ç‚¹é£å‘ç©å®¶çš„é€Ÿåº¦
     public GameObject player;
 
-    private float lastPowerSpawnTime = -1f; // ÉÏ´ÎÉú³ÉPowerµÀ¾ßµÄÊ±¼ä
-    private const float powerSpawnInterval = 0.5f; // Éú³É¼ä¸ô
+    private float lastPowerSpawnTime = -1f; // ä¸Šæ¬¡ç”ŸæˆPoweré“å…·çš„æ—¶é—´
+    private const float powerSpawnInterval = 0.5f; // ç”Ÿæˆé—´éš”
 
     protected virtual void Awake()
     {
@@ -80,7 +81,7 @@ public class CreateItem : MonoBehaviour
     }
 
     /// <summary>
-    /// ³õÊ¼»¯ÎïÆ·³Ø
+    /// åˆå§‹åŒ–ç‰©å“æ± 
     /// </summary>
     private void InitItemPool()
     {
@@ -91,10 +92,10 @@ public class CreateItem : MonoBehaviour
     }
 
     /// <summary>
-    /// Éú³ÉµôÂäÎï
+    /// ç”Ÿæˆæ‰è½ç‰©
     /// </summary>
-    /// <param name="position">Éú³ÉÎ»ÖÃ</param>
-    /// <param name="dropConfigs">µôÂäÎïÅäÖÃÁĞ±í</param>
+    /// <param name="position">ç”Ÿæˆä½ç½®</param>
+    /// <param name="dropConfigs">æ‰è½ç‰©é…ç½®åˆ—è¡¨</param>
     public void SpawnItems(Vector3 position, List<ItemDropConfig> dropConfigs)
     {
         if (dropConfigs == null || dropConfigs.Count == 0)
@@ -108,39 +109,39 @@ public class CreateItem : MonoBehaviour
             return;
         }
 
-        // ±éÀúËùÓĞµôÂäÎïÅäÖÃ
+        // éå†æ‰€æœ‰æ‰è½ç‰©é…ç½®
         foreach (ItemDropConfig config in dropConfigs)
         {
-            // ¸ù¾İµôÂäÎïÀàĞÍ»ñÈ¡¶ÔÓ¦µÄÔ¤ÖÆÌåË÷Òı
+            // æ ¹æ®æ‰è½ç‰©ç±»å‹è·å–å¯¹åº”çš„é¢„åˆ¶ä½“ç´¢å¼•
             int prefabIndex = (int)config.itemType;
 
-            // ¼ì²éÔ¤ÖÆÌåË÷ÒıÊÇ·ñÓĞĞ§
+            // æ£€æŸ¥é¢„åˆ¶ä½“ç´¢å¼•æ˜¯å¦æœ‰æ•ˆ
             if (prefabIndex < 0 || prefabIndex >= ItemPrefabs.Count)
             {
-                Debug.LogWarning($"ItemType {config.itemType} ¶ÔÓ¦µÄÔ¤ÖÆÌåË÷Òı {prefabIndex} ³¬³öÁË·¶Î§!");
+                Debug.LogWarning($"ItemType {config.itemType} å¯¹åº”çš„é¢„åˆ¶ä½“ç´¢å¼• {prefabIndex} è¶…å‡ºäº†èŒƒå›´!");
                 continue;
             }
 
             GameObject prefab = ItemPrefabs[prefabIndex];
             if (prefab == null)
             {
-                Debug.LogWarning($"ItemType {config.itemType} ¶ÔÓ¦µÄÔ¤ÖÆÌåÎª¿Õ!");
+                Debug.LogWarning($"ItemType {config.itemType} å¯¹åº”çš„é¢„åˆ¶ä½“ä¸ºç©º!");
                 continue;
             }
 
-            // Éú³ÉÖ¸¶¨ÊıÁ¿µÄµôÂäÎï
+            // ç”ŸæˆæŒ‡å®šæ•°é‡çš„æ‰è½ç‰©
             for (int i = 0; i < config.count; i++)
             {
-                // ¼ÆËãËæ»úÆ«ÒÆÎ»ÖÃ
+                // è®¡ç®—éšæœºåç§»ä½ç½®
                 Vector3 spawnPosition = position + GetRandomOffset();
 
-                // ´Ó¶ÔÏó³Ø»ñÈ¡ÎïÆ·
+                // ä»å¯¹è±¡æ± è·å–ç‰©å“
                 GameObject item = Global_ObjectPool.Instance.GetObject(prefab, spawnPosition, Quaternion.identity);
                 AboutItem aboutItem = item.GetComponent<AboutItem>();
                 aboutItem.player = player;
                 aboutItem.SetCollectClip(collectClip);
 
-                // ÅĞ¶ÏÊÇ·ñÎªµÃ·ÖµãÀàĞÍ£¨GradeMinus»òGradeMinusMinus£©£¬×Ô¶¯·ÉÏòÍæ¼Ò
+                // åˆ¤æ–­æ˜¯å¦ä¸ºå¾—åˆ†ç‚¹ç±»å‹ï¼ˆGradeMinusæˆ–GradeMinusMinusï¼‰ï¼Œè‡ªåŠ¨é£å‘ç©å®¶
                 if (config.itemType == ItemType.GradeMinus || config.itemType == ItemType.GradeMinusMinus)
                 {
                     aboutItem.SetAutoFlyToPlayer(true, scoreItemFlySpeed);
@@ -148,16 +149,16 @@ public class CreateItem : MonoBehaviour
 
                 if (item == null)
                 {
-                    Debug.LogWarning($"ÎŞ·¨´Ó¶ÔÏó³Ø»ñÈ¡ÎïÆ·: {prefab.name}");
+                    Debug.LogWarning($"æ— æ³•ä»å¯¹è±¡æ± è·å–ç‰©å“: {prefab.name}");
                 }
             }
         }
     }
 
     /// <summary>
-    /// Éú³ÉµÃ·Öµã£¨8~20Ëæ»úÕûÊı£¬ÉÌ¸öGradeMinus + ÓàÊı¸öGradeMinusMinus£©
+    /// ç”Ÿæˆå¾—åˆ†ç‚¹ï¼ˆ8~20éšæœºæ•´æ•°ï¼Œå•†ä¸ªGradeMinus + ä½™æ•°ä¸ªGradeMinusMinusï¼‰
     /// </summary>
-    /// <param name="position">Éú³ÉÎ»ÖÃ</param>
+    /// <param name="position">ç”Ÿæˆä½ç½®</param>
     public void SpawnScoreItems(Vector3 position)
     {
         if (Global_ObjectPool.Instance == null)
@@ -171,24 +172,24 @@ public class CreateItem : MonoBehaviour
             return;
         }
 
-        // Éú³É8~20µÄËæ»úÕûÊı
-        int randomValue = Random.Range(8, 21);
+        // ç”Ÿæˆ8~20çš„éšæœºæ•´æ•°
+        int randomValue = GameRNG.Range(8, 21);
         int gradeMinusCount = randomValue / 10;
         int gradeMinusMinusCount = randomValue % 10;
 
-        // Éú³ÉGradeMinus
+        // ç”ŸæˆGradeMinus
         if (gradeMinusCount > 0)
         {
             SpawnScoreItemType(position, ItemType.GradeMinus, gradeMinusCount, player);
         }
 
-        // Éú³ÉGradeMinusMinus
+        // ç”ŸæˆGradeMinusMinus
         if (gradeMinusMinusCount > 0)
         {
             SpawnScoreItemType(position, ItemType.GradeMinusMinus, gradeMinusMinusCount, player);
         }
 
-        Debug.Log($"Éú³ÉµÃ·Öµã: ×ÜÖµ={randomValue}, GradeMinus={gradeMinusCount}, GradeMinusMinus={gradeMinusMinusCount}");
+        Debug.Log($"ç”Ÿæˆå¾—åˆ†ç‚¹: æ€»å€¼={randomValue}, GradeMinus={gradeMinusCount}, GradeMinusMinus={gradeMinusMinusCount}");
     }
 
     public void SpawnPowerItems(Vector3 position)
@@ -199,11 +200,11 @@ public class CreateItem : MonoBehaviour
             return;
         }
 
-        // ¼ì²éplayerÊÇ·ñÒÑÉèÖÃ
+        // æ£€æŸ¥playeræ˜¯å¦å·²è®¾ç½®
         if (player == null)
         {
             Debug.LogError("CreateItem.player is not assigned! Please assign it in Inspector.");
-            // ³¢ÊÔ×Ô¶¯²éÕÒÍæ¼Ò¶ÔÏó
+            // å°è¯•è‡ªåŠ¨æŸ¥æ‰¾ç©å®¶å¯¹è±¡
             player = GameObject.FindGameObjectWithTag("Player");
             if (player == null)
             {
@@ -216,19 +217,19 @@ public class CreateItem : MonoBehaviour
         bool canSpawnPower = (lastPowerSpawnTime < 0f) || (currentTime - lastPowerSpawnTime >= powerSpawnInterval);
 
         ItemType spawnType = canSpawnPower ? ItemType.Power : ItemType.GradeMinusMinus;
-        bool shouldFlyToPlayer = !canSpawnPower; // GradeMinusMinusĞèÒª·ÉÏòÍæ¼Ò
+        bool shouldFlyToPlayer = !canSpawnPower; // GradeMinusMinuséœ€è¦é£å‘ç©å®¶
 
         int prefabIndex = (int)spawnType;
         if (prefabIndex < 0 || prefabIndex >= ItemPrefabs.Count)
         {
-            Debug.LogWarning($"ItemType {spawnType} ¶ÔÓ¦µÄÔ¤ÖÆÌåË÷Òı {prefabIndex} ³¬³öÁË·¶Î§!");
+            Debug.LogWarning($"ItemType {spawnType} å¯¹åº”çš„é¢„åˆ¶ä½“ç´¢å¼• {prefabIndex} è¶…å‡ºäº†èŒƒå›´!");
             return;
         }
 
         GameObject prefab = ItemPrefabs[prefabIndex];
         if (prefab == null)
         {
-            Debug.LogWarning($"ItemType {spawnType} ¶ÔÓ¦µÄÔ¤ÖÆÌåÎª¿Õ!");
+            Debug.LogWarning($"ItemType {spawnType} å¯¹åº”çš„é¢„åˆ¶ä½“ä¸ºç©º!");
             return;
         }
 
@@ -253,8 +254,8 @@ public class CreateItem : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning($"ÎŞ·¨´Ó¶ÔÏó³Ø»ñÈ¡ÎïÆ·: {prefab.name}");
-            // ¼´Ê¹»ñÈ¡Ê§°Ü£¬Ò²¸üĞÂÊ±¼ä´Á£¬±ÜÃâÁ¬ĞøÇëÇó
+            Debug.LogWarning($"æ— æ³•ä»å¯¹è±¡æ± è·å–ç‰©å“: {prefab.name}");
+            // å³ä½¿è·å–å¤±è´¥ï¼Œä¹Ÿæ›´æ–°æ—¶é—´æˆ³ï¼Œé¿å…è¿ç»­è¯·æ±‚
             if (canSpawnPower)
             {
                 lastPowerSpawnTime = currentTime;
@@ -263,7 +264,7 @@ public class CreateItem : MonoBehaviour
     }
 
     /// <summary>
-    /// Éú³ÉÖ¸¶¨ÀàĞÍµÄµÃ·Öµã
+    /// ç”ŸæˆæŒ‡å®šç±»å‹çš„å¾—åˆ†ç‚¹
     /// </summary>
     private void SpawnScoreItemType(Vector3 position, ItemType itemType, int count, GameObject player)
     {
@@ -286,19 +287,19 @@ public class CreateItem : MonoBehaviour
             AboutItem aboutItem = item.GetComponent<AboutItem>();
             aboutItem.player = player;
             aboutItem.SetCollectClip(collectClip);
-            // µÃ·Öµã×Ô¶¯·ÉÏòÍæ¼Ò
+            // å¾—åˆ†ç‚¹è‡ªåŠ¨é£å‘ç©å®¶
             aboutItem.SetAutoFlyToPlayer(true, scoreItemFlySpeed);
         }
     }
 
     /// <summary>
-    /// »ñÈ¡Ëæ»úÆ«ÒÆÏòÁ¿
+    /// è·å–éšæœºåç§»å‘é‡
     /// </summary>
-    /// <returns>Ëæ»úÆ«ÒÆÏòÁ¿</returns>
+    /// <returns>éšæœºåç§»å‘é‡</returns>
     private Vector3 GetRandomOffset()
     {
-        float offsetX = Random.Range(-spawnOffset, spawnOffset);
-        float offsetY = Random.Range(-spawnOffset, spawnOffset);
+        float offsetX = GameRNG.Range(-spawnOffset, spawnOffset);
+        float offsetY = GameRNG.Range(-spawnOffset, spawnOffset);
         return new Vector3(offsetX, offsetY, 0f);
     }
 }

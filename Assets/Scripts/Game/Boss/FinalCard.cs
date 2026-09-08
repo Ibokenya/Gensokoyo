@@ -1,30 +1,31 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ReplaySystem;
 
 public class FinalCard : MonoBehaviour
 {
-    public GameObject IcePearl;//±ùÖé
-    public GameObject IcePick;//±ù´Ì
-    public GameObject FrozenBall;//±ùÇò
-    public GameObject IceSpike;//±ù×¶
-    public GameObject IceFlake;//±ù»¨
-    public GameObject RotatePick;//Ğı×ª±ù´Ì
-    public IceRealm IceRealm;//±ùÁìÓò£¨³¡¾°¹ÌÓĞ¶ÔÏó£©
+    public GameObject IcePearl;//å†°ç 
+    public GameObject IcePick;//å†°åˆº
+    public GameObject FrozenBall;//å†°çƒ
+    public GameObject IceSpike;//å†°é”¥
+    public GameObject IceFlake;//å†°èŠ±
+    public GameObject RotatePick;//æ—‹è½¬å†°åˆº
+    public IceRealm IceRealm;//å†°é¢†åŸŸï¼ˆåœºæ™¯å›ºæœ‰å¯¹è±¡ï¼‰
 
-    [Header("½Å±¾ÒıÓÃ")]
+    [Header("è„šæœ¬å¼•ç”¨")]
     public ChangeBG changeBG;
-    public UIManager uiManager; // UIManager½Å±¾ÒıÓÃ
+    public UIManager uiManager; // UIManagerè„šæœ¬å¼•ç”¨
     
-    [Header("FinalCard½×¶Î²ÎÊı")]
-    public int currentPhase = 1; // µ±Ç°½×¶Î£¨1-4£©
-    public float phaseTimer = 0f; // ½×¶Î¼ÆÊ±Æ÷
-    public float phase1Duration = 12f; // µÚÒ»½×¶Î³ÖĞøÊ±¼ä
-    public float phase2Duration = 12f; // µÚ¶ş½×¶Î³ÖĞøÊ±¼ä
-    public float phase3Duration = 12f; // µÚÈı½×¶Î³ÖĞøÊ±¼ä
-    public float phase4Duration = 12f; // µÚËÄ½×¶Î³ÖĞøÊ±¼ä
-    public int snowFlakeCount = 50; // Ñ©»¨Éú³É×ÜÊı
-    public float attackInterval = 6f; // ¹¥»÷¼ä¸ô£¨Ã¿¸ô¶à¾Ã·¢¶¯Ò»´ÎÑ©»¨¹¥»÷£©
+    [Header("FinalCardé˜¶æ®µå‚æ•°")]
+    public int currentPhase = 1; // å½“å‰é˜¶æ®µï¼ˆ1-4ï¼‰
+    public float phaseTimer = 0f; // é˜¶æ®µè®¡æ—¶å™¨
+    public float phase1Duration = 12f; // ç¬¬ä¸€é˜¶æ®µæŒç»­æ—¶é—´
+    public float phase2Duration = 12f; // ç¬¬äºŒé˜¶æ®µæŒç»­æ—¶é—´
+    public float phase3Duration = 12f; // ç¬¬ä¸‰é˜¶æ®µæŒç»­æ—¶é—´
+    public float phase4Duration = 12f; // ç¬¬å››é˜¶æ®µæŒç»­æ—¶é—´
+    public int snowFlakeCount = 50; // é›ªèŠ±ç”Ÿæˆæ€»æ•°
+    public float attackInterval = 6f; // æ”»å‡»é—´éš”ï¼ˆæ¯éš”å¤šä¹…å‘åŠ¨ä¸€æ¬¡é›ªèŠ±æ”»å‡»ï¼‰
     
     public BossShootSystem bossShootSystem;
     private Coroutine icePearlCoroutine_left;
@@ -32,15 +33,15 @@ public class FinalCard : MonoBehaviour
     
     private void OnEnable()
     {
-        // ÖØÖÃ½×¶Î²ÎÊı
+        // é‡ç½®é˜¶æ®µå‚æ•°
         currentPhase = 1;
         phaseTimer = 0f;
         
-        // ÖØÖÃĞ­³ÌÒıÓÃ
+        // é‡ç½®åç¨‹å¼•ç”¨
         icePearlCoroutine_left = null;
         icePearlCoroutine_right = null;
         
-        // ³õÊ¼»¯±ù×¶¶ÔÏó³Ø£¨20¸ö£©
+        // åˆå§‹åŒ–å†°é”¥å¯¹è±¡æ± ï¼ˆ20ä¸ªï¼‰
         if (IceSpike != null)
         {
             Global_ObjectPool.Instance.InitPool(IceSpike, 20);
@@ -54,28 +55,28 @@ public class FinalCard : MonoBehaviour
             Global_ObjectPool.Instance.InitPool(RotatePick, 18);
         }
         
-        // ÉèÖÃBossShootSystemµÄIceSpikeÒıÓÃ
+        // è®¾ç½®BossShootSystemçš„IceSpikeå¼•ç”¨
         if (bossShootSystem != null && IceSpike != null)
         {
             bossShootSystem.IceSpike = IceSpike;
         }
         
-        // ¿ªÊ¼Éä»÷
+        // å¼€å§‹å°„å‡»
         StartShooting();
     }
 
     private void OnDisable()
     {
         IceRealm.StartFadeOut();
-        // ±ê¼ÇÎª»ñÈ¡ÁË×îÖÕ·û¿¨
+        // æ ‡è®°ä¸ºè·å–äº†æœ€ç»ˆç¬¦å¡
         uiManager.isFinalCardGet = true;
         bossShootSystem.isAllowAreaLimit = false;
-        // Í£Ö¹ËùÓĞĞ­³Ì
+        // åœæ­¢æ‰€æœ‰åç¨‹
         StopAllCoroutines();
-        // È¡ÏûËùÓĞ Invoke µ÷ÓÃ
+        // å–æ¶ˆæ‰€æœ‰ Invoke è°ƒç”¨
         CancelInvoke();
         
-        // Í£Ö¹ BossShootSystem ÖĞµÄËùÓĞÉä»÷Ğ­³Ì
+        // åœæ­¢ BossShootSystem ä¸­çš„æ‰€æœ‰å°„å‡»åç¨‹
         if (bossShootSystem != null)
         {
             bossShootSystem.StopAllShooting();
@@ -83,116 +84,116 @@ public class FinalCard : MonoBehaviour
         }
     }
     
-    private void Update()
+    private void FixedUpdate()
     {
-        // ¸üĞÂ¼ÆÊ±Æ÷
-        phaseTimer += Time.deltaTime;
+        // æ›´æ–°è®¡æ—¶å™¨
+        phaseTimer += SimClock.FixedTickDt;
         
-        // ½×¶ÎÇĞ»»Âß¼­
+        // é˜¶æ®µåˆ‡æ¢é€»è¾‘
         UpdatePhase();
     }
     
     /// <summary>
-    /// ¸üĞÂ½×¶Î
+    /// æ›´æ–°é˜¶æ®µ
     /// </summary>
     private void UpdatePhase()
     {
         switch (currentPhase)
         {
             case 1:
-                // µÚÒ»½×¶Î£ºÍ¬Ê±·¢Éä±ùÖéºÍ±ù´Ì£¬12Ãëºó½øÈëµÚ¶ş½×¶Î
+                // ç¬¬ä¸€é˜¶æ®µï¼šåŒæ—¶å‘å°„å†°ç å’Œå†°åˆºï¼Œ12ç§’åè¿›å…¥ç¬¬äºŒé˜¶æ®µ
                 if (phaseTimer >= phase1Duration)
                 {
                     currentPhase = 2;
                     phaseTimer = 0f;
-                    Debug.Log("FinalCard½øÈëµÚ¶ş½×¶Î");
-                    // ½×¶ÎÇĞ»»£¬Æô¶¯ĞÂµÄÉä»÷
+                    Debug.Log("FinalCardè¿›å…¥ç¬¬äºŒé˜¶æ®µ");
+                    // é˜¶æ®µåˆ‡æ¢ï¼Œå¯åŠ¨æ–°çš„å°„å‡»
                     StartShooting();
                 }
                 break;
             case 2:
-                // µÚ¶ş½×¶Î£º¶³½á±ùÖé²¢À©´ó±ùÇò£¬¼ÌĞø·¢Éä±ù´Ì£¬12Ãëºó½øÈëµÚÈı½×¶Î
+                // ç¬¬äºŒé˜¶æ®µï¼šå†»ç»“å†°ç å¹¶æ‰©å¤§å†°çƒï¼Œç»§ç»­å‘å°„å†°åˆºï¼Œ12ç§’åè¿›å…¥ç¬¬ä¸‰é˜¶æ®µ
                 if (phaseTimer >= phase2Duration)
                 {
                     currentPhase = 3;
                     phaseTimer = 0f;
-                    Debug.Log("FinalCard½øÈëµÚÈı½×¶Î");
-                    // ½×¶ÎÇĞ»»£¬Æô¶¯ĞÂµÄÉä»÷
+                    Debug.Log("FinalCardè¿›å…¥ç¬¬ä¸‰é˜¶æ®µ");
+                    // é˜¶æ®µåˆ‡æ¢ï¼Œå¯åŠ¨æ–°çš„å°„å‡»
                     bossShootSystem.isAllowAreaLimit = true;
                     StartShooting();
                 }
                 break;
             case 3:
-                // µÚÈı½×¶Î£ºÆô¶¯AreaLimit·½·¨£¬¼ÌĞø·¢Éä±ù´Ì
+                // ç¬¬ä¸‰é˜¶æ®µï¼šå¯åŠ¨AreaLimitæ–¹æ³•ï¼Œç»§ç»­å‘å°„å†°åˆº
                 if (phaseTimer >= phase3Duration)
                 {
                     currentPhase = 4;
                     phaseTimer = 0f;
-                    Debug.Log("FinalCard½øÈëµÚËÄ½×¶Î");
-                    // ½×¶ÎÇĞ»»£¬Æô¶¯ĞÂµÄÉä»÷
+                    Debug.Log("FinalCardè¿›å…¥ç¬¬å››é˜¶æ®µ");
+                    // é˜¶æ®µåˆ‡æ¢ï¼Œå¯åŠ¨æ–°çš„å°„å‡»
                     StartShooting();
                 }
                 break;
             case 4:
                 IceRealm.enabled = true;
                 changeBG.ShowMagicEffect();
-                // µÚËÄ½×¶Î
+                // ç¬¬å››é˜¶æ®µ
                 break;
         }
     }
     
     /// <summary>
-    /// ¿ªÊ¼Éä»÷
+    /// å¼€å§‹å°„å‡»
     /// </summary>
     private void StartShooting()
     {
         if (bossShootSystem != null)
         {
-            // µÚÒ»½×¶Î£ºÍ¬Ê±·¢Éä±ùÖéºÍ±ù´Ì
+            // ç¬¬ä¸€é˜¶æ®µï¼šåŒæ—¶å‘å°„å†°ç å’Œå†°åˆº
             if (currentPhase == 1 && IcePearl != null && IcePick != null)
             {
-                // ±ùÖé´Ó×ó²à¿ªÊ¼£¨´Ó×óÏòÓÒÉ¨£©£¬´æ´¢×Óµ¯ÒÔÖ´ĞĞºóĞø¶³½á
+                // å†°ç ä»å·¦ä¾§å¼€å§‹ï¼ˆä»å·¦å‘å³æ‰«ï¼‰ï¼Œå­˜å‚¨å­å¼¹ä»¥æ‰§è¡Œåç»­å†»ç»“
                 icePearlCoroutine_left = bossShootSystem.RepeatShoot(IcePearl, 60f, 53f, 0.16f, true, true);
-                // ±ùÖé´ÓÓÒ²à¿ªÊ¼£¨´ÓÓÒÏò×óÉ¨£©£¬´æ´¢×Óµ¯ÒÔÖ´ĞĞºóĞø¶³½á
+                // å†°ç ä»å³ä¾§å¼€å§‹ï¼ˆä»å³å‘å·¦æ‰«ï¼‰ï¼Œå­˜å‚¨å­å¼¹ä»¥æ‰§è¡Œåç»­å†»ç»“
                 icePearlCoroutine_right = bossShootSystem.RepeatShoot(IcePearl, 60f, 47f, 0.22f, false, true);
                 
-                // ±ù´Ì´Ó×ó²à¿ªÊ¼£¨´Ó×óÏòÓÒÉ¨£©
+                // å†°åˆºä»å·¦ä¾§å¼€å§‹ï¼ˆä»å·¦å‘å³æ‰«ï¼‰
                 bossShootSystem.RepeatShoot(IcePick, 60f, 41f, 0.22f, true);
-                // ±ù´Ì´ÓÓÒ²à¿ªÊ¼£¨´ÓÓÒÏò×óÉ¨£©
+                // å†°åˆºä»å³ä¾§å¼€å§‹ï¼ˆä»å³å‘å·¦æ‰«ï¼‰
                 bossShootSystem.RepeatShoot(IcePick, 60f, 37f, 0.26f, false);
             }
-            // µÚ¶ş½×¶Î£º¶³½á±ùÖé²¢À©´ó±ùÇò
+            // ç¬¬äºŒé˜¶æ®µï¼šå†»ç»“å†°ç å¹¶æ‰©å¤§å†°çƒ
             else if (currentPhase == 2 && FrozenBall != null)
             {
-                // Í£Ö¹±ùÖéÉä»÷Ğ­³Ì
+                // åœæ­¢å†°ç å°„å‡»åç¨‹
                 if (icePearlCoroutine_left != null)
                 {
                     bossShootSystem.StopCoroutine(icePearlCoroutine_left);
                     icePearlCoroutine_left = null;
                 }
-                // Í£Ö¹±ùÖéÉä»÷Ğ­³Ì
+                // åœæ­¢å†°ç å°„å‡»åç¨‹
                 if (icePearlCoroutine_right != null)
                 {
                     bossShootSystem.StopCoroutine(icePearlCoroutine_right);
                     icePearlCoroutine_right = null;
                 }
                 
-                // ¶³½áËùÓĞ±ùÖé£¨Ö»Ö´ĞĞÒ»´Î£©
+                // å†»ç»“æ‰€æœ‰å†°ç ï¼ˆåªæ‰§è¡Œä¸€æ¬¡ï¼‰
                 bossShootSystem.FrozenPearl(FrozenBall);
             }
-            // µÚÈı½×¶Î£ºÆô¶¯AreaLimit·½·¨ºÍÑ©»¨¹¥»÷
+            // ç¬¬ä¸‰é˜¶æ®µï¼šå¯åŠ¨AreaLimitæ–¹æ³•å’Œé›ªèŠ±æ”»å‡»
             else if (currentPhase == 3 && RotatePick != null && IceFlake != null)
             {
-                // Æô¶¯AreaLimit·½·¨
+                // å¯åŠ¨AreaLimitæ–¹æ³•
                 bossShootSystem.AreaLimit(RotatePick, new Vector3(-3f, 0f, 0f), 7f, 90f, 2f, 2.5f);
-                // Æô¶¯Ñ©»¨¹¥»÷
+                // å¯åŠ¨é›ªèŠ±æ”»å‡»
                 StartCoroutine(SnowFlakeAttackLoop());
                 bossShootSystem.ShowTerrain();
             }
-            // µÚËÄ½×¶Î£º¼¤»î±ùÇôÁı
+            // ç¬¬å››é˜¶æ®µï¼šæ¿€æ´»å†°å›šç¬¼
             else if (currentPhase == 4 && IceRealm != null)
             {
-                // ¼¤»î±ùÁìÓòÔÚÇøÓòÏŞÖÆ¹¥»÷µÄÖĞĞÄµã
+                // æ¿€æ´»å†°é¢†åŸŸåœ¨åŒºåŸŸé™åˆ¶æ”»å‡»çš„ä¸­å¿ƒç‚¹
                 bossShootSystem.ActivateIceRealm(new Vector3(-3f, 0f, 0f));
                 bossShootSystem.isInArea = true;
             }
@@ -200,19 +201,19 @@ public class FinalCard : MonoBehaviour
     }
 
     /// <summary>
-    /// Ñ©»¨¹¥»÷Ñ­»·
+    /// é›ªèŠ±æ”»å‡»å¾ªç¯
     /// </summary>
     private IEnumerator SnowFlakeAttackLoop()
     {
         while (true)
         {
-            // ·¢¶¯Ñ©»¨¹¥»÷
+            // å‘åŠ¨é›ªèŠ±æ”»å‡»
             if (bossShootSystem != null)
             {
                 bossShootSystem.SnowFlakeAttack(IceFlake, snowFlakeCount);
             }
             
-            // µÈ´ı¹¥»÷¼ä¸ô
+            // ç­‰å¾…æ”»å‡»é—´éš”
             yield return new WaitForSeconds(attackInterval);
         }
     }

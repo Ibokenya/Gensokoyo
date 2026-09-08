@@ -1,74 +1,75 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ReplaySystem;
 
 /// <summary>
-/// ¶ñÄ§Ö®ÑÛ¹¥»÷½Å±¾
-/// ¸ºÔğ´¦Àí¶ñÄ§Ö®ÑÛµÄ¹¥»÷Âß¼­
+/// æ¶é­”ä¹‹çœ¼æ”»å‡»è„šæœ¬
+/// è´Ÿè´£å¤„ç†æ¶é­”ä¹‹çœ¼çš„æ”»å‡»é€»è¾‘
 /// </summary>
 public class EvilEyeAttack : MonoBehaviour
 {
-    public float fadeDuration = 1f; // µ­³öÊ±¼ä
-    public float laserWidth = 0.3f; // Á¬Ïß¿í¶È
-    public Material laserMaterial; // Á¬Ïß²ÄÖÊ
-    public GameObject blackHole; // ºÚ¶´¶ÔÏó£¨¶ñÄ§Ö®ÑÛµÄ×Ó¶ÔÏó£©
-    public float blackHoleRotationSpeed = 180f; // ºÚ¶´Ğı×ªËÙ¶È
-    public List<GameObject> shadowBulletPrefabs; // °µÓ°µ¯Ô¤ÖÆ¼şÁĞ±í£¨¹²3ÖÖ£©
-    public float spawnInterval = 0.5f; // °µÓ°µ¯Éú³É¼ä¸ô
+    public float fadeDuration = 1f; // æ·¡å‡ºæ—¶é—´
+    public float laserWidth = 0.3f; // è¿çº¿å®½åº¦
+    public Material laserMaterial; // è¿çº¿æè´¨
+    public GameObject blackHole; // é»‘æ´å¯¹è±¡ï¼ˆæ¶é­”ä¹‹çœ¼çš„å­å¯¹è±¡ï¼‰
+    public float blackHoleRotationSpeed = 180f; // é»‘æ´æ—‹è½¬é€Ÿåº¦
+    public List<GameObject> shadowBulletPrefabs; // æš—å½±å¼¹é¢„åˆ¶ä»¶åˆ—è¡¨ï¼ˆå…±3ç§ï¼‰
+    public float spawnInterval = 0.5f; // æš—å½±å¼¹ç”Ÿæˆé—´éš”
     
-    [Header("´¦¾öĞ§¹û")]
-    public GameObject giantHandPrefab; // ¾ŞÊÖÔ¤ÖÆ¼ş
-    public Sprite openHandSprite; // ÕÅ¿ªµÄÊÖ¾«Áé
-    public Sprite closedHandSprite; // ÎÕ×¡µÄÊÖ¾«Áé
-    public float handSpawnYOffset = 6f; // ¾ŞÊÖÉú³ÉÎ»ÖÃµÄYÖáÆ«ÒÆ
-    public float handSpawnXOffset = -0.3f; // ¾ŞÊÖÉú³ÉÎ»ÖÃµÄXÖáÆ«ÒÆ
-    public float handTargetYOffset = 1.6f; // ¾ŞÊÖÄ¿±êÎ»ÖÃµÄYÖáÆ«ÒÆ
-    public float handFadeInDuration = 1f; // ¾ŞÊÖµ­ÈëÊ±¼ä
-    public float handFadeOutDuration = 0.5f; // ¾ŞÊÖµ­³öÊ±¼ä
-    public float handMinY = 0.52f; // ¾ŞÊÖ×îµÍY×ø±ê
+    [Header("å¤„å†³æ•ˆæœ")]
+    public GameObject giantHandPrefab; // å·¨æ‰‹é¢„åˆ¶ä»¶
+    public Sprite openHandSprite; // å¼ å¼€çš„æ‰‹ç²¾çµ
+    public Sprite closedHandSprite; // æ¡ä½çš„æ‰‹ç²¾çµ
+    public float handSpawnYOffset = 6f; // å·¨æ‰‹ç”Ÿæˆä½ç½®çš„Yè½´åç§»
+    public float handSpawnXOffset = -0.3f; // å·¨æ‰‹ç”Ÿæˆä½ç½®çš„Xè½´åç§»
+    public float handTargetYOffset = 1.6f; // å·¨æ‰‹ç›®æ ‡ä½ç½®çš„Yè½´åç§»
+    public float handFadeInDuration = 1f; // å·¨æ‰‹æ·¡å…¥æ—¶é—´
+    public float handFadeOutDuration = 0.5f; // å·¨æ‰‹æ·¡å‡ºæ—¶é—´
+    public float handMinY = 0.52f; // å·¨æ‰‹æœ€ä½Yåæ ‡
     
-    // ¿ÕĞÄ¾ØĞÎ·¶Î§£¨Í¨¹ı4×é×ø±ê½ç¶¨£©
-    public Vector2 innerRectBottomLeft; // Ğ¡¾ØĞÎ×óÏÂ½Ç×ø±ê
-    public Vector2 innerRectTopRight; // Ğ¡¾ØĞÎÓÒÉÏ½Ç×ø±ê
-    public Vector2 outerRectBottomLeft; // ´ó¾ØĞÎ×óÏÂ½Ç×ø±ê
-    public Vector2 outerRectTopRight; // ´ó¾ØĞÎÓÒÉÏ½Ç×ø±ê
+    // ç©ºå¿ƒçŸ©å½¢èŒƒå›´ï¼ˆé€šè¿‡4ç»„åæ ‡ç•Œå®šï¼‰
+    public Vector2 innerRectBottomLeft; // å°çŸ©å½¢å·¦ä¸‹è§’åæ ‡
+    public Vector2 innerRectTopRight; // å°çŸ©å½¢å³ä¸Šè§’åæ ‡
+    public Vector2 outerRectBottomLeft; // å¤§çŸ©å½¢å·¦ä¸‹è§’åæ ‡
+    public Vector2 outerRectTopRight; // å¤§çŸ©å½¢å³ä¸Šè§’åæ ‡
 
-    [Header("´¦¾öÒôĞ§")]
-    public AudioClip deathClip; // ´¦¾öÒôĞ§
+    [Header("å¤„å†³éŸ³æ•ˆ")]
+    public AudioClip deathClip; // å¤„å†³éŸ³æ•ˆ
 
-    [Header("boss¶ÔÏó")]
-    public GameObject boss; // Boss¶ÔÏó
+    [Header("bosså¯¹è±¡")]
+    public GameObject boss; // Bosså¯¹è±¡
     
     private SpriteRenderer spriteRenderer;
     private SpriteRenderer blackHoleRenderer;
-    private List<GameObject> activeLasers = new List<GameObject>(); // »îÔ¾µÄÁ¬ÏßÁĞ±í
-    private Queue<GameObject> laserPool = new Queue<GameObject>(); // Á¬Ïß¶ÔÏó³Ø
-    public bool isFadeInComplete = false; // µ­ÈëÊÇ·ñÍê³É
-    private bool isInEvilEyeMode = false; // ÊÇ·ñ´¦ÓÚ¶ñÄ§Ö®ÑÛ¹¥»÷Ä£Ê½
-    private float spawnTimer = 0f; // °µÓ°µ¯Éú³É¼ÆÊ±Æ÷
-    private int LaserInterval = 10;// ¼¤¹âÉËº¦¼ä¸ôÖ¡£¨Ã¿6Ö¡³öÉË£©
+    private List<GameObject> activeLasers = new List<GameObject>(); // æ´»è·ƒçš„è¿çº¿åˆ—è¡¨
+    private Queue<GameObject> laserPool = new Queue<GameObject>(); // è¿çº¿å¯¹è±¡æ± 
+    public bool isFadeInComplete = false; // æ·¡å…¥æ˜¯å¦å®Œæˆ
+    private bool isInEvilEyeMode = false; // æ˜¯å¦å¤„äºæ¶é­”ä¹‹çœ¼æ”»å‡»æ¨¡å¼
+    private float spawnTimer = 0f; // æš—å½±å¼¹ç”Ÿæˆè®¡æ—¶å™¨
+    private int LaserInterval = 10;// æ¿€å…‰ä¼¤å®³é—´éš”å¸§ï¼ˆæ¯6å¸§å‡ºä¼¤ï¼‰
     private Coroutine fadeCoroutine;
     
-    // ¾ŞÊÖ¶ÔÏó³Ø
+    // å·¨æ‰‹å¯¹è±¡æ± 
     private Queue<GameObject> giantHandPool = new Queue<GameObject>();
-    private const int handPoolSize = 4; // ¾ŞÊÖ¶ÔÏó³Ø´óĞ¡
+    private const int handPoolSize = 4; // å·¨æ‰‹å¯¹è±¡æ± å¤§å°
 
     void Awake()
     {
-        // Ê¹ÓÃGlobal_ObjectPool³õÊ¼»¯3ÖÖ°µÓ°µ¯µÄ¶ÔÏó³Ø
+        // ä½¿ç”¨Global_ObjectPoolåˆå§‹åŒ–3ç§æš—å½±å¼¹çš„å¯¹è±¡æ± 
         InitializeShadowBulletPools();
         
-        // ³õÊ¼»¯¾ŞÊÖ¶ÔÏó³Ø
+        // åˆå§‹åŒ–å·¨æ‰‹å¯¹è±¡æ± 
         InitializeGiantHandPool();
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        // ³õÊ¼»¯Âß¼­
+        // åˆå§‹åŒ–é€»è¾‘
         spriteRenderer = GetComponent<SpriteRenderer>();
         
-        // ³õÊ¼»¯ºÚ¶´
+        // åˆå§‹åŒ–é»‘æ´
         if (blackHole != null)
         {
             blackHoleRenderer = blackHole.GetComponent<SpriteRenderer>();
@@ -83,32 +84,32 @@ public class EvilEyeAttack : MonoBehaviour
 
     void OnDisable()
     {
-        // Í£Ö¹ÕıÔÚÔËĞĞµÄĞ­³Ì
+        // åœæ­¢æ­£åœ¨è¿è¡Œçš„åç¨‹
         if (fadeCoroutine != null)
         {
             StopCoroutine(fadeCoroutine);
             fadeCoroutine = null;
         }
         
-        // ÇåÀí»îÔ¾µÄ¼¤¹â
+        // æ¸…ç†æ´»è·ƒçš„æ¿€å…‰
         ClearAllLasers();
         
-        // ÖØÖÃ×´Ì¬
+        // é‡ç½®çŠ¶æ€
         isFadeInComplete = false;
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-        // ¹¥»÷Âß¼­
-        if (isFadeInComplete && Input.GetKey(KeyCode.LeftShift))
+        // æ”»å‡»é€»è¾‘
+        if (isFadeInComplete && ReplayManager.Input.GetKey(LogicalKey.Slow))
         {
             UpdateBlackHole();
             
-            // ¼ì²âZ¼ü°´ÏÂºÍÌ§Æğ
-            if (Input.GetKey(KeyCode.Z))
+            // æ£€æµ‹Zé”®æŒ‰ä¸‹å’ŒæŠ¬èµ·
+            if (ReplayManager.Input.GetKey(LogicalKey.Fire))
             {
-                // Z¼ü°´ÏÂÊ±£¬Ö´ĞĞ¹¥»÷Âß¼­£¨Ö»ÓĞÔÚ¶ñÄ§Ö®ÑÛÄ£Ê½ÏÂ²Å´´½¨Á¬Ïß£©
+                // Zé”®æŒ‰ä¸‹æ—¶ï¼Œæ‰§è¡Œæ”»å‡»é€»è¾‘ï¼ˆåªæœ‰åœ¨æ¶é­”ä¹‹çœ¼æ¨¡å¼ä¸‹æ‰åˆ›å»ºè¿çº¿ï¼‰
                 if (isInEvilEyeMode)
                 {
                     UpdateLasers();
@@ -121,15 +122,15 @@ public class EvilEyeAttack : MonoBehaviour
                 }
                 UpdateShadowBullets();
             }
-            else if (Input.GetKeyUp(KeyCode.Z))
+            else if (ReplayManager.Input.GetKeyUp(LogicalKey.Fire))
             {
-                // Z¼üÌ§ÆğÊ±£¬Çå¿ÕËùÓĞÁ¬Ïß
+                // Zé”®æŠ¬èµ·æ—¶ï¼Œæ¸…ç©ºæ‰€æœ‰è¿çº¿
                 ClearAllLasers();
             }
         }
         
-        // ¼ì²â×óShiftÌ§Æğ£¬Á¢¼´Çå³ıËùÓĞÁ¬Ïß²¢ÍË³ö¶ñÄ§Ö®ÑÛÄ£Ê½
-        if (isFadeInComplete && Input.GetKeyUp(KeyCode.LeftShift))
+        // æ£€æµ‹å·¦ShiftæŠ¬èµ·ï¼Œç«‹å³æ¸…é™¤æ‰€æœ‰è¿çº¿å¹¶é€€å‡ºæ¶é­”ä¹‹çœ¼æ¨¡å¼
+        if (isFadeInComplete && ReplayManager.Input.GetKeyUp(LogicalKey.Slow))
         {
             isInEvilEyeMode = false;
             ClearAllLasers();
@@ -137,7 +138,7 @@ public class EvilEyeAttack : MonoBehaviour
     }
     
     /// <summary>
-    /// ¿ªÊ¼µ­Èë
+    /// å¼€å§‹æ·¡å…¥
     /// </summary>
     public void StartFadeIn()
     {
@@ -148,7 +149,7 @@ public class EvilEyeAttack : MonoBehaviour
     }
     
     /// <summary>
-    /// µ­ÈëĞ­³Ì
+    /// æ·¡å…¥åç¨‹
     /// </summary>
     private IEnumerator FadeIn()
     {
@@ -157,7 +158,7 @@ public class EvilEyeAttack : MonoBehaviour
             yield break;
         }
         
-        // ¼¤»îºÚ¶´
+        // æ¿€æ´»é»‘æ´
         if (blackHole != null)
         {
             if (blackHoleRenderer == null)
@@ -182,11 +183,11 @@ public class EvilEyeAttack : MonoBehaviour
             elapsedTime += Time.deltaTime;
             float alpha = Mathf.Clamp01(elapsedTime / fadeDuration);
             
-            // ¶ñÄ§Ö®ÑÛµ­Èë
+            // æ¶é­”ä¹‹çœ¼æ·¡å…¥
             originalColor.a = alpha;
             spriteRenderer.color = originalColor;
             
-            // ºÚ¶´µ­Èë£ºÔÚÍ¬ÑùµÄÊ±¼äÄÚÓÉ0Í¸Ã÷¶ÈÕÇÎª0.5£¬0.5ÊÇÉÏÏŞ
+            // é»‘æ´æ·¡å…¥ï¼šåœ¨åŒæ ·çš„æ—¶é—´å†…ç”±0é€æ˜åº¦æ¶¨ä¸º0.5ï¼Œ0.5æ˜¯ä¸Šé™
             if (blackHoleRenderer != null)
             {
                 Color blackHoleColor = blackHoleRenderer.color;
@@ -197,11 +198,11 @@ public class EvilEyeAttack : MonoBehaviour
             yield return null;
         }
         
-        // È·±£×îÖÕÍ¸Ã÷¶ÈÎª1
+        // ç¡®ä¿æœ€ç»ˆé€æ˜åº¦ä¸º1
         originalColor.a = 1f;
         spriteRenderer.color = originalColor;
         
-        // È·±£ºÚ¶´×îÖÕÍ¸Ã÷¶ÈÎª0.5
+        // ç¡®ä¿é»‘æ´æœ€ç»ˆé€æ˜åº¦ä¸º0.5
         if (blackHoleRenderer != null)
         {
             Color blackHoleColor = blackHoleRenderer.color;
@@ -209,19 +210,19 @@ public class EvilEyeAttack : MonoBehaviour
             blackHoleRenderer.color = blackHoleColor;
         }
         
-        // µ­ÈëÍê³É£¬¿ªÊ¼¹¥»÷£¬½øÈë¶ñÄ§Ö®ÑÛ¹¥»÷Ä£Ê½
+        // æ·¡å…¥å®Œæˆï¼Œå¼€å§‹æ”»å‡»ï¼Œè¿›å…¥æ¶é­”ä¹‹çœ¼æ”»å‡»æ¨¡å¼
         isFadeInComplete = true;
         isInEvilEyeMode = true;
     }
     
     /// <summary>
-    /// ¿ªÊ¼µ­³ö
+    /// å¼€å§‹æ·¡å‡º
     /// </summary>
     public void StartFadeOut()
     {
         if (gameObject.activeInHierarchy)
         {
-            // Í£Ö¹ÕıÔÚÔËĞĞµÄĞ­³Ì£¨°üÀ¨µ­ÈëĞ­³Ì£©
+            // åœæ­¢æ­£åœ¨è¿è¡Œçš„åç¨‹ï¼ˆåŒ…æ‹¬æ·¡å…¥åç¨‹ï¼‰
             if (fadeCoroutine != null)
             {
                 StopCoroutine(fadeCoroutine);
@@ -233,7 +234,7 @@ public class EvilEyeAttack : MonoBehaviour
     }
     
     /// <summary>
-    /// µ­³öĞ­³Ì
+    /// æ·¡å‡ºåç¨‹
     /// </summary>
     private IEnumerator FadeOut()
     {
@@ -244,8 +245,8 @@ public class EvilEyeAttack : MonoBehaviour
         
         float elapsedTime = 0f;
         Color originalColor = spriteRenderer.color;
-        float currentAlpha = originalColor.a; // »ñÈ¡µ±Ç°Í¸Ã÷¶È
-        float actualFadeDuration = fadeDuration * currentAlpha; // ¼ÆËãÊµ¼Êµ­³öÊ±¼ä
+        float currentAlpha = originalColor.a; // è·å–å½“å‰é€æ˜åº¦
+        float actualFadeDuration = fadeDuration * currentAlpha; // è®¡ç®—å®é™…æ·¡å‡ºæ—¶é—´
         Color blackHoleColor = Color.black;
         if (blackHoleRenderer != null)
         {
@@ -258,11 +259,11 @@ public class EvilEyeAttack : MonoBehaviour
             float t = Mathf.Clamp01(elapsedTime / actualFadeDuration);
             float alpha = Mathf.Clamp01(1 - t);
             
-            // ¶ñÄ§Ö®ÑÛµ­³ö
+            // æ¶é­”ä¹‹çœ¼æ·¡å‡º
             originalColor.a = alpha;
             spriteRenderer.color = originalColor;
             
-            // ºÚ¶´µ­³ö£º´Óµ±Ç°Í¸Ã÷¶Èµ­³öµ½0
+            // é»‘æ´æ·¡å‡ºï¼šä»å½“å‰é€æ˜åº¦æ·¡å‡ºåˆ°0
             if (blackHoleRenderer != null)
             {
                 blackHoleColor.a = alpha * 0.5f;
@@ -272,11 +273,11 @@ public class EvilEyeAttack : MonoBehaviour
             yield return null;
         }
         
-        // È·±£×îÖÕÍ¸Ã÷¶ÈÎª0
+        // ç¡®ä¿æœ€ç»ˆé€æ˜åº¦ä¸º0
         originalColor.a = 0f;
         spriteRenderer.color = originalColor;
         
-        // È·±£ºÚ¶´×îÖÕÍ¸Ã÷¶ÈÎª0
+        // ç¡®ä¿é»‘æ´æœ€ç»ˆé€æ˜åº¦ä¸º0
         if (blackHoleRenderer != null)
         {
             blackHoleColor.a = 0f;
@@ -285,11 +286,11 @@ public class EvilEyeAttack : MonoBehaviour
     }
     
     /// <summary>
-    /// ´´½¨Á¬Ïß
+    /// åˆ›å»ºè¿çº¿
     /// </summary>
     private void CreateLasers()
     {
-        // ÇåÀíÖ®Ç°µÄÁ¬Ïß
+        // æ¸…ç†ä¹‹å‰çš„è¿çº¿
         ClearAllLasers();
         
         if (boss != null && boss.activeInHierarchy)
@@ -297,7 +298,7 @@ public class EvilEyeAttack : MonoBehaviour
             CreateLaserToTarget(boss.transform.position);
             return;
         }
-        // ´Ó GameManager »ñÈ¡ËùÓĞ»îÔ¾µĞÈË
+        // ä» GameManager è·å–æ‰€æœ‰æ´»è·ƒæ•Œäºº
         List<GameObject> enemies = GetActiveEnemies();
         
         foreach (GameObject enemy in enemies)
@@ -310,29 +311,29 @@ public class EvilEyeAttack : MonoBehaviour
     }
     
     /// <summary>
-    /// ´´½¨µ½Ä¿±êÎ»ÖÃµÄÁ¬Ïß£¨Ê¹ÓÃ¶ÔÏó³Ø¸´ÓÃ£©
+    /// åˆ›å»ºåˆ°ç›®æ ‡ä½ç½®çš„è¿çº¿ï¼ˆä½¿ç”¨å¯¹è±¡æ± å¤ç”¨ï¼‰
     /// </summary>
     private void CreateLaserToTarget(Vector3 targetPosition)
     {
-        // ´Ó¶ÔÏó³Ø»ñÈ¡»ò´´½¨Á¬Ïß¶ÔÏó
+        // ä»å¯¹è±¡æ± è·å–æˆ–åˆ›å»ºè¿çº¿å¯¹è±¡
         GameObject laserObj = GetLaserFromPool();
         laserObj.transform.parent = transform;
         laserObj.transform.position = transform.position;
         laserObj.SetActive(true);
         
-        // »ñÈ¡ LineRenderer ×é¼ş
+        // è·å– LineRenderer ç»„ä»¶
         LineRenderer lineRenderer = laserObj.GetComponent<LineRenderer>();
         
-        // ÉèÖÃÁ¬ÏßµÄÁ½¸öµã
+        // è®¾ç½®è¿çº¿çš„ä¸¤ä¸ªç‚¹
         lineRenderer.SetPosition(0, transform.position);
         lineRenderer.SetPosition(1, targetPosition);
         
-        // Ìí¼Óµ½»îÔ¾Á¬ÏßÁĞ±í
+        // æ·»åŠ åˆ°æ´»è·ƒè¿çº¿åˆ—è¡¨
         activeLasers.Add(laserObj);
     }
     
     /// <summary>
-    /// ´Ó¶ÔÏó³Ø»ñÈ¡Á¬Ïß¶ÔÏó
+    /// ä»å¯¹è±¡æ± è·å–è¿çº¿å¯¹è±¡
     /// </summary>
     private GameObject GetLaserFromPool()
     {
@@ -342,10 +343,10 @@ public class EvilEyeAttack : MonoBehaviour
         }
         else
         {
-            // ´´½¨ĞÂµÄÁ¬Ïß¶ÔÏó
+            // åˆ›å»ºæ–°çš„è¿çº¿å¯¹è±¡
             GameObject laserObj = new GameObject("EvilEyeLaser");
             
-            // Ìí¼Ó LineRenderer ×é¼ş
+            // æ·»åŠ  LineRenderer ç»„ä»¶
             LineRenderer lineRenderer = laserObj.AddComponent<LineRenderer>();
             lineRenderer.startWidth = laserWidth;
             lineRenderer.endWidth = laserWidth;
@@ -353,11 +354,11 @@ public class EvilEyeAttack : MonoBehaviour
             lineRenderer.startColor = new Color(1f, 0f, 0f, 0.5f);
             lineRenderer.endColor = new Color(1f, 0f, 0f, 0.5f);
             lineRenderer.positionCount = 2;
-            lineRenderer.useWorldSpace = true; // Ê¹ÓÃÊÀ½ç¿Õ¼ä×ø±ê
+            lineRenderer.useWorldSpace = true; // ä½¿ç”¨ä¸–ç•Œç©ºé—´åæ ‡
             
-            // ÉèÖÃÅÅĞò²ã¼¶
-            lineRenderer.sortingLayerName = "Effect"; // ÉèÖÃÎªĞ§¹û²ã
-            lineRenderer.sortingOrder = 9; // ÉèÖÃÅÅĞòË³Ğò
+            // è®¾ç½®æ’åºå±‚çº§
+            lineRenderer.sortingLayerName = "Effect"; // è®¾ç½®ä¸ºæ•ˆæœå±‚
+            lineRenderer.sortingOrder = 9; // è®¾ç½®æ’åºé¡ºåº
             
             laserObj.SetActive(false);
             return laserObj;
@@ -365,20 +366,20 @@ public class EvilEyeAttack : MonoBehaviour
     }
     
     /// <summary>
-    /// ¸üĞÂÁ¬Ïß
+    /// æ›´æ–°è¿çº¿
     /// </summary>
     private void UpdateLasers()
     {
-        // Ã¿Ö¡ÖØĞÂ´´½¨Á¬Ïß£¬È·±£Á¬Ïßµ½ËùÓĞµĞÈË
+        // æ¯å¸§é‡æ–°åˆ›å»ºè¿çº¿ï¼Œç¡®ä¿è¿çº¿åˆ°æ‰€æœ‰æ•Œäºº
         CreateLasers();
     }
     
     /// <summary>
-    /// ÇåÀíËùÓĞÁ¬Ïß£¨·Å»Ø¶ÔÏó³Ø£©
+    /// æ¸…ç†æ‰€æœ‰è¿çº¿ï¼ˆæ”¾å›å¯¹è±¡æ± ï¼‰
     /// </summary>
     public void ClearAllLasers()
     {
-        // ½«»îÔ¾Á¬Ïß·Å»Ø¶ÔÏó³Ø
+        // å°†æ´»è·ƒè¿çº¿æ”¾å›å¯¹è±¡æ± 
         foreach (GameObject laserObj in activeLasers)
         {
             if (laserObj != null)
@@ -389,26 +390,26 @@ public class EvilEyeAttack : MonoBehaviour
             }
         }
         
-        // Çå¿Õ»îÔ¾Á¬ÏßÁĞ±í
+        // æ¸…ç©ºæ´»è·ƒè¿çº¿åˆ—è¡¨
         activeLasers.Clear();
     }
     
     /// <summary>
-    /// ¶ÔµĞÈËÔì³ÉÉËº¦
+    /// å¯¹æ•Œäººé€ æˆä¼¤å®³
     /// </summary>
     private void DealDamageToEnemies()
     {
-        // Èç¹ûBoss¼¤»î£¬Ö±½Ó¶ÔBossÔì³ÉÉËº¦£¬Ìø¹ı±éÀúµĞÈËÁĞ±í
+        // å¦‚æœBossæ¿€æ´»ï¼Œç›´æ¥å¯¹Bossé€ æˆä¼¤å®³ï¼Œè·³è¿‡éå†æ•Œäººåˆ—è¡¨
         if (boss != null && boss.activeInHierarchy)
         {
             DealDamageToBoss();
-            return; // Ö±½Ó·µ»Ø£¬²»ÔÙ´¦ÀíÆÕÍ¨µĞÈË
+            return; // ç›´æ¥è¿”å›ï¼Œä¸å†å¤„ç†æ™®é€šæ•Œäºº
         }
         
-        // ´Ó GameManager »ñÈ¡ËùÓĞ»îÔ¾µĞÈË
+        // ä» GameManager è·å–æ‰€æœ‰æ´»è·ƒæ•Œäºº
         List<GameObject> enemies = GetActiveEnemies();
         
-        // ´´½¨ÁÙÊ±ÁĞ±íÀ´´æ´¢ÓĞĞ§µÄµĞÈË
+        // åˆ›å»ºä¸´æ—¶åˆ—è¡¨æ¥å­˜å‚¨æœ‰æ•ˆçš„æ•Œäºº
         List<GameObject> validEnemies = new List<GameObject>();
         foreach (GameObject enemy in enemies)
         {
@@ -418,24 +419,24 @@ public class EvilEyeAttack : MonoBehaviour
             }
         }
         
-        // ±éÀúÓĞĞ§µĞÈËÁĞ±í²¢Ôì³ÉÉËº¦
+        // éå†æœ‰æ•ˆæ•Œäººåˆ—è¡¨å¹¶é€ æˆä¼¤å®³
         foreach (GameObject enemy in validEnemies)
         {
             if (enemy.TryGetComponent<Enemy>(out var enemyComponent))
             {
-                // ¼ÆËãÉËº¦
+                // è®¡ç®—ä¼¤å®³
                 int damage = CalDamage();
-                // ¶ÔµĞÈËÔì³ÉÉËº¦
+                // å¯¹æ•Œäººé€ æˆä¼¤å®³
                 enemyComponent.Damage(damage);
                 
-                // ¸üĞÂµĞÈËºìÉ«¶È
+                // æ›´æ–°æ•Œäººçº¢è‰²åº¦
                 enemyComponent.UpdateRedIntensity();
             }
         }
     }
     
     /// <summary>
-    /// ¶ÔBossÔì³ÉÉËº¦
+    /// å¯¹Bossé€ æˆä¼¤å®³
     /// </summary>
     private void DealDamageToBoss()
     {
@@ -444,22 +445,22 @@ public class EvilEyeAttack : MonoBehaviour
             BossBase bossBase = boss.GetComponent<BossBase>();
             if (bossBase != null)
             {
-                int damage = CalDamage() * 2;// ¶ÔBossÔì³ÉÉËº¦Öµ·­±¶
-                // ¶ÔBossÔì³ÉÉËº¦
+                int damage = CalDamage() * 2;// å¯¹Bossé€ æˆä¼¤å®³å€¼ç¿»å€
+                // å¯¹Bossé€ æˆä¼¤å®³
                 bossBase.TakeDamage(damage);
             }
         }
     }
     
     /// <summary>
-    /// ´Ó GameManager »ñÈ¡»îÔ¾µĞÈË
+    /// ä» GameManager è·å–æ´»è·ƒæ•Œäºº
     /// </summary>
-    /// <returns>»îÔ¾µĞÈËÁĞ±í</returns>
+    /// <returns>æ´»è·ƒæ•Œäººåˆ—è¡¨</returns>
     private List<GameObject> GetActiveEnemies()
     {
         if (Global_GameManager.Instance != null)
         {
-            // ´´½¨ÁÙÊ±ÁĞ±íÀ´´æ´¢ÓĞĞ§µÄµĞÈË
+            // åˆ›å»ºä¸´æ—¶åˆ—è¡¨æ¥å­˜å‚¨æœ‰æ•ˆçš„æ•Œäºº
             List<GameObject> validEnemies = new List<GameObject>();
             foreach (GameObject enemy in Global_GameManager.Instance.EnemyList)
             {
@@ -474,20 +475,20 @@ public class EvilEyeAttack : MonoBehaviour
     }
     
     /// <summary>
-    /// ¼ÆËãÉËº¦
+    /// è®¡ç®—ä¼¤å®³
     /// </summary>
-    /// <returns>Ã¿ÉËº¦Ö¡ÉËº¦Öµ</returns>
+    /// <returns>æ¯ä¼¤å®³å¸§ä¼¤å®³å€¼</returns>
     private int CalDamage()
     {
         return 3+(Global_GameManager.Instance.Power/100);
     }
     
     /// <summary>
-    /// ¸üĞÂºÚ¶´
+    /// æ›´æ–°é»‘æ´
     /// </summary>
     private void UpdateBlackHole()
     {
-        // ºÚ¶´Ğı×ª
+        // é»‘æ´æ—‹è½¬
         if (blackHole != null && spriteRenderer != null && spriteRenderer.color.a >= 0.99f)
         {
             blackHole.transform.Rotate(0f, 0f, blackHoleRotationSpeed * Time.deltaTime);
@@ -495,30 +496,30 @@ public class EvilEyeAttack : MonoBehaviour
     }
     
     /// <summary>
-    /// ¸üĞÂ°µÓ°µ¯
+    /// æ›´æ–°æš—å½±å¼¹
     /// </summary>
     private void UpdateShadowBullets()
     {
-        // ¼ì²éºÚ¶´ÊÇ·ñ´æÔÚ
+        // æ£€æŸ¥é»‘æ´æ˜¯å¦å­˜åœ¨
         if (blackHole == null)
         {
             return;
         }
         
-        // ¼ì²é¶ñÄ§Ö®ÑÛÊÇ·ñÍêÈ«ÏÔÊ¾£¨Í¸Ã÷¶ÈÎª1£©
+        // æ£€æŸ¥æ¶é­”ä¹‹çœ¼æ˜¯å¦å®Œå…¨æ˜¾ç¤ºï¼ˆé€æ˜åº¦ä¸º1ï¼‰
         if (spriteRenderer != null && spriteRenderer.color.a < 0.99f)
         {
             return;
         }
         
-        // ¼ì²éÊÇ·ñÓĞ°µÓ°µ¯Ô¤ÖÆ¼ş
+        // æ£€æŸ¥æ˜¯å¦æœ‰æš—å½±å¼¹é¢„åˆ¶ä»¶
         if (shadowBulletPrefabs == null || shadowBulletPrefabs.Count == 0)
         {
             return;
         }
         
-        // ¼ÆÊ±Éú³É°µÓ°µ¯
-        spawnTimer += Time.deltaTime;
+        // è®¡æ—¶ç”Ÿæˆæš—å½±å¼¹
+        spawnTimer += SimClock.FixedTickDt;
         if (spawnTimer >= spawnInterval)
         {
             spawnTimer = 0f;
@@ -527,18 +528,18 @@ public class EvilEyeAttack : MonoBehaviour
     }
     
     /// <summary>
-    /// Éú³É°µÓ°µ¯
+    /// ç”Ÿæˆæš—å½±å¼¹
     /// </summary>
     private void SpawnShadowBullet()
     {
-        // ¼ì²éÊÇ·ñÓĞ°µÓ°µ¯Ô¤ÖÆ¼ş
+        // æ£€æŸ¥æ˜¯å¦æœ‰æš—å½±å¼¹é¢„åˆ¶ä»¶
         if (shadowBulletPrefabs == null || shadowBulletPrefabs.Count == 0)
         {
             return;
         }
         
-        // Ëæ»úÑ¡ÔñÒ»ÖÖ°µÓ°µ¯ÀàĞÍ
-        int randomIndex = Random.Range(0, shadowBulletPrefabs.Count);
+        // éšæœºé€‰æ‹©ä¸€ç§æš—å½±å¼¹ç±»å‹
+        int randomIndex = GameRNG.Range(0, shadowBulletPrefabs.Count);
         GameObject selectedPrefab = shadowBulletPrefabs[randomIndex];
         
         if (selectedPrefab == null)
@@ -546,15 +547,15 @@ public class EvilEyeAttack : MonoBehaviour
             return;
         }
         
-        // ÔÚ¿ÕĞÄ¾ØĞÎ·¶Î§ÄÚËæ»úÉú³ÉÎ»ÖÃ
+        // åœ¨ç©ºå¿ƒçŸ©å½¢èŒƒå›´å†…éšæœºç”Ÿæˆä½ç½®
         Vector3 spawnPosition = GetRandomPositionInHollowRect();
         
-        // ¼ÆËã³¯ÏòºÚ¶´µÄ·½Ïò
+        // è®¡ç®—æœå‘é»‘æ´çš„æ–¹å‘
         Vector2 direction = (blackHole.transform.position - spawnPosition).normalized;
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         Quaternion rotation = Quaternion.Euler(0f, 0f, angle);
         
-        // ´ÓGlobal_ObjectPool»ñÈ¡°µÓ°µ¯
+        // ä»Global_ObjectPoolè·å–æš—å½±å¼¹
         GameObject bullet = Global_ObjectPool.Instance.GetObject(selectedPrefab, spawnPosition, rotation);
         
         if (bullet == null)
@@ -562,7 +563,7 @@ public class EvilEyeAttack : MonoBehaviour
             return;
         }
         
-        // ³õÊ¼»¯°µÓ°µ¯
+        // åˆå§‹åŒ–æš—å½±å¼¹
         DarkFO darkFO = bullet.GetComponent<DarkFO>();
         if (darkFO != null)
         {
@@ -571,76 +572,76 @@ public class EvilEyeAttack : MonoBehaviour
     }
     
     /// <summary>
-    /// »ñÈ¡¿ÕĞÄ¾ØĞÎ·¶Î§ÄÚµÄËæ»úÎ»ÖÃ
-    /// °µÓ°µ¯Ö»ÔÚÍâ¾ØĞÎ±ß¿òÉÏÉú³É£¬µ«ÅÅ³ıÄÚ¾ØĞÎ¸²¸ÇµÄÇøÓò
+    /// è·å–ç©ºå¿ƒçŸ©å½¢èŒƒå›´å†…çš„éšæœºä½ç½®
+    /// æš—å½±å¼¹åªåœ¨å¤–çŸ©å½¢è¾¹æ¡†ä¸Šç”Ÿæˆï¼Œä½†æ’é™¤å†…çŸ©å½¢è¦†ç›–çš„åŒºåŸŸ
     /// </summary>
-    /// <returns>Ëæ»úÎ»ÖÃ</returns>
+    /// <returns>éšæœºä½ç½®</returns>
     private Vector3 GetRandomPositionInHollowRect()
     {
         float x, y;
         
-        // Ëæ»ú¾ö¶¨ÊÇÔÚ×óÓÒ±ß»¹ÊÇÉÏÏÂ±ß
-        bool isHorizontal = Random.value > 0.5f;
+        // éšæœºå†³å®šæ˜¯åœ¨å·¦å³è¾¹è¿˜æ˜¯ä¸Šä¸‹è¾¹
+        bool isHorizontal = GameRNG.value > 0.5f;
         
         if (isHorizontal)
         {
-            // ×óÓÒ±ß
-            // Ëæ»úÑ¡Ôñ×ó±ß»òÓÒ±ß
-            bool isLeft = Random.value > 0.5f;
+            // å·¦å³è¾¹
+            // éšæœºé€‰æ‹©å·¦è¾¹æˆ–å³è¾¹
+            bool isLeft = GameRNG.value > 0.5f;
             x = isLeft ? outerRectBottomLeft.x : outerRectTopRight.x;
             
-            // ÉÏÏÂ·¶Î§ÄÚËæ»ú£¬µ«ÅÅ³ıÄÚ¾ØĞÎ¸²¸ÇµÄÇøÓò
-            // ÔÚÉÏÏÂÁ½ÌõÏß¶ÎÖĞËæ»úÑ¡ÔñÒ»Ìõ
-            bool isUpper = Random.value > 0.5f;
+            // ä¸Šä¸‹èŒƒå›´å†…éšæœºï¼Œä½†æ’é™¤å†…çŸ©å½¢è¦†ç›–çš„åŒºåŸŸ
+            // åœ¨ä¸Šä¸‹ä¸¤æ¡çº¿æ®µä¸­éšæœºé€‰æ‹©ä¸€æ¡
+            bool isUpper = GameRNG.value > 0.5f;
             if (isUpper)
             {
-                // ÉÏ±ßÏß¶Î£º´ÓÄÚ¾ØĞÎ¶¥²¿µ½Íâ¾ØĞÎ¶¥²¿
-                y = Random.Range(innerRectTopRight.y, outerRectTopRight.y);
+                // ä¸Šè¾¹çº¿æ®µï¼šä»å†…çŸ©å½¢é¡¶éƒ¨åˆ°å¤–çŸ©å½¢é¡¶éƒ¨
+                y = GameRNG.Range(innerRectTopRight.y, outerRectTopRight.y);
             }
             else
             {
-                // ÏÂ±ßÏß¶Î£º´ÓÍâ¾ØĞÎµ×²¿µ½ÄÚ¾ØĞÎµ×²¿
-                y = Random.Range(outerRectBottomLeft.y, innerRectBottomLeft.y);
+                // ä¸‹è¾¹çº¿æ®µï¼šä»å¤–çŸ©å½¢åº•éƒ¨åˆ°å†…çŸ©å½¢åº•éƒ¨
+                y = GameRNG.Range(outerRectBottomLeft.y, innerRectBottomLeft.y);
             }
         }
         else
         {
-            // ÉÏÏÂ±ß
-            // Ëæ»úÑ¡ÔñÉÏ±ß»òÏÂ±ß
-            bool isTop = Random.value > 0.5f;
+            // ä¸Šä¸‹è¾¹
+            // éšæœºé€‰æ‹©ä¸Šè¾¹æˆ–ä¸‹è¾¹
+            bool isTop = GameRNG.value > 0.5f;
             y = isTop ? outerRectTopRight.y : outerRectBottomLeft.y;
             
-            // ×óÓÒ·¶Î§ÄÚËæ»ú£¬µ«ÅÅ³ıÄÚ¾ØĞÎ¸²¸ÇµÄÇøÓò
-            // ÔÚ×óÓÒÁ½ÌõÏß¶ÎÖĞËæ»úÑ¡ÔñÒ»Ìõ
-            bool isRight = Random.value > 0.5f;
+            // å·¦å³èŒƒå›´å†…éšæœºï¼Œä½†æ’é™¤å†…çŸ©å½¢è¦†ç›–çš„åŒºåŸŸ
+            // åœ¨å·¦å³ä¸¤æ¡çº¿æ®µä¸­éšæœºé€‰æ‹©ä¸€æ¡
+            bool isRight = GameRNG.value > 0.5f;
             if (isRight)
             {
-                // ÓÒ±ßÏß¶Î£º´ÓÄÚ¾ØĞÎÓÒ²àµ½Íâ¾ØĞÎÓÒ²à
-                x = Random.Range(innerRectTopRight.x, outerRectTopRight.x);
+                // å³è¾¹çº¿æ®µï¼šä»å†…çŸ©å½¢å³ä¾§åˆ°å¤–çŸ©å½¢å³ä¾§
+                x = GameRNG.Range(innerRectTopRight.x, outerRectTopRight.x);
             }
             else
             {
-                // ×ó±ßÏß¶Î£º´ÓÍâ¾ØĞÎ×ó²àµ½ÄÚ¾ØĞÎ×ó²à
-                x = Random.Range(outerRectBottomLeft.x, innerRectBottomLeft.x);
+                // å·¦è¾¹çº¿æ®µï¼šä»å¤–çŸ©å½¢å·¦ä¾§åˆ°å†…çŸ©å½¢å·¦ä¾§
+                x = GameRNG.Range(outerRectBottomLeft.x, innerRectBottomLeft.x);
             }
         }
         
-        // ×ª»»ÎªÊÀ½ç×ø±ê
+        // è½¬æ¢ä¸ºä¸–ç•Œåæ ‡
         return transform.position + new Vector3(x, y, 0f);
     }
     
     /// <summary>
-    /// ³õÊ¼»¯°µÓ°µ¯¶ÔÏó³Ø
+    /// åˆå§‹åŒ–æš—å½±å¼¹å¯¹è±¡æ± 
     /// </summary>
     private void InitializeShadowBulletPools()
     {
-        // ¼ì²éÊÇ·ñÓĞ°µÓ°µ¯Ô¤ÖÆ¼ş
+        // æ£€æŸ¥æ˜¯å¦æœ‰æš—å½±å¼¹é¢„åˆ¶ä»¶
         if (shadowBulletPrefabs == null || shadowBulletPrefabs.Count == 0)
         {
             return;
         }
         
-        // Ê¹ÓÃGlobal_ObjectPoolÎªÃ¿ÖÖ°µÓ°µ¯´´½¨¶ÔÏó³Ø£¨Ã¿ÖÖ15¸ö£©
+        // ä½¿ç”¨Global_ObjectPoolä¸ºæ¯ç§æš—å½±å¼¹åˆ›å»ºå¯¹è±¡æ± ï¼ˆæ¯ç§15ä¸ªï¼‰
         for (int i = 0; i < shadowBulletPrefabs.Count; i++)
         {
             if (shadowBulletPrefabs[i] != null)
@@ -651,7 +652,7 @@ public class EvilEyeAttack : MonoBehaviour
     }
     
     /// <summary>
-    /// ³õÊ¼»¯¾ŞÊÖ¶ÔÏó³Ø
+    /// åˆå§‹åŒ–å·¨æ‰‹å¯¹è±¡æ± 
     /// </summary>
     private void InitializeGiantHandPool()
     {
@@ -669,9 +670,9 @@ public class EvilEyeAttack : MonoBehaviour
     }
     
     /// <summary>
-    /// ´Ó¶ÔÏó³Ø»ñÈ¡¾ŞÊÖ
+    /// ä»å¯¹è±¡æ± è·å–å·¨æ‰‹
     /// </summary>
-    /// <returns>¾ŞÊÖ¶ÔÏó</returns>
+    /// <returns>å·¨æ‰‹å¯¹è±¡</returns>
     private GameObject GetGiantHandFromPool()
     {
         if (giantHandPool.Count > 0)
@@ -680,7 +681,7 @@ public class EvilEyeAttack : MonoBehaviour
         }
         else if (giantHandPrefab != null)
         {
-            // Èç¹û¶ÔÏó³ØÎª¿Õ£¬´´½¨ĞÂµÄ¾ŞÊÖ
+            // å¦‚æœå¯¹è±¡æ± ä¸ºç©ºï¼Œåˆ›å»ºæ–°çš„å·¨æ‰‹
             GameObject hand = Instantiate(giantHandPrefab);
             hand.SetActive(false);
             return hand;
@@ -689,9 +690,9 @@ public class EvilEyeAttack : MonoBehaviour
     }
     
     /// <summary>
-    /// »ØÊÕ¾ŞÊÖµ½¶ÔÏó³Ø
+    /// å›æ”¶å·¨æ‰‹åˆ°å¯¹è±¡æ± 
     /// </summary>
-    /// <param name="hand">Òª»ØÊÕµÄ¾ŞÊÖ</param>
+    /// <param name="hand">è¦å›æ”¶çš„å·¨æ‰‹</param>
     private void RecycleGiantHand(GameObject hand)
     {
         if (hand != null)
@@ -702,30 +703,30 @@ public class EvilEyeAttack : MonoBehaviour
     }
     
     /// <summary>
-    /// Ö´ĞĞ´¦¾öĞ§¹û
+    /// æ‰§è¡Œå¤„å†³æ•ˆæœ
     /// </summary>
-    /// <param name="enemyPosition">µĞÈËÎ»ÖÃ</param>
+    /// <param name="enemyPosition">æ•Œäººä½ç½®</param>
     public void ExecuteEnemy(Vector3 enemyPosition)
     {
-        // ´Ó¶ÔÏó³Ø»ñÈ¡¾ŞÊÖ
+        // ä»å¯¹è±¡æ± è·å–å·¨æ‰‹
         GameObject hand = GetGiantHandFromPool();
         if (hand == null)
         {
             return;
         }
         
-        // ¼ÆËã¾ŞÊÖµÄÉú³ÉÎ»ÖÃ
+        // è®¡ç®—å·¨æ‰‹çš„ç”Ÿæˆä½ç½®
         Vector3 spawnPosition = enemyPosition;
         spawnPosition.y += handSpawnYOffset;
         
-        // ¼ÆËã¾ŞÊÖµÄÄ¿±êÎ»ÖÃ
+        // è®¡ç®—å·¨æ‰‹çš„ç›®æ ‡ä½ç½®
         Vector3 targetPosition = enemyPosition;
         targetPosition.x += handSpawnXOffset;
         targetPosition.y += handTargetYOffset;
-        // È·±£¾ŞÊÖµÄY×ø±ê²»µÍÓÚ×îµÍÖµ
+        // ç¡®ä¿å·¨æ‰‹çš„Yåæ ‡ä¸ä½äºæœ€ä½å€¼
         targetPosition.y = Mathf.Max(targetPosition.y, handMinY);
         
-        // ³õÊ¼»¯¾ŞÊÖ
+        // åˆå§‹åŒ–å·¨æ‰‹
         hand.transform.position = spawnPosition;
         hand.transform.localScale = new Vector3(0, 0, 1);
         
@@ -739,15 +740,15 @@ public class EvilEyeAttack : MonoBehaviour
         
         hand.SetActive(true);
         
-        // ¿ªÊ¼´¦¾ö¶¯»­
+        // å¼€å§‹å¤„å†³åŠ¨ç”»
         StartCoroutine(ExecuteAnimation(hand, targetPosition));
     }
     
     /// <summary>
-    /// ´¦¾ö¶¯»­Ğ­³Ì
+    /// å¤„å†³åŠ¨ç”»åç¨‹
     /// </summary>
-    /// <param name="hand">¾ŞÊÖ¶ÔÏó</param>
-    /// <param name="targetPosition">Ä¿±êÎ»ÖÃ</param>
+    /// <param name="hand">å·¨æ‰‹å¯¹è±¡</param>
+    /// <param name="targetPosition">ç›®æ ‡ä½ç½®</param>
     private IEnumerator ExecuteAnimation(GameObject hand, Vector3 targetPosition)
     {
         SpriteRenderer handRenderer = hand.GetComponent<SpriteRenderer>();
@@ -756,12 +757,12 @@ public class EvilEyeAttack : MonoBehaviour
             RecycleGiantHand(hand);
             yield break;
         }
-        // ²¥·Å´¦¾öÒôĞ§
+        // æ’­æ”¾å¤„å†³éŸ³æ•ˆ
         if (Global_AudioManager.Instance != null && deathClip != null)
         {
             Global_AudioManager.Instance.PlaySFX(deathClip,false);
         }
-        // ÉèÖÃ³õÊ¼¾«ÁéÎªÕÅ¿ªµÄÊÖ
+        // è®¾ç½®åˆå§‹ç²¾çµä¸ºå¼ å¼€çš„æ‰‹
         if (openHandSprite != null)
         {
             handRenderer.sprite = openHandSprite;
@@ -772,19 +773,19 @@ public class EvilEyeAttack : MonoBehaviour
         Vector3 startScale = hand.transform.localScale;
         Color startColor = handRenderer.color;
         
-        // µ­ÈëºÍÒÆ¶¯µ½Ä¿±êÎ»ÖÃ
+        // æ·¡å…¥å’Œç§»åŠ¨åˆ°ç›®æ ‡ä½ç½®
         while (elapsedTime < handFadeInDuration)
         {
             elapsedTime += Time.deltaTime;
             float t = Mathf.Clamp01(elapsedTime / handFadeInDuration);
             
-            // ÒÆ¶¯
+            // ç§»åŠ¨
             hand.transform.position = Vector3.Lerp(startPosition, targetPosition, t);
             
-            // Ëõ·Å
+            // ç¼©æ”¾
             hand.transform.localScale = Vector3.Lerp(startScale, new Vector3(2.25f, 2.25f, 1), t);
             
-            // µ­Èë
+            // æ·¡å…¥
             Color color = startColor;
             color.a = t/2;
             handRenderer.color = color;
@@ -792,16 +793,16 @@ public class EvilEyeAttack : MonoBehaviour
             yield return null;
         }
         
-        // ÇĞ»»µ½µÚ¶şÖ¡£¨ÎÕ×¡µÄÊÖ£©
+        // åˆ‡æ¢åˆ°ç¬¬äºŒå¸§ï¼ˆæ¡ä½çš„æ‰‹ï¼‰
         if (closedHandSprite != null)
         {
             handRenderer.sprite = closedHandSprite;
         }
         
-        // µÈ´ıÒ»Ğ¡¶ÎÊ±¼ä
+        // ç­‰å¾…ä¸€å°æ®µæ—¶é—´
         yield return new WaitForSeconds(0.1f);
         
-        // µ­³ö
+        // æ·¡å‡º
         elapsedTime = 0f;
         startColor = handRenderer.color;
         while (elapsedTime < handFadeOutDuration)
@@ -809,7 +810,7 @@ public class EvilEyeAttack : MonoBehaviour
             elapsedTime += Time.deltaTime;
             float t = Mathf.Clamp01(elapsedTime / handFadeOutDuration);
             
-            // µ­³ö
+            // æ·¡å‡º
             Color color = startColor;
             color.a = 1f - t;
             handRenderer.color = color;
@@ -817,7 +818,7 @@ public class EvilEyeAttack : MonoBehaviour
             yield return null;
         }
         
-        // »ØÊÕ¾ŞÊÖ
+        // å›æ”¶å·¨æ‰‹
         RecycleGiantHand(hand);
     }
 }

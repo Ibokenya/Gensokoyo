@@ -1,11 +1,12 @@
 using UnityEngine;
 using System.Collections.Generic;
+using ReplaySystem;
 
 public class Graze : MonoBehaviour
 {
     public AudioClip grazeSound;
-    private List<Collider2D> currentBullets = new(); // ´æ´¢µ±Ç°ÔÚÅĞ¶¨ÇøÓòÄÚµÄµ¯Ä»
-    private bool isPlaying = false; // ±ê¼ÇÊÇ·ñÕıÔÚ²¥·Å²Áµ¯ÒôĞ§
+    private List<Collider2D> currentBullets = new(); // å­˜å‚¨å½“å‰åœ¨åˆ¤å®šåŒºåŸŸå†…çš„å¼¹å¹•
+    private bool isPlaying = false; // æ ‡è®°æ˜¯å¦æ­£åœ¨æ’­æ”¾æ“¦å¼¹éŸ³æ•ˆ
     public FreezeSystem FreezeSystem;
 
     void OnEnable()
@@ -22,7 +23,7 @@ public class Graze : MonoBehaviour
         }
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         if (currentBullets.Count > 0)
         {
@@ -39,23 +40,23 @@ public class Graze : MonoBehaviour
     {
         if(Global_GameManager.Instance.state == State.Gaming)
         {
-            // È·±£Ö»¶ÔµĞÈËºÍµĞÈË×Óµ¯ºÍBoss×Óµ¯ÉúĞ§
+            // ç¡®ä¿åªå¯¹æ•Œäººå’Œæ•Œäººå­å¼¹å’ŒBosså­å¼¹ç”Ÿæ•ˆ
             if (collision.CompareTag("Enemy") || collision.CompareTag("EnemyBullet") || collision.CompareTag("BossBullet"))
             {
-                // Ôö¼Ó²Áµ¯Êı
+                // å¢åŠ æ“¦å¼¹æ•°
                 Global_GameManager.Instance.AddGraze(1);
                 
-                // ²Áµ¯Ê±¼õÉÙ¶³½á½ø¶È
+                // æ“¦å¼¹æ—¶å‡å°‘å†»ç»“è¿›åº¦
                 FreezeSystem.ReduceFrozenDegree();
                 
-                // Èç¹ûµ±Ç°ÁĞ±íÎª¿Õ£¬ÇÒµ±Ç°µ¯Ä»²»ÔÚÁĞ±íÖĞ£¬²¥·Å²Áµ¯ÒôĞ§
+                // å¦‚æœå½“å‰åˆ—è¡¨ä¸ºç©ºï¼Œä¸”å½“å‰å¼¹å¹•ä¸åœ¨åˆ—è¡¨ä¸­ï¼Œæ’­æ”¾æ“¦å¼¹éŸ³æ•ˆ
                 if (currentBullets.Count == 0 && !isPlaying)
                 {
                     Global_AudioManager.Instance.PlaySFX(grazeSound, true);
                     isPlaying = true;
                 }
                 
-                // Èç¹ûµ±Ç°µ¯Ä»²»ÔÚÁĞ±íÖĞ£¬Ìí¼Óµ½ÁĞ±í
+                // å¦‚æœå½“å‰å¼¹å¹•ä¸åœ¨åˆ—è¡¨ä¸­ï¼Œæ·»åŠ åˆ°åˆ—è¡¨
                 if (!currentBullets.Contains(collision))
                 {
                     currentBullets.Add(collision);
@@ -68,17 +69,17 @@ public class Graze : MonoBehaviour
     {
         if(Global_GameManager.Instance.state == State.Gaming)
         {
-            // È·±£Ö»¶ÔµĞÈËºÍµĞÈË×Óµ¯ºÍBoss×Óµ¯ÉúĞ§
+            // ç¡®ä¿åªå¯¹æ•Œäººå’Œæ•Œäººå­å¼¹å’ŒBosså­å¼¹ç”Ÿæ•ˆ
             if (collision.CompareTag("Enemy") || collision.CompareTag("EnemyBullet") ||
             collision.CompareTag("BossBullet"))
             {
-                // ´ÓÁĞ±íÖĞÒÆ³ıµ¯Ä»
+                // ä»åˆ—è¡¨ä¸­ç§»é™¤å¼¹å¹•
                 if (currentBullets.Contains(collision))
                 {
                     currentBullets.Remove(collision);
                 }
 
-                // Èç¹ûÁĞ±íÎª¿Õ£¬Í£Ö¹²¥·ÅÒôĞ§
+                // å¦‚æœåˆ—è¡¨ä¸ºç©ºï¼Œåœæ­¢æ’­æ”¾éŸ³æ•ˆ
                 if (currentBullets.Count == 0 && isPlaying)
                 {
                     Global_AudioManager.Instance.StopLoopSFX(grazeSound);
@@ -89,8 +90,8 @@ public class Graze : MonoBehaviour
     }
 
     /// <summary>
-    /// Ç¿ÖÆÍ£Ö¹²Áµ¯ÒôĞ§
-    /// ÔÚÊ±Í£¶¯»­½áÊøºóµ÷ÓÃ£¬È·±£²Áµ¯ÒôĞ§±»ÕıÈ·Í£Ö¹
+    /// å¼ºåˆ¶åœæ­¢æ“¦å¼¹éŸ³æ•ˆ
+    /// åœ¨æ—¶åœåŠ¨ç”»ç»“æŸåè°ƒç”¨ï¼Œç¡®ä¿æ“¦å¼¹éŸ³æ•ˆè¢«æ­£ç¡®åœæ­¢
     /// </summary>
     public void ForceStopGrazeSound()
     {

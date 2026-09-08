@@ -1,17 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ReplaySystem;
 
 /// <summary>
-/// ¶ñÄ§ÒõÓ°½Å±¾
-/// ¸ºÔğ´¦ÀíÆÁÄ»±äºÚÌØĞ§µÄĞı×ªºÍÍ¸Ã÷¶È±ä»¯
+/// æ¶é­”é˜´å½±è„šæœ¬
+/// è´Ÿè´£å¤„ç†å±å¹•å˜é»‘ç‰¹æ•ˆçš„æ—‹è½¬å’Œé€æ˜åº¦å˜åŒ–
 /// </summary>
 public class EvilShadow : MonoBehaviour
 {
-    public float maxRotationSpeed = 180f; // ×î´óĞı×ªËÙ¶È£¨¶È/Ãë£©
-    public float targetAlpha = 0.8f; // Ä¿±êÍ¸Ã÷¶È
-    public float fadeInDuration = 6f; // µ­ÈëÊ±¼ä£¨6Ãë£©
-    public float fadeOutDuration = 3f; // »ù´¡µ­³öÊ±¼ä£¨0.8Í¸Ã÷¶ÈĞèÒª3Ãë£©
+    public float maxRotationSpeed = 180f; // æœ€å¤§æ—‹è½¬é€Ÿåº¦ï¼ˆåº¦/ç§’ï¼‰
+    public float targetAlpha = 0.8f; // ç›®æ ‡é€æ˜åº¦
+    public float fadeInDuration = 6f; // æ·¡å…¥æ—¶é—´ï¼ˆ6ç§’ï¼‰
+    public float fadeOutDuration = 3f; // åŸºç¡€æ·¡å‡ºæ—¶é—´ï¼ˆ0.8é€æ˜åº¦éœ€è¦3ç§’ï¼‰
     
     private SpriteRenderer spriteRenderer;
     public bool isStartFadeIn = false;
@@ -20,32 +21,32 @@ public class EvilShadow : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        // ³õÊ¼»¯ SpriteRenderer
+        // åˆå§‹åŒ– SpriteRenderer
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-        // Ğı×ªÂß¼­£¬×ªËÙÓëÍ¸Ã÷¶È³ÉÕı±È
+        // æ—‹è½¬é€»è¾‘ï¼Œè½¬é€Ÿä¸é€æ˜åº¦æˆæ­£æ¯”
         if (spriteRenderer != null)
         {
             float alpha = spriteRenderer.color.a;
             float rotationSpeed = maxRotationSpeed * alpha;
-            transform.Rotate(0f, 0f, rotationSpeed * Time.deltaTime);
+            transform.Rotate(0f, 0f, rotationSpeed * SimClock.FixedTickDt);
         }
     }
     
     void OnDisable()
     {
-        // Í£Ö¹ÕıÔÚÔËĞĞµÄĞ­³Ì
+        // åœæ­¢æ­£åœ¨è¿è¡Œçš„åç¨‹
         if (fadeCoroutine != null)
         {
             StopCoroutine(fadeCoroutine);
             fadeCoroutine = null;
         }
         
-        // ÖØÖÃ×´Ì¬
+        // é‡ç½®çŠ¶æ€
         if (spriteRenderer != null)
         {
             Color color = spriteRenderer.color;
@@ -55,7 +56,7 @@ public class EvilShadow : MonoBehaviour
     }
     
     /// <summary>
-    /// ¿ªÊ¼µ­Èë
+    /// å¼€å§‹æ·¡å…¥
     /// </summary>
     public void StartFadeIn()
     {
@@ -67,7 +68,7 @@ public class EvilShadow : MonoBehaviour
     }
     
     /// <summary>
-    /// µ­ÈëĞ­³Ì
+    /// æ·¡å…¥åç¨‹
     /// </summary>
     private IEnumerator FadeIn()
     {
@@ -83,7 +84,7 @@ public class EvilShadow : MonoBehaviour
         
         while (elapsedTime < fadeInDuration)
         {
-            // ¼ì²é¶ÔÏóÊÇ·ñÈÔÈ»¼¤»î
+            // æ£€æŸ¥å¯¹è±¡æ˜¯å¦ä»ç„¶æ¿€æ´»
             if (!gameObject.activeInHierarchy)
             {
                 yield break;
@@ -91,23 +92,23 @@ public class EvilShadow : MonoBehaviour
             
             elapsedTime += Time.deltaTime;
             float alpha = Mathf.Clamp01(elapsedTime / fadeInDuration);
-            originalColor.a = alpha * targetAlpha; // ×îÖÕÍ¸Ã÷¶ÈÎª targetAlpha
+            originalColor.a = alpha * targetAlpha; // æœ€ç»ˆé€æ˜åº¦ä¸º targetAlpha
             spriteRenderer.color = originalColor;
             yield return null;
         }
-        // È·±£×îÖÕÍ¸Ã÷¶ÈÎª targetAlpha
+        // ç¡®ä¿æœ€ç»ˆé€æ˜åº¦ä¸º targetAlpha
         originalColor.a = targetAlpha;
         spriteRenderer.color = originalColor;
     }
     
     /// <summary>
-    /// ¿ªÊ¼µ­³ö
+    /// å¼€å§‹æ·¡å‡º
     /// </summary>
     public void StartFadeOut()
     {
         if (gameObject.activeInHierarchy)
         {
-            // Í£Ö¹ÕıÔÚÔËĞĞµÄĞ­³Ì£¨°üÀ¨µ­ÈëĞ­³Ì£©
+            // åœæ­¢æ­£åœ¨è¿è¡Œçš„åç¨‹ï¼ˆåŒ…æ‹¬æ·¡å…¥åç¨‹ï¼‰
             if (fadeCoroutine != null)
             {
                 StopCoroutine(fadeCoroutine);
@@ -120,7 +121,7 @@ public class EvilShadow : MonoBehaviour
     }
     
     /// <summary>
-    /// µ­³öĞ­³Ì
+    /// æ·¡å‡ºåç¨‹
     /// </summary>
     private IEnumerator FadeOut()
     {
@@ -133,13 +134,13 @@ public class EvilShadow : MonoBehaviour
         Color originalColor = spriteRenderer.color;
         float currentAlpha = originalColor.a;
         
-        // ¶¯Ì¬¼ÆËãµ­³öÊ±¼ä£º¸ù¾İµ±Ç°Í¸Ã÷¶È¼ÆËã
-        // 0.8Í¸Ã÷¶ÈĞèÒª3Ãë£¬0.4Í¸Ã÷¶ÈĞèÒª0.4*3/0.8 = 1.5Ãë
+        // åŠ¨æ€è®¡ç®—æ·¡å‡ºæ—¶é—´ï¼šæ ¹æ®å½“å‰é€æ˜åº¦è®¡ç®—
+        // 0.8é€æ˜åº¦éœ€è¦3ç§’ï¼Œ0.4é€æ˜åº¦éœ€è¦0.4*3/0.8 = 1.5ç§’
         float dynamicFadeOutDuration = currentAlpha / targetAlpha * fadeOutDuration;
         
         while (elapsedTime < dynamicFadeOutDuration)
         {
-            // ¼ì²é¶ÔÏóÊÇ·ñÈÔÈ»¼¤»î
+            // æ£€æŸ¥å¯¹è±¡æ˜¯å¦ä»ç„¶æ¿€æ´»
             if (!gameObject.activeInHierarchy)
             {
                 yield break;
@@ -147,12 +148,12 @@ public class EvilShadow : MonoBehaviour
             
             elapsedTime += Time.deltaTime;
             float alpha = Mathf.Clamp01(1 - elapsedTime / dynamicFadeOutDuration);
-            originalColor.a = alpha * currentAlpha; // ´Óµ±Ç°Í¸Ã÷¶Èµ­³öµ½0
+            originalColor.a = alpha * currentAlpha; // ä»å½“å‰é€æ˜åº¦æ·¡å‡ºåˆ°0
             spriteRenderer.color = originalColor;
             yield return null;
         }
         
-        // È·±£×îÖÕÍ¸Ã÷¶ÈÎª0²¢½ûÓÃ
+        // ç¡®ä¿æœ€ç»ˆé€æ˜åº¦ä¸º0å¹¶ç¦ç”¨
         originalColor.a = 0f;
         spriteRenderer.color = originalColor;
     }

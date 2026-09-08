@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -7,9 +7,9 @@ using UnityEngine.UI;
 
 public class Manual : MonoBehaviour
 {
-    [Header("³ĞÔØËµÃ÷ÊéÄ¿Â¼")]
+    [Header("æ‰¿è½½è¯´æ˜ä¹¦ç›®å½•")]
     public List<TextMeshProUGUI> Texts = new();
-    [Header("³ĞÔØËµÃ÷ÊéÒ³")]
+    [Header("æ‰¿è½½è¯´æ˜ä¹¦é¡µ")]
     public List<TextMeshProUGUI> Panels = new();
 
     public GameObject Shadel;
@@ -22,22 +22,22 @@ public class Manual : MonoBehaviour
     private int Index;
     private int LastIndex;
 
-    private bool IsIndex=true;// ÊÇ·ñÊÇË÷ÒıÒ³
+    private bool IsIndex=true;// æ˜¯å¦æ˜¯ç´¢å¼•é¡µ
 
     public ButtonEvent Event;
 
-    [Header("ÒôĞ§ÉèÖÃ")]
-    [SerializeField] private AudioClip ZSound;   // ZÒôĞ§
-    [SerializeField] private AudioClip XSound;   // XÒôĞ§
-    [SerializeField] private AudioClip PageSound;// ·­Ò³ÒôĞ§
+    [Header("éŸ³æ•ˆè®¾ç½®")]
+    [SerializeField] private AudioClip ZSound;   // ZéŸ³æ•ˆ
+    [SerializeField] private AudioClip XSound;   // XéŸ³æ•ˆ
+    [SerializeField] private AudioClip PageSound;// ç¿»é¡µéŸ³æ•ˆ
 
     // Start is called before the first frame update
     void Start()
     {
         if (Texts.Count == 0 || Panels.Count == 0 || Texts.Count != Panels.Count)
         {
-            Debug.LogError("Ë÷ÒıÎÄ±¾ºÍ½éÉÜÎÄ±¾ÊıÁ¿²»Æ¥Åä»òÎª¿Õ£¡Çë¼ì²éÁĞ±í¸³Öµ");
-            enabled = false; // ½ûÓÃ½Å±¾£¬±ÜÃâ±¨´í
+            Debug.LogError("ç´¢å¼•æ–‡æœ¬å’Œä»‹ç»æ–‡æœ¬æ•°é‡ä¸åŒ¹é…æˆ–ä¸ºç©ºï¼è¯·æ£€æŸ¥åˆ—è¡¨èµ‹å€¼");
+            enabled = false; // ç¦ç”¨è„šæœ¬ï¼Œé¿å…æŠ¥é”™
             return;
         }
         Index = 0;
@@ -60,7 +60,7 @@ public class Manual : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.UpArrow))
         {
-            // ²¥·Å·­Ò³ÒôĞ§
+            // æ’­æ”¾ç¿»é¡µéŸ³æ•ˆ
             if (XSound != null)
             {
                 Global_AudioManager.Instance.PlaySFX(PageSound, false);
@@ -72,7 +72,7 @@ public class Manual : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.DownArrow))
         {
-            // ²¥·Å·­Ò³ÒôĞ§
+            // æ’­æ”¾ç¿»é¡µéŸ³æ•ˆ
             if (XSound != null)
             {
                 Global_AudioManager.Instance.PlaySFX(PageSound, false);
@@ -82,9 +82,9 @@ public class Manual : MonoBehaviour
             UpdateMenu();
         }
 
-        if (Input.GetKeyDown(KeyCode.Z) && IsIndex)// ÊÇË÷ÒıÌ¬£¬½øÈëÒ³Ì¬
+        if (Input.GetKeyDown(KeyCode.Z) && IsIndex)// æ˜¯ç´¢å¼•æ€ï¼Œè¿›å…¥é¡µæ€
         {
-            // ²¥·ÅZÒôĞ§
+            // æ’­æ”¾ZéŸ³æ•ˆ
             if (XSound != null)
             {
                 Global_AudioManager.Instance.PlaySFX(ZSound, false);
@@ -94,30 +94,30 @@ public class Manual : MonoBehaviour
             manual.SetActive(false);
             foreach(TextMeshProUGUI text in Texts)
             {
-                text.alpha=0;// ÉèÖÃËùÓĞ°´Å¥Îª²»¿É¼û
+                text.alpha=0;// è®¾ç½®æ‰€æœ‰æŒ‰é’®ä¸ºä¸å¯è§
             }
             BeClicked(Index);
         }
         if (Input.GetKeyDown(KeyCode.X))
         {
-            // ²¥·ÅXÒôĞ§
+            // æ’­æ”¾XéŸ³æ•ˆ
             if (XSound != null)
             {
                 Global_AudioManager.Instance.PlaySFX(XSound, false);
             }
-            if (!IsIndex)// ÊÇÒ³Ì¬£¬»ØÍËµ½Ë÷ÒıÌ¬
+            if (!IsIndex)// æ˜¯é¡µæ€ï¼Œå›é€€åˆ°ç´¢å¼•æ€
             {
                 IsIndex = true;
                 Shadel.SetActive(false);
                 manual.SetActive(true);
                 foreach (TextMeshProUGUI text in Texts)
                 {
-                    text.color = darkColor;// ÉèÖÃËùÓĞ°´Å¥Îª¿É¼û
+                    text.color = darkColor;// è®¾ç½®æ‰€æœ‰æŒ‰é’®ä¸ºå¯è§
                 }
                 BeCanceled(Index);
                 BeSelected(Index);
             }
-            else// ÊÇË÷ÒıÌ¬£¬»ØÍËÖÁMenu
+            else// æ˜¯ç´¢å¼•æ€ï¼Œå›é€€è‡³Menu
             {
                 BeRemove(Index);
                 Event.Manual();

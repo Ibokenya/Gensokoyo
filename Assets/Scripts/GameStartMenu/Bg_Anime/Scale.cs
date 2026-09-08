@@ -1,4 +1,4 @@
-using System.Collections;
+锘縰sing System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,7 +6,7 @@ public class Scale : MonoBehaviour
 {
     public GameObject myself;
     public float ScaleSpeed = 0.02f;
-    public float Scale_a = -0.00005f;// 加速度，缩放的速度应该越来越慢才对
+    public float Scale_a = -0.00005f;// 鍔犻�熷害锛岀缉鏀剧殑閫熷害搴旇瓒婃潵瓒婃參鎵嶅
     private float TrueSpeed;
 
     private void Start()

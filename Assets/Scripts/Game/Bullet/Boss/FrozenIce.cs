@@ -1,24 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ReplaySystem;
 
 public class FrozenIce : MonoBehaviour
 {
-    public GameObject ParentOb; // ¸¸ÎïÌå
-    public int hp = 240; // ÉúÃüÖµ
-    public GameObject normalIcePrefab; // ÆÕÍ¨±ù×Óµ¯Ô¤ÖÆ¼ş£¨ÓÃÓÚÆÆÁÑ¹¥»÷£©
-    public BossShootSystem bossShootSystem; // BossÉä»÷ÏµÍ³ÒıÓÃ
+    public GameObject ParentOb; // çˆ¶ç‰©ä½“
+    public int hp = 240; // ç”Ÿå‘½å€¼
+    public GameObject normalIcePrefab; // æ™®é€šå†°å­å¼¹é¢„åˆ¶ä»¶ï¼ˆç”¨äºç ´è£‚æ”»å‡»ï¼‰
+    public BossShootSystem bossShootSystem; // Bosså°„å‡»ç³»ç»Ÿå¼•ç”¨
     private Rigidbody2D rb2D;
-    private float timer = 0f; // ¼ÆÊ±Æ÷
+    private float timer = 0f; // è®¡æ—¶å™¨
     
-    // ±ß½ç·¶Î§
+    // è¾¹ç•ŒèŒƒå›´
     private readonly float minX = -13f;
     private readonly float maxX = 7f;
     private readonly float minY = -9f;
     private readonly float maxY = 9f;
 
     
-    void Update()
+    void FixedUpdate()
     {
         if (ParentOb != null)
         {
@@ -27,8 +28,8 @@ public class FrozenIce : MonoBehaviour
         
         CheckBounds();
         
-        // Ã¿ÃëÁ÷Ê§20µãHP
-        timer += Time.deltaTime;
+        // æ¯ç§’æµå¤±20ç‚¹HP
+        timer += SimClock.FixedTickDt;
         if (timer >= 1f)
         {
             hp -= 20;
@@ -41,9 +42,9 @@ public class FrozenIce : MonoBehaviour
     }
     
     /// <summary>
-    /// ÊÜÉË·½·¨
+    /// å—ä¼¤æ–¹æ³•
     /// </summary>
-    /// <param name="damage">ÉËº¦Öµ</param>
+    /// <param name="damage">ä¼¤å®³å€¼</param>
     public void TakeDamage(int damage)
     {
         hp -= damage;
@@ -54,7 +55,7 @@ public class FrozenIce : MonoBehaviour
     }
     
     /// <summary>
-    /// ¼ì²é±ß½ç£¬³¬³ö·¶Î§Ôò»ØÊÕ
+    /// æ£€æŸ¥è¾¹ç•Œï¼Œè¶…å‡ºèŒƒå›´åˆ™å›æ”¶
     /// </summary>
     private void CheckBounds()
     {
@@ -66,14 +67,14 @@ public class FrozenIce : MonoBehaviour
     }
     
     /// <summary>
-    /// »ØÊÕ×Óµ¯
+    /// å›æ”¶å­å¼¹
     /// </summary>
     private void Recycle()
     {
-        // ±£´æµ±Ç°Î»ÖÃÓÃÓÚ·¢ÉäÆÆÁÑ×Óµ¯
+        // ä¿å­˜å½“å‰ä½ç½®ç”¨äºå‘å°„ç ´è£‚å­å¼¹
         Vector3 destroyedPosition = transform.position;
         bossShootSystem.Shake(0.5f);
-        // Í¨ÖªBossShootSystemÔö¼ÓËæ»úÉä»÷µÄ×Óµ¯ÊıÁ¿
+        // é€šçŸ¥BossShootSystemå¢åŠ éšæœºå°„å‡»çš„å­å¼¹æ•°é‡
         if (bossShootSystem != null)
         {
             bossShootSystem.OnFrozenIceDestroyed();

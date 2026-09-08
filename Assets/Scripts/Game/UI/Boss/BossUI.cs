@@ -4,29 +4,30 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using System.Security;
+using ReplaySystem;
 
 public class BossUI : MonoBehaviour
 {
-    [Header("UIÔªËØ")]
-    public List<GameObject> HPs;// ¼¸¸öÒõÑôÓñÑªÌõ
-    public GameObject TimeText;// Ê±¼äÎÄ±¾
+    [Header("UIå…ƒç´ ")]
+    public List<GameObject> HPs;// å‡ ä¸ªé˜´é˜³ç‰è¡€æ¡
+    public GameObject TimeText;// æ—¶é—´æ–‡æœ¬
     private TextMeshProUGUI timeTextComponent;
     public TextMeshProUGUI FinalWarningText;
     
-    [Header("Ê±¼äÉèÖÃ")]
-    private float currentTime = 0f; // µ±Ç°Ê£ÓàÊ±¼ä
-    public AudioClip timeoutSound;//³¬Ê±ÒôĞ§
-    private int countdownSoundIndex = 5; // µ±Ç°Ó¦¸Ã²¥·ÅµÚ¼¸ÃëµÄµ¹¼ÆÊ±ÒôĞ§£¨5,4,3,2,1£©
-    private bool isTimeTransitioning = false; // ÊÇ·ñÕıÔÚ½øĞĞÊ±¼ä¹ı¶É£¨·ÀÖ¹¹ı¶ÉÆÚ¼äÎó´¥·¢ÒôĞ§£©
+    [Header("æ—¶é—´è®¾ç½®")]
+    private float currentTime = 0f; // å½“å‰å‰©ä½™æ—¶é—´
+    public AudioClip timeoutSound;//è¶…æ—¶éŸ³æ•ˆ
+    private int countdownSoundIndex = 5; // å½“å‰åº”è¯¥æ’­æ”¾ç¬¬å‡ ç§’çš„å€’è®¡æ—¶éŸ³æ•ˆï¼ˆ5,4,3,2,1ï¼‰
+    private bool isTimeTransitioning = false; // æ˜¯å¦æ­£åœ¨è¿›è¡Œæ—¶é—´è¿‡æ¸¡ï¼ˆé˜²æ­¢è¿‡æ¸¡æœŸé—´è¯¯è§¦å‘éŸ³æ•ˆï¼‰
 
-    [Header("ÒõÑôÓñ½×¶ÎÍ¼±ê")]
+    [Header("é˜´é˜³ç‰é˜¶æ®µå›¾æ ‡")]
     public List<Sprite> HpIcons;
     
-    [Header("ÑªÁ¿×´Ì¬")]
-    private int currentHpIndex = 0; // µ±Ç°ÑªÁ¿Ö¸Ê¾ÎïË÷Òı£¨´ÓÄ©Î²¿ªÊ¼¼ÆÊı£¬0±íÊ¾µÚÒ»¸öÖ¸Ê¾ÎïµÄµÚÒ»¸ñÑª£©
+    [Header("è¡€é‡çŠ¶æ€")]
+    private int currentHpIndex = 0; // å½“å‰è¡€é‡æŒ‡ç¤ºç‰©ç´¢å¼•ï¼ˆä»æœ«å°¾å¼€å§‹è®¡æ•°ï¼Œ0è¡¨ç¤ºç¬¬ä¸€ä¸ªæŒ‡ç¤ºç‰©çš„ç¬¬ä¸€æ ¼è¡€ï¼‰
     
-    [Header("½×¶ÎĞÅÏ¢")]
-    public List<GameObject> phaseIndicators; // ½×¶ÎÖ¸Ê¾Æ÷
+    [Header("é˜¶æ®µä¿¡æ¯")]
+    public List<GameObject> phaseIndicators; // é˜¶æ®µæŒ‡ç¤ºå™¨
 
     void OnEnable()
     {
@@ -34,19 +35,19 @@ public class BossUI : MonoBehaviour
         {
             timeTextComponent = TimeText.GetComponent<TextMeshProUGUI>();
         }
-        // ÖØÖÃËùÓĞHPsµÄspriteÎªHpIcons[2]£¨ÂúÑªĞÄĞÎ£©
+        // é‡ç½®æ‰€æœ‰HPsçš„spriteä¸ºHpIcons[2]ï¼ˆæ»¡è¡€å¿ƒå½¢ï¼‰
         ResetAllHPs();
         ShowUI();
     }
 
     /// <summary>
-    /// ¸üĞÂÊ±¼ä
+    /// æ›´æ–°æ—¶é—´
     /// </summary>
-    void Update()
+    void FixedUpdate()
     {
         if (currentTime > 0f)
         {
-            currentTime -= Time.deltaTime;
+            currentTime -= SimClock.FixedTickDt;
             if (currentTime <= 0f)
             {
                 currentTime = 0f;
@@ -54,13 +55,13 @@ public class BossUI : MonoBehaviour
             }
             UpdateTimeText(currentTime);
             
-            // ²¥·Åµ¹¼ÆÊ±ÒôĞ§£¨½öÔÚÊ£Óà5,4,3,2,1ÃëÊ±²¥·Å£©
+            // æ’­æ”¾å€’è®¡æ—¶éŸ³æ•ˆï¼ˆä»…åœ¨å‰©ä½™5,4,3,2,1ç§’æ—¶æ’­æ”¾ï¼‰
             PlayCountdownSound();
         }
     }
     
     /// <summary>
-    /// ÖØÖÃËùÓĞHPsµÄspriteÎªÂúÑª×´Ì¬
+    /// é‡ç½®æ‰€æœ‰HPsçš„spriteä¸ºæ»¡è¡€çŠ¶æ€
     /// </summary>
     private void ResetAllHPs()
     {
@@ -79,17 +80,17 @@ public class BossUI : MonoBehaviour
     }
     
     /// <summary>
-    /// ¿Û³ıÒ»¸ñÑª
-    /// Õı³£Çé¿öÏÂ¹²2¸öÑªÁ¿Ö¸Ê¾Îï
-    /// µÚÒ»´Î¿ÛÑª£º½«Ë÷ÒıÄ©Î²µÄÖ¸Ê¾ÎïµÄspriteÉèÎªHpIcons[1]£¨°ë¸öĞÄĞÎ£©
-    /// µÚ¶ş´Î¿ÛÑª£º½«¸ÃÎïÌåspriteÉèÎªHpIcons[0]£¨¿ÕĞÄĞÄĞÎ£©
-    /// ÔÙ¿ÛÑª£º°´ÕÕHPsË÷ÒıÄ©Î²ÍùÇ°µİÍÆ
+    /// æ‰£é™¤ä¸€æ ¼è¡€
+    /// æ­£å¸¸æƒ…å†µä¸‹å…±2ä¸ªè¡€é‡æŒ‡ç¤ºç‰©
+    /// ç¬¬ä¸€æ¬¡æ‰£è¡€ï¼šå°†ç´¢å¼•æœ«å°¾çš„æŒ‡ç¤ºç‰©çš„spriteè®¾ä¸ºHpIcons[1]ï¼ˆåŠä¸ªå¿ƒå½¢ï¼‰
+    /// ç¬¬äºŒæ¬¡æ‰£è¡€ï¼šå°†è¯¥ç‰©ä½“spriteè®¾ä¸ºHpIcons[0]ï¼ˆç©ºå¿ƒå¿ƒå½¢ï¼‰
+    /// å†æ‰£è¡€ï¼šæŒ‰ç…§HPsç´¢å¼•æœ«å°¾å¾€å‰é€’æ¨
     /// </summary>
     public void SubLife()
     {
-        // ¼ÆËãµ±Ç°Ó¦¸ÃĞŞ¸ÄµÄÖ¸Ê¾ÎïË÷Òı£¨´ÓÄ©Î²¿ªÊ¼£©
+        // è®¡ç®—å½“å‰åº”è¯¥ä¿®æ”¹çš„æŒ‡ç¤ºç‰©ç´¢å¼•ï¼ˆä»æœ«å°¾å¼€å§‹ï¼‰
         int indicatorIndex = HPs.Count - 1 - (currentHpIndex / 2);
-        int subIndex = currentHpIndex % 2; // 0±íÊ¾µÚÒ»´Î¿ÛÑª£¬1±íÊ¾µÚ¶ş´Î¿ÛÑª
+        int subIndex = currentHpIndex % 2; // 0è¡¨ç¤ºç¬¬ä¸€æ¬¡æ‰£è¡€ï¼Œ1è¡¨ç¤ºç¬¬äºŒæ¬¡æ‰£è¡€
         
         if (indicatorIndex >= 0 && indicatorIndex < HPs.Count)
         {
@@ -101,12 +102,12 @@ public class BossUI : MonoBehaviour
                 {
                     if (subIndex == 0)
                     {
-                        // µÚÒ»´Î¿ÛÑª£¬ÉèÎª°ë¸öĞÄĞÎ
+                        // ç¬¬ä¸€æ¬¡æ‰£è¡€ï¼Œè®¾ä¸ºåŠä¸ªå¿ƒå½¢
                         image.sprite = HpIcons[1];
                     }
                     else
                     {
-                        // µÚ¶ş´Î¿ÛÑª£¬ÉèÎª¿ÕĞÄĞÄĞÎ
+                        // ç¬¬äºŒæ¬¡æ‰£è¡€ï¼Œè®¾ä¸ºç©ºå¿ƒå¿ƒå½¢
                         image.sprite = HpIcons[0];
                     }
                 }
@@ -116,7 +117,7 @@ public class BossUI : MonoBehaviour
         currentHpIndex++;
     }
     /// <summary>
-    /// ÏÔÊ¾UI£¬1ÃëÄÚµ­Èë
+    /// æ˜¾ç¤ºUIï¼Œ1ç§’å†…æ·¡å…¥
     /// </summary>
     public void ShowUI()
     {
@@ -124,7 +125,7 @@ public class BossUI : MonoBehaviour
     }
     
     /// <summary>
-    /// UIµ­ÈëĞ­³Ì
+    /// UIæ·¡å…¥åç¨‹
     /// </summary>
     /// <returns></returns>
     private IEnumerator FadeInUI()
@@ -132,7 +133,7 @@ public class BossUI : MonoBehaviour
         float duration = 1f;
         float elapsedTime = 0f;
         
-        // ³õÊ¼»¯Í¸Ã÷¶ÈÎª0
+        // åˆå§‹åŒ–é€æ˜åº¦ä¸º0
         foreach (GameObject hp in HPs)
         {
             if (hp != null)
@@ -154,7 +155,7 @@ public class BossUI : MonoBehaviour
             timeTextComponent.color = color;
         }
         
-        // µ­ÈëĞ§¹û
+        // æ·¡å…¥æ•ˆæœ
         while (elapsedTime < duration)
         {
             float t = elapsedTime / duration;
@@ -185,7 +186,7 @@ public class BossUI : MonoBehaviour
             yield return null;
         }
         
-        // È·±£×îÖÕÍ¸Ã÷¶ÈÎª1
+        // ç¡®ä¿æœ€ç»ˆé€æ˜åº¦ä¸º1
         foreach (GameObject hp in HPs)
         {
             if (hp != null)
@@ -209,18 +210,18 @@ public class BossUI : MonoBehaviour
     }
     
     /// <summary>
-    /// ²¥·Åµ¹¼ÆÊ±ÒôĞ§
-    /// µ±Ê£ÓàÊ±¼äÎª5ÃëÊ±¿ªÊ¼£¬Ã¿Ò»Ãë²¥·ÅÒ»´Î£¨½öÔÚÕıÕûÊıÃë5,4,3,2,1²¥·Å£©
+    /// æ’­æ”¾å€’è®¡æ—¶éŸ³æ•ˆ
+    /// å½“å‰©ä½™æ—¶é—´ä¸º5ç§’æ—¶å¼€å§‹ï¼Œæ¯ä¸€ç§’æ’­æ”¾ä¸€æ¬¡ï¼ˆä»…åœ¨æ­£æ•´æ•°ç§’5,4,3,2,1æ’­æ”¾ï¼‰
     /// </summary>
     private void PlayCountdownSound()
     {
-        // ÕıÔÚ½øĞĞÊ±¼ä¹ı¶ÉÊ±²»²¥·ÅÒôĞ§
+        // æ­£åœ¨è¿›è¡Œæ—¶é—´è¿‡æ¸¡æ—¶ä¸æ’­æ”¾éŸ³æ•ˆ
         if (isTimeTransitioning)
         {
             return;
         }
         
-        // ¼ì²â²¢²¥·Å¶ÔÓ¦ÃëÊıµÄµ¹¼ÆÊ±ÒôĞ§
+        // æ£€æµ‹å¹¶æ’­æ”¾å¯¹åº”ç§’æ•°çš„å€’è®¡æ—¶éŸ³æ•ˆ
         if (currentTime < 5f && countdownSoundIndex == 5)
         {
             PlayTimeoutSound();
@@ -249,7 +250,7 @@ public class BossUI : MonoBehaviour
     }
     
     /// <summary>
-    /// ²¥·Å³¬Ê±ÒôĞ§
+    /// æ’­æ”¾è¶…æ—¶éŸ³æ•ˆ
     /// </summary>
     private void PlayTimeoutSound()
     {
@@ -260,25 +261,25 @@ public class BossUI : MonoBehaviour
     }
     
     /// <summary>
-    /// ÉèÖÃ·û¿¨Ê±¼ä
+    /// è®¾ç½®ç¬¦å¡æ—¶é—´
     /// </summary>
-    /// <param name="time">Ê±¼ä£¨Ãë£©</param>
+    /// <param name="time">æ—¶é—´ï¼ˆç§’ï¼‰</param>
     public void SetCardTime(float time)
     {
         StartCoroutine(SmoothTimeTransition(time));
     }
     
     /// <summary>
-    /// Æ½»¬Ê±¼ä¹ı¶ÉĞ­³Ì
+    /// å¹³æ»‘æ—¶é—´è¿‡æ¸¡åç¨‹
     /// </summary>
-    /// <param name="targetTime">Ä¿±êÊ±¼ä£¨Ãë£©</param>
+    /// <param name="targetTime">ç›®æ ‡æ—¶é—´ï¼ˆç§’ï¼‰</param>
     /// <returns></returns>
     private IEnumerator SmoothTimeTransition(float targetTime)
     {
-        // ÉèÖÃ±êÖ¾£¬±íÊ¾ÕıÔÚ½øĞĞÊ±¼ä¹ı¶É
+        // è®¾ç½®æ ‡å¿—ï¼Œè¡¨ç¤ºæ­£åœ¨è¿›è¡Œæ—¶é—´è¿‡æ¸¡
         isTimeTransitioning = true;
         
-        float duration = 1f; // ¹ı¶ÉÊ±¼äÎª1Ãë
+        float duration = 1f; // è¿‡æ¸¡æ—¶é—´ä¸º1ç§’
         float startTime = currentTime;
         float elapsedTime = 0f;
         
@@ -286,36 +287,36 @@ public class BossUI : MonoBehaviour
         {
             elapsedTime += Time.deltaTime;
             float t = elapsedTime / duration;
-            // Ê¹ÓÃÏßĞÔ²åÖµ´Óµ±Ç°Ê±¼ä¹ı¶Éµ½Ä¿±êÊ±¼ä
+            // ä½¿ç”¨çº¿æ€§æ’å€¼ä»å½“å‰æ—¶é—´è¿‡æ¸¡åˆ°ç›®æ ‡æ—¶é—´
             currentTime = Mathf.Lerp(startTime, targetTime, t);
-            // ¸üĞÂÊ±¼äÎÄ±¾
+            // æ›´æ–°æ—¶é—´æ–‡æœ¬
             UpdateTimeText(currentTime);
             yield return null;
         }
         
-        // È·±£×îÖÕÊ±¼äÎªÄ¿±êÊ±¼ä
+        // ç¡®ä¿æœ€ç»ˆæ—¶é—´ä¸ºç›®æ ‡æ—¶é—´
         currentTime = targetTime;
         UpdateTimeText(currentTime);
         
-        // ÖØÖÃ±êÖ¾£¬±íÊ¾Ê±¼ä¹ı¶É½áÊø
+        // é‡ç½®æ ‡å¿—ï¼Œè¡¨ç¤ºæ—¶é—´è¿‡æ¸¡ç»“æŸ
         isTimeTransitioning = false;
         
-        // ÖØÖÃµ¹¼ÆÊ±ÒôĞ§Ë÷Òı£¬È·±£µ¹¼ÆÊ±ÒôĞ§ÄÜÕı³£²¥·Å
+        // é‡ç½®å€’è®¡æ—¶éŸ³æ•ˆç´¢å¼•ï¼Œç¡®ä¿å€’è®¡æ—¶éŸ³æ•ˆèƒ½æ­£å¸¸æ’­æ”¾
         countdownSoundIndex = 5;
     }
     
     /// <summary>
-    /// Ê±¼ä½áÊø´¦Àí
+    /// æ—¶é—´ç»“æŸå¤„ç†
     /// </summary>
     public void TimeOver()
     {
-        // Ê±¼ä¹éÁãµÄ´¦ÀíÂß¼­
+        // æ—¶é—´å½’é›¶çš„å¤„ç†é€»è¾‘
     }
     
     /// <summary>
-    /// ¸üĞÂÊ±¼äÎÄ±¾
+    /// æ›´æ–°æ—¶é—´æ–‡æœ¬
     /// </summary>
-    /// <param name="timeLeft">Ê£ÓàÊ±¼ä£¨Ãë£©</param>
+    /// <param name="timeLeft">å‰©ä½™æ—¶é—´ï¼ˆç§’ï¼‰</param>
     public void UpdateTimeText(float timeLeft)
     {
         if (timeTextComponent != null)

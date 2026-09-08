@@ -1,64 +1,65 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ReplaySystem;
 
 /// <summary>
-/// ÁéÃÎ¾öËÀ¼¼ÄÜ½Å±¾
-/// ¹ÒÔØÔÚ"ÁéÃÎ¾öËÀ"×ÓÎïÌåÉÏ
+/// çµæ¢¦å†³æ­»æŠ€èƒ½è„šæœ¬
+/// æŒ‚è½½åœ¨"çµæ¢¦å†³æ­»"å­ç‰©ä½“ä¸Š
 /// </summary>
 public class ReimuSuper : MonoBehaviour
 {
-    [Header("²¥·Å¿ØÖÆ")]
-    public bool IsAnime = false; // ÉèÖÃÎªtrue¿ªÊ¼²¥·Å¶¯»­
-    public Animator animator; // ×ÓÎïÌåÉÏµÄ¶¯»­×é¼ş
+    [Header("æ’­æ”¾æ§åˆ¶")]
+    public bool IsAnime = false; // è®¾ç½®ä¸ºtrueå¼€å§‹æ’­æ”¾åŠ¨ç”»
+    public Animator animator; // å­ç‰©ä½“ä¸Šçš„åŠ¨ç”»ç»„ä»¶
     
-    [Header("½Å±¾ÒıÓÃ")]
-    public SpellCardEffect spellCardEffect; // ÒıÓÃ¸¸ÎïÌåµÄSpellCardEffect½Å±¾
-    public ClearAllBullet clearAllBullet; // ÒıÓÃClearAllBullet½Å±¾
+    [Header("è„šæœ¬å¼•ç”¨")]
+    public SpellCardEffect spellCardEffect; // å¼•ç”¨çˆ¶ç‰©ä½“çš„SpellCardEffectè„šæœ¬
+    public ClearAllBullet clearAllBullet; // å¼•ç”¨ClearAllBulletè„šæœ¬
 
-    [Header("boss¶ÔÏó")]
-    public GameObject boss; // Boss¶ÔÏó
+    [Header("bosså¯¹è±¡")]
+    public GameObject boss; // Bosså¯¹è±¡
     
-    [Header("ÎïÌåÒıÓÃ")]
-    public GameObject player;// Íæ¼ÒÎïÌå
-    public GameObject spaceEye;// ÑÇ¿ÕÑ¨ÎïÌå
-    public List<GameObject> attackEffects;// ¹¥»÷Ğ§¹û¶ÔÏóÁĞ±í£¨ÏÂõß¡¢ÕÆ»÷¡¢Æ÷Ğµ»÷¡¢²àÌß£©
-    public GameObject WinEffect;// ÍËÖÎĞ§¹û
+    [Header("ç‰©ä½“å¼•ç”¨")]
+    public GameObject player;// ç©å®¶ç‰©ä½“
+    public GameObject spaceEye;// äºšç©ºç©´ç‰©ä½“
+    public List<GameObject> attackEffects;// æ”»å‡»æ•ˆæœå¯¹è±¡åˆ—è¡¨ï¼ˆä¸‹è¸¹ã€æŒå‡»ã€å™¨æ¢°å‡»ã€ä¾§è¸¢ï¼‰
+    public GameObject WinEffect;// é€€æ²»æ•ˆæœ
     
-    [Header("ÒôĞ§ÉèÖÃ")]
-    public AudioClip TimeStopClip;//ÁéÃÎ¾öËÀÊ±Í£ÒôĞ§clip
-    public List<AudioClip> ReimuHitList;//ÁéÃÎ¾öËÀÑÓ³ÙÒôĞ§clip¶ÓÁĞ£¨2¸ö£©
+    [Header("éŸ³æ•ˆè®¾ç½®")]
+    public AudioClip TimeStopClip;//çµæ¢¦å†³æ­»æ—¶åœéŸ³æ•ˆclip
+    public List<AudioClip> ReimuHitList;//çµæ¢¦å†³æ­»å»¶è¿ŸéŸ³æ•ˆclipé˜Ÿåˆ—ï¼ˆ2ä¸ªï¼‰
     
-    [Header("ÉËº¦ÉèÖÃ")]
-    private readonly int ReimuHitDamageValue = 250;// ÁéÃÎ¾öËÀÉËº¦
-    private readonly float attackEffectDuration = 0.25f;// ¹¥»÷Ğ§¹û³ÖĞøÊ±¼ä
-    private readonly float attackEffectInterval = 0.167f;// ¹¥»÷Ğ§¹û¼ä¸ôÊ±¼ä
+    [Header("ä¼¤å®³è®¾ç½®")]
+    private readonly int ReimuHitDamageValue = 250;// çµæ¢¦å†³æ­»ä¼¤å®³
+    private readonly float attackEffectDuration = 0.25f;// æ”»å‡»æ•ˆæœæŒç»­æ—¶é—´
+    private readonly float attackEffectInterval = 0.167f;// æ”»å‡»æ•ˆæœé—´éš”æ—¶é—´
     
-    private List<GameObject> Enemys => Global_GameManager.Instance.EnemyList;// µĞÈËÁĞ±í
-    private bool isOpenOrCloseEye = false;// ÊÇ·ñÕıÔÚ¿ª¹ØÑÇ¿ÕÑ¨
-    private Coroutine huntCoroutine;// ÁÔÉ±µĞÈËµÄĞ­³Ì
-    private float originalTimeScale = 1f;// Ô­Ê¼Ê±¼äËõ·ÅÖµ
+    private List<GameObject> Enemys => Global_GameManager.Instance.EnemyList;// æ•Œäººåˆ—è¡¨
+    private bool isOpenOrCloseEye = false;// æ˜¯å¦æ­£åœ¨å¼€å…³äºšç©ºç©´
+    private Coroutine huntCoroutine;// çŒæ€æ•Œäººçš„åç¨‹
+    private float originalTimeScale = 1f;// åŸå§‹æ—¶é—´ç¼©æ”¾å€¼
 
     void OnEnable()
     {
-        // ÖØÖÃ×´Ì¬
+        // é‡ç½®çŠ¶æ€
         IsAnime = false;
         isOpenOrCloseEye = false;
-        // ÉèÖÃÓÎÏ·×´Ì¬ÎªÊ±Í£
+        // è®¾ç½®æ¸¸æˆçŠ¶æ€ä¸ºæ—¶åœ
         Global_GameManager.Instance.state = State.TimeStop;
-        // ¶ÔBossÔì³ÉÉËº¦
+        // å¯¹Bossé€ æˆä¼¤å®³
         ReimuSuperDamageToBoss();
     }
     
-    void Update()
+    void FixedUpdate()
     {     
-        // ¼ì²éÊÇ·ñĞèÒª¿ªÊ¼²¥·Å¶¯»­
+        // æ£€æŸ¥æ˜¯å¦éœ€è¦å¼€å§‹æ’­æ”¾åŠ¨ç”»
         if (animator != null)
         {
-            // ÉèÖÃAnimatorµÄIsAnime²ÎÊı
+            // è®¾ç½®Animatorçš„IsAnimeå‚æ•°
             animator.SetBool("IsAnime", IsAnime);
         }
-        // Èç¹ûÕıÔÚ²¥·Å£¬´¦ÀíÑÇ¿ÕÑ¨°ó¶¨
+        // å¦‚æœæ­£åœ¨æ’­æ”¾ï¼Œå¤„ç†äºšç©ºç©´ç»‘å®š
         if (IsAnime)
         {
             if (player != null && spaceEye != null)
@@ -76,7 +77,7 @@ public class ReimuSuper : MonoBehaviour
     }
     
     /// <summary>
-    /// ÑÇ¿ÕÑ¨°ó¶¨Íæ¼Ò×ø±ê
+    /// äºšç©ºç©´ç»‘å®šç©å®¶åæ ‡
     /// </summary>
     public void SpaceEyeToPlayer()
     {
@@ -87,7 +88,7 @@ public class ReimuSuper : MonoBehaviour
     }
     
     /// <summary>
-    /// ¿ª¹ØÑÇ¿ÕÑ¨£¨·´×ª×´Ì¬£©
+    /// å¼€å…³äºšç©ºç©´ï¼ˆåè½¬çŠ¶æ€ï¼‰
     /// </summary>
     public void OpenOrCloseSpaceEye()
     {
@@ -95,7 +96,7 @@ public class ReimuSuper : MonoBehaviour
     }
     
     /// <summary>
-    /// ²¥·Å¾öËÀÊ±Í£ÒôĞ§
+    /// æ’­æ”¾å†³æ­»æ—¶åœéŸ³æ•ˆ
     /// </summary>
     public void AudioTimeStop()
     {
@@ -106,7 +107,7 @@ public class ReimuSuper : MonoBehaviour
     }
     
     /// <summary>
-    /// Ëæ»ú²¥·ÅÁ½ÖÖ»÷´òÒôĞ§Ö®Ò»
+    /// éšæœºæ’­æ”¾ä¸¤ç§å‡»æ‰“éŸ³æ•ˆä¹‹ä¸€
     /// </summary>
     public void AudioReimuHit()
     {
@@ -118,7 +119,7 @@ public class ReimuSuper : MonoBehaviour
     }
     
     /// <summary>
-    /// Çå³ıÆÁÄ»×Óµ¯
+    /// æ¸…é™¤å±å¹•å­å¼¹
     /// </summary>
     public void ClearAllBullet()
     {
@@ -133,7 +134,7 @@ public class ReimuSuper : MonoBehaviour
     }
     
     /// <summary>
-    /// Ê±Í£½áÊø£¬¿ªÊ¼ÁÔÉ±
+    /// æ—¶åœç»“æŸï¼Œå¼€å§‹çŒæ€
     /// </summary>
     public void TimeStopOver()
     {
@@ -141,18 +142,18 @@ public class ReimuSuper : MonoBehaviour
     }
     
     /// <summary>
-    /// ÁÔÉ±µĞÈËµÄĞ­³Ì
+    /// çŒæ€æ•Œäººçš„åç¨‹
     /// </summary>
     private IEnumerator HuntEnemiesCoroutine()
     {
-        // ¼ÇÂ¼Ğ­³Ì¿ªÊ¼Ê±¼ä£¨ÓÃÓÚ¿ØÖÆÍËÖÎĞ§¹ûÏÔÊ¾Ê±»ú£©
+        // è®°å½•åç¨‹å¼€å§‹æ—¶é—´ï¼ˆç”¨äºæ§åˆ¶é€€æ²»æ•ˆæœæ˜¾ç¤ºæ—¶æœºï¼‰
         float startTime = Time.realtimeSinceStartup;
         
-        // ±£´æµ±Ç°Ê±¼äËõ·Å
+        // ä¿å­˜å½“å‰æ—¶é—´ç¼©æ”¾
         originalTimeScale = Time.timeScale;
         Time.timeScale = 0f;
         
-        // ´´½¨µĞÈËÁĞ±íµÄ¸±±¾
+        // åˆ›å»ºæ•Œäººåˆ—è¡¨çš„å‰¯æœ¬
         List<GameObject> tempEnemys = new List<GameObject>();
         foreach (var enemy in Enemys)
         {
@@ -162,44 +163,44 @@ public class ReimuSuper : MonoBehaviour
             }
         }
         
-        // È·±£¹¥»÷Ğ§¹ûÁĞ±í²»Îª¿Õ
+        // ç¡®ä¿æ”»å‡»æ•ˆæœåˆ—è¡¨ä¸ä¸ºç©º
         if (attackEffects == null || attackEffects.Count == 0)
         {
             Time.timeScale = originalTimeScale;
             yield break;
         }
         
-        // ÓÃÓÚ¸ú×Ù¼¤»îµÄ¹¥»÷Ğ§¹û
+        // ç”¨äºè·Ÿè¸ªæ¿€æ´»çš„æ”»å‡»æ•ˆæœ
         List<GameObject> activeAttackEffects = new List<GameObject>();
         
-        // ¹¥»÷Ğ§¹ûÆ«ÒÆÁ¿ÅäÖÃ£¨Ä¬ÈÏ×ó²à£©
+        // æ”»å‡»æ•ˆæœåç§»é‡é…ç½®ï¼ˆé»˜è®¤å·¦ä¾§ï¼‰
         Vector2[] attackOffsets = new Vector2[]
         {
-            new Vector2(-0.5f, 0.5f), // ÏÂõß
-            new Vector2(-0.7f, 0f),   // ÕÆ»÷
-            new Vector2(-0.8f, 0f),   // Æ÷Ğµ»÷
-            new Vector2(-0.8f, 0f)    // ²àÌß
+            new Vector2(-0.5f, 0.5f), // ä¸‹è¸¹
+            new Vector2(-0.7f, 0f),   // æŒå‡»
+            new Vector2(-0.8f, 0f),   // å™¨æ¢°å‡»
+            new Vector2(-0.8f, 0f)    // ä¾§è¸¢
         };
         
-        // ³ÖĞøÑ­»·Ö±µ½¶¯»­½áÊø
+        // æŒç»­å¾ªç¯ç›´åˆ°åŠ¨ç”»ç»“æŸ
         while (IsAnime)
         {
-            // ¹ıÂËµôÒÑ¾­±»Ïú»Ù»òËÀÍöµÄµĞÈË£¨Hp <= 0±íÊ¾ËÀÍö£©
+            // è¿‡æ»¤æ‰å·²ç»è¢«é”€æ¯æˆ–æ­»äº¡çš„æ•Œäººï¼ˆHp <= 0è¡¨ç¤ºæ­»äº¡ï¼‰
             tempEnemys.RemoveAll(enemy => enemy == null || enemy.GetComponent<Enemy>().Hp <= 0);
             
-            // Èç¹û»¹ÓĞ´æ»îµÄµĞÈË£¬¼ÌĞø¹¥»÷
+            // å¦‚æœè¿˜æœ‰å­˜æ´»çš„æ•Œäººï¼Œç»§ç»­æ”»å‡»
             if (tempEnemys.Count > 0)
             {
-                // ±éÀúÃ¿¸öµĞÈË
+                // éå†æ¯ä¸ªæ•Œäºº
                 for (int i = 0; i < tempEnemys.Count && IsAnime; i++)
                 {
                     var enemy = tempEnemys[i];
                     if (enemy != null)
                     {
-                        // µÈ´ı¹¥»÷Ğ§¹û¼ä¸ô
+                        // ç­‰å¾…æ”»å‡»æ•ˆæœé—´éš”
                         yield return new WaitForSecondsRealtime(attackEffectInterval);
                         
-                        // ²éÕÒ¿ÉÓÃµÄ¹¥»÷Ğ§¹û¶ÔÏó
+                        // æŸ¥æ‰¾å¯ç”¨çš„æ”»å‡»æ•ˆæœå¯¹è±¡
                         List<GameObject> availableEffects = new List<GameObject>();
                         foreach (var effect in attackEffects)
                         {
@@ -211,44 +212,44 @@ public class ReimuSuper : MonoBehaviour
                         
                         if (availableEffects.Count > 0)
                         {
-                            // Ëæ»úÑ¡ÔñÒ»¸ö¿ÉÓÃµÄ¹¥»÷Ğ§¹û¶ÔÏó
-                            GameObject availableAttackEffect = availableEffects[Random.Range(0, availableEffects.Count)];
+                            // éšæœºé€‰æ‹©ä¸€ä¸ªå¯ç”¨çš„æ”»å‡»æ•ˆæœå¯¹è±¡
+                            GameObject availableAttackEffect = availableEffects[GameRNG.Range(0, availableEffects.Count)];
                             
-                            // Ëæ»úÑ¡Ôñ¹¥»÷·½Ïò
-                            bool isRight = Random.value > 0.5f;
+                            // éšæœºé€‰æ‹©æ”»å‡»æ–¹å‘
+                            bool isRight = GameRNG.value > 0.5f;
                             
-                            // Ëæ»úÑ¡Ôñ¹¥»÷Ğ§¹ûÀàĞÍ
-                            int attackIndex = Random.Range(0, attackOffsets.Length);
+                            // éšæœºé€‰æ‹©æ”»å‡»æ•ˆæœç±»å‹
+                            int attackIndex = GameRNG.Range(0, attackOffsets.Length);
                             
-                            // ¼ÆËã¹¥»÷Ğ§¹ûµÄÎ»ÖÃ
+                            // è®¡ç®—æ”»å‡»æ•ˆæœçš„ä½ç½®
                             Vector3 enemyPosition = enemy.transform.position;
                             Vector3 effectPosition = enemyPosition;
                             
-                            // »ñÈ¡µ±Ç°¹¥»÷Ğ§¹ûµÄÆ«ÒÆÁ¿
+                            // è·å–å½“å‰æ”»å‡»æ•ˆæœçš„åç§»é‡
                             Vector2 offset = attackOffsets[attackIndex];
                             
-                            // ¸ù¾İ¹¥»÷·½Ïòµ÷ÕûÆ«ÒÆÁ¿
+                            // æ ¹æ®æ”»å‡»æ–¹å‘è°ƒæ•´åç§»é‡
                             if (isRight)
                             {
                                 offset.x = -offset.x;
                             }
                             
-                            // Ó¦ÓÃÆ«ÒÆÁ¿
+                            // åº”ç”¨åç§»é‡
                             effectPosition.x += offset.x;
                             effectPosition.y += offset.y;
                             
-                            // ÉèÖÃ¹¥»÷Ğ§¹ûµÄÎ»ÖÃºÍĞı×ª
+                            // è®¾ç½®æ”»å‡»æ•ˆæœçš„ä½ç½®å’Œæ—‹è½¬
                             availableAttackEffect.transform.position = effectPosition;
                             availableAttackEffect.transform.localScale = new Vector3(isRight ? 1 : -1, 1, 1);
                             
-                            // ¼¤»î¹¥»÷Ğ§¹û
+                            // æ¿€æ´»æ”»å‡»æ•ˆæœ
                             availableAttackEffect.SetActive(true);
                             activeAttackEffects.Add(availableAttackEffect);
                             
-                            // ²¥·Å»÷´òÒôĞ§
+                            // æ’­æ”¾å‡»æ‰“éŸ³æ•ˆ
                             AudioReimuHit();
                             
-                            // ÑÓ³Ùºó½ûÓÃ¹¥»÷Ğ§¹û²¢Ôì³ÉÉËº¦
+                            // å»¶è¿Ÿåç¦ç”¨æ”»å‡»æ•ˆæœå¹¶é€ æˆä¼¤å®³
                             StartCoroutine(DisableAttackEffectAndDamage(availableAttackEffect, activeAttackEffects, enemy));
                         }
                     }
@@ -256,39 +257,39 @@ public class ReimuSuper : MonoBehaviour
             }
             else
             {
-                // ¼ÆËã´ÓĞ­³Ì¿ªÊ¼µ½ÏÖÔÚµÄÊ±¼ä
+                // è®¡ç®—ä»åç¨‹å¼€å§‹åˆ°ç°åœ¨çš„æ—¶é—´
                 float elapsedTime = Time.realtimeSinceStartup - startTime;
                 
-                // Èç¹û»¹Ã»µ½2Ãë£¬µÈ´ıÊ£ÓàÊ±¼ä
+                // å¦‚æœè¿˜æ²¡åˆ°2ç§’ï¼Œç­‰å¾…å‰©ä½™æ—¶é—´
                 if (elapsedTime < 2f)
                 {
                     yield return new WaitForSecondsRealtime(2f - elapsedTime);
                 }
                 
-                // Ã»ÓĞµĞÈËÊ±£¬¼¤»îÍËÖÎĞ§¹û£¨ÖÁÉÙÔÚ¶¯»­¿ªÊ¼ºó2Ãë£©
+                // æ²¡æœ‰æ•Œäººæ—¶ï¼Œæ¿€æ´»é€€æ²»æ•ˆæœï¼ˆè‡³å°‘åœ¨åŠ¨ç”»å¼€å§‹å2ç§’ï¼‰
                 if (WinEffect != null)
                 {
                     WinEffect.SetActive(true);
                 }
                 
-                // µÈ´ıÒ»Ğ¡¶ÎÊ±¼äºóÍ£Ö¹ÁÔÉ±
+                // ç­‰å¾…ä¸€å°æ®µæ—¶é—´ååœæ­¢çŒæ€
                 yield return new WaitForSecondsRealtime(0.5f);
-                break; // ÍË³öÁÔÉ±Ñ­»·
+                break; // é€€å‡ºçŒæ€å¾ªç¯
             }
             
-            // µÈ´ıÒ»¶ÎÊ±¼äºóÔÙ¿ªÊ¼ÏÂÒ»ÂÖ¹¥»÷
+            // ç­‰å¾…ä¸€æ®µæ—¶é—´åå†å¼€å§‹ä¸‹ä¸€è½®æ”»å‡»
             yield return new WaitForSecondsRealtime(attackEffectInterval * 2);
         }
     }
     
     /// <summary>
-    /// ½ûÓÃ¹¥»÷Ğ§¹û²¢Ôì³ÉÉËº¦µÄĞ­³Ì
+    /// ç¦ç”¨æ”»å‡»æ•ˆæœå¹¶é€ æˆä¼¤å®³çš„åç¨‹
     /// </summary>
     private IEnumerator DisableAttackEffectAndDamage(GameObject attackEffect, List<GameObject> activeAttackEffects, GameObject enemy)
     {
         yield return new WaitForSecondsRealtime(attackEffectDuration);
         
-        // ¶ÔµĞÈËÔì³ÉÉËº¦
+        // å¯¹æ•Œäººé€ æˆä¼¤å®³
         if (enemy != null)
         {
             var enemyComponent = enemy.GetComponent<Enemy>();
@@ -298,7 +299,7 @@ public class ReimuSuper : MonoBehaviour
             }
         }
         
-        // ½ûÓÃ¹¥»÷Ğ§¹û
+        // ç¦ç”¨æ”»å‡»æ•ˆæœ
         if (attackEffect != null)
         {
             attackEffect.SetActive(false);
@@ -307,7 +308,7 @@ public class ReimuSuper : MonoBehaviour
     }
     
     /// <summary>
-    /// ÁéÃÎ¾öËÀ¶ÔBoss·¢ËÍ¼¼ÄÜ¹¥»÷Í¨Öª
+    /// çµæ¢¦å†³æ­»å¯¹Bosså‘é€æŠ€èƒ½æ”»å‡»é€šçŸ¥
     /// </summary>
     private void ReimuSuperDamageToBoss()
     {
@@ -316,14 +317,14 @@ public class ReimuSuper : MonoBehaviour
             BossBase bossBase = boss.GetComponent<BossBase>();
             if (bossBase != null)
             {
-                // ·¢ËÍ¼¼ÄÜ¹¥»÷Í¨Öª£¬²»Ö±½ÓÔì³ÉÉËº¦£¬ÈÃBossÓĞ»ú»á¹æ±Ü
-                bossBase.OnPlayerSkillAttack(2); // 2±íÊ¾ÁéÃÎ¾öËÀ
+                // å‘é€æŠ€èƒ½æ”»å‡»é€šçŸ¥ï¼Œä¸ç›´æ¥é€ æˆä¼¤å®³ï¼Œè®©Bossæœ‰æœºä¼šè§„é¿
+                bossBase.OnPlayerSkillAttack(2); // 2è¡¨ç¤ºçµæ¢¦å†³æ­»
             }
         }
     }
 
     /// <summary>
-    /// ¶¯»­½áÊø»Øµ÷
+    /// åŠ¨ç”»ç»“æŸå›è°ƒ
     /// </summary>
     public void OnAnimationEnd()
     {
@@ -331,56 +332,56 @@ public class ReimuSuper : MonoBehaviour
         BossBase bossBase = boss.GetComponent<BossBase>();
         if (bossBase != null)
         {
-            bossBase.DefenseEnd(); // ¹Ø±Õ·ÀÓùÆÁÕÏ
+            bossBase.DefenseEnd(); // å…³é—­é˜²å¾¡å±éšœ
         }
-        // Í£Ö¹ÁÔÉ±Ğ­³Ì
+        // åœæ­¢çŒæ€åç¨‹
         if (huntCoroutine != null)
         {
             StopCoroutine(huntCoroutine);
             huntCoroutine = null;
         }
-        // ÖØÖÃ×´Ì¬
+        // é‡ç½®çŠ¶æ€
         IsAnime = false;
         isOpenOrCloseEye = false;
         
-        // ÖØÖÃAnimator²ÎÊı
+        // é‡ç½®Animatorå‚æ•°
         if (animator != null)
         {
             animator.SetBool("IsAnime", false);
         }
         
         WinEffect.SetActive(false);
-        // »Ö¸´Ê±¼äËõ·Å
+        // æ¢å¤æ—¶é—´ç¼©æ”¾
         Time.timeScale = 1f;
         
-        // Í¨Öª¸¸½Å±¾¶¯»­½áÊø
+        // é€šçŸ¥çˆ¶è„šæœ¬åŠ¨ç”»ç»“æŸ
         if (spellCardEffect != null)
         {
-            spellCardEffect.OnChildAnimationEnd(2); // 2±íÊ¾ÁéÃÎ¾öËÀ
+            spellCardEffect.OnChildAnimationEnd(2); // 2è¡¨ç¤ºçµæ¢¦å†³æ­»
         }
     }
     /// <summary>
-    /// ÁéÃÎ´ÓÑÇ¿ÕÑ¨·µ»Ø£¨¹Ø±ÕÍËÖÎĞ§¹û£©
+    /// çµæ¢¦ä»äºšç©ºç©´è¿”å›ï¼ˆå…³é—­é€€æ²»æ•ˆæœï¼‰
     /// </summary>
     public void Back()
     {
         player.transform.position = new(-3,-4,0);
-        // »Ö¸´Ê±¼äËõ·Å
+        // æ¢å¤æ—¶é—´ç¼©æ”¾
         Time.timeScale = originalTimeScale;
         
-        // »Ö¸´ÓÎÏ·×´Ì¬ÎªÓÎÏ·ÖĞ
+        // æ¢å¤æ¸¸æˆçŠ¶æ€ä¸ºæ¸¸æˆä¸­
         Global_GameManager.Instance.state = State.Gaming;
         
-        // ´¦ÀíÊ±Í£ÆÚ¼äËÀÍöµÄµĞÈË
+        // å¤„ç†æ—¶åœæœŸé—´æ­»äº¡çš„æ•Œäºº
         ProcessDeadEnemies();
     }
     
     /// <summary>
-    /// ´¦ÀíÊ±Í£ÆÚ¼äËÀÍöµÄµĞÈË
+    /// å¤„ç†æ—¶åœæœŸé—´æ­»äº¡çš„æ•Œäºº
     /// </summary>
     private void ProcessDeadEnemies()
     {
-        // ´´½¨µĞÈËÁĞ±íµÄ¸±±¾ÒÔ±ÜÃâ±éÀú¹ı³ÌÖĞĞŞ¸ÄÔ­Ê¼ÁĞ±í
+        // åˆ›å»ºæ•Œäººåˆ—è¡¨çš„å‰¯æœ¬ä»¥é¿å…éå†è¿‡ç¨‹ä¸­ä¿®æ”¹åŸå§‹åˆ—è¡¨
         List<GameObject> enemiesToProcess = new List<GameObject>(Enemys);
         
         foreach (var enemy in enemiesToProcess)
@@ -390,7 +391,7 @@ public class ReimuSuper : MonoBehaviour
                 Enemy enemyComponent = enemy.GetComponent<Enemy>();
                 if (enemyComponent != null && enemyComponent.Hp <= 0)
                 {
-                    // ÊÖ¶¯µ÷ÓÃDelete·½·¨´¦ÀíËÀÍöµĞÈË
+                    // æ‰‹åŠ¨è°ƒç”¨Deleteæ–¹æ³•å¤„ç†æ­»äº¡æ•Œäºº
                     enemyComponent.Delete();
                 }
             }

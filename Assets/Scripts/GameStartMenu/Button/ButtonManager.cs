@@ -1,17 +1,17 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class ButtonManager : MonoBehaviour
 {
-    [Header("°´Å¥ÁĞ±í£¨×ÔÉÏµ½ÏÂ£©")]
+    [Header("æŒ‰é’®åˆ—è¡¨ï¼ˆè‡ªä¸Šåˆ°ä¸‹ï¼‰")]
     public List<Button> buttons = new List<Button>();
-    [Header("Ä¬ÈÏÑ¡ÖĞµÄ°´Å¥Ë÷Òı£¨Ä¬ÈÏµÚÒ»¸ö£©")]
+    [Header("é»˜è®¤é€‰ä¸­çš„æŒ‰é’®ç´¢å¼•ï¼ˆé»˜è®¤ç¬¬ä¸€ä¸ªï¼‰")]
     public int defaultButtonIndex = 0;
-    [Header("°´Å¥¶¯»­½Å±¾ÒıÓÃ")]
+    [Header("æŒ‰é’®åŠ¨ç”»è„šæœ¬å¼•ç”¨")]
     public ButtonAnime ButtonAnime;
-    [Header("°´Å¥ÊÂ¼ş½Å±¾ÒıÓÃ£¨Button&SceneÎïÌåÉÏ£©")]
+    [Header("æŒ‰é’®äº‹ä»¶è„šæœ¬å¼•ç”¨ï¼ˆButton&Sceneç‰©ä½“ä¸Šï¼‰")]
     public ButtonEvent buttonEvent;
 
     private int currentButtonIndex;
@@ -21,46 +21,46 @@ public class ButtonManager : MonoBehaviour
     {
         if(buttons.Count == 0)
         {
-            Debug.LogWarning("°´Å¥ÁĞ±íÎª¿Õ£¡");
+            Debug.LogWarning("æŒ‰é’®åˆ—è¡¨ä¸ºç©ºï¼");
         }
         if(ButtonAnime == null)
         {
-            Debug.LogWarning("Ã»ÓĞÒıÓÃ°´Å¥¶¯»­×é¼ş£¨½Å±¾£©");
+            Debug.LogWarning("æ²¡æœ‰å¼•ç”¨æŒ‰é’®åŠ¨ç”»ç»„ä»¶ï¼ˆè„šæœ¬ï¼‰");
         }
         currentButtonIndex = defaultButtonIndex;
-        // ÁîÄ¬ÈÏ°´Å¥±»Ñ¡ÖĞ
+        // ä»¤é»˜è®¤æŒ‰é’®è¢«é€‰ä¸­
         ButtonAnime.ButtonBeChoose(buttons[currentButtonIndex]);
     }
 
     // Update is called once per frame
     void Update()
     {
-        // ¼ì²âÉÏÏÂ¼üÇĞ»»°´Å¥£¨GetKeyDownÈ·±£Ö»´¥·¢Ò»´Î£©
+        // æ£€æµ‹ä¸Šä¸‹é”®åˆ‡æ¢æŒ‰é’®ï¼ˆGetKeyDownç¡®ä¿åªè§¦å‘ä¸€æ¬¡ï¼‰
         CheckButtonSwitch();
-        // ¼ì²âZ¼üÄ£Äâµã»÷Ñ¡ÖĞµÄ°´Å¥
+        // æ£€æµ‹Zé”®æ¨¡æ‹Ÿç‚¹å‡»é€‰ä¸­çš„æŒ‰é’®
         CheckButtonClick();
     }
 
     /// <summary>
-    /// ¼ì²â°´Å¥Ñ¡ÔñµÄ·½·¨£¬Ã¿Ò»Ö¡¶¼¼àÌıÊÇ·ñ°´ÏÂÉÏÏÂ¼üÇĞ»»Ñ¡ÖĞ°´Å¥£¬ÔÊĞí°´×¡Ò»Ö±ÇĞ»»
+    /// æ£€æµ‹æŒ‰é’®é€‰æ‹©çš„æ–¹æ³•ï¼Œæ¯ä¸€å¸§éƒ½ç›‘å¬æ˜¯å¦æŒ‰ä¸‹ä¸Šä¸‹é”®åˆ‡æ¢é€‰ä¸­æŒ‰é’®ï¼Œå…è®¸æŒ‰ä½ä¸€ç›´åˆ‡æ¢
     /// </summary>
     private void CheckButtonSwitch()
     {
-        if(Input.GetKeyDown(KeyCode.UpArrow))// °´ÏÂ¡ü¼ü
+        if(Input.GetKeyDown(KeyCode.UpArrow))// æŒ‰ä¸‹â†‘é”®
         {
             ButtonAnime.ButtonBeMoveoff(buttons[currentButtonIndex]);
             currentButtonIndex--;
-            if(currentButtonIndex<0)// ×îÉÏ·½Ñ­»·µ½µ×²ã
+            if(currentButtonIndex<0)// æœ€ä¸Šæ–¹å¾ªç¯åˆ°åº•å±‚
             {
                 currentButtonIndex = buttons.Count - 1;
             }
             ButtonAnime.ButtonBeChoose(buttons[currentButtonIndex]);
         }
-        if (Input.GetKeyDown(KeyCode.DownArrow))// °´ÏÂ¡ı¼ü
+        if (Input.GetKeyDown(KeyCode.DownArrow))// æŒ‰ä¸‹â†“é”®
         {
             ButtonAnime.ButtonBeMoveoff(buttons[currentButtonIndex]);
             currentButtonIndex++;
-            if (currentButtonIndex > buttons.Count - 1)// ×îÏÂ·½Ñ­»·µ½¶¥²ã
+            if (currentButtonIndex > buttons.Count - 1)// æœ€ä¸‹æ–¹å¾ªç¯åˆ°é¡¶å±‚
             {
                 currentButtonIndex = 0;
             }
@@ -69,8 +69,8 @@ public class ButtonManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Ö÷ÒªÊÇ¼ì²âZ¼ü£¬°´ÏÂµÄÊ±ºò¸ù¾İµ±Ç°Ñ¡ÖĞµÄ°´Å¥Ö´ĞĞ¶ÔÓ¦µÄ°´ÏÂÂß¼­
-    /// »¹ÓĞX¼ü£¬X¼üÄ¬ÈÏÑ¡ÖĞÍË³ö°´Å¥
+    /// ä¸»è¦æ˜¯æ£€æµ‹Zé”®ï¼ŒæŒ‰ä¸‹çš„æ—¶å€™æ ¹æ®å½“å‰é€‰ä¸­çš„æŒ‰é’®æ‰§è¡Œå¯¹åº”çš„æŒ‰ä¸‹é€»è¾‘
+    /// è¿˜æœ‰Xé”®ï¼ŒXé”®é»˜è®¤é€‰ä¸­é€€å‡ºæŒ‰é’®
     /// </summary>
     private void CheckButtonClick()
     {
@@ -80,29 +80,29 @@ public class ButtonManager : MonoBehaviour
             
             switch(currentButtonIndex)
             {
-                case 0: // Start°´Å¥
+                case 0: // StartæŒ‰é’®
                     buttonEvent.Strat_Event();
                     break;
-                case 1: // ExStart°´Å¥
+                case 1: // ExStartæŒ‰é’®
                     buttonEvent.ExStart_Event();
                     break;
-                case 2: // Result°´Å¥
+                case 2: // ResultæŒ‰é’®
                     buttonEvent.Result_Event();
                     break;
-                case 3: // Manual°´Å¥
+                case 3: // ManualæŒ‰é’®
                     buttonEvent.Manual_Event();
                     break;
-                case 4: // MusicRoom°´Å¥
+                case 4: // MusicRoomæŒ‰é’®
                     buttonEvent.MusicRoom_Event();
                     break;
-                case 5: // Option°´Å¥
+                case 5: // OptionæŒ‰é’®
                     buttonEvent.Option_Event();
                     break;
-                case 6: // Quit°´Å¥
+                case 6: // QuitæŒ‰é’®
                     buttonEvent.Quit_Event();
                     break;
                 default:
-                    Debug.LogWarning($"Î´´¦ÀíµÄ°´Å¥Ë÷Òı£º{currentButtonIndex}");
+                    Debug.LogWarning($"æœªå¤„ç†çš„æŒ‰é’®ç´¢å¼•ï¼š{currentButtonIndex}");
                     break;
             }
         }

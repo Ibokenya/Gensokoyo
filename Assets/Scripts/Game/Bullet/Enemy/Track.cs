@@ -1,26 +1,27 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ReplaySystem;
 
 /// <summary>
-/// ¸ú×Ù×Óµ¯Track
-/// ÒÆ¶¯Ê±»á¸ù¾İÄ¿±ê»úµÄÎ»ÖÃ½øĞĞÒÆ¶¯£¨½ö×·×ÙÒ»´Î£©
-/// ¼ıÍ·µ¯£¬·û¹‚µ¯£¬¿àÎŞµ¯
+/// è·Ÿè¸ªå­å¼¹Track
+/// ç§»åŠ¨æ—¶ä¼šæ ¹æ®ç›®æ ‡æœºçš„ä½ç½®è¿›è¡Œç§»åŠ¨ï¼ˆä»…è¿½è¸ªä¸€æ¬¡ï¼‰
+/// ç®­å¤´å¼¹ï¼Œç¬¦ç®“å¼¹ï¼Œè‹¦æ— å¼¹
 /// </summary>
 public class Track : MonoBehaviour
 {
-    public float Speed = 5f;// ÒÆ¶¯ËÙ¶È
-    public float WindUp = 0f;// Ç°Ò¡Ê±¼ä£¨Ãë£©
-    public List<Sprite> spriteVariants = new List<Sprite>(); // ×Óµ¯ÑÕÉ«±äÌå
+    public float Speed = 5f;// ç§»åŠ¨é€Ÿåº¦
+    public float WindUp = 0f;// å‰æ‘‡æ—¶é—´ï¼ˆç§’ï¼‰
+    public List<Sprite> spriteVariants = new List<Sprite>(); // å­å¼¹é¢œè‰²å˜ä½“
     private float windUpTimer = 0f;
     private bool isWindingUp = true;
-    private GameObject Target;// Ä¿±ê»ú¶ÔÏó
+    private GameObject Target;// ç›®æ ‡æœºå¯¹è±¡
     private Vector2 targetPosition;
     private bool hasTarget = false;
     private Rigidbody2D rb2D;
     public SpriteRenderer spriteRenderer;
     
-    // ±ß½ç·¶Î§
+    // è¾¹ç•ŒèŒƒå›´
     private readonly float minX = -11f;
     private readonly float maxX = 5f;
     private readonly float minY = -7.5f;
@@ -28,40 +29,40 @@ public class Track : MonoBehaviour
     
     void Start()
     {
-        // »ñÈ¡¸ÕÌå×é¼ş
+        // è·å–åˆšä½“ç»„ä»¶
         rb2D = GetComponent<Rigidbody2D>();
-        // »ñÈ¡¾«ÁéäÖÈ¾Æ÷
+        // è·å–ç²¾çµæ¸²æŸ“å™¨
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
     
     void OnEnable()
     {
-        // È·±£¸ÕÌå×é¼ş´æÔÚ
+        // ç¡®ä¿åˆšä½“ç»„ä»¶å­˜åœ¨
         if (rb2D == null)
         {
             rb2D = GetComponent<Rigidbody2D>();
         }
         
-        // È·±£¾«ÁéäÖÈ¾Æ÷´æÔÚ
+        // ç¡®ä¿ç²¾çµæ¸²æŸ“å™¨å­˜åœ¨
         if (spriteRenderer == null)
         {
             spriteRenderer = GetComponent<SpriteRenderer>();
         }
         
-        // ³õÊ¼»¯Ç°Ò¡×´Ì¬
+        // åˆå§‹åŒ–å‰æ‘‡çŠ¶æ€
         windUpTimer = 0f;
         isWindingUp = true;
         
-        // ÉèÖÃ³õÊ¼ËÙ¶È£¨Ö±ÏßÒÆ¶¯£©
+        // è®¾ç½®åˆå§‹é€Ÿåº¦ï¼ˆç›´çº¿ç§»åŠ¨ï¼‰
         if (rb2D != null)
         {
             Vector2 direction = transform.up;
             rb2D.velocity = direction * Speed;
-            // È·±£¸ÕÌå²»ÊÇÔË¶¯Ñ§µÄ
+            // ç¡®ä¿åˆšä½“ä¸æ˜¯è¿åŠ¨å­¦çš„
             rb2D.isKinematic = false;
         }
         
-        // Ëæ»úÑ¡ÔñÒ»¸ösprite±äÌå
+        // éšæœºé€‰æ‹©ä¸€ä¸ªspriteå˜ä½“
         if (spriteRenderer != null && spriteVariants.Count > 0)
         {
             int randomIndex = Random.Range(0, spriteVariants.Count);
@@ -69,17 +70,17 @@ public class Track : MonoBehaviour
         }
     }
     
-    void Update()
+    void FixedUpdate()
     {
-        // Ç°Ò¡Âß¼­
+        // å‰æ‘‡é€»è¾‘
         if (isWindingUp)
         {
-            windUpTimer += Time.deltaTime;
+            windUpTimer += SimClock.FixedTickDt;
             if (windUpTimer >= WindUp)
             {
-                // Ç°Ò¡½áÊø£¬¿ªÊ¼×·×Ù
+                // å‰æ‘‡ç»“æŸï¼Œå¼€å§‹è¿½è¸ª
                 isWindingUp = false;
-                // »ñÈ¡Ä¿±êÎ»ÖÃ£¨½ö»ñÈ¡Ò»´Î£©
+                // è·å–ç›®æ ‡ä½ç½®ï¼ˆä»…è·å–ä¸€æ¬¡ï¼‰
                 if (Target != null)
                 {
                     targetPosition = Target.transform.position;
@@ -87,8 +88,8 @@ public class Track : MonoBehaviour
                 }
                 else
                 {
-                    Debug.LogError("¸ú×Ùµ¯Ä¿±ê»úÎ´ÉèÖÃ");
-                    // Èç¹ûÃ»ÓĞÄ¿±ê£¬³¢ÊÔ»ñÈ¡Íæ¼Ò¶ÔÏó
+                    Debug.LogError("è·Ÿè¸ªå¼¹ç›®æ ‡æœºæœªè®¾ç½®");
+                    // å¦‚æœæ²¡æœ‰ç›®æ ‡ï¼Œå°è¯•è·å–ç©å®¶å¯¹è±¡
                     GameObject player = GameObject.FindGameObjectWithTag("Player");
                     if (player != null)
                     {
@@ -97,14 +98,14 @@ public class Track : MonoBehaviour
                     }
                 }
                 
-                // Èç¹ûÓĞÄ¿±ê£¬¼ÆËã³¯ÏòÄ¿±êµÄ·½Ïò²¢Ğı×ª
+                // å¦‚æœæœ‰ç›®æ ‡ï¼Œè®¡ç®—æœå‘ç›®æ ‡çš„æ–¹å‘å¹¶æ—‹è½¬
                 if (hasTarget)
                 {
                     Vector2 direction = (targetPosition - (Vector2)transform.position).normalized;
                     float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90;
                     transform.rotation = Quaternion.Euler(0, 0, angle);
                     
-                    // ¸üĞÂ¸ÕÌåËÙ¶È
+                    // æ›´æ–°åˆšä½“é€Ÿåº¦
                     if (rb2D != null)
                     {
                         rb2D.velocity = transform.up * Speed;
@@ -113,19 +114,19 @@ public class Track : MonoBehaviour
             }
         }
         
-        // ±ß½ç¼ì²â
+        // è¾¹ç•Œæ£€æµ‹
         CheckBounds();
     }
     
     /// <summary>
-    /// ¼ì²é±ß½ç£¬³¬³ö±ß½çÔò»ØÊÕ
+    /// æ£€æŸ¥è¾¹ç•Œï¼Œè¶…å‡ºè¾¹ç•Œåˆ™å›æ”¶
     /// </summary>
     private void CheckBounds()
     {
         Vector2 position = transform.position;
         if (position.x < minX || position.x > maxX || position.y < minY || position.y > maxY)
         {
-            // ³¬³ö±ß½ç£¬»ØÊÕ×Óµ¯
+            // è¶…å‡ºè¾¹ç•Œï¼Œå›æ”¶å­å¼¹
             if (Global_ObjectPool.Instance != null)
             {
                 Global_ObjectPool.Instance.Recycle(gameObject);

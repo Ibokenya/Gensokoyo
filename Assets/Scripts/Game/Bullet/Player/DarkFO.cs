@@ -1,25 +1,26 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ReplaySystem;
 
 /// <summary>
-/// °µÓ°µ¯½Å±¾
-/// ¸ºÔğ°µÓ°µ¯µÄÒÆ¶¯¡¢Åö×²ºÍ»ØÊÕÂß¼­
+/// æš—å½±å¼¹è„šæœ¬
+/// è´Ÿè´£æš—å½±å¼¹çš„ç§»åŠ¨ã€ç¢°æ’å’Œå›æ”¶é€»è¾‘
 /// </summary>
 public class DarkFO : MonoBehaviour
 {
-    [Header("ÉËº¦ÊôĞÔ")]
-    public int damage = 10; // Ô­Ê¼ÉËº¦Öµ
-    private int currentDamage = 10; // µ±Ç°ÉËº¦Öµ
+    [Header("ä¼¤å®³å±æ€§")]
+    public int damage = 10; // åŸå§‹ä¼¤å®³å€¼
+    private int currentDamage = 10; // å½“å‰ä¼¤å®³å€¼
     
-    [Header("ÒÆ¶¯ÊôĞÔ")]
-    public float moveSpeed = 3f; // Ô­Ê¼ÒÆ¶¯ËÙ¶È
-    private float currentSpeed = 3f; // µ±Ç°ÒÆ¶¯ËÙ¶È
-    public float absorbDistance = 0.5f; // ÎüÊÕ¾àÀëãĞÖµ
+    [Header("ç§»åŠ¨å±æ€§")]
+    public float moveSpeed = 3f; // åŸå§‹ç§»åŠ¨é€Ÿåº¦
+    private float currentSpeed = 3f; // å½“å‰ç§»åŠ¨é€Ÿåº¦
+    public float absorbDistance = 0.5f; // å¸æ”¶è·ç¦»é˜ˆå€¼
     
-    [Header("×´Ì¬")]
-    public bool isAbsorbed = false; // ÊÇ·ñ±»ÎüÊÕ
-    public bool isEnhanced = false; // ÊÇ·ñÇ¿»¯
+    [Header("çŠ¶æ€")]
+    public bool isAbsorbed = false; // æ˜¯å¦è¢«å¸æ”¶
+    public bool isEnhanced = false; // æ˜¯å¦å¼ºåŒ–
     
     private Rigidbody2D rb;
     private SpriteRenderer spriteRenderer;
@@ -42,56 +43,52 @@ public class DarkFO : MonoBehaviour
     
     void OnEnable()
     {
-        // ÖØÖÃËùÓĞÊôĞÔ
+        // é‡ç½®æ‰€æœ‰å±æ€§
         ResetAllProperties();
-    }
-    
-    void Update()
-    {
-        // ¼ì²éÊÇ·ñ³¬³ö×î´ó¾ØĞÎ·¶Î§
-        CheckOutOfBounds();
-        
-        // µ­ÈëÂß¼­
-        if (isFading)
-        {
-            UpdateFade();
-        }
     }
     
     void FixedUpdate()
     {
-        if (!isFading)
+        // æ£€æŸ¥æ˜¯å¦è¶…å‡ºæœ€å¤§çŸ©å½¢èŒƒå›´
+        CheckOutOfBounds();
+        
+        // æ·¡å…¥é€»è¾‘
+        if (isFading)
         {
-            // ÒÆ¶¯Âß¼­
+            UpdateFade();
+        }
+        else
+        {
+            // ç§»åŠ¨é€»è¾‘
             MoveTowardsTarget();
             
-            // ¼ì²éÊÇ·ñ½Ó½üºÚ¶´
+            // æ£€æŸ¥æ˜¯å¦æ¥è¿‘é»‘æ´
             CheckAbsorbDistance();
         }
     }
     
     /// <summary>
-    /// ÖØÖÃËùÓĞÊôĞÔ
+    /// é‡ç½®æ‰€æœ‰å±æ€§
     /// </summary>
     private void ResetAllProperties()
     {
-        // ÖØÖÃ×´Ì¬
+        // é‡ç½®çŠ¶æ€
         isAbsorbed = false;
         isEnhanced = false;
         isFading = false;
         fadeTimer = 0f;
         
-        // ÖØÖÃÊôĞÔ
+        // é‡ç½®å±æ€§
         currentDamage = damage;
         currentSpeed = moveSpeed;
         
-        // ÖØÖÃÑÕÉ«
+        // é‡ç½®é¢œè‰²
         if (spriteRenderer != null)
         {
             spriteRenderer.color = originalColor;
         }
         
-        // ÖØÖÃËÙ¶È
+        // é‡ç½®é€Ÿåº¦
         if (rb != null)
         {
             rb.velocity = Vector2.zero;
@@ -99,52 +96,52 @@ public class DarkFO : MonoBehaviour
     }
     
     /// <summary>
-    /// ³õÊ¼»¯°µÓ°µ¯
+    /// åˆå§‹åŒ–æš—å½±å¼¹
     /// </summary>
-    /// <param name="blackHole">ºÚ¶´Î»ÖÃ</param>
-    /// <param name="outerBottomLeft">×î´ó¾ØĞÎ×óÏÂ½Ç</param>
-    /// <param name="outerTopRight">×î´ó¾ØĞÎÓÒÉÏ½Ç</param>
+    /// <param name="blackHole">é»‘æ´ä½ç½®</param>
+    /// <param name="outerBottomLeft">æœ€å¤§çŸ©å½¢å·¦ä¸‹è§’</param>
+    /// <param name="outerTopRight">æœ€å¤§çŸ©å½¢å³ä¸Šè§’</param>
     public void Initialize(Transform blackHole, Vector2 outerBottomLeft, Vector2 outerTopRight)
     {
         blackHoleTransform = blackHole;
         outerRectBottomLeft = outerBottomLeft;
         outerRectTopRight = outerTopRight;
         
-        // ¼ÆËã³¯ÏòºÚ¶´µÄ·½Ïò
+        // è®¡ç®—æœå‘é»‘æ´çš„æ–¹å‘
         if (blackHoleTransform != null)
         {
             moveDirection = (blackHoleTransform.position - transform.position).normalized;
             
-            // ÉèÖÃ³¯Ïò£¨ÈÃ°µÓ°µ¯³¯ÏòºÚ¶´£©
+            // è®¾ç½®æœå‘ï¼ˆè®©æš—å½±å¼¹æœå‘é»‘æ´ï¼‰
             float angle = Mathf.Atan2(moveDirection.y, moveDirection.x) * Mathf.Rad2Deg;
             transform.rotation = Quaternion.Euler(0f, 0f, angle);
         }
     }
     
     /// <summary>
-    /// Ç¿»¯ºóÖØĞÂ·¢Éä
+    /// å¼ºåŒ–åé‡æ–°å‘å°„
     /// </summary>
-    /// <param name="blackHole">ºÚ¶´Î»ÖÃ</param>
+    /// <param name="blackHole">é»‘æ´ä½ç½®</param>
     public void ReLaunch(Transform blackHole)
     {
         blackHoleTransform = blackHole;
         
-        // ´ÓºÚ¶´Î»ÖÃ·¢Éä
+        // ä»é»‘æ´ä½ç½®å‘å°„
         transform.position = blackHoleTransform.position;
         
-        // Ëæ»ú·½Ïò
-        float randomAngle = Random.Range(0f, 360f);
+        // éšæœºæ–¹å‘
+        float randomAngle = GameRNG.Range(0f, 360f);
         moveDirection = new Vector2(Mathf.Cos(randomAngle * Mathf.Deg2Rad), Mathf.Sin(randomAngle * Mathf.Deg2Rad));
         
-        // ÉèÖÃ³¯Ïò£¨ÑØ×Å·¢Éä·½Ïò£©
+        // è®¾ç½®æœå‘ï¼ˆæ²¿ç€å‘å°„æ–¹å‘ï¼‰
         transform.rotation = Quaternion.Euler(0f, 0f, randomAngle);
         
-        // Ç¿»¯ÊôĞÔ
+        // å¼ºåŒ–å±æ€§
         isEnhanced = true;
         currentDamage = (int)(currentDamage * 1.5f);
         currentSpeed *= 3;
         
-        // ÉèÖÃÑÕÉ«ÎªºìÉ«
+        // è®¾ç½®é¢œè‰²ä¸ºçº¢è‰²
         if (spriteRenderer != null)
         {
             spriteRenderer.color = new Color(1f, 0f, 0f, 1f);
@@ -152,7 +149,7 @@ public class DarkFO : MonoBehaviour
     }
     
     /// <summary>
-    /// ÒÆ¶¯Âß¼­
+    /// ç§»åŠ¨é€»è¾‘
     /// </summary>
     private void MoveTowardsTarget()
     {
@@ -163,7 +160,7 @@ public class DarkFO : MonoBehaviour
     }
     
     /// <summary>
-    /// ¼ì²éÊÇ·ñ½Ó½üºÚ¶´
+    /// æ£€æŸ¥æ˜¯å¦æ¥è¿‘é»‘æ´
     /// </summary>
     private void CheckAbsorbDistance()
     {
@@ -176,12 +173,12 @@ public class DarkFO : MonoBehaviour
         
         if (distance <= absorbDistance)
         {
-            // ¿ªÊ¼µ­Èë
+            // å¼€å§‹æ·¡å…¥
             isAbsorbed = true;
             isFading = true;
             fadeTimer = 0f;
             
-            // Í£Ö¹ÒÆ¶¯
+            // åœæ­¢ç§»åŠ¨
             if (rb != null)
             {
                 rb.velocity = Vector2.zero;
@@ -190,16 +187,16 @@ public class DarkFO : MonoBehaviour
     }
     
     /// <summary>
-    /// ¸üĞÂµ­ÈëĞ§¹û
+    /// æ›´æ–°æ·¡å…¥æ•ˆæœ
     /// </summary>
     private void UpdateFade()
     {
         fadeTimer += Time.deltaTime;
-        float fadeProgress = fadeTimer / 0.5f; // 0.5Ãëµ­Èë
+        float fadeProgress = fadeTimer / 0.5f; // 0.5ç§’æ·¡å…¥
         
         if (fadeProgress >= 1f)
         {
-            // µ­ÈëÍê³É£¬Í¸Ã÷¶ÈÎª0
+            // æ·¡å…¥å®Œæˆï¼Œé€æ˜åº¦ä¸º0
             if (spriteRenderer != null)
             {
                 Color color = spriteRenderer.color;
@@ -209,12 +206,12 @@ public class DarkFO : MonoBehaviour
             
             isFading = false;
             
-            // Ç¿»¯²¢ÖØĞÂ·¢Éä
+            // å¼ºåŒ–å¹¶é‡æ–°å‘å°„
             ReLaunch(blackHoleTransform);
         }
         else
         {
-            // µ­ÈëÖĞ
+            // æ·¡å…¥ä¸­
             if (spriteRenderer != null)
             {
                 Color color = spriteRenderer.color;
@@ -225,25 +222,25 @@ public class DarkFO : MonoBehaviour
     }
     
     /// <summary>
-    /// ¼ì²éÊÇ·ñ³¬³ö×î´ó¾ØĞÎ·¶Î§
+    /// æ£€æŸ¥æ˜¯å¦è¶…å‡ºæœ€å¤§çŸ©å½¢èŒƒå›´
     /// </summary>
     private void CheckOutOfBounds()
     {
         Vector2 currentPos = transform.position;
         
-        // ¼ì²éÊÇ·ñ³¬³ö·¶Î§
+        // æ£€æŸ¥æ˜¯å¦è¶…å‡ºèŒƒå›´
         if (currentPos.x < outerRectBottomLeft.x || currentPos.x > outerRectTopRight.x ||
             currentPos.y < outerRectBottomLeft.y || currentPos.y > outerRectTopRight.y)
         {
-            // ³¬³ö·¶Î§£¬»ØÊÕ
+            // è¶…å‡ºèŒƒå›´ï¼Œå›æ”¶
             Recycle();
         }
     }
     
     /// <summary>
-    /// Åö×²¼ì²â
+    /// ç¢°æ’æ£€æµ‹
     /// </summary>
-    /// <param name="collision">Åö×²ĞÅÏ¢</param>
+    /// <param name="collision">ç¢°æ’ä¿¡æ¯</param>
     void OnTriggerEnter2D(Collider2D collision)
     {
         switch (collision.tag)
@@ -291,14 +288,14 @@ public class DarkFO : MonoBehaviour
     }
     
     /// <summary>
-    /// »ØÊÕ°µÓ°µ¯
+    /// å›æ”¶æš—å½±å¼¹
     /// </summary>
     public void Recycle()
     {
-        // ÖØÖÃËùÓĞÊôĞÔ
+        // é‡ç½®æ‰€æœ‰å±æ€§
         ResetAllProperties();
         
-        // Ê¹ÓÃGlobal_ObjectPool»ØÊÕ
+        // ä½¿ç”¨Global_ObjectPoolå›æ”¶
         Global_ObjectPool.Instance.Recycle(gameObject);
     }
 }

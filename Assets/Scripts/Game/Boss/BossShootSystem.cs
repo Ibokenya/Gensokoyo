@@ -2,49 +2,50 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using ReplaySystem;
 
 
 
 public class BossShootSystem : MonoBehaviour
 {
-    [Header("¸±¿¨¶³½áÌØĞ§")]
+    [Header("å‰¯å¡å†»ç»“ç‰¹æ•ˆ")]
     public Image FrozeImage;
-    [Header("·û¿¨ÏµÍ³ÒıÓÃ")]
+    [Header("ç¬¦å¡ç³»ç»Ÿå¼•ç”¨")]
     public SpellCardEffect spellCardEffect;
 
-    public Game1 GameCamera;// ÓÎÏ·Ïà»ú£¬ÓÃÀ´¶¶¶¯¾µÍ·
+    public Game1 GameCamera;// æ¸¸æˆç›¸æœºï¼Œç”¨æ¥æŠ–åŠ¨é•œå¤´
     public GameObject player;
     public GameObject boss;
-    public GameObject IceTerrain;// ±ù´ÌµØĞÎ
+    public GameObject IceTerrain;// å†°åˆºåœ°å½¢
     public SpriteRenderer IceTerrainSprite;
     public GameObject ColdAir;
     public SpriteRenderer ColdAirSprite;
     public BossBase bossBase;
 
-    public AudioClip FrozeSound; // ±ù¶³ÒôĞ§
-    private const float animationSpeed = 0.1f; // ¶¯»­ËÙ¶È
-    private int currentSpriteIndex = 0; // µ±Ç°¶¯»­Ö¡Ë÷Òı
+    public AudioClip FrozeSound; // å†°å†»éŸ³æ•ˆ
+    private const float animationSpeed = 0.1f; // åŠ¨ç”»é€Ÿåº¦
+    private int currentSpriteIndex = 0; // å½“å‰åŠ¨ç”»å¸§ç´¢å¼•
     private Vector2 Center = new Vector2(-3, 0);
-#region none1²ÎÊı
+#region none1å‚æ•°
     public GameObject IcePoint;
     public List<GameObject> IcePoints;
-    public List<Sprite> icePointSprites; // icepoint Ö¡¶¯»­ËØ²Ä
+    public List<Sprite> icePointSprites; // icepoint å¸§åŠ¨ç”»ç´ æ
 #endregion
-#region card1²ÎÊı
-    // card1Ïà¹Ø²ÎÊıÓÉcard1½Å±¾Ìá¹©
+#region card1å‚æ•°
+    // card1ç›¸å…³å‚æ•°ç”±card1è„šæœ¬æä¾›
     List<GameObject> stones = new ();
-    List<float> initialAngles = new (); // ±£´æÃ¿¸öÔÉÊ¯µÄ³õÊ¼½Ç¶È
-    List<float> speedOffsets = new (); // ±£´æÃ¿¸öÔÉÊ¯µÄĞı×ªËÙ¶ÈÆ«ÒÆ
-    List<Vector2> stonePositions = new (); // ±£´æÒÑÉú³ÉµÄÔÉÊ¯Î»ÖÃ
-    List<float> individualAngles = new (); // ±£´æÃ¿¸öÔÉÊ¯µÄ¶ÀÁ¢½Ç¶È
+    List<float> initialAngles = new (); // ä¿å­˜æ¯ä¸ªé™¨çŸ³çš„åˆå§‹è§’åº¦
+    List<float> speedOffsets = new (); // ä¿å­˜æ¯ä¸ªé™¨çŸ³çš„æ—‹è½¬é€Ÿåº¦åç§»
+    List<Vector2> stonePositions = new (); // ä¿å­˜å·²ç”Ÿæˆçš„é™¨çŸ³ä½ç½®
+    List<float> individualAngles = new (); // ä¿å­˜æ¯ä¸ªé™¨çŸ³çš„ç‹¬ç«‹è§’åº¦
     Vector2 targetPosition;
-    private int randomIcePickBulletCount = 5; // Ëæ»úÉä»÷µÄ×Óµ¯ÊıÁ¿
+    private int randomIcePickBulletCount = 5; // éšæœºå°„å‡»çš„å­å¼¹æ•°é‡
 #endregion  
-#region card2²ÎÊı
-    // Ñ©»¨Éú³ÉµãÁĞ±í£¨24¸ö£©
+#region card2å‚æ•°
+    // é›ªèŠ±ç”Ÿæˆç‚¹åˆ—è¡¨ï¼ˆ24ä¸ªï¼‰
     private List<Vector2> FlakePos = new List<Vector2>
     {
-        // ÉÏ±ß¿ò (y=6)
+        // ä¸Šè¾¹æ¡† (y=6)
         new Vector2(-12, 6),
         new Vector2(-9, 6),
         new Vector2(-6, 6),
@@ -52,7 +53,7 @@ public class BossShootSystem : MonoBehaviour
         new Vector2(0, 6),
         new Vector2(3, 6),
         new Vector2(6, 6),
-        // ÏÂ±ß¿ò (y=-6)
+        // ä¸‹è¾¹æ¡† (y=-6)
         new Vector2(-12, -6),
         new Vector2(-9, -6),
         new Vector2(-6, -6),
@@ -60,62 +61,62 @@ public class BossShootSystem : MonoBehaviour
         new Vector2(0, -6),
         new Vector2(3, -6),
         new Vector2(6, -6),
-        // ×ó±ß¿ò (x=-12, ÅÅ³ıÉÏÏÂ±ß¿òÖØ¸´µÄµã)
+        // å·¦è¾¹æ¡† (x=-12, æ’é™¤ä¸Šä¸‹è¾¹æ¡†é‡å¤çš„ç‚¹)
         new Vector2(-12,4),
         new Vector2(-12, 2),
         new Vector2(-12, 0),
         new Vector2(-12, -2),
         new Vector2(-12, -4),
-        // ÓÒ±ß¿ò (x=6, ÅÅ³ıÉÏÏÂ±ß¿òÖØ¸´µÄµã)
+        // å³è¾¹æ¡† (x=6, æ’é™¤ä¸Šä¸‹è¾¹æ¡†é‡å¤çš„ç‚¹)
         new Vector2(6, 4),
         new Vector2(6, 2),
         new Vector2(6, 0),
         new Vector2(6, -2),
         new Vector2(6, -4)
     };
-    // ´æ´¢»îÔ¾µÄÑ©»¨×Óµ¯
+    // å­˜å‚¨æ´»è·ƒçš„é›ªèŠ±å­å¼¹
     private List<GameObject> activeSnowFlakes = new List<GameObject>();
 
-    // ±ùÔÆÉú³É²ÎÊı
-    private Vector2 cloudSpawnMin; // Éú³É·¶Î§×óÏÂ½Ç
-    private Vector2 cloudSpawnMax; // Éú³É·¶Î§ÓÒÉÏ½Ç
-    private int cloudCount; // ±ùÔÆÊıÁ¿
-    private GameObject cloudPrefab; // ±ùÔÆÔ¤ÖÆ¼ş
+    // å†°äº‘ç”Ÿæˆå‚æ•°
+    private Vector2 cloudSpawnMin; // ç”ŸæˆèŒƒå›´å·¦ä¸‹è§’
+    private Vector2 cloudSpawnMax; // ç”ŸæˆèŒƒå›´å³ä¸Šè§’
+    private int cloudCount; // å†°äº‘æ•°é‡
+    private GameObject cloudPrefab; // å†°äº‘é¢„åˆ¶ä»¶
 
-    // åçĞÇ¹¥»÷²ÎÊı
-    private float cometAttackInterval = 5f; // åçĞÇ¹¥»÷¼ä¸ô
-    private float cometSpawnY = 6f; // åçĞÇÉú³Éy×ø±ê
-    private GameObject cometPrefab; // åçĞÇÔ¤ÖÆ¼ş
-    private GameObject linePrefab; // Á¬ÏßÔ¤ÖÆ¼ş
+    // å½—æ˜Ÿæ”»å‡»å‚æ•°
+    private float cometAttackInterval = 5f; // å½—æ˜Ÿæ”»å‡»é—´éš”
+    private float cometSpawnY = 6f; // å½—æ˜Ÿç”Ÿæˆyåæ ‡
+    private GameObject cometPrefab; // å½—æ˜Ÿé¢„åˆ¶ä»¶
+    private GameObject linePrefab; // è¿çº¿é¢„åˆ¶ä»¶
 #endregion
-#region FinalCard²ÎÊı
-    // FinalCardÉä»÷²ÎÊı
+#region FinalCardå‚æ•°
+    // FinalCardå°„å‡»å‚æ•°
     [HideInInspector]
-    public GameObject IceSpike; // ±ù×¶Ô¤ÖÆ¼ş
-    public IceRealm IceRealm; // ±ùÁìÓò£¨³¡¾°¹ÌÓĞ¶ÔÏó£©
-    // ±ùÖé´æ´¢ÁĞ±í
+    public GameObject IceSpike; // å†°é”¥é¢„åˆ¶ä»¶
+    public IceRealm IceRealm; // å†°é¢†åŸŸï¼ˆåœºæ™¯å›ºæœ‰å¯¹è±¡ï¼‰
+    // å†°ç å­˜å‚¨åˆ—è¡¨
     private List<GameObject> activeIcePearls = new List<GameObject>();
-    // ¶³½áµÄ±ùÖéÁĞ±í
+    // å†»ç»“çš„å†°ç åˆ—è¡¨
     private List<GameObject> frozenIcePearls = new List<GameObject>();
 
-    // ÇøÓòÏŞÖÆ¹¥»÷Ïà¹Ø±äÁ¿
-    private Coroutine areaLimitCoroutine; // ÇøÓòÏŞÖÆ¹¥»÷Ğ­³Ì
-    private Coroutine fadeOutCoroutine; // µ­³öĞ­³Ì
-    private GameObject currentAreaLimitBullet; // µ±Ç°ÇøÓòÏŞÖÆ¹¥»÷µÄ×Óµ¯
-    private Vector3 currentAreaLimitCenter; // µ±Ç°ÇøÓòÏŞÖÆ¹¥»÷µÄÖĞĞÄ
-    private float currentAreaLimitRadius; // µ±Ç°ÇøÓòÏŞÖÆ¹¥»÷µÄ°ë¾¶
-    private float currentAreaLimitRotationSpeed; // µ±Ç°ÇøÓòÏŞÖÆ¹¥»÷µÄĞı×ªËÙ¶È
-    private float currentAreaLimitShrinkSpeed; // µ±Ç°ÇøÓòÏŞÖÆ¹¥»÷µÄÊÕËõËÙ¶È
-    private float currentAreaLimitStopDistance; // µ±Ç°ÇøÓòÏŞÖÆ¹¥»÷µÄÍ£Ö¹ÊÕËõ¾àÀë
-    private float currentAreaLimitCheckRadius; // µ±Ç°ÇøÓòÏŞÖÆ¹¥»÷µÄ¼ì²âÍæ¼ÒÊÇ·ñÔÚ·¶Î§ÄÚµÄ°ë¾¶
-    private float areaLimitCheckTimer = 0f; // ÇøÓòÏŞÖÆ¹¥»÷µÄ¼ì²é¼ÆÊ±Æ÷
-    private const float areaLimitCheckInterval = 0.5f; // ÇøÓòÏŞÖÆ¹¥»÷µÄ¼ì²é¼ä¸ô
-    private bool isReadyForCheck = false; // ÊÇ·ñÔÊĞí¼ì²âÍæ¼ÒÎ»ÖÃ
-    public bool isAllowAreaLimit = false; // ÊÇ·ñÔÊĞíÇøÓòÏŞÖÆ¹¥»÷
-    private bool isFadingOut = false; // ÊÇ·ñÕıÔÚµ­³ö
-    public bool isInArea = false; // ÊÇ·ñÔÚÏŞÖÆÇøÓòÄÚ
-    private List<GameObject> currentAreaLimitBullets = new List<GameObject>(); // µ±Ç°ÇøÓòÏŞÖÆ¹¥»÷µÄ×Óµ¯ÁĞ±í
-    private List<SpriteRenderer> currentAreaLimitSpriteRenderers = new List<SpriteRenderer>(); // µ±Ç°ÇøÓòÏŞÖÆ¹¥»÷µÄ¾«ÁéäÖÈ¾Æ÷ÁĞ±í
+    // åŒºåŸŸé™åˆ¶æ”»å‡»ç›¸å…³å˜é‡
+    private Coroutine areaLimitCoroutine; // åŒºåŸŸé™åˆ¶æ”»å‡»åç¨‹
+    private Coroutine fadeOutCoroutine; // æ·¡å‡ºåç¨‹
+    private GameObject currentAreaLimitBullet; // å½“å‰åŒºåŸŸé™åˆ¶æ”»å‡»çš„å­å¼¹
+    private Vector3 currentAreaLimitCenter; // å½“å‰åŒºåŸŸé™åˆ¶æ”»å‡»çš„ä¸­å¿ƒ
+    private float currentAreaLimitRadius; // å½“å‰åŒºåŸŸé™åˆ¶æ”»å‡»çš„åŠå¾„
+    private float currentAreaLimitRotationSpeed; // å½“å‰åŒºåŸŸé™åˆ¶æ”»å‡»çš„æ—‹è½¬é€Ÿåº¦
+    private float currentAreaLimitShrinkSpeed; // å½“å‰åŒºåŸŸé™åˆ¶æ”»å‡»çš„æ”¶ç¼©é€Ÿåº¦
+    private float currentAreaLimitStopDistance; // å½“å‰åŒºåŸŸé™åˆ¶æ”»å‡»çš„åœæ­¢æ”¶ç¼©è·ç¦»
+    private float currentAreaLimitCheckRadius; // å½“å‰åŒºåŸŸé™åˆ¶æ”»å‡»çš„æ£€æµ‹ç©å®¶æ˜¯å¦åœ¨èŒƒå›´å†…çš„åŠå¾„
+    private float areaLimitCheckTimer = 0f; // åŒºåŸŸé™åˆ¶æ”»å‡»çš„æ£€æŸ¥è®¡æ—¶å™¨
+    private const float areaLimitCheckInterval = 0.5f; // åŒºåŸŸé™åˆ¶æ”»å‡»çš„æ£€æŸ¥é—´éš”
+    private bool isReadyForCheck = false; // æ˜¯å¦å…è®¸æ£€æµ‹ç©å®¶ä½ç½®
+    public bool isAllowAreaLimit = false; // æ˜¯å¦å…è®¸åŒºåŸŸé™åˆ¶æ”»å‡»
+    private bool isFadingOut = false; // æ˜¯å¦æ­£åœ¨æ·¡å‡º
+    public bool isInArea = false; // æ˜¯å¦åœ¨é™åˆ¶åŒºåŸŸå†…
+    private List<GameObject> currentAreaLimitBullets = new List<GameObject>(); // å½“å‰åŒºåŸŸé™åˆ¶æ”»å‡»çš„å­å¼¹åˆ—è¡¨
+    private List<SpriteRenderer> currentAreaLimitSpriteRenderers = new List<SpriteRenderer>(); // å½“å‰åŒºåŸŸé™åˆ¶æ”»å‡»çš„ç²¾çµæ¸²æŸ“å™¨åˆ—è¡¨
 #endregion
 
     void OnEnable()
@@ -123,30 +124,30 @@ public class BossShootSystem : MonoBehaviour
         isReadyForCheck = false;
         isInArea = false;
     }
-    private void Update()
+    private void FixedUpdate()
     {
-        // ÇøÓòÏŞÖÆ¹¥»÷µÄÍæ¼ÒÎ»ÖÃ¼ì²é
+        // åŒºåŸŸé™åˆ¶æ”»å‡»çš„ç©å®¶ä½ç½®æ£€æŸ¥
         if (currentAreaLimitBullet != null && player != null && isReadyForCheck && !isFadingOut && isAllowAreaLimit)
         {
-            areaLimitCheckTimer += Time.deltaTime;
+            areaLimitCheckTimer += SimClock.FixedTickDt;
             if (areaLimitCheckTimer >= areaLimitCheckInterval)
             {
                 areaLimitCheckTimer = 0f;
                 
-                // ¼ì²âÍæ¼ÒÊÇ·ñÔÚÖ¸¶¨°ë¾¶ÄÚ
+                // æ£€æµ‹ç©å®¶æ˜¯å¦åœ¨æŒ‡å®šåŠå¾„å†…
                 float distance = Vector3.Distance(player.transform.position, currentAreaLimitCenter);
                 if (distance > currentAreaLimitCheckRadius)
                 {
-                    // Íæ¼Ò²»ÔÚ·¶Î§ÄÚ£¬ÏÈµ­³öÔÙÖØĞÂÆô¶¯ÇøÓòÏŞÖÆ¹¥»÷
+                    // ç©å®¶ä¸åœ¨èŒƒå›´å†…ï¼Œå…ˆæ·¡å‡ºå†é‡æ–°å¯åŠ¨åŒºåŸŸé™åˆ¶æ”»å‡»
                     isInArea = false;
                     StartFadeOutAndRestart();
                 }
                 else
                 {
-                    // Íæ¼ÒÔÚÏŞÖÆÇøÓòÄÚ
+                    // ç©å®¶åœ¨é™åˆ¶åŒºåŸŸå†…
                     isInArea = true;
                     
-                    // ¼¤»î±ùÇôÁı
+                    // æ¿€æ´»å†°å›šç¬¼
                     if (isReadyForCheck && IceRealm != null)
                     {
                         IceRealm.Activate();
@@ -156,7 +157,7 @@ public class BossShootSystem : MonoBehaviour
         }
     }
 
-#region ¶¨Î»ÉÈĞÎÉä»÷£¨Ò»·Ç£©
+#region å®šä½æ‰‡å½¢å°„å‡»ï¼ˆä¸€éï¼‰
     public void Pos_FanShaped_Shoot(GameObject bullet, float shoot_interval)
     {
         StartCoroutine(FanShapedShootCoroutine(bullet, shoot_interval));
@@ -169,55 +170,55 @@ public class BossShootSystem : MonoBehaviour
             if (player != null && boss != null && bullet != null && 
             Global_GameManager.Instance.state != State.SpellCard && !bossBase.isLockingHP)
             {
-                // ¼ÆËãÍæ¼ÒÏà¶ÔÓÚ boss µÄ·½ÏòÏòÁ¿
+                // è®¡ç®—ç©å®¶ç›¸å¯¹äº boss çš„æ–¹å‘å‘é‡
                 Vector3 direction = player.transform.position - boss.transform.position;
-                direction.z = 0; // Ö»¿¼ÂÇ 2D Æ½Ãæ
+                direction.z = 0; // åªè€ƒè™‘ 2D å¹³é¢
                 float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
                 
-                // È·±£½Ç¶ÈÔÚ 0-360 ¶È·¶Î§ÄÚ
+                // ç¡®ä¿è§’åº¦åœ¨ 0-360 åº¦èŒƒå›´å†…
                 if (angle < 0)
                 {
                     angle += 360f;
                 }
                 
-                // ¼ÆËãÉä»÷·¶Î§£¨120¶È£©
+                // è®¡ç®—å°„å‡»èŒƒå›´ï¼ˆ120åº¦ï¼‰
                 float startAngle = angle - 60f;
                 float endAngle = angle + 60f;
                 
-                // Ëæ»ú×Óµ¯ÊıÁ¿£¨6-10Ã¶£©
-                int bulletCount = Random.Range(6, 11);
+                // éšæœºå­å¼¹æ•°é‡ï¼ˆ6-10æšï¼‰
+                int bulletCount = GameRNG.Range(6, 11);
                 
-                // ¼ÆËãÃ¿Ã¶×Óµ¯µÄ½Ç¶È¼ä¸ô
+                // è®¡ç®—æ¯æšå­å¼¹çš„è§’åº¦é—´éš”
                 float angleStep = (endAngle - startAngle) / (bulletCount - 1);
                 
-                // ·¢Éä×Óµ¯
+                // å‘å°„å­å¼¹
                 for (int i = 0; i < bulletCount; i++)
                 {
                     float currentAngle = startAngle + i * angleStep;
                     Quaternion rotation = Quaternion.Euler(0, 0, currentAngle);
                     
-                    // Ê¹ÓÃ¶ÔÏó³Ø»ñÈ¡×Óµ¯
+                    // ä½¿ç”¨å¯¹è±¡æ± è·å–å­å¼¹
                     Global_ObjectPool.Instance.GetObject(bullet, boss.transform.position, rotation);
                 }
             }
             
-            // µÈ´ıÉä»÷¼ä¸ô
+            // ç­‰å¾…å°„å‡»é—´éš”
             yield return new WaitForSeconds(shoot_interval);
         }
     }
 #endregion
-#region ·¢Éä±ùµã²¢±¬Õ¨£¨Ò»·Ç£©
+#region å‘å°„å†°ç‚¹å¹¶çˆ†ç‚¸ï¼ˆä¸€éï¼‰
     public void IcePointAttack()
     {
         IcePoint.SetActive(true);
         
-        // È·±£ IcePoints ÁĞ±í²»Îª¿Õ
+        // ç¡®ä¿ IcePoints åˆ—è¡¨ä¸ä¸ºç©º
         if (IcePoints == null)
         {
             IcePoints = new List<GameObject>();
         }
         
-        // Æô¶¯Ö¡¶¯»­
+        // å¯åŠ¨å¸§åŠ¨ç”»
         StartCoroutine(IcePointAnimationCoroutine());
     }
     
@@ -227,7 +228,7 @@ public class BossShootSystem : MonoBehaviour
         {
             if (icePointSprites.Count > 0)
             {
-                // ÇĞ»»ËùÓĞ icepoint µÄ sprite
+                // åˆ‡æ¢æ‰€æœ‰ icepoint çš„ sprite
                 foreach (var icePoint in IcePoints)
                 {
                     if (icePoint != null)
@@ -240,7 +241,7 @@ public class BossShootSystem : MonoBehaviour
                     }
                 }
                 
-                // ¸üĞÂ¶¯»­Ö¡Ë÷Òı
+                // æ›´æ–°åŠ¨ç”»å¸§ç´¢å¼•
                 currentSpriteIndex = (currentSpriteIndex + 1) % icePointSprites.Count;
             }
             
@@ -252,7 +253,7 @@ public class BossShootSystem : MonoBehaviour
     {
         if(Global_GameManager.Instance.state != State.SpellCard && !bossBase.isLockingHP)
         {
-            // Ê×ÏÈ·¢ÉäÔ¤ÖÆ¼ş1µÄµ¯Ä»£¨360¡ã 12¸ö£©£¬²»Ê¹ÓÃËÙ¶ÈÆ«ÒÆ£¬²»ÊÇ±ùÖé
+            // é¦–å…ˆå‘å°„é¢„åˆ¶ä»¶1çš„å¼¹å¹•ï¼ˆ360Â° 12ä¸ªï¼‰ï¼Œä¸ä½¿ç”¨é€Ÿåº¦åç§»ï¼Œä¸æ˜¯å†°ç 
             for (int i = 0; i < IcePoints.Count; i++)
             {
                 var icePoint = IcePoints[i];
@@ -263,11 +264,11 @@ public class BossShootSystem : MonoBehaviour
             }
         }
         
-        // Æô¶¯Éä»÷Âß¼­
+        // å¯åŠ¨å°„å‡»é€»è¾‘
         StartCoroutine(IcePointShootCoroutine(bullet2, interval1, interval2, bullet2Speed, rotationSpeed));
     }
 
-    // ±ùµã·¢ÉäÒ»È¦»·×´×Óµ¯
+    // å†°ç‚¹å‘å°„ä¸€åœˆç¯çŠ¶å­å¼¹
     private void FireBulletRing(GameObject icePoint, GameObject bullet, int count, bool useSpeedOffset = true, float speed = -1f, bool isIcePearl = false, float rotationSpeed = 0f, int icePointIndex = 0)
     {
         float angleStep = 360f / count;
@@ -276,19 +277,19 @@ public class BossShootSystem : MonoBehaviour
             float angle = i * angleStep;
             Quaternion rotation = Quaternion.Euler(0, 0, angle);
             
-            // Ê¹ÓÃ¶ÔÏó³Ø»ñÈ¡×Óµ¯
+            // ä½¿ç”¨å¯¹è±¡æ± è·å–å­å¼¹
             GameObject bulletInstance = Global_ObjectPool.Instance.GetObject(bullet, icePoint.transform.position, rotation);
             
             if (bulletInstance != null)
             {
                 if (isIcePearl)
                 {
-                    // ÉèÖÃ IcePearl ×é¼ş²ÎÊı
+                    // è®¾ç½® IcePearl ç»„ä»¶å‚æ•°
                     IcePearl icePearl = bulletInstance.GetComponent<IcePearl>();
                     if (icePearl != null)
                     {
                         icePearl.icePoint = icePoint;
-                        // ¸ù¾İ±ùµãË÷Òı¾ö¶¨Ğı×ª·½Ïò
+                        // æ ¹æ®å†°ç‚¹ç´¢å¼•å†³å®šæ—‹è½¬æ–¹å‘
                         if(icePointIndex < 3)
                         {
                             icePearl.rotationSpeed = rotationSpeed;
@@ -302,12 +303,12 @@ public class BossShootSystem : MonoBehaviour
                 }
                 else
                 {
-                    // ÉèÖÃ×Óµ¯ÊÇ·ñÊ¹ÓÃËÙ¶ÈÆ«ÒÆ
+                    // è®¾ç½®å­å¼¹æ˜¯å¦ä½¿ç”¨é€Ÿåº¦åç§»
                     NormalIce normalIce = bulletInstance.GetComponent<NormalIce>();
                     if (normalIce != null)
                     {
                         normalIce.useSpeedOffset = useSpeedOffset;
-                        // Èç¹ûÖ¸¶¨ÁËËÙ¶È£¬ÔòÉèÖÃ×Óµ¯ËÙ¶È
+                        // å¦‚æœæŒ‡å®šäº†é€Ÿåº¦ï¼Œåˆ™è®¾ç½®å­å¼¹é€Ÿåº¦
                         if (speed > 0)
                         {
                             normalIce.SetSpeed(speed);
@@ -320,14 +321,14 @@ public class BossShootSystem : MonoBehaviour
     
     private IEnumerator IcePointShootCoroutine(GameObject bullet2, float interval1, float interval2, float bullet2Speed = -1f, float rotationSpeed = 60f)
     {
-        // µÈ´ı interval1 ºó¿ªÊ¼·¢ÉäÔ¤ÖÆ¼ş2
+        // ç­‰å¾… interval1 åå¼€å§‹å‘å°„é¢„åˆ¶ä»¶2
         yield return new WaitForSeconds(interval1);
         
         while (true)
         {
             if(Global_GameManager.Instance.state != State.SpellCard && !bossBase.isLockingHP)
             {
-                // ·¢ÉäÔ¤ÖÆ¼ş2µÄµ¯Ä»£¨360¡ã 12¸ö£©£¬Ê¹ÓÃËÙ¶ÈÆ«ÒÆ£¬ÊÇ±ùÖé
+                // å‘å°„é¢„åˆ¶ä»¶2çš„å¼¹å¹•ï¼ˆ360Â° 12ä¸ªï¼‰ï¼Œä½¿ç”¨é€Ÿåº¦åç§»ï¼Œæ˜¯å†°ç 
                 for (int i = 0; i < IcePoints.Count; i++)
                 {
                     var icePoint = IcePoints[i];
@@ -337,7 +338,7 @@ public class BossShootSystem : MonoBehaviour
                     }
                 }
             }      
-            // µÈ´ı interval2 ºóÔÙ´Î·¢Éä
+            // ç­‰å¾… interval2 åå†æ¬¡å‘å°„
             yield return new WaitForSeconds(interval2);
         }
     }
@@ -347,15 +348,15 @@ public class BossShootSystem : MonoBehaviour
         IcePoint.SetActive(false);
     }
 #endregion
-#region ÔÉÊ¯±ù¶³Ğı×ª¹¥»÷£¨Ò»·û£©
+#region é™¨çŸ³å†°å†»æ—‹è½¬æ”»å‡»ï¼ˆä¸€ç¬¦ï¼‰
     /// <summary>
-    /// ÔÉÊ¯±ù¶³Ğı×ª¹¥»÷
+    /// é™¨çŸ³å†°å†»æ—‹è½¬æ”»å‡»
     /// </summary>
-    /// <param name="stoneBullet">ÔÉÊ¯×Óµ¯Ô¤ÖÆÌå</param>
-    /// <param name="frozenIceBullet">±ù¶³×Óµ¯Ô¤ÖÆÌå</param>
-    /// <param name="normalIceBullet">ÆÕÍ¨±ù×Óµ¯Ô¤ÖÆÌå£¨ÓÃÓÚ±ù¿éÆÆÁÑ£©</param>
-    /// <param name="stoneCount">ÔÉÊ¯ÊıÁ¿</param>
-    /// <param name="rotationSpeed">Ğı×ªËÙ¶È</param>
+    /// <param name="stoneBullet">é™¨çŸ³å­å¼¹é¢„åˆ¶ä½“</param>
+    /// <param name="frozenIceBullet">å†°å†»å­å¼¹é¢„åˆ¶ä½“</param>
+    /// <param name="normalIceBullet">æ™®é€šå†°å­å¼¹é¢„åˆ¶ä½“ï¼ˆç”¨äºå†°å—ç ´è£‚ï¼‰</param>
+    /// <param name="stoneCount">é™¨çŸ³æ•°é‡</param>
+    /// <param name="rotationSpeed">æ—‹è½¬é€Ÿåº¦</param>
     public void StoneFrozenAttack(GameObject stoneBullet, GameObject frozenIceBullet, GameObject normalIceBullet, int stoneCount, float rotationSpeed)
     {
         StartCoroutine(StoneFrozenAttackCoroutine(stoneBullet, frozenIceBullet, normalIceBullet, stoneCount, rotationSpeed));
@@ -363,28 +364,28 @@ public class BossShootSystem : MonoBehaviour
     
     private IEnumerator StoneFrozenAttackCoroutine(GameObject stoneBullet, GameObject frozenIceBullet, GameObject normalIceBullet, int stoneCount, float rotationSpeed)
     {
-        // Éú³ÉËæ»úÄ¿±êµã²¢·¢ÉäÔÉÊ¯
+        // ç”Ÿæˆéšæœºç›®æ ‡ç‚¹å¹¶å‘å°„é™¨çŸ³
         for (int i = 0; i < stoneCount; i++)
         {
             bool validPosition = false;
             int attempts = 0;
             
-            // ³¢ÊÔÉú³ÉÓĞĞ§µÄÔÉÊ¯Î»ÖÃ
+            // å°è¯•ç”Ÿæˆæœ‰æ•ˆçš„é™¨çŸ³ä½ç½®
             while (!validPosition && attempts < 50)
             {
                 attempts++;
-                // Éú³ÉËæ»ú½Ç¶È
-                float angle = Random.Range(0, Mathf.PI * 2);
-                // Ê¹ÓÃ¶ş´Î·½·Ö²¼£¬Ê¹ÔÉÊ¯¸ü¿ÉÄÜ³öÏÖÔÚÀëÔ²ĞÄ½ÏÔ¶µÄµØ·½
-                float randomValue = Random.value; // 0-1Ö®¼äµÄËæ»úÖµ
-                // Ó³Éäµ½1-6µÄ°ë¾¶·¶Î§£¬Ê¹ÓÃ¶ş´Î·½·Ö²¼
+                // ç”Ÿæˆéšæœºè§’åº¦
+                float angle = GameRNG.Range(0, Mathf.PI * 2);
+                // ä½¿ç”¨äºŒæ¬¡æ–¹åˆ†å¸ƒï¼Œä½¿é™¨çŸ³æ›´å¯èƒ½å‡ºç°åœ¨ç¦»åœ†å¿ƒè¾ƒè¿œçš„åœ°æ–¹
+                float randomValue = GameRNG.value; // 0-1ä¹‹é—´çš„éšæœºå€¼
+                // æ˜ å°„åˆ°1-6çš„åŠå¾„èŒƒå›´ï¼Œä½¿ç”¨äºŒæ¬¡æ–¹åˆ†å¸ƒ
                 float radius = 1f + (5f * randomValue * randomValue);
                 targetPosition = new Vector2(
                     Center.x + Mathf.Cos(angle) * radius,
                     Center.y + Mathf.Sin(angle) * radius
                 );
                 
-                // ¼ì²éÓëÒÑÓĞÔÉÊ¯µÄ¾àÀë
+                // æ£€æŸ¥ä¸å·²æœ‰é™¨çŸ³çš„è·ç¦»
                 validPosition = true;
                 foreach (var existingPos in stonePositions)
                 {
@@ -396,21 +397,21 @@ public class BossShootSystem : MonoBehaviour
                 }
             }
             
-            // Èç¹ûÎŞ·¨ÕÒµ½ÓĞĞ§Î»ÖÃ£¬Ê¹ÓÃÄ¬ÈÏÎ»ÖÃ
+            // å¦‚æœæ— æ³•æ‰¾åˆ°æœ‰æ•ˆä½ç½®ï¼Œä½¿ç”¨é»˜è®¤ä½ç½®
             if (!validPosition)
             {
-                float angle = Random.Range(0, Mathf.PI * 2);
-                float radius = 3f + Random.Range(0, 3f);
+                float angle = GameRNG.Range(0, Mathf.PI * 2);
+                float radius = 3f + GameRNG.Range(0, 3f);
                 targetPosition = new Vector2(
                     Center.x + Mathf.Cos(angle) * radius,
                     Center.y + Mathf.Sin(angle) * radius
                 );
             }
             
-            // ±£´æÎ»ÖÃ
+            // ä¿å­˜ä½ç½®
             stonePositions.Add(targetPosition);
             
-            // ´´½¨ÔÉÊ¯×Óµ¯
+            // åˆ›å»ºé™¨çŸ³å­å¼¹
             GameObject stone = Global_ObjectPool.Instance.GetObject(stoneBullet, new Vector3(targetPosition.x, 7f, 0), Quaternion.identity);
             if (stone != null)
             {
@@ -419,20 +420,20 @@ public class BossShootSystem : MonoBehaviour
                 {
                     stoneScript.Initialize(targetPosition.x, targetPosition.y);
                     stones.Add(stone);
-                    // ±£´æ³õÊ¼½Ç¶È£¨»¡¶È£©
+                    // ä¿å­˜åˆå§‹è§’åº¦ï¼ˆå¼§åº¦ï¼‰
                     initialAngles.Add(Mathf.Atan2(targetPosition.y - Center.y, targetPosition.x - Center.x));
-                    // ÎªÃ¿¸öÔÉÊ¯Éú³ÉĞı×ªËÙ¶ÈÆ«ÒÆ£¨-5µ½5Ö®¼ä£©
-                    speedOffsets.Add(Random.Range(-5f, 5f));
-                    // ÎªÃ¿¸öÔÉÊ¯³õÊ¼»¯¶ÀÁ¢½Ç¶È
+                    // ä¸ºæ¯ä¸ªé™¨çŸ³ç”Ÿæˆæ—‹è½¬é€Ÿåº¦åç§»ï¼ˆ-5åˆ°5ä¹‹é—´ï¼‰
+                    speedOffsets.Add(GameRNG.Range(-5f, 5f));
+                    // ä¸ºæ¯ä¸ªé™¨çŸ³åˆå§‹åŒ–ç‹¬ç«‹è§’åº¦
                     individualAngles.Add(0f);
                 }
             }
             
-            // ÉÔÎ¢ÑÓ³ÙÉú³ÉÏÂÒ»¸öÔÉÊ¯
+            // ç¨å¾®å»¶è¿Ÿç”Ÿæˆä¸‹ä¸€ä¸ªé™¨çŸ³
             yield return new WaitForSeconds(0.1f);
         }
         
-        // µÈ´ıËùÓĞÔÉÊ¯µ½´ïÄ¿±êÎ»ÖÃ
+        // ç­‰å¾…æ‰€æœ‰é™¨çŸ³åˆ°è¾¾ç›®æ ‡ä½ç½®
         bool allStonesReached = false;
         while (!allStonesReached)
         {
@@ -451,12 +452,12 @@ public class BossShootSystem : MonoBehaviour
             yield return null;
         }
         
-        // ÎªÃ¿¸öÔÉÊ¯´´½¨±ù¶³Ğ§¹û²¢¿ªÊ¼Ğı×ª
+        // ä¸ºæ¯ä¸ªé™¨çŸ³åˆ›å»ºå†°å†»æ•ˆæœå¹¶å¼€å§‹æ—‹è½¬
         foreach (var stone in stones)
         {
             if (stone != null && stone.activeInHierarchy)
             {
-                // ´´½¨±ù¶³×Óµ¯
+                // åˆ›å»ºå†°å†»å­å¼¹
                 GameObject frozenIce = Global_ObjectPool.Instance.GetObject(frozenIceBullet, stone.transform.position, Quaternion.identity);
                 if (frozenIce != null)
                 {
@@ -471,7 +472,7 @@ public class BossShootSystem : MonoBehaviour
             }
         }
         
-        // ¿ªÊ¼Ğı×ªËùÓĞÔÉÊ¯
+        // å¼€å§‹æ—‹è½¬æ‰€æœ‰é™¨çŸ³
         while (true && !bossBase.isLockingHP)
         {
             for (int i = 0; i < stones.Count; i++)
@@ -479,11 +480,11 @@ public class BossShootSystem : MonoBehaviour
                 var stone = stones[i];
                 if (stone != null && stone.activeInHierarchy && i < initialAngles.Count && i < speedOffsets.Count && i < individualAngles.Count)
                 {
-                    // ¼ÆËãÃ¿¸öÔÉÊ¯µÄĞı×ªËÙ¶È£¨»ù´¡ËÙ¶È¼ÓÉÏÆ«ÒÆ£©
+                    // è®¡ç®—æ¯ä¸ªé™¨çŸ³çš„æ—‹è½¬é€Ÿåº¦ï¼ˆåŸºç¡€é€Ÿåº¦åŠ ä¸Šåç§»ï¼‰
                     float stoneRotationSpeed = rotationSpeed + speedOffsets[i];
-                    // ¸üĞÂÃ¿¸öÔÉÊ¯µÄ¶ÀÁ¢½Ç¶È
+                    // æ›´æ–°æ¯ä¸ªé™¨çŸ³çš„ç‹¬ç«‹è§’åº¦
                     individualAngles[i] += stoneRotationSpeed * Time.deltaTime;
-                    // ¼ÆËãÃ¿¸öÔÉÊ¯µÄĞı×ªÎ»ÖÃ£¨Ê¹ÓÃ³õÊ¼½Ç¶È¼ÓÉÏ¶ÀÁ¢Ğı×ª½Ç¶È£©
+                    // è®¡ç®—æ¯ä¸ªé™¨çŸ³çš„æ—‹è½¬ä½ç½®ï¼ˆä½¿ç”¨åˆå§‹è§’åº¦åŠ ä¸Šç‹¬ç«‹æ—‹è½¬è§’åº¦ï¼‰
                     float angle = individualAngles[i] * Mathf.Deg2Rad + initialAngles[i];
                     float radius = Vector2.Distance(new Vector2(stone.transform.position.x, stone.transform.position.y), Center);
                     float x = Center.x + Mathf.Cos(angle) * radius;
@@ -497,14 +498,14 @@ public class BossShootSystem : MonoBehaviour
         }
     }
 #endregion
-#region Ëæ»úÉä»÷£¨Ò»·û£©
+#region éšæœºå°„å‡»ï¼ˆä¸€ç¬¦ï¼‰
     /// <summary>
-    /// Ëæ»úÉä»÷·½·¨£¨Ò»·û×¨ÓÃ£©
+    /// éšæœºå°„å‡»æ–¹æ³•ï¼ˆä¸€ç¬¦ä¸“ç”¨ï¼‰
     /// </summary>
-    /// <param name="bullet">×Óµ¯Ô¤ÖÆ¼ş</param>
-    /// <param name="bulletSpeed">Éä»÷ËÙ¶È</param>
-    /// <param name="shootInterval">Éä»÷¼ä¸ô</param>
-    /// <param name="bulletCount">Ã¿ÂÖÉä»÷×Óµ¯Êı</param>
+    /// <param name="bullet">å­å¼¹é¢„åˆ¶ä»¶</param>
+    /// <param name="bulletSpeed">å°„å‡»é€Ÿåº¦</param>
+    /// <param name="shootInterval">å°„å‡»é—´éš”</param>
+    /// <param name="bulletCount">æ¯è½®å°„å‡»å­å¼¹æ•°</param>
     public void randomIcePick(GameObject bullet, float bulletSpeed, float shootInterval, int bulletCount = 5)
     {
         randomIcePickBulletCount = bulletCount;
@@ -517,19 +518,19 @@ public class BossShootSystem : MonoBehaviour
         {
             if(Global_GameManager.Instance.state != State.SpellCard && !bossBase.isLockingHP)
             {
-                // ·¢ÉäÒ»²¨Ëæ»ú½Ç¶ÈµÄ×Óµ¯
+                // å‘å°„ä¸€æ³¢éšæœºè§’åº¦çš„å­å¼¹
                 for (int i = 0; i < randomIcePickBulletCount; i++)
                 {
-                    // Ëæ»úÉú³É0-360¶ÈµÄ½Ç¶È
-                    float randomAngle = Random.Range(0f, 360f);
+                    // éšæœºç”Ÿæˆ0-360åº¦çš„è§’åº¦
+                    float randomAngle = GameRNG.Range(0f, 360f);
                     Quaternion rotation = Quaternion.Euler(0, 0, randomAngle);
                     
-                    // Ê¹ÓÃ¶ÔÏó³Ø»ñÈ¡×Óµ¯
+                    // ä½¿ç”¨å¯¹è±¡æ± è·å–å­å¼¹
                     GameObject bulletInstance = Global_ObjectPool.Instance.GetObject(bullet, boss.transform.position, rotation);
                     
                     if (bulletInstance != null)
                     {
-                        // ¼ì²éÊÇ·ñÊÇNormalIce
+                        // æ£€æŸ¥æ˜¯å¦æ˜¯NormalIce
                         NormalIce normalIce = bulletInstance.GetComponent<NormalIce>();
                         if (normalIce != null)
                         {
@@ -539,20 +540,20 @@ public class BossShootSystem : MonoBehaviour
                 }
             }
             
-            // µÈ´ıÉä»÷¼ä¸ô
+            // ç­‰å¾…å°„å‡»é—´éš”
             yield return new WaitForSeconds(shootInterval);
         }
     } 
 #endregion
-#region ±ù¿éÆÆÁÑ¹¥»÷£¨Ò»·û£©
+#region å†°å—ç ´è£‚æ”»å‡»ï¼ˆä¸€ç¬¦ï¼‰
     /// <summary>
-    /// ±ù¿éÆÆÁÑ¹¥»÷¡ª¡ªÒÔÖ¸¶¨Î»ÖÃÎªÖĞĞÄ·¢ÉäÒ»È¦NormalIce×Óµ¯
+    /// å†°å—ç ´è£‚æ”»å‡»â€”â€”ä»¥æŒ‡å®šä½ç½®ä¸ºä¸­å¿ƒå‘å°„ä¸€åœˆNormalIceå­å¼¹
     /// </summary>
-    /// <param name="position">±ù¿é´İ»ÙÎ»ÖÃ</param>
-    /// <param name="normalIcePrefab">NormalIce×Óµ¯Ô¤ÖÆ¼ş</param>
+    /// <param name="position">å†°å—æ‘§æ¯ä½ç½®</param>
+    /// <param name="normalIcePrefab">NormalIceå­å¼¹é¢„åˆ¶ä»¶</param>
     public void FrozenIceExplode(Vector3 position, GameObject normalIcePrefab)
     {
-        // ·¢Éä4Ã¶¾ùÔÈ·Ö²¼µÄNormalIce×Óµ¯
+        // å‘å°„4æšå‡åŒ€åˆ†å¸ƒçš„NormalIceå­å¼¹
         int bulletCount = 4;
         float angleStep = 360f / bulletCount;
         
@@ -563,7 +564,7 @@ public class BossShootSystem : MonoBehaviour
                 float angle = i * angleStep;
                 Quaternion rotation = Quaternion.Euler(0, 0, angle);
                 
-                // Ê¹ÓÃ¶ÔÏó³Ø»ñÈ¡×Óµ¯
+                // ä½¿ç”¨å¯¹è±¡æ± è·å–å­å¼¹
                 GameObject bulletInstance = Global_ObjectPool.Instance.GetObject(normalIcePrefab, position, rotation);
                 
                 if (bulletInstance != null)
@@ -578,39 +579,39 @@ public class BossShootSystem : MonoBehaviour
         }
     }
     /// <summary>
-    /// µ±FrozenIce±»´İ»ÙÊ±µ÷ÓÃ£¬Ôö¼ÓÔÉÊ¯Ğı×ªËÙ¶ÈºÍËæ»ú×Óµ¯ÊıÁ¿
+    /// å½“FrozenIceè¢«æ‘§æ¯æ—¶è°ƒç”¨ï¼Œå¢åŠ é™¨çŸ³æ—‹è½¬é€Ÿåº¦å’Œéšæœºå­å¼¹æ•°é‡
     /// </summary>
     public void OnFrozenIceDestroyed()
     {
-        // Ôö¼ÓËæ»úÉä»÷µÄ×Óµ¯ÊıÁ¿
+        // å¢åŠ éšæœºå°„å‡»çš„å­å¼¹æ•°é‡
         randomIcePickBulletCount++;
         
-        // Ôö¼ÓËùÓĞÔÉÊ¯µÄĞı×ªËÙ¶È
+        // å¢åŠ æ‰€æœ‰é™¨çŸ³çš„æ—‹è½¬é€Ÿåº¦
         for (int i = 0; i < speedOffsets.Count; i++)
         {
             speedOffsets[i] += 2f;
         }
     }
 #endregion
-#region Ğ¡±ùÖéËæ»úÉä»÷£¨¶ş·Ç£©
+#region å°å†°ç éšæœºå°„å‡»ï¼ˆäºŒéï¼‰
     private Coroutine none2ShootingCoroutine;
     
     /// <summary>
-    /// ¶ş·ÇËæ»úÉä»÷·½·¨
+    /// äºŒééšæœºå°„å‡»æ–¹æ³•
     /// </summary>
-    /// <param name="bullet">×Óµ¯Ô¤ÖÆ¼ş£¨miniIceBall£©</param>
-    /// <param name="bulletSpeed">Éä»÷ËÙ¶È</param>
-    /// <param name="shootInterval">Éä»÷¼ä¸ô</param>
-    /// <param name="bulletCount">Ã¿ÂÖÉä»÷×Óµ¯Êı</param>
+    /// <param name="bullet">å­å¼¹é¢„åˆ¶ä»¶ï¼ˆminiIceBallï¼‰</param>
+    /// <param name="bulletSpeed">å°„å‡»é€Ÿåº¦</param>
+    /// <param name="shootInterval">å°„å‡»é—´éš”</param>
+    /// <param name="bulletCount">æ¯è½®å°„å‡»å­å¼¹æ•°</param>
     public void none2RandomShoot(GameObject bullet, float bulletSpeed, float shootInterval, int bulletCount = 5)
     {
-        // Í£Ö¹Ö®Ç°µÄÉä»÷Ğ­³Ì
+        // åœæ­¢ä¹‹å‰çš„å°„å‡»åç¨‹
         if (none2ShootingCoroutine != null)
         {
             StopCoroutine(none2ShootingCoroutine);
         }
         
-        // Æô¶¯ĞÂµÄÉä»÷Ğ­³Ì
+        // å¯åŠ¨æ–°çš„å°„å‡»åç¨‹
         none2ShootingCoroutine = StartCoroutine(None2RandomShootCoroutine(bullet, bulletSpeed, shootInterval, bulletCount));
     }
     
@@ -620,26 +621,26 @@ public class BossShootSystem : MonoBehaviour
         {
             if(Global_GameManager.Instance.state != State.SpellCard && !bossBase.isLockingHP)
             {
-                // ·¢ÉäÒ»²¨×Óµ¯
+                // å‘å°„ä¸€æ³¢å­å¼¹
                 List<GameObject> waveBullets = new List<GameObject>();
                 
-                // »ñÈ¡µ±Ç°bossÎ»ÖÃ×÷ÎªÄ¿±êÎ»ÖÃ
+                // è·å–å½“å‰bossä½ç½®ä½œä¸ºç›®æ ‡ä½ç½®
                 Vector3 currentBossPosition = boss.transform.position;
                 
                 for (int i = 0; i < bulletCount; i++)
                 {
-                    // Ëæ»úÉú³É0-360¶ÈµÄ½Ç¶È
-                    float randomAngle = Random.Range(0f, 360f);
+                    // éšæœºç”Ÿæˆ0-360åº¦çš„è§’åº¦
+                    float randomAngle = GameRNG.Range(0f, 360f);
                     Quaternion rotation = Quaternion.Euler(0, 0, randomAngle);
                     
-                    // Ê¹ÓÃ¶ÔÏó³Ø»ñÈ¡×Óµ¯
+                    // ä½¿ç”¨å¯¹è±¡æ± è·å–å­å¼¹
                     GameObject bulletInstance = Global_ObjectPool.Instance.GetObject(bullet, currentBossPosition, rotation);
                     
                     if (bulletInstance != null)
                     {
                         waveBullets.Add(bulletInstance);
                         
-                        // ÉèÖÃminiIceBall²ÎÊı
+                        // è®¾ç½®miniIceBallå‚æ•°
                         miniIceBall miniIce = bulletInstance.GetComponent<miniIceBall>();
                         if (miniIce != null)
                         {
@@ -650,7 +651,7 @@ public class BossShootSystem : MonoBehaviour
                     }
                 }
                 
-                // Æô¶¯ÕâÒ»²¨×Óµ¯µÄÈÚºÏ´¦Àí
+                // å¯åŠ¨è¿™ä¸€æ³¢å­å¼¹çš„èåˆå¤„ç†
                 if (waveBullets.Count > 0)
                 {
                     StartBulletWave(waveBullets, currentBossPosition);
@@ -660,9 +661,9 @@ public class BossShootSystem : MonoBehaviour
         }
     }
 #endregion
-#region ×Óµ¯ÈÚºÏ¹¥»÷£¨¶ş·Ç£©
+#region å­å¼¹èåˆæ”»å‡»ï¼ˆäºŒéï¼‰
     /// <summary>
-    /// ×Óµ¯²¨´ÎÊı¾İÀà
+    /// å­å¼¹æ³¢æ¬¡æ•°æ®ç±»
     /// </summary>
     private class BulletWave
     {
@@ -679,10 +680,10 @@ public class BossShootSystem : MonoBehaviour
     private int currentWaveId = 0;
     
     /// <summary>
-    /// ¿ªÊ¼µ¥²¨×Óµ¯ÈÚºÏ¹¥»÷
+    /// å¼€å§‹å•æ³¢å­å¼¹èåˆæ”»å‡»
     /// </summary>
-    /// <param name="bullets">×Óµ¯ÁĞ±í</param>
-    /// <param name="targetPosition">Ä¿±êÎ»ÖÃ</param>
+    /// <param name="bullets">å­å¼¹åˆ—è¡¨</param>
+    /// <param name="targetPosition">ç›®æ ‡ä½ç½®</param>
     public void StartBulletWave(List<GameObject> bullets, Vector3 targetPosition)
     {
         if (bullets == null || bullets.Count == 0)
@@ -690,7 +691,7 @@ public class BossShootSystem : MonoBehaviour
             return;
         }
         
-        // ´´½¨ĞÂµÄ²¨´Î
+        // åˆ›å»ºæ–°çš„æ³¢æ¬¡
         BulletWave newWave = new BulletWave();
         newWave.waveId = currentWaveId++;
         newWave.bullets = new List<GameObject>(bullets);
@@ -698,17 +699,17 @@ public class BossShootSystem : MonoBehaviour
         newWave.targetPosition = targetPosition;
         activeWaves.Add(newWave);
         
-        // Æô¶¯¸Ã²¨´ÎµÄÈÚºÏĞ­³Ì
+        // å¯åŠ¨è¯¥æ³¢æ¬¡çš„èåˆåç¨‹
         StartCoroutine(ProcessBulletWaveCoroutine(newWave));
     }
     
     private IEnumerator ProcessBulletWaveCoroutine(BulletWave wave)
     {
-        // ´æ´¢²¨´ÎÖĞËùÓĞ×Óµ¯µÄÊôĞÔ
+        // å­˜å‚¨æ³¢æ¬¡ä¸­æ‰€æœ‰å­å¼¹çš„å±æ€§
         int totalBulletsCount = wave.totalBullets;
         int totalHP = 0;
         float originalSpeed = 0;
-        // ¼ÇÂ¼Ô­Ê¼ËÙ¶È£¨È¡µÚÒ»¸ö×Óµ¯µÄËÙ¶È£©
+        // è®°å½•åŸå§‹é€Ÿåº¦ï¼ˆå–ç¬¬ä¸€ä¸ªå­å¼¹çš„é€Ÿåº¦ï¼‰
         if (wave.bullets.Count > 0)
         {
             miniIceBall firstMiniIce = wave.bullets[0].GetComponent<miniIceBall>();
@@ -718,7 +719,7 @@ public class BossShootSystem : MonoBehaviour
             }
         }
         
-        // ¼ÇÂ¼ËùÓĞ×Óµ¯µÄHP
+        // è®°å½•æ‰€æœ‰å­å¼¹çš„HP
         foreach (var bullet in wave.bullets)
         {
             if (bullet != null && bullet.activeInHierarchy)
@@ -731,10 +732,10 @@ public class BossShootSystem : MonoBehaviour
             }
         }
         
-        // µÈ´ı3Ãë£¬ÈÃ×Óµ¯Íê³É·ÉĞĞºÍÕÛ·µ
+        // ç­‰å¾…3ç§’ï¼Œè®©å­å¼¹å®Œæˆé£è¡Œå’ŒæŠ˜è¿”
         yield return new WaitForSeconds(3f);
         
-        // »ØÊÕËùÓĞÊ£ÓàµÄ×Óµ¯
+        // å›æ”¶æ‰€æœ‰å‰©ä½™çš„å­å¼¹
         foreach (var bullet in wave.bullets)
         {
             if (bullet != null && bullet.activeInHierarchy)
@@ -747,26 +748,26 @@ public class BossShootSystem : MonoBehaviour
             }
         }
         
-        // ´´½¨Ò»¸öĞÂµÄ´ó×Óµ¯
+        // åˆ›å»ºä¸€ä¸ªæ–°çš„å¤§å­å¼¹
         if (totalBulletsCount > 0 && player != null && wave.bullets.Count > 0)
         { 
-            // ¼ÆËã´ó×Óµ¯µÄÊôĞÔ
+            // è®¡ç®—å¤§å­å¼¹çš„å±æ€§
             float scaleIncrease = totalBulletsCount * 0.2f;
             float finalSpeed = Mathf.Max(1, originalSpeed - totalBulletsCount * 0.2f);  
-            // ´Ó¶ÔÏó³Ø»ñÈ¡Ò»¸ö×Óµ¯×÷Îª´ó×Óµ¯
+            // ä»å¯¹è±¡æ± è·å–ä¸€ä¸ªå­å¼¹ä½œä¸ºå¤§å­å¼¹
             GameObject bigBullet = Global_ObjectPool.Instance.GetObject(wave.bullets[0].gameObject, wave.targetPosition, Quaternion.identity);
             if (bigBullet != null)
             {
                 miniIceBall bigIce = bigBullet.GetComponent<miniIceBall>();
                 if (bigIce != null)
                 {
-                    // ÉèÖÃ´ó×Óµ¯ÊôĞÔ
-                    bigIce.isMini = false; // ·ÇminiÌ¬£¬ÎŞÕÛ·µ
+                    // è®¾ç½®å¤§å­å¼¹å±æ€§
+                    bigIce.isMini = false; // éminiæ€ï¼Œæ— æŠ˜è¿”
                     bigIce.moveSpeed = finalSpeed;
                     bigIce.hp = totalHP;
                     bigIce.transform.localScale = new Vector3(1 + scaleIncrease, 1 + scaleIncrease, 1);
                     
-                    // Ãé×¼Íæ¼Ò·¢Éä
+                    // ç„å‡†ç©å®¶å‘å°„
                     Vector2 direction = (player.transform.position - bigBullet.transform.position).normalized;
                     bigIce.FireInDirection(direction);
                 }
@@ -774,12 +775,12 @@ public class BossShootSystem : MonoBehaviour
         }
         
         wave.hasLaunched = true; 
-        // ´Ó»î¶¯²¨´ÎÁĞ±íÖĞÒÆ³ı
+        // ä»æ´»åŠ¨æ³¢æ¬¡åˆ—è¡¨ä¸­ç§»é™¤
         activeWaves.Remove(wave);
     }
     
     /// <summary>
-    /// Í£Ö¹ËùÓĞ×Óµ¯²¨´Î
+    /// åœæ­¢æ‰€æœ‰å­å¼¹æ³¢æ¬¡
     /// </summary>
     public void StopAllBulletWaves()
     {
@@ -800,41 +801,41 @@ public class BossShootSystem : MonoBehaviour
         activeWaves.Clear();
     }
 #endregion
-#region Ñ©»¨¹¥»÷£¨¶ş·û£©
+#region é›ªèŠ±æ”»å‡»ï¼ˆäºŒç¬¦ï¼‰
     /// <summary>
-    /// Ñ©»¨¹¥»÷·½·¨
+    /// é›ªèŠ±æ”»å‡»æ–¹æ³•
     /// </summary>
-    /// <param name="flakePrefab">Ñ©»¨×Óµ¯Ô¤ÖÆÌå</param>
-    /// <param name="totalCount">Éú³ÉµÄÑ©»¨×ÜÊı</param>
+    /// <param name="flakePrefab">é›ªèŠ±å­å¼¹é¢„åˆ¶ä½“</param>
+    /// <param name="totalCount">ç”Ÿæˆçš„é›ªèŠ±æ€»æ•°</param>
     public void SnowFlakeAttack(GameObject flakePrefab, int totalCount)
     {
         StartCoroutine(SnowFlakeAttackCoroutine(flakePrefab, totalCount));
-        Debug.Log($"¿ªÊ¼Éú³ÉÑ©»¨×Óµ¯");
+        Debug.Log($"å¼€å§‹ç”Ÿæˆé›ªèŠ±å­å¼¹");
     }
     
     private IEnumerator SnowFlakeAttackCoroutine(GameObject flakePrefab, int totalCount)
     {
-        // Éú³ÉÖ¸¶¨ÊıÁ¿µÄÑ©»¨×Óµ¯
+        // ç”ŸæˆæŒ‡å®šæ•°é‡çš„é›ªèŠ±å­å¼¹
         for (int i = 0; i < totalCount; i++)
         {
             if(Global_GameManager.Instance.state != State.SpellCard && !bossBase.isLockingHP)
             {
-                // Ëæ»úÑ¡ÔñÒ»¸öÉú³Éµã
-                int randomPosIndex = Random.Range(0, FlakePos.Count);
+                // éšæœºé€‰æ‹©ä¸€ä¸ªç”Ÿæˆç‚¹
+                int randomPosIndex = GameRNG.Range(0, FlakePos.Count);
                 Vector2 spawnPosition = FlakePos[randomPosIndex];
                 
-                // Ê¹ÓÃ¶ÔÏó³Ø»ñÈ¡Ñ©»¨×Óµ¯
+                // ä½¿ç”¨å¯¹è±¡æ± è·å–é›ªèŠ±å­å¼¹
                 GameObject flakeInstance = Global_ObjectPool.Instance.GetObject(flakePrefab, spawnPosition, Quaternion.identity);
                 
                 if (flakeInstance != null)
                 {
-                    // Ìí¼Óµ½»îÔ¾Ñ©»¨ÁĞ±í
+                    // æ·»åŠ åˆ°æ´»è·ƒé›ªèŠ±åˆ—è¡¨
                     activeSnowFlakes.Add(flakeInstance);
                     
                     SnowFlake snowFlake = flakeInstance.GetComponent<SnowFlake>();
                     if (snowFlake != null)
                     {
-                        // ¸ù¾İÉú³ÉµãÎ»ÖÃÈ·¶¨ÒÆ¶¯·½Ïò
+                        // æ ¹æ®ç”Ÿæˆç‚¹ä½ç½®ç¡®å®šç§»åŠ¨æ–¹å‘
                         Vector2 direction = GetSnowFlakeDirection(spawnPosition);
                         snowFlake.SetDirection(direction);
                     }
@@ -842,100 +843,100 @@ public class BossShootSystem : MonoBehaviour
             } 
             else
             {
-                Debug.Log("bossÔÚËøÑª×´Ì¬»ò·û¿¨½×¶Î£¬²»Éú³ÉÑ©»¨");
+                Debug.Log("bossåœ¨é”è¡€çŠ¶æ€æˆ–ç¬¦å¡é˜¶æ®µï¼Œä¸ç”Ÿæˆé›ªèŠ±");
             }
-            // ¶ÌÔİÑÓ³Ù£¬±ÜÃâËùÓĞÑ©»¨Í¬Ê±Éú³É
+            // çŸ­æš‚å»¶è¿Ÿï¼Œé¿å…æ‰€æœ‰é›ªèŠ±åŒæ—¶ç”Ÿæˆ
             yield return new WaitForSeconds(0.1f);
         }
     }
     
     /// <summary>
-    /// ¸ù¾İÉú³ÉµãÎ»ÖÃÈ·¶¨Ñ©»¨ÒÆ¶¯·½Ïò
+    /// æ ¹æ®ç”Ÿæˆç‚¹ä½ç½®ç¡®å®šé›ªèŠ±ç§»åŠ¨æ–¹å‘
     /// </summary>
-    /// <param name="position">Éú³ÉµãÎ»ÖÃ</param>
-    /// <returns>ÒÆ¶¯·½ÏòÏòÁ¿</returns>
+    /// <param name="position">ç”Ÿæˆç‚¹ä½ç½®</param>
+    /// <returns>ç§»åŠ¨æ–¹å‘å‘é‡</returns>
     private Vector2 GetSnowFlakeDirection(Vector2 position)
     {
         float x = position.x;
         float y = position.y;
         
-        // ÉÏ±ß¿ò (y=6)
+        // ä¸Šè¾¹æ¡† (y=6)
         if (y == 6)
         {
             if (x <= -9)
             {
-                return new Vector2(1, -1).normalized; // ÓÒÏÂ
+                return new Vector2(1, -1).normalized; // å³ä¸‹
             }
             else if (x >= 3)
             {
-                return new Vector2(-1, -1).normalized; // ×óÏÂ
+                return new Vector2(-1, -1).normalized; // å·¦ä¸‹
             }
             else
             {
-                return new Vector2(0, -1).normalized; // ÏòÏÂ
+                return new Vector2(0, -1).normalized; // å‘ä¸‹
             }
         }
-        // ÏÂ±ß¿ò (y=-6)
+        // ä¸‹è¾¹æ¡† (y=-6)
         else if (y == -6)
         {
             if (x <= -9)
             {
-                return new Vector2(1, 1).normalized; // ÓÒsahng
+                return new Vector2(1, 1).normalized; // å³sahng
             }
             else if (x >= 3)
             {
-                return new Vector2(-1, 1).normalized; // ×óÏÂ
+                return new Vector2(-1, 1).normalized; // å·¦ä¸‹
             }
             else
             {
-                return new Vector2(0, 1).normalized; // ÏòÉÏ
+                return new Vector2(0, 1).normalized; // å‘ä¸Š
             }
         }
-        // ×ó±ß¿ò (x=-12)
+        // å·¦è¾¹æ¡† (x=-12)
         else if (x == -12)
         {
             if (y >= 4)
             {
-                return new Vector2(1, -1).normalized; // ÓÒÏÂ
+                return new Vector2(1, -1).normalized; // å³ä¸‹
             }
             else if (y <= -4)
             {
-                return new Vector2(1, 1).normalized; // ÓÒÉÏ
+                return new Vector2(1, 1).normalized; // å³ä¸Š
             }
             else
             {
-                return new Vector2(1, 0).normalized; // ÏòÓÒ
+                return new Vector2(1, 0).normalized; // å‘å³
             }
         }
-        // ÓÒ±ß¿ò (x=6)
+        // å³è¾¹æ¡† (x=6)
         else if (x == 6)
         {
             if (y >= 4)
             {
-                return new Vector2(-1, -1).normalized; // ×óÏÂ
+                return new Vector2(-1, -1).normalized; // å·¦ä¸‹
             }
             else if (y <= -4)
             {
-                return new Vector2(-1, 1).normalized; // ×óÉÏ
+                return new Vector2(-1, 1).normalized; // å·¦ä¸Š
             }
             else
             {
-                return new Vector2(-1, 0).normalized; // Ïò×ó
+                return new Vector2(-1, 0).normalized; // å‘å·¦
             }
         }
         
-        // Ä¬ÈÏ·½Ïò£¨ÏòÏÂ£©
+        // é»˜è®¤æ–¹å‘ï¼ˆå‘ä¸‹ï¼‰
         return new Vector2(0, -1).normalized;
     }
 #endregion
-#region ±ùÔÆ¹¥»÷£¨¶ş·û£©
+#region å†°äº‘æ”»å‡»ï¼ˆäºŒç¬¦ï¼‰
     /// <summary>
-    /// ´´½¨±ùÔÆ·½·¨
+    /// åˆ›å»ºå†°äº‘æ–¹æ³•
     /// </summary>
-    /// <param name="prefab">±ùÔÆÔ¤ÖÆ¼ş</param>
-    /// <param name="minPos">Éú³É·¶Î§×óÏÂ½Ç</param>
-    /// <param name="maxPos">Éú³É·¶Î§ÓÒÉÏ½Ç</param>
-    /// <param name="count">Éú³ÉÊıÁ¿</param>
+    /// <param name="prefab">å†°äº‘é¢„åˆ¶ä»¶</param>
+    /// <param name="minPos">ç”ŸæˆèŒƒå›´å·¦ä¸‹è§’</param>
+    /// <param name="maxPos">ç”ŸæˆèŒƒå›´å³ä¸Šè§’</param>
+    /// <param name="count">ç”Ÿæˆæ•°é‡</param>
     public void CreateCloud(GameObject prefab, Vector2 minPos, Vector2 maxPos, int count)
     {
         cloudPrefab = prefab;
@@ -943,7 +944,7 @@ public class BossShootSystem : MonoBehaviour
         cloudSpawnMax = maxPos;
         cloudCount = count;
         
-        // Éú³É³õÊ¼±ùÔÆ
+        // ç”Ÿæˆåˆå§‹å†°äº‘
         for (int i = 0; i < count; i++)
         {
             SpawnCloud();
@@ -951,40 +952,40 @@ public class BossShootSystem : MonoBehaviour
     }
     
     /// <summary>
-    /// Éú³Éµ¥¸ö±ùÔÆ
+    /// ç”Ÿæˆå•ä¸ªå†°äº‘
     /// </summary>
     private void SpawnCloud()
     {
         if (cloudPrefab == null)
             return;
         
-        // ÔÚÖ¸¶¨·¶Î§ÄÚËæ»úÉú³ÉÎ»ÖÃ
-        float x = Random.Range(cloudSpawnMin.x, cloudSpawnMax.x);
-        float y = Random.Range(cloudSpawnMin.y, cloudSpawnMax.y);
+        // åœ¨æŒ‡å®šèŒƒå›´å†…éšæœºç”Ÿæˆä½ç½®
+        float x = GameRNG.Range(cloudSpawnMin.x, cloudSpawnMax.x);
+        float y = GameRNG.Range(cloudSpawnMin.y, cloudSpawnMax.y);
         Vector2 spawnPosition = new (x, y);
         
-        // Ê¹ÓÃ¶ÔÏó³Ø»ñÈ¡±ùÔÆ
+        // ä½¿ç”¨å¯¹è±¡æ± è·å–å†°äº‘
         GameObject cloudInstance = Global_ObjectPool.Instance.GetObject(cloudPrefab, spawnPosition, Quaternion.identity);
         cloudInstance.GetComponent<IceCloud>().bossShootSystem = this;
     }
     
     /// <summary>
-    /// µ±±ùÔÆ±»»ØÊÕÊ±µ÷ÓÃ£¬Éú³ÉĞÂµÄ±ùÔÆ
+    /// å½“å†°äº‘è¢«å›æ”¶æ—¶è°ƒç”¨ï¼Œç”Ÿæˆæ–°çš„å†°äº‘
     /// </summary>
     public void OnCloudRecycled()
     {
-        // Éú³ÉĞÂµÄ±ùÔÆ
+        // ç”Ÿæˆæ–°çš„å†°äº‘
         SpawnCloud();
     }
 #endregion
-#region åçĞÇ¹¥»÷£¨¶ş·û£©
+#region å½—æ˜Ÿæ”»å‡»ï¼ˆäºŒç¬¦ï¼‰
     /// <summary>
-    /// ¿ªÊ¼åçĞÇ¹¥»÷
+    /// å¼€å§‹å½—æ˜Ÿæ”»å‡»
     /// </summary>
-    /// <param name="comet">åçĞÇÔ¤ÖÆ¼ş</param>
-    /// <param name="line">Á¬ÏßÔ¤ÖÆ¼ş</param>
-    /// <param name="interval">¹¥»÷¼ä¸ô</param>
-    /// <param name="spawnY">åçĞÇÉú³Éy×ø±ê</param>
+    /// <param name="comet">å½—æ˜Ÿé¢„åˆ¶ä»¶</param>
+    /// <param name="line">è¿çº¿é¢„åˆ¶ä»¶</param>
+    /// <param name="interval">æ”»å‡»é—´éš”</param>
+    /// <param name="spawnY">å½—æ˜Ÿç”Ÿæˆyåæ ‡</param>
     public void StartCometAttack(GameObject comet, GameObject line, float interval, float spawnY)
     {
         cometPrefab = comet;
@@ -992,12 +993,12 @@ public class BossShootSystem : MonoBehaviour
         cometAttackInterval = interval;
         cometSpawnY = spawnY;
         
-        // Æô¶¯åçĞÇ¹¥»÷Ğ­³Ì
+        // å¯åŠ¨å½—æ˜Ÿæ”»å‡»åç¨‹
         StartCoroutine(CometAttackCoroutine());
     }
     
     /// <summary>
-    /// åçĞÇ¹¥»÷Ğ­³Ì
+    /// å½—æ˜Ÿæ”»å‡»åç¨‹
     /// </summary>
     private IEnumerator CometAttackCoroutine()
     {
@@ -1006,7 +1007,7 @@ public class BossShootSystem : MonoBehaviour
             if (player != null && cometPrefab != null && linePrefab != null &&
              !bossBase.isLockingHP )
             {
-                // ¶¨Î»Íæ¼Òµ±Ç°x×ø±ê
+                // å®šä½ç©å®¶å½“å‰xåæ ‡
                 float playerX = player.transform.position.x;
                 if(playerX < -7f )
                 {
@@ -1017,40 +1018,40 @@ public class BossShootSystem : MonoBehaviour
                     playerX = 1f;
                 }
                 
-                // Éú³ÉÁ¬Ïß²¢µÈ´ıÆä¶¯»­Íê³ÉºóÉú³ÉåçĞÇ
+                // ç”Ÿæˆè¿çº¿å¹¶ç­‰å¾…å…¶åŠ¨ç”»å®Œæˆåç”Ÿæˆå½—æ˜Ÿ
                 yield return StartCoroutine(GenerateLineAndWait(playerX));
             }
             
-            // µÈ´ı¹¥»÷¼ä¸ô
+            // ç­‰å¾…æ”»å‡»é—´éš”
             yield return new WaitForSeconds(cometAttackInterval);
         }
     }
     
     /// <summary>
-    /// Éú³ÉÁ¬Ïß²¢µÈ´ı¶¯»­Íê³É
+    /// ç”Ÿæˆè¿çº¿å¹¶ç­‰å¾…åŠ¨ç”»å®Œæˆ
     /// </summary>
-    /// <param name="x">Á¬ÏßµÄx×ø±ê</param>
+    /// <param name="x">è¿çº¿çš„xåæ ‡</param>
     private IEnumerator GenerateLineAndWait(float x)
     {
         if (linePrefab == null)
             yield break;
         
-        // ´´½¨Á¬Ïß¶ÔÏó
+        // åˆ›å»ºè¿çº¿å¯¹è±¡
         GameObject lineInstance = Global_ObjectPool.Instance.GetObject(linePrefab, new Vector3(x, 0, 0), Quaternion.identity);
         if (lineInstance != null)
         {
-            // Æô¶¯Á¬Ïß¶¯»­²¢µÈ´ıÍê³É
+            // å¯åŠ¨è¿çº¿åŠ¨ç”»å¹¶ç­‰å¾…å®Œæˆ
             yield return StartCoroutine(LineAnimation(lineInstance));
             
-            // Á¬Ïß¶¯»­Íê³ÉºóÉú³ÉåçĞÇ
+            // è¿çº¿åŠ¨ç”»å®Œæˆåç”Ÿæˆå½—æ˜Ÿ
             SpawnComet(x);
         }
     }
     
     /// <summary>
-    /// Á¬Ïß¶¯»­
+    /// è¿çº¿åŠ¨ç”»
     /// </summary>
-    /// <param name="line">Á¬Ïß¶ÔÏó</param>
+    /// <param name="line">è¿çº¿å¯¹è±¡</param>
     private IEnumerator LineAnimation(GameObject line)
     {
         if (line == null)
@@ -1060,11 +1061,11 @@ public class BossShootSystem : MonoBehaviour
         if (lineRenderer == null)
             yield break;
         
-        float duration1 = 1f; // ¿í¶È´Ó0µ½0.5µÄÊ±¼ä
-        float duration2 = 1f; // ¿í¶Èµ½1²¢µ­³öµÄÊ±¼ä
+        float duration1 = 1f; // å®½åº¦ä»0åˆ°0.5çš„æ—¶é—´
+        float duration2 = 1f; // å®½åº¦åˆ°1å¹¶æ·¡å‡ºçš„æ—¶é—´
         float elapsedTime = 0f;
         
-        // ³õÊ¼×´Ì¬
+        // åˆå§‹çŠ¶æ€
         Color initialColor = lineRenderer.startColor;
         initialColor.a = 1f;
         lineRenderer.startColor = initialColor;
@@ -1072,7 +1073,7 @@ public class BossShootSystem : MonoBehaviour
         lineRenderer.startWidth = 0f;
         lineRenderer.endWidth = 0f;
         
-        // µÚÒ»½×¶Î£º¿í¶È´Ó0µ­Èëµ½0.5f£¬»¨·Ñ1Ãë
+        // ç¬¬ä¸€é˜¶æ®µï¼šå®½åº¦ä»0æ·¡å…¥åˆ°0.5fï¼ŒèŠ±è´¹1ç§’
         while (elapsedTime < duration1)
         {
             elapsedTime += Time.deltaTime;
@@ -1083,7 +1084,7 @@ public class BossShootSystem : MonoBehaviour
             yield return null;
         }
         
-        // µÚ¶ş½×¶Î£º¿í¶È´Ó0.5fÔö³¤µ½1f£¬Í¬Ê±Í¸Ã÷¶È´Ó1µ­³öµ½0£¬»¨·Ñ1Ãë
+        // ç¬¬äºŒé˜¶æ®µï¼šå®½åº¦ä»0.5få¢é•¿åˆ°1fï¼ŒåŒæ—¶é€æ˜åº¦ä»1æ·¡å‡ºåˆ°0ï¼ŒèŠ±è´¹1ç§’
         elapsedTime = 0f;
         while (elapsedTime < duration2)
         {
@@ -1103,55 +1104,55 @@ public class BossShootSystem : MonoBehaviour
             yield return null;
         }
         
-        // »ØÊÕÁ¬Ïß
+        // å›æ”¶è¿çº¿
         Global_ObjectPool.Instance.Recycle(line);
     }
     
     /// <summary>
-    /// Éú³ÉåçĞÇ
+    /// ç”Ÿæˆå½—æ˜Ÿ
     /// </summary>
-    /// <param name="x">åçĞÇÉú³ÉµÄx×ø±ê</param>
+    /// <param name="x">å½—æ˜Ÿç”Ÿæˆçš„xåæ ‡</param>
     private void SpawnComet(float x)
     {
         if (cometPrefab == null)
             return;
         
-        // ÔÚÖ¸¶¨Î»ÖÃÉú³ÉåçĞÇ
+        // åœ¨æŒ‡å®šä½ç½®ç”Ÿæˆå½—æ˜Ÿ
         Vector3 spawnPosition = new Vector3(x, cometSpawnY, 0f);
         GameObject cometInstance = Global_ObjectPool.Instance.GetObject(cometPrefab, spawnPosition, Quaternion.identity);
     }
 #endregion
-#region Íù¸´É¨ÉäÉä»÷£¨Final£©
+#region å¾€å¤æ‰«å°„å°„å‡»ï¼ˆFinalï¼‰
     /// <summary>
-    /// ÖØ¸´É¨ÉäÉä»÷·½·¨
+    /// é‡å¤æ‰«å°„å°„å‡»æ–¹æ³•
     /// </summary>
-    /// <param name="bullet">×Óµ¯Ô¤ÖÆ¼ş</param>
-    /// <param name="angleOffset">½Ç¶ÈÆ«ÒÆ·¶Î§£¬Ä¬ÈÏ60¶È</param>
-    /// <param name="angleStep">Éä»÷Æ«ÒÆ½Ç¶È£¬Ä¬ÈÏ10¶È</param>
-    /// <param name="shootInterval">Éä»÷¼ä¸ô£¬Ä¬ÈÏ0.5Ãë</param>
-    /// <param name="startFromLeft">ÊÇ·ñ´ÓÇø¼ä×ó²à¿ªÊ¼£¨´Ó×óÏòÓÒÉ¨£©£¬Ä¬ÈÏtrue</param>
-    /// <param name="storeBullets">ÊÇ·ñ´æ´¢×Óµ¯ÒÔÖ´ĞĞºóĞø¶³½áĞ§¹û£¬Ä¬ÈÏfalse</param>
+    /// <param name="bullet">å­å¼¹é¢„åˆ¶ä»¶</param>
+    /// <param name="angleOffset">è§’åº¦åç§»èŒƒå›´ï¼Œé»˜è®¤60åº¦</param>
+    /// <param name="angleStep">å°„å‡»åç§»è§’åº¦ï¼Œé»˜è®¤10åº¦</param>
+    /// <param name="shootInterval">å°„å‡»é—´éš”ï¼Œé»˜è®¤0.5ç§’</param>
+    /// <param name="startFromLeft">æ˜¯å¦ä»åŒºé—´å·¦ä¾§å¼€å§‹ï¼ˆä»å·¦å‘å³æ‰«ï¼‰ï¼Œé»˜è®¤true</param>
+    /// <param name="storeBullets">æ˜¯å¦å­˜å‚¨å­å¼¹ä»¥æ‰§è¡Œåç»­å†»ç»“æ•ˆæœï¼Œé»˜è®¤false</param>
     public Coroutine RepeatShoot(GameObject bullet, float angleOffset = 60f, float angleStep = 10f, float shootInterval = 0.5f, bool startFromLeft = true, bool storeBullets = false)
     {
         return StartCoroutine(RepeatShootCoroutine(bullet, angleOffset, angleStep, shootInterval, startFromLeft, storeBullets));
     }
     
     /// <summary>
-    /// ÖØ¸´É¨ÉäÉä»÷Ğ­³Ì
+    /// é‡å¤æ‰«å°„å°„å‡»åç¨‹
     /// </summary>
-    /// <param name="bullet">×Óµ¯Ô¤ÖÆ¼ş</param>
-    /// <param name="angleOffset">½Ç¶ÈÆ«ÒÆ·¶Î§</param>
-    /// <param name="angleStep">Éä»÷Æ«ÒÆ½Ç¶È</param>
-    /// <param name="shootInterval">Éä»÷¼ä¸ô</param>
-    /// <param name="startFromLeft">ÊÇ·ñ´ÓÇø¼ä×ó²à¿ªÊ¼£¨´Ó×óÏòÓÒÉ¨£©</param>
-    /// <param name="storeBullets">ÊÇ·ñ´æ´¢×Óµ¯ÒÔÖ´ĞĞºóĞø¶³½áĞ§¹û</param>
+    /// <param name="bullet">å­å¼¹é¢„åˆ¶ä»¶</param>
+    /// <param name="angleOffset">è§’åº¦åç§»èŒƒå›´</param>
+    /// <param name="angleStep">å°„å‡»åç§»è§’åº¦</param>
+    /// <param name="shootInterval">å°„å‡»é—´éš”</param>
+    /// <param name="startFromLeft">æ˜¯å¦ä»åŒºé—´å·¦ä¾§å¼€å§‹ï¼ˆä»å·¦å‘å³æ‰«ï¼‰</param>
+    /// <param name="storeBullets">æ˜¯å¦å­˜å‚¨å­å¼¹ä»¥æ‰§è¡Œåç»­å†»ç»“æ•ˆæœ</param>
     private IEnumerator RepeatShootCoroutine(GameObject bullet, float angleOffset, float angleStep, float shootInterval, bool startFromLeft, bool storeBullets)
     {
         while (true)
         {
             if (player != null && boss != null && bullet != null)
             {
-                // ³õÊ¼»¯Éä»÷Çø¼ä
+                // åˆå§‹åŒ–å°„å‡»åŒºé—´
                 Vector3 direction = player.transform.position - boss.transform.position;
                 direction.z = 0;
                 float playerAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
@@ -1163,16 +1164,16 @@ public class BossShootSystem : MonoBehaviour
                 float currentAngle = startFromLeft ? (playerAngle - angleOffset) : (playerAngle + angleOffset);
                 bool increasing = startFromLeft;
                 
-                // ·¢ÉäµÚÒ»·¢×Óµ¯
+                // å‘å°„ç¬¬ä¸€å‘å­å¼¹
                 FireBullet(currentAngle, bullet, storeBullets);
                 
-                // Ñ­»·Éä»÷
+                // å¾ªç¯å°„å‡»
                 while (true)
                 {
-                    // µÈ´ıÉä»÷¼ä¸ô
+                    // ç­‰å¾…å°„å‡»é—´éš”
                     yield return new WaitForSeconds(shootInterval);
                     
-                    // ÖØĞÂ¼ÆËãÍæ¼Òµ±Ç°½Ç¶ÈºÍÇø¼ä
+                    // é‡æ–°è®¡ç®—ç©å®¶å½“å‰è§’åº¦å’ŒåŒºé—´
                     direction = player.transform.position - boss.transform.position;
                     direction.z = 0;
                     playerAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
@@ -1184,7 +1185,7 @@ public class BossShootSystem : MonoBehaviour
                     float startAngle = playerAngle - angleOffset;
                     float endAngle = playerAngle + angleOffset;
                     
-                    // ¸ù¾İ·½Ïò¸üĞÂ½Ç¶È
+                    // æ ¹æ®æ–¹å‘æ›´æ–°è§’åº¦
                     if (increasing)
                     {
                         currentAngle += angleStep;
@@ -1204,7 +1205,7 @@ public class BossShootSystem : MonoBehaviour
                         }
                     }
                     
-                    // ·¢Éä×Óµ¯
+                    // å‘å°„å­å¼¹
                     FireBullet(currentAngle, bullet, storeBullets);
                 }
             }
@@ -1214,11 +1215,11 @@ public class BossShootSystem : MonoBehaviour
     }
     
     /// <summary>
-    /// ·¢Éä×Óµ¯
+    /// å‘å°„å­å¼¹
     /// </summary>
-    /// <param name="angle">·¢Éä½Ç¶È</param>
-    /// <param name="bullet">×Óµ¯Ô¤ÖÆ¼ş</param>
-    /// <param name="storeBullet">ÊÇ·ñ´æ´¢×Óµ¯ÒıÓÃ</param>
+    /// <param name="angle">å‘å°„è§’åº¦</param>
+    /// <param name="bullet">å­å¼¹é¢„åˆ¶ä»¶</param>
+    /// <param name="storeBullet">æ˜¯å¦å­˜å‚¨å­å¼¹å¼•ç”¨</param>
     private void FireBullet(float angle, GameObject bullet, bool storeBullet = false)
     {
         Quaternion rotation = Quaternion.Euler(0, 0, angle);
@@ -1228,7 +1229,7 @@ public class BossShootSystem : MonoBehaviour
         {
             activeIcePearls.Add(bulletInstance);
             
-            // ÉèÖÃ×Óµ¯µÄBossShootSystemÒıÓÃ
+            // è®¾ç½®å­å¼¹çš„BossShootSystemå¼•ç”¨
             NormalIce normalIce = bulletInstance.GetComponent<NormalIce>();
             if (normalIce != null)
             {
@@ -1238,9 +1239,9 @@ public class BossShootSystem : MonoBehaviour
     }
     
     /// <summary>
-    /// ´Ó»îÔ¾±ùÖéÁĞ±íÖĞÒÆ³ı×Óµ¯
+    /// ä»æ´»è·ƒå†°ç åˆ—è¡¨ä¸­ç§»é™¤å­å¼¹
     /// </summary>
-    /// <param name="icePearl">ÒªÒÆ³ıµÄ±ùÖé</param>
+    /// <param name="icePearl">è¦ç§»é™¤çš„å†°ç </param>
     public void RemoveIcePearl(GameObject icePearl)
     {
         if (icePearl != null && activeIcePearls.Contains(icePearl))
@@ -1250,9 +1251,9 @@ public class BossShootSystem : MonoBehaviour
     }
     
     /// <summary>
-    /// ÊÍ·Åµ¥¸ö¶³½áµÄ±ùÖé
+    /// é‡Šæ”¾å•ä¸ªå†»ç»“çš„å†°ç 
     /// </summary>
-    /// <param name="icePearl">ÒªÊÍ·ÅµÄ±ùÖé</param>
+    /// <param name="icePearl">è¦é‡Šæ”¾çš„å†°ç </param>
     public void ReleaseFrozenPearl(GameObject icePearl)
     {
         if (player == null || icePearl == null || !icePearl.activeInHierarchy)
@@ -1260,23 +1261,23 @@ public class BossShootSystem : MonoBehaviour
             return;
         }
         
-        // »ñÈ¡Íæ¼Òµ±Ç°×ø±ê
+        // è·å–ç©å®¶å½“å‰åæ ‡
         Vector3 playerPosition = player.transform.position;
         
-        // ¼ÆËã±ùÖéµ½Íæ¼ÒµÄ·½Ïò
+        // è®¡ç®—å†°ç åˆ°ç©å®¶çš„æ–¹å‘
         Vector3 direction = playerPosition - icePearl.transform.position;
         direction.z = 0;
         direction.Normalize();
         
-        // ÉèÖÃ±ùÖéµÄËÙ¶È
+        // è®¾ç½®å†°ç çš„é€Ÿåº¦
         Rigidbody2D rb = icePearl.GetComponent<Rigidbody2D>();
         if (rb != null)
         {
-            float speed = 5f; // ±ùÖéËÙ¶È
+            float speed = 5f; // å†°ç é€Ÿåº¦
             rb.velocity = direction * speed;
         }
         
-        // ´Ó¶³½áÁĞ±íÖĞÒÆ³ı
+        // ä»å†»ç»“åˆ—è¡¨ä¸­ç§»é™¤
         if (frozenIcePearls.Contains(icePearl))
         {
             frozenIcePearls.Remove(icePearl);
@@ -1285,30 +1286,30 @@ public class BossShootSystem : MonoBehaviour
     
     
 #endregion
-#region ±ùÖé¶³½á£¨Final£©
+#region å†°ç å†»ç»“ï¼ˆFinalï¼‰
     /// <summary>
-    /// ¶³½áËùÓĞ±ùÖé²¢Éú³É±ùÇò
+    /// å†»ç»“æ‰€æœ‰å†°ç å¹¶ç”Ÿæˆå†°çƒ
     /// </summary>
-    /// <param name="frozenIcePrefab">±ùÇòÔ¤ÖÆ¼ş</param>
+    /// <param name="frozenIcePrefab">å†°çƒé¢„åˆ¶ä»¶</param>
     public void FrozenPearl(GameObject frozenIcePrefab)
     {
         List<GameObject> frozenIceList = new ();
         List<GameObject> pearlsToRemove = new ();
         
-        // ±éÀúËùÓĞ»îÔ¾µÄ±ùÖé
+        // éå†æ‰€æœ‰æ´»è·ƒçš„å†°ç 
         for (int i = 0; i < activeIcePearls.Count; i++)
         {
             GameObject icePearl = activeIcePearls[i];
             if (icePearl != null && icePearl.activeInHierarchy)
             {
-                // Í£Ö¹±ùÖéÒÆ¶¯
+                // åœæ­¢å†°ç ç§»åŠ¨
                 Rigidbody2D rb = icePearl.GetComponent<Rigidbody2D>();
                 if (rb != null)
                 {
                     rb.velocity = Vector2.zero;
                 }
                 
-                // ÔÚ±ùÖéÎ»ÖÃ´´½¨±ùÇò
+                // åœ¨å†°ç ä½ç½®åˆ›å»ºå†°çƒ
                 if (frozenIcePrefab != null)
                 {
                     try
@@ -1316,7 +1317,7 @@ public class BossShootSystem : MonoBehaviour
                         GameObject frozenIce = Global_ObjectPool.Instance.GetObject(frozenIcePrefab, icePearl.transform.position, Quaternion.identity);
                         if (frozenIce != null)
                         {
-                            // ÉèÖÃ±ùÇòµÄ²ÎÊı
+                            // è®¾ç½®å†°çƒçš„å‚æ•°
                             FrozenBall frozenBall = frozenIce.GetComponent<FrozenBall>();
                             if (frozenBall != null)
                             {
@@ -1329,43 +1330,43 @@ public class BossShootSystem : MonoBehaviour
                     }
                     catch (System.Exception e)
                     {
-                        Debug.LogWarning("´´½¨±ùÇòÊ±³ö´í: " + e.Message);
+                        Debug.LogWarning("åˆ›å»ºå†°çƒæ—¶å‡ºé”™: " + e.Message);
                     }
                 }
                 
-                // ´Ó»îÔ¾ÁĞ±íÖĞÒÆ³ı±ùÖé£¬Ìí¼Óµ½¶³½áÁĞ±íÖĞ£¬ÒÔ±ãºóĞøÊÍ·Å
+                // ä»æ´»è·ƒåˆ—è¡¨ä¸­ç§»é™¤å†°ç ï¼Œæ·»åŠ åˆ°å†»ç»“åˆ—è¡¨ä¸­ï¼Œä»¥ä¾¿åç»­é‡Šæ”¾
                 pearlsToRemove.Add(icePearl);
                 frozenIcePearls.Add(icePearl);
             }
             else if (icePearl == null || !icePearl.activeInHierarchy)
             {
-                // ¼ÇÂ¼ÒÑ¾­²»»îÔ¾µÄ±ùÖé£¬ÉÔºóÒÆ³ı
+                // è®°å½•å·²ç»ä¸æ´»è·ƒçš„å†°ç ï¼Œç¨åç§»é™¤
                 pearlsToRemove.Add(icePearl);
             }
         }
         
-        // ÒÆ³ı´¦Àí¹ıµÄ±ùÖé
+        // ç§»é™¤å¤„ç†è¿‡çš„å†°ç 
         foreach (GameObject pearl in pearlsToRemove)
         {
             activeIcePearls.Remove(pearl);
         }
         
-        // Æô¶¯±ùÇò±ä´óµÄĞ­³Ì
+        // å¯åŠ¨å†°çƒå˜å¤§çš„åç¨‹
         if (frozenIceList.Count > 0)
         {
             StartCoroutine(GrowFrozenIceCoroutine(frozenIceList));
         }
     }
     /// <summary>
-    /// ±ùÇò±ä´óĞ­³Ì
+    /// å†°çƒå˜å¤§åç¨‹
     /// </summary>
     private IEnumerator GrowFrozenIceCoroutine(List<GameObject> frozenIceList)
     {
-        float growthDuration = 8f; // ±ä´ó³ÖĞøÊ±¼ä
-        float maxScale = 1.2f; // ×î´óËõ·Å
+        float growthDuration = 8f; // å˜å¤§æŒç»­æ—¶é—´
+        float maxScale = 1.2f; // æœ€å¤§ç¼©æ”¾
         float elapsedTime = 0f;
         
-        // ³õÊ¼»¯±ùÇòËõ·Å
+        // åˆå§‹åŒ–å†°çƒç¼©æ”¾
         foreach (var frozenIce in frozenIceList)
         {
             if (frozenIce != null)
@@ -1374,7 +1375,7 @@ public class BossShootSystem : MonoBehaviour
             }
         }
         
-        // ³ÖĞø±ä´ó
+        // æŒç»­å˜å¤§
         while (elapsedTime < growthDuration)
         {
             elapsedTime += Time.deltaTime;
@@ -1393,21 +1394,21 @@ public class BossShootSystem : MonoBehaviour
         }
     }
 #endregion
-#region ÇøÓòÏŞÖÆ¹¥»÷£¨Final£©
+#region åŒºåŸŸé™åˆ¶æ”»å‡»ï¼ˆFinalï¼‰
     /// <summary>
-    /// ÇøÓòÏŞÖÆ¹¥»÷
+    /// åŒºåŸŸé™åˆ¶æ”»å‡»
     /// </summary>
-    /// <param name="bullet">×Óµ¯Ô¤ÖÆ¼ş</param>
-    /// <param name="center">ÖĞĞÄµã</param>
-    /// <param name="radius">³õÊ¼°ë¾¶</param>
-    /// <param name="rotationSpeed">Ğı×ªËÙ¶È</param>
-    /// <param name="shrinkSpeed">ÊÕËõËÙ¶È</param>
-    /// <param name="stopDistance">Í£Ö¹ÊÕËõµÄ¾àÀë</param>
-    /// <param name="checkRadius">¼ì²âÍæ¼ÒÊÇ·ñÔÚ·¶Î§ÄÚµÄ°ë¾¶</param>
+    /// <param name="bullet">å­å¼¹é¢„åˆ¶ä»¶</param>
+    /// <param name="center">ä¸­å¿ƒç‚¹</param>
+    /// <param name="radius">åˆå§‹åŠå¾„</param>
+    /// <param name="rotationSpeed">æ—‹è½¬é€Ÿåº¦</param>
+    /// <param name="shrinkSpeed">æ”¶ç¼©é€Ÿåº¦</param>
+    /// <param name="stopDistance">åœæ­¢æ”¶ç¼©çš„è·ç¦»</param>
+    /// <param name="checkRadius">æ£€æµ‹ç©å®¶æ˜¯å¦åœ¨èŒƒå›´å†…çš„åŠå¾„</param>
     public void AreaLimit(GameObject bullet, Vector3 center, float radius = 5f, float rotationSpeed = 90f,
      float shrinkSpeed = 2f, float stopDistance = 2f, float checkRadius = 2.5f)
     {
-        // ±£´æµ±Ç°²ÎÊı
+        // ä¿å­˜å½“å‰å‚æ•°
         currentAreaLimitBullet = bullet;
         currentAreaLimitCenter = center;
         currentAreaLimitRadius = radius;
@@ -1416,26 +1417,26 @@ public class BossShootSystem : MonoBehaviour
         currentAreaLimitStopDistance = stopDistance;
         currentAreaLimitCheckRadius = checkRadius;
         
-        // Í£Ö¹Ö®Ç°µÄĞ­³Ì
+        // åœæ­¢ä¹‹å‰çš„åç¨‹
         if (areaLimitCoroutine != null)
         {
             StopCoroutine(areaLimitCoroutine);
         }
         
-        // Æô¶¯ĞÂµÄĞ­³Ì
+        // å¯åŠ¨æ–°çš„åç¨‹
         areaLimitCoroutine = StartCoroutine(AreaLimitCoroutine(bullet, center, radius, rotationSpeed,
          shrinkSpeed, stopDistance));
     }
     
     /// <summary>
-    /// ÇøÓòÏŞÖÆ¹¥»÷Ğ­³Ì
-    /// <param name="bullet">×Óµ¯Ô¤ÖÆ¼ş</param>
-    /// <param name="center">ÖĞĞÄµã</param>
-    /// <param name="radius">³õÊ¼°ë¾¶</param>
-    /// <param name="rotationSpeed">Ğı×ªËÙ¶È</param>
-    /// <param name="shrinkSpeed">ÊÕËõËÙ¶È</param>
-    /// <param name="duration">³ÖĞøÊ±¼ä</param>
-    /// <param name="stopDistance">Í£Ö¹ÊÕËõµÄ¾àÀë</param>
+    /// åŒºåŸŸé™åˆ¶æ”»å‡»åç¨‹
+    /// <param name="bullet">å­å¼¹é¢„åˆ¶ä»¶</param>
+    /// <param name="center">ä¸­å¿ƒç‚¹</param>
+    /// <param name="radius">åˆå§‹åŠå¾„</param>
+    /// <param name="rotationSpeed">æ—‹è½¬é€Ÿåº¦</param>
+    /// <param name="shrinkSpeed">æ”¶ç¼©é€Ÿåº¦</param>
+    /// <param name="duration">æŒç»­æ—¶é—´</param>
+    /// <param name="stopDistance">åœæ­¢æ”¶ç¼©çš„è·ç¦»</param>
     /// </summary>
     private IEnumerator AreaLimitCoroutine(GameObject bullet, Vector3 center, float radius,
      float rotationSpeed, float shrinkSpeed, float stopDistance)
@@ -1449,7 +1450,7 @@ public class BossShootSystem : MonoBehaviour
         List<float> angles = new List<float>();
         List<SpriteRenderer> spriteRenderers = new List<SpriteRenderer>();
         
-        // ´´½¨18Ã¶¾ùÔÈ·Ö²¼µÄ×Óµ¯
+        // åˆ›å»º18æšå‡åŒ€åˆ†å¸ƒçš„å­å¼¹
         int bulletCount = 18;
         float angleStep = 360f / bulletCount;
         
@@ -1458,18 +1459,18 @@ public class BossShootSystem : MonoBehaviour
             float angle = i * angleStep;
             angles.Add(angle);
             
-            // ¼ÆËã×Óµ¯Î»ÖÃ
+            // è®¡ç®—å­å¼¹ä½ç½®
             float radians = angle * Mathf.Deg2Rad;
             float x = center.x + Mathf.Cos(radians) * radius;
             float y = center.y + Mathf.Sin(radians) * radius;
             Vector3 position = new Vector3(x, y, 0f);
             
-            // ¼ÆËã×Óµ¯³¯Ïò£¨Ö¸ÏòÖĞĞÄ£©
+            // è®¡ç®—å­å¼¹æœå‘ï¼ˆæŒ‡å‘ä¸­å¿ƒï¼‰
             Vector3 direction = center - position;
             float bulletAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
             Quaternion rotation = Quaternion.Euler(0, 0, bulletAngle+90f);
             
-            // ´´½¨×Óµ¯
+            // åˆ›å»ºå­å¼¹
             GameObject bulletInstance = Global_ObjectPool.Instance.GetObject(bullet, position, rotation);
             if (bulletInstance != null)
             {
@@ -1478,7 +1479,7 @@ public class BossShootSystem : MonoBehaviour
                 bullets.Add(bulletInstance);
                 currentAreaLimitBullets.Add(bulletInstance);
                 
-                // »ñÈ¡SpriteRendererÓÃÓÚµ­³öĞ§¹û
+                // è·å–SpriteRendererç”¨äºæ·¡å‡ºæ•ˆæœ
                 if (sr != null)
                 {
                     spriteRenderers.Add(sr);
@@ -1492,24 +1493,24 @@ public class BossShootSystem : MonoBehaviour
             }
         }
         
-        // ÖØÖÃ±êÖ¾Î»
+        // é‡ç½®æ ‡å¿—ä½
         isReadyForCheck = false;
         float elapsedTime = 0f;
         float currentRadius = radius;
         bool shouldShrink = true;
         bool hasLoggedShrunk = false;
         
-        // ¿ØÖÆ×Óµ¯Ğı×ªºÍÊÕËõ
+        // æ§åˆ¶å­å¼¹æ—‹è½¬å’Œæ”¶ç¼©
         while (bullets.Count > 0)
         {
             elapsedTime += Time.deltaTime;
             
-            // ¼ì²éÊÇ·ñÓ¦¸ÃÍ£Ö¹ÊÕËõ
+            // æ£€æŸ¥æ˜¯å¦åº”è¯¥åœæ­¢æ”¶ç¼©
             if (currentRadius <= stopDistance)
             {
                 shouldShrink = false;
                 
-                // ÉèÖÃ±êÖ¾Î»
+                // è®¾ç½®æ ‡å¿—ä½
                 if (!hasLoggedShrunk)
                 {
                     isReadyForCheck = true;
@@ -1520,36 +1521,36 @@ public class BossShootSystem : MonoBehaviour
             if (shouldShrink)
             {
                 currentRadius -= shrinkSpeed * Time.deltaTime;
-                // È·±£°ë¾¶²»»áĞ¡ÓÚ0
+                // ç¡®ä¿åŠå¾„ä¸ä¼šå°äº0
                 if (currentRadius < stopDistance)
                 {
                     currentRadius = stopDistance;
                 }
             }
             
-            // ¸üĞÂÃ¿¿Å×Óµ¯µÄÎ»ÖÃºÍĞı×ª
+            // æ›´æ–°æ¯é¢—å­å¼¹çš„ä½ç½®å’Œæ—‹è½¬
             for (int i = 0; i < bullets.Count; i++)
             {
                 GameObject bulletInstance = bullets[i];
                 if (bulletInstance != null && bulletInstance.activeInHierarchy)
                 {
-                    // ¸üĞÂ½Ç¶È
+                    // æ›´æ–°è§’åº¦
                     angles[i] += rotationSpeed * Time.deltaTime;
                     if (angles[i] >= 360f)
                     {
                         angles[i] -= 360f;
                     }
                     
-                    // ¼ÆËãĞÂÎ»ÖÃ
+                    // è®¡ç®—æ–°ä½ç½®
                     float radians = angles[i] * Mathf.Deg2Rad;
                     float x = center.x + Mathf.Cos(radians) * currentRadius;
                     float y = center.y + Mathf.Sin(radians) * currentRadius;
                     Vector3 newPosition = new Vector3(x, y, 0f);
                     
-                    // ¸üĞÂÎ»ÖÃ
+                    // æ›´æ–°ä½ç½®
                     bulletInstance.transform.position = newPosition;
                     
-                    // ¸üĞÂ³¯Ïò£¨Ê¼ÖÕÖ¸ÏòÖĞĞÄ£©
+                    // æ›´æ–°æœå‘ï¼ˆå§‹ç»ˆæŒ‡å‘ä¸­å¿ƒï¼‰
                     Vector3 direction = center - newPosition;
                     float bulletAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
                     Quaternion newRotation = Quaternion.Euler(0, 0, bulletAngle+90f);
@@ -1557,7 +1558,7 @@ public class BossShootSystem : MonoBehaviour
                 }
                 else
                 {
-                    // ÒÆ³ıÎŞĞ§µÄ×Óµ¯
+                    // ç§»é™¤æ— æ•ˆçš„å­å¼¹
                     bullets.RemoveAt(i);
                     angles.RemoveAt(i);
                     spriteRenderers.RemoveAt(i);
@@ -1569,7 +1570,7 @@ public class BossShootSystem : MonoBehaviour
     }
     
     /// <summary>
-    /// µ­³ö²¢ÖØÆôÇøÓòÏŞÖÆ¹¥»÷
+    /// æ·¡å‡ºå¹¶é‡å¯åŒºåŸŸé™åˆ¶æ”»å‡»
     /// </summary>
     private void StartFadeOutAndRestart()
     {
@@ -1585,7 +1586,7 @@ public class BossShootSystem : MonoBehaviour
     }
     
     /// <summary>
-    /// ÇøÓòÏŞÖÆ¹¥»÷µ­³öĞ­³Ì
+    /// åŒºåŸŸé™åˆ¶æ”»å‡»æ·¡å‡ºåç¨‹
     /// </summary>
     private IEnumerator FadeOutAreaLimitCoroutine()
     {
@@ -1615,7 +1616,7 @@ public class BossShootSystem : MonoBehaviour
             yield return null;
         }
         
-        // »ØÊÕËùÓĞ×Óµ¯
+        // å›æ”¶æ‰€æœ‰å­å¼¹
         foreach (GameObject bulletInstance in currentAreaLimitBullets)
         {
             if (bulletInstance != null && Global_ObjectPool.Instance != null)
@@ -1624,13 +1625,13 @@ public class BossShootSystem : MonoBehaviour
             }
         }
         
-        // Çå¿ÕÁĞ±í
+        // æ¸…ç©ºåˆ—è¡¨
         currentAreaLimitBullets.Clear();
         currentAreaLimitSpriteRenderers.Clear();
         
         isFadingOut = false;
         
-        // ÖØĞÂµ÷ÓÃAreaLimit·½·¨
+        // é‡æ–°è°ƒç”¨AreaLimitæ–¹æ³•
         AreaLimit(
             currentAreaLimitBullet,
             currentAreaLimitCenter,
@@ -1642,11 +1643,11 @@ public class BossShootSystem : MonoBehaviour
         );
     }
 #endregion
-#region ±ùÇòÆÆËé£¨Final£©
+#region å†°çƒç ´ç¢ï¼ˆFinalï¼‰
     /// <summary>
-    /// ¼¤»î±ùÁìÓò
+    /// æ¿€æ´»å†°é¢†åŸŸ
     /// </summary>
-    /// <param name="position">¼¤»îÎ»ÖÃ</param>
+    /// <param name="position">æ¿€æ´»ä½ç½®</param>
     public void ActivateIceRealm(Vector3 position)
     {
         if (IceRealm == null)
@@ -1658,9 +1659,9 @@ public class BossShootSystem : MonoBehaviour
     }
     
     /// <summary>
-    /// Éú³É±ù×¶
+    /// ç”Ÿæˆå†°é”¥
     /// </summary>
-    /// <param name="count">Éú³ÉÊıÁ¿</param>
+    /// <param name="count">ç”Ÿæˆæ•°é‡</param>
     public void SpawnIceSpikes(int count)
     {
         if (IceSpike == null)
@@ -1668,32 +1669,32 @@ public class BossShootSystem : MonoBehaviour
             return;
         }
         
-        // Éú³É·¶Î§£ºx: -8.5~2.5, y: 6
+        // ç”ŸæˆèŒƒå›´ï¼šx: -8.5~2.5, y: 6
         float minX = -8.5f;
         float maxX = 2.5f;
         float y = 6f;
         
         for (int i = 0; i < count; i++)
         {
-            // Ëæ»úx×ø±ê
-            float x = Random.Range(minX, maxX);
+            // éšæœºxåæ ‡
+            float x = GameRNG.Range(minX, maxX);
             Vector3 spawnPosition = new Vector3(x, y, 0f);
             
-            // Éú³É±ù×¶
+            // ç”Ÿæˆå†°é”¥
             Global_ObjectPool.Instance.GetObject(IceSpike, spawnPosition, Quaternion.identity);
         }
     }
 #endregion
     
     
-#region ±ù´ÌµØĞÎÏà¹Ø
+#region å†°åˆºåœ°å½¢ç›¸å…³
     public void ShowTerrain()
     {
         StartCoroutine(ShowTerrainCoroutine());
     }
     private IEnumerator ShowTerrainCoroutine()
     {
-        // ²¥·Å±ù¶³ÒôĞ§
+        // æ’­æ”¾å†°å†»éŸ³æ•ˆ
         if (FrozeSound != null)
         {
             Global_AudioManager.Instance.PlaySFX(FrozeSound);
@@ -1743,7 +1744,7 @@ public class BossShootSystem : MonoBehaviour
         IceTerrainSprite.color = new Color(0.6f, 1, 1, 0);
     }
 #endregion
-#region ç÷Â¶ÅµµÄÀäÆøÏà¹Ø
+#region çªéœ²è¯ºçš„å†·æ°”ç›¸å…³
     public void ShowColdAir()
     {
         ColdAir.SetActive(true);
@@ -1804,16 +1805,16 @@ public class BossShootSystem : MonoBehaviour
         ColdAir.SetActive(false);
     }
 #endregion
-#region ÇĞ»»½×¶ÎÇåÆÁ
+#region åˆ‡æ¢é˜¶æ®µæ¸…å±
     public void ClearBullet()
     {
-        // ÕÒµ½ËùÓĞµĞÈË×Óµ¯
+        // æ‰¾åˆ°æ‰€æœ‰æ•Œäººå­å¼¹
         GameObject[] BossBullets = GameObject.FindGameObjectsWithTag("BossBullet");
         GameObject[] EnemyBullets = GameObject.FindGameObjectsWithTag("EnemyBullet");
         GameObject[] Enemy = GameObject.FindGameObjectsWithTag("Enemy");
         GameObject[] FrozenBall = GameObject.FindGameObjectsWithTag("FrozenBall");
         GameObject[] MiniBall = GameObject.FindGameObjectsWithTag("MiniBall");
-        // »ØÊÕËùÓĞµĞÈË×Óµ¯
+        // å›æ”¶æ‰€æœ‰æ•Œäººå­å¼¹
         foreach (GameObject bullet in BossBullets)
         {
             if (bullet != null)
@@ -1853,7 +1854,7 @@ public class BossShootSystem : MonoBehaviour
 #endregion    
 
     /// <summary>
-    /// »Ö¸´ËùÓĞÔÉÊ¯µÄÖØÁ¦
+    /// æ¢å¤æ‰€æœ‰é™¨çŸ³çš„é‡åŠ›
     /// </summary>
     public void ResumeAllStonesGravity()
     {
@@ -1875,7 +1876,7 @@ public class BossShootSystem : MonoBehaviour
     }
 
     /// <summary>
-    /// ¶³½á¸±¿¨ÌØĞ§
+    /// å†»ç»“å‰¯å¡ç‰¹æ•ˆ
     /// </summary>
     public void FreezeSpellCard()
     {
@@ -1903,17 +1904,17 @@ public class BossShootSystem : MonoBehaviour
     }
 
     /// <summary>
-    /// Í£Ö¹ËùÓĞÉä»÷Ğ­³Ì
+    /// åœæ­¢æ‰€æœ‰å°„å‡»åç¨‹
     /// </summary>
     public void StopAllShooting()
     {
-        // Í£Ö¹ËùÓĞĞ­³Ì
+        // åœæ­¢æ‰€æœ‰åç¨‹
         StopAllCoroutines();
         
-        // È¡ÏûËùÓĞ Invoke µ÷ÓÃ
+        // å–æ¶ˆæ‰€æœ‰ Invoke è°ƒç”¨
         CancelInvoke();
         
-        // Í£Ö¹ËùÓĞ×Óµ¯²¨´Î
+        // åœæ­¢æ‰€æœ‰å­å¼¹æ³¢æ¬¡
         StopAllBulletWaves();
     }
     

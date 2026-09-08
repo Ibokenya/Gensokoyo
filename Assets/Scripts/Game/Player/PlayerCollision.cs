@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Íæ¼ÒÅö×²´¥·¢Æ÷
+/// ç©å®¶ç¢°æ’è§¦å‘å™¨
 /// </summary>
 public class PlayerCollision : MonoBehaviour
 {
-    private Rigidbody2D rb2D;// ¸ÕÌå×é¼ş
-    private Vector2 moveDirection = Vector2.zero;// ÒÆ¶¯·½Ïò
-    private bool isDiagonalMove = false;// ÊÇ·ñÎªĞ±ÏòÒÆ¶¯
-    // ±ß½çÖµ
+    private Rigidbody2D rb2D;// åˆšä½“ç»„ä»¶
+    private Vector2 moveDirection = Vector2.zero;// ç§»åŠ¨æ–¹å‘
+    private bool isDiagonalMove = false;// æ˜¯å¦ä¸ºæ–œå‘ç§»åŠ¨
+    // è¾¹ç•Œå€¼
     private readonly float minX = -8.9f;
     private readonly float maxX = 2.95f;
     private readonly float minY = -4.7f;
@@ -18,72 +18,72 @@ public class PlayerCollision : MonoBehaviour
 
     void OnEnable()
     {
-        // »ñÈ¡¸ÕÌå×é¼ş
+        // è·å–åˆšä½“ç»„ä»¶
         rb2D = GetComponent<Rigidbody2D>();
         if (rb2D == null)
         {
-            Debug.LogError("Ã»ÓĞÕÒµ½Íæ¼ÒµÄ¸ÕÌå×é¼ş");
+            Debug.LogError("æ²¡æœ‰æ‰¾åˆ°ç©å®¶çš„åˆšä½“ç»„ä»¶");
         }
     }
 
-    // Update is called once per frame
-    void Update()
+    // å›ºå®š 50Hz ç‰©ç†å¸§é©±åŠ¨
+    void FixedUpdate()
     {
-        // È·±£rb2DÒÑ»ñÈ¡
+        // ç¡®ä¿rb2Då·²è·å–
         if (rb2D == null)
         {
             rb2D = GetComponent<Rigidbody2D>();
             if (rb2D == null)
             {
-                Debug.LogError("PlayerCollision: ÕÒ²»µ½¸ÕÌå×é¼ş£¡");
+                Debug.LogError("PlayerCollision: æ‰¾ä¸åˆ°åˆšä½“ç»„ä»¶ï¼");
                 return;
             }
         }
         
-        // ´¦Àí²»Í¬×´Ì¬
+        // å¤„ç†ä¸åŒçŠ¶æ€
         if(Global_GameManager.Instance.state == State.Gaming || 
            Global_GameManager.Instance.state == State.NoDead ||
            Global_GameManager.Instance.state == State.SpellCard)   
         {
-            // ´¦Àí±ß½ç¼ì²â
+            // å¤„ç†è¾¹ç•Œæ£€æµ‹
             HandleBounds();
         }
         else if(Global_GameManager.Instance.state == State.Reincarnation ||
                 Global_GameManager.Instance.state == State.Frozen)
         {
-            // ÖØÉú×´Ì¬»ò¶³½á×´Ì¬Ê±£¬ÉèÖÃËÙ¶ÈÎª0
+            // é‡ç”ŸçŠ¶æ€æˆ–å†»ç»“çŠ¶æ€æ—¶ï¼Œè®¾ç½®é€Ÿåº¦ä¸º0
             rb2D.velocity = Vector2.zero;
         }
     }
 
     /// <summary>
-    /// ¸üĞÂÒÆ¶¯×´Ì¬
+    /// æ›´æ–°ç§»åŠ¨çŠ¶æ€
     /// </summary>
-    /// <param name="leftPressed">×ó¼üÊÇ·ñ°´ÏÂ</param>
-    /// <param name="rightPressed">ÓÒ¼üÊÇ·ñ°´ÏÂ</param>
-    /// <param name="upPressed">ÉÏ¼üÊÇ·ñ°´ÏÂ</param>
-    /// <param name="downPressed">ÏÂ¼üÊÇ·ñ°´ÏÂ</param>
-    /// <param name="moveSpeed">ÒÆ¶¯ËÙ¶È</param>
+    /// <param name="leftPressed">å·¦é”®æ˜¯å¦æŒ‰ä¸‹</param>
+    /// <param name="rightPressed">å³é”®æ˜¯å¦æŒ‰ä¸‹</param>
+    /// <param name="upPressed">ä¸Šé”®æ˜¯å¦æŒ‰ä¸‹</param>
+    /// <param name="downPressed">ä¸‹é”®æ˜¯å¦æŒ‰ä¸‹</param>
+    /// <param name="moveSpeed">ç§»åŠ¨é€Ÿåº¦</param>
     public void UpdateMovement(bool leftPressed, bool rightPressed, bool upPressed, bool downPressed, float moveSpeed)
     {
-        // Ö»ÓĞÔÚÓÎÏ·×´Ì¬¡¢ÎŞµĞ×´Ì¬ºÍ·û¿¨×´Ì¬Ê±²Å´¦ÀíÒÆ¶¯
-        // ¶³½á×´Ì¬ÏÂ½ûÖ¹ÒÆ¶¯
+        // åªæœ‰åœ¨æ¸¸æˆçŠ¶æ€ã€æ— æ•ŒçŠ¶æ€å’Œç¬¦å¡çŠ¶æ€æ—¶æ‰å¤„ç†ç§»åŠ¨
+        // å†»ç»“çŠ¶æ€ä¸‹ç¦æ­¢ç§»åŠ¨
         if(Global_GameManager.Instance.state != State.Gaming && 
            Global_GameManager.Instance.state != State.NoDead &&
            Global_GameManager.Instance.state != State.SpellCard) return;
         
-        // È·±£rb2DÒÑ»ñÈ¡
+        // ç¡®ä¿rb2Då·²è·å–
         if (rb2D == null)
         {
             rb2D = GetComponent<Rigidbody2D>();
             if (rb2D == null)
             {
-                Debug.LogError("PlayerCollision: ÕÒ²»µ½¸ÕÌå×é¼ş£¬ÎŞ·¨Ó¦ÓÃÒÆ¶¯£¡");
+                Debug.LogError("PlayerCollision: æ‰¾ä¸åˆ°åˆšä½“ç»„ä»¶ï¼Œæ— æ³•åº”ç”¨ç§»åŠ¨ï¼");
                 return;
             }
         }
         
-        // ¼ÆËãË®Æ½ÒÆ¶¯·½Ïò
+        // è®¡ç®—æ°´å¹³ç§»åŠ¨æ–¹å‘
         float horizontal = 0f;
         if (leftPressed)
         {
@@ -94,7 +94,7 @@ public class PlayerCollision : MonoBehaviour
             horizontal = 1f;
         }
 
-        // ¼ÆËã´¹Ö±ÒÆ¶¯·½Ïò
+        // è®¡ç®—å‚ç›´ç§»åŠ¨æ–¹å‘
         float vertical = 0f;
         if (upPressed)
         {
@@ -105,61 +105,61 @@ public class PlayerCollision : MonoBehaviour
             vertical = -1f;
         }
 
-        // ¼ÆËãÒÆ¶¯·½ÏòÏòÁ¿
+        // è®¡ç®—ç§»åŠ¨æ–¹å‘å‘é‡
         moveDirection = new Vector2(horizontal, vertical);
 
-        // ¼ì²éÊÇ·ñÎªĞ±ÏòÒÆ¶¯
+        // æ£€æŸ¥æ˜¯å¦ä¸ºæ–œå‘ç§»åŠ¨
         isDiagonalMove = (horizontal != 0f && vertical != 0f);
 
-        // ¼ÆËãÒÆ¶¯ËÙ¶È
+        // è®¡ç®—ç§»åŠ¨é€Ÿåº¦
         float speed = moveSpeed;
         if (isDiagonalMove)
         {
-            // Ğ±ÏòÒÆ¶¯Ê±ËÙ¶È²¹Õı£¨³ËÒÔ¸ùºÅ2µÄµ¹Êı£©
+            // æ–œå‘ç§»åŠ¨æ—¶é€Ÿåº¦è¡¥æ­£ï¼ˆä¹˜ä»¥æ ¹å·2çš„å€’æ•°ï¼‰
             speed = moveSpeed * 0.7f;
         }
 
-        // Ó¦ÓÃÒÆ¶¯
+        // åº”ç”¨ç§»åŠ¨
         rb2D.velocity = moveDirection * speed * Global_GameManager.Instance.GetSpeedScale();
     }
 
     /// <summary>
-    /// Ç¿ĞĞÍ£Ö¹Íæ¼ÒÒÆ¶¯
-    /// ¼´Ê¹Íæ¼Ò»¹°´×Å·½Ïò¼ü£¬Ò²»áÁ¢¼´Í£Ö¹
+    /// å¼ºè¡Œåœæ­¢ç©å®¶ç§»åŠ¨
+    /// å³ä½¿ç©å®¶è¿˜æŒ‰ç€æ–¹å‘é”®ï¼Œä¹Ÿä¼šç«‹å³åœæ­¢
     /// </summary>
     public void StopMove()
     {
-        // È·±£rb2DÒÑ»ñÈ¡
+        // ç¡®ä¿rb2Då·²è·å–
         if (rb2D == null)
         {
             rb2D = GetComponent<Rigidbody2D>();
             if (rb2D == null)
             {
-                Debug.LogError("PlayerCollision: ÕÒ²»µ½¸ÕÌå×é¼ş£¬ÎŞ·¨Í£Ö¹ÒÆ¶¯£¡");
+                Debug.LogError("PlayerCollision: æ‰¾ä¸åˆ°åˆšä½“ç»„ä»¶ï¼Œæ— æ³•åœæ­¢ç§»åŠ¨ï¼");
                 return;
             }
         }
         
-        // ½«ËÙ¶ÈÉèÎª0£¬Í£Ö¹ÒÆ¶¯
+        // å°†é€Ÿåº¦è®¾ä¸º0ï¼Œåœæ­¢ç§»åŠ¨
         rb2D.velocity = Vector2.zero;
         moveDirection = Vector2.zero;
     }
 
     /// <summary>
-    /// ´¦Àí±ß½ç¼ì²â
+    /// å¤„ç†è¾¹ç•Œæ£€æµ‹
     /// </summary>
     private void HandleBounds()
     {
-        // Ö»ÓĞÔÚÓÎÏ·×´Ì¬ºÍÎŞµĞ×´Ì¬Ê±²Å´¦Àí±ß½ç¼ì²â
+        // åªæœ‰åœ¨æ¸¸æˆçŠ¶æ€å’Œæ— æ•ŒçŠ¶æ€æ—¶æ‰å¤„ç†è¾¹ç•Œæ£€æµ‹
         if(Global_GameManager.Instance.state != State.Gaming && 
            Global_GameManager.Instance.state != State.NoDead &&
            Global_GameManager.Instance.state != State.SpellCard &&
            Global_GameManager.Instance.state != State.Dialog) return;
         
-        // »ñÈ¡µ±Ç°Î»ÖÃ
+        // è·å–å½“å‰ä½ç½®
         Vector3 position = transform.position;
 
-        // ±ß½ç¼ì²â
+        // è¾¹ç•Œæ£€æµ‹
         if (position.x < minX)
         {
             position.x = minX;
@@ -177,7 +177,7 @@ public class PlayerCollision : MonoBehaviour
             position.y = maxY;
         }
 
-        // ¸üĞÂÎ»ÖÃ
+        // æ›´æ–°ä½ç½®
         transform.position = position;
     }
 }

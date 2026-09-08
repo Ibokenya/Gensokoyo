@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -7,16 +7,16 @@ using UnityEngine.UI;
 public class ButtonAnime : MonoBehaviour
 {
     private TMP_Text text;
-    [Header("ÑÕÉ«²î£¨Ñ¡ÖĞÊ±Ôö¼ÓÑÕÉ«²îÊıÖµ£©")]
+    [Header("é¢œè‰²å·®ï¼ˆé€‰ä¸­æ—¶å¢åŠ é¢œè‰²å·®æ•°å€¼ï¼‰")]
     [SerializeField]
     private Color color = new Color(0.2f, 0f, 0.4f,0f);
-    [Header("×ÖÌå²î£¨Ñ¡ÖĞÊ±Ôö¼Ó×ÖÌå²îÊıÖµ£©")]
+    [Header("å­—ä½“å·®ï¼ˆé€‰ä¸­æ—¶å¢åŠ å­—ä½“å·®æ•°å€¼ï¼‰")]
     [SerializeField]
     private int font=20;
     
-    [Header("ÒôĞ§ÉèÖÃ")]
-    [SerializeField] private AudioClip moveoffSound;   // È¡ÏûÑ¡ÖĞÒôĞ§
-    [SerializeField] private AudioClip clickSound;      // µã»÷ÒôĞ§
+    [Header("éŸ³æ•ˆè®¾ç½®")]
+    [SerializeField] private AudioClip moveoffSound;   // å–æ¶ˆé€‰ä¸­éŸ³æ•ˆ
+    [SerializeField] private AudioClip clickSound;      // ç‚¹å‡»éŸ³æ•ˆ
 
     // Start is called before the first frame update
     void Start()
@@ -31,9 +31,9 @@ public class ButtonAnime : MonoBehaviour
     }
 
     /// <summary>
-    /// µ±°´Å¥±»Ñ¡ÖĞÊ±
+    /// å½“æŒ‰é’®è¢«é€‰ä¸­æ—¶
     /// </summary>
-    /// <param name="button">½«±»Ñ¡ÖĞµÄ°´Å¥´«µİ½øÀ´</param>
+    /// <param name="button">å°†è¢«é€‰ä¸­çš„æŒ‰é’®ä¼ é€’è¿›æ¥</param>
     public void ButtonBeChoose(Button button)
     {
         text=button.GetComponentInChildren<TMP_Text>();
@@ -42,16 +42,16 @@ public class ButtonAnime : MonoBehaviour
     }
 
     /// <summary>
-    /// µ±°´Å¥±»È¡ÏûÑ¡ÖĞÊ±£¬±ØĞë»Ö¸´Ô­×´
+    /// å½“æŒ‰é’®è¢«å–æ¶ˆé€‰ä¸­æ—¶ï¼Œå¿…é¡»æ¢å¤åŸçŠ¶
     /// </summary>
-    /// <param name="button">±»ÒÆ³ıÑ¡ÖĞ×´Ì¬µÄ°´Å¥</param>
+    /// <param name="button">è¢«ç§»é™¤é€‰ä¸­çŠ¶æ€çš„æŒ‰é’®</param>
     public void ButtonBeMoveoff(Button button)
     {
         text = button.GetComponentInChildren<TMP_Text>();
         text.fontSize -= font;
         text.color -= color;
 
-        // ²¥·ÅÈ¡ÏûÑ¡ÖĞÒôĞ§
+        // æ’­æ”¾å–æ¶ˆé€‰ä¸­éŸ³æ•ˆ
         if (moveoffSound != null)
         {
             Global_AudioManager.Instance.PlaySFX(moveoffSound, false);
@@ -59,12 +59,12 @@ public class ButtonAnime : MonoBehaviour
     }
 
     /// <summary>
-    /// °´Å¥±»Ñ¡ÔñÊ±£¨°´ÏÂÁËZ¼ü£©£¬²»¹ıÕâÊ±ºòÒ²Ã»Ê²Ã´¶¯»­¿É×öµÄ£¬µ«£¬»¹ÓĞÒôĞ§²»ÊÇÂğ£¿
+    /// æŒ‰é’®è¢«é€‰æ‹©æ—¶ï¼ˆæŒ‰ä¸‹äº†Zé”®ï¼‰ï¼Œä¸è¿‡è¿™æ—¶å€™ä¹Ÿæ²¡ä»€ä¹ˆåŠ¨ç”»å¯åšçš„ï¼Œä½†ï¼Œè¿˜æœ‰éŸ³æ•ˆä¸æ˜¯å—ï¼Ÿ
     /// </summary>
-    /// <param name="button">±»°´ÏÂµÄ°´Å¥</param>
+    /// <param name="button">è¢«æŒ‰ä¸‹çš„æŒ‰é’®</param>
     public void ButtonBeClick(Button button)
     {
-        // ²¥·Åµã»÷ÒôĞ§
+        // æ’­æ”¾ç‚¹å‡»éŸ³æ•ˆ
         if (clickSound != null)
         {
             Global_AudioManager.Instance.PlaySFX(clickSound, false);

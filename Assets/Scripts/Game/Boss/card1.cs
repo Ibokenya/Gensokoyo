@@ -1,37 +1,37 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class card1 : MonoBehaviour
 {
-    [Header("Ò»·û²ÎÊı")]
-    public GameObject stoneBulletPrefab; // ÔÉÊ¯×Óµ¯Ô¤ÖÆ¼ş
-    public GameObject frozenIceBulletPrefab; // ±ù¶³×Óµ¯Ô¤ÖÆ¼ş
-    public GameObject normalIceBulletPrefab; // ÆÕÍ¨±ù×Óµ¯Ô¤ÖÆ¼ş£¨ÓÃÓÚ±ù¿éÆÆÁÑ£©
-    public GameObject randomIcePickBulletPrefab; // Ëæ»úÉä»÷×Óµ¯Ô¤ÖÆ¼ş
-    public BossShootSystem bossShootSystem; // Éä»÷ÏµÍ³ÒıÓÃ
-    public GameObject boss; // Boss¶ÔÏóÒıÓÃ
+    [Header("ä¸€ç¬¦å‚æ•°")]
+    public GameObject stoneBulletPrefab; // é™¨çŸ³å­å¼¹é¢„åˆ¶ä»¶
+    public GameObject frozenIceBulletPrefab; // å†°å†»å­å¼¹é¢„åˆ¶ä»¶
+    public GameObject normalIceBulletPrefab; // æ™®é€šå†°å­å¼¹é¢„åˆ¶ä»¶ï¼ˆç”¨äºå†°å—ç ´è£‚ï¼‰
+    public GameObject randomIcePickBulletPrefab; // éšæœºå°„å‡»å­å¼¹é¢„åˆ¶ä»¶
+    public BossShootSystem bossShootSystem; // å°„å‡»ç³»ç»Ÿå¼•ç”¨
+    public GameObject boss; // Bosså¯¹è±¡å¼•ç”¨
 
-    [Header("ÔÉÊ¯±ù¶³Ğı×ª¹¥»÷²ÎÊı")]
-    public int stoneCount = 5; // ÔÉÊ¯ÊıÁ¿
-    public float rotationSpeed = 30f; // Ğı×ªËÙ¶È
+    [Header("é™¨çŸ³å†°å†»æ—‹è½¬æ”»å‡»å‚æ•°")]
+    public int stoneCount = 5; // é™¨çŸ³æ•°é‡
+    public float rotationSpeed = 30f; // æ—‹è½¬é€Ÿåº¦
 
-    [Header("Ëæ»úÉä»÷²ÎÊı")]
-    public float bulletSpeed = 5f; // ×Óµ¯ËÙ¶È
-    public float shootInterval = 2f; // Éä»÷¼ä¸ô
-    public int bulletCount = 5; // Ã¿ÂÖÉä»÷×Óµ¯Êı
+    [Header("éšæœºå°„å‡»å‚æ•°")]
+    public float bulletSpeed = 5f; // å­å¼¹é€Ÿåº¦
+    public float shootInterval = 2f; // å°„å‡»é—´éš”
+    public int bulletCount = 5; // æ¯è½®å°„å‡»å­å¼¹æ•°
 
-    [Header("½Å±¾ÒıÓÃ")]
-    public BossUI bossUI; // BossUI½Å±¾ÒıÓÃ
-    public BossBase bossBase; // Boss»ù´¡ÊôĞÔÒıÓÃ
-    public UIManager uiManager; // UIManager½Å±¾ÒıÓÃ
+    [Header("è„šæœ¬å¼•ç”¨")]
+    public BossUI bossUI; // BossUIè„šæœ¬å¼•ç”¨
+    public BossBase bossBase; // BossåŸºç¡€å±æ€§å¼•ç”¨
+    public UIManager uiManager; // UIManagerè„šæœ¬å¼•ç”¨
 
-    [Header("·û¿¨ÊÕÈ¡½±Àø")]
-    public List<ItemDropConfig> card1ClearRewards; // ·û¿¨1ÊÕÈ¡³É¹¦Ê±µÄµôÂäÎïÅäÖÃ
+    [Header("ç¬¦å¡æ”¶å–å¥–åŠ±")]
+    public List<ItemDropConfig> card1ClearRewards; // ç¬¦å¡1æ”¶å–æˆåŠŸæ—¶çš„æ‰è½ç‰©é…ç½®
 
     private void OnEnable()
     {
-        // ³õÊ¼»¯µ¯Ä»³Ø
+        // åˆå§‹åŒ–å¼¹å¹•æ± 
         if (stoneBulletPrefab != null)
         {
             Global_ObjectPool.Instance.InitPool(stoneBulletPrefab, 20);
@@ -48,25 +48,25 @@ public class card1 : MonoBehaviour
         {
             Global_ObjectPool.Instance.InitPool(randomIcePickBulletPrefab, 100);
         }
-        // ÏÔÊ¾±ù´ÌµØĞÎ
+        // æ˜¾ç¤ºå†°åˆºåœ°å½¢
         bossShootSystem.ShowTerrain();
-        // ¿ªÊ¼¹¥»÷
+        // å¼€å§‹æ”»å‡»
         StartAttacks();
     }
 
     private void OnDisable()
     {
-        // Í£Ö¹ËùÓĞĞ­³Ì
+        // åœæ­¢æ‰€æœ‰åç¨‹
         StopAllCoroutines();
-        // È¡ÏûËùÓĞ Invoke µ÷ÓÃ
+        // å–æ¶ˆæ‰€æœ‰ Invoke è°ƒç”¨
         CancelInvoke();
-        // »Ö¸´ËùÓĞÔÉÊ¯µÄÖØÁ¦
+        // æ¢å¤æ‰€æœ‰é™¨çŸ³çš„é‡åŠ›
         if (bossShootSystem != null)
         {
             bossShootSystem.ResumeAllStonesGravity();
         }
 
-        // Í£Ö¹ BossShootSystem ÖĞµÄËùÓĞÉä»÷Ğ­³Ì
+        // åœæ­¢ BossShootSystem ä¸­çš„æ‰€æœ‰å°„å‡»åç¨‹
         if (bossShootSystem != null)
         {
             bossShootSystem.StopAllShooting();
@@ -75,7 +75,7 @@ public class card1 : MonoBehaviour
 
     private void StartAttacks()
     {
-        // Æô¶¯bossÒÆ¶¯Ğ­³Ì
+        // å¯åŠ¨bossç§»åŠ¨åç¨‹
         StartCoroutine(MoveBossToCenter());
     }
 
@@ -88,35 +88,35 @@ public class card1 : MonoBehaviour
             float duration = 2f;
             float elapsedTime = 0f;
 
-            // Æ½»¬ÒÆ¶¯bossµ½ÖĞĞÄÎ»ÖÃ
+            // å¹³æ»‘ç§»åŠ¨bossåˆ°ä¸­å¿ƒä½ç½®
             while (elapsedTime < duration)
             {
                 float t = elapsedTime / duration;
-                // Ê¹ÓÃÆ½»¬µÄ»º¶¯º¯Êı
+                // ä½¿ç”¨å¹³æ»‘çš„ç¼“åŠ¨å‡½æ•°
                 t = Mathf.SmoothStep(0f, 1f, t);
                 boss.transform.position = Vector3.Lerp(startPosition, targetPosition, t);
                 elapsedTime += Time.deltaTime;
                 yield return null;
             }
 
-            // È·±£bossµ½´ï¾«È·Î»ÖÃ
+            // ç¡®ä¿bossåˆ°è¾¾ç²¾ç¡®ä½ç½®
             boss.transform.position = targetPosition;
         }
 
-        // ÒÆ¶¯Íê³Éºó¿ªÊ¼¹¥»÷
+        // ç§»åŠ¨å®Œæˆåå¼€å§‹æ”»å‡»
         if (bossShootSystem != null)
         {
-            // Æô¶¯ÔÉÊ¯±ù¶³Ğı×ª¹¥»÷
+            // å¯åŠ¨é™¨çŸ³å†°å†»æ—‹è½¬æ”»å‡»
             bossShootSystem.StoneFrozenAttack(stoneBulletPrefab, frozenIceBulletPrefab, normalIceBulletPrefab, stoneCount, rotationSpeed);
 
-            // Æô¶¯Ëæ»úÉä»÷
+            // å¯åŠ¨éšæœºå°„å‡»
             bossShootSystem.randomIcePick(randomIcePickBulletPrefab, bulletSpeed, shootInterval, bulletCount);
         }
     }
 
     /// <summary>
-    /// ¼ì²ébossÊÇ·ñÒÑ¾­ËÀÍö»ò´¦ÓÚËøÑª×´Ì¬
-    /// Èç¹ûboss´¦ÓÚËøÑª×´Ì¬£¬ËµÃ÷Íæ¼Ò³É¹¦ÌÖ·¥µ±Ç°½×¶Î
+    /// æ£€æŸ¥bossæ˜¯å¦å·²ç»æ­»äº¡æˆ–å¤„äºé”è¡€çŠ¶æ€
+    /// å¦‚æœbosså¤„äºé”è¡€çŠ¶æ€ï¼Œè¯´æ˜ç©å®¶æˆåŠŸè®¨ä¼å½“å‰é˜¶æ®µ
     /// </summary>
     public void CheckOver()
     {
@@ -125,30 +125,30 @@ public class card1 : MonoBehaviour
             bool isDefeated = bossBase.CheckOver();
             if (isDefeated)
             {
-                Debug.Log("card1½×¶Î£ºÍæ¼Ò³É¹¦ÌÖ·¥Boss£¡");
-                // ±ê¼ÇÎª»ñÈ¡ÁË·û¿¨1
+                Debug.Log("card1é˜¶æ®µï¼šç©å®¶æˆåŠŸè®¨ä¼Bossï¼");
+                // æ ‡è®°ä¸ºè·å–äº†ç¬¦å¡1
                 uiManager.isCard1Get = true;
-                // ·¢·Å·û¿¨ÊÕÈ¡½±Àø
+                // å‘æ”¾ç¬¦å¡æ”¶å–å¥–åŠ±
                 SpawnClearRewards();
             }
             else
             {
-                Debug.Log("card1½×¶Î£ºBossÈÔÈ»´æ»î£¬Ê±¼äµ½");
-                // ±ê¼ÇÎªÎ´»ñÈ¡·û¿¨1
+                Debug.Log("card1é˜¶æ®µï¼šBossä»ç„¶å­˜æ´»ï¼Œæ—¶é—´åˆ°");
+                // æ ‡è®°ä¸ºæœªè·å–ç¬¦å¡1
                 uiManager.isCard1Get = false;
             }
         }
     }
 
     /// <summary>
-    /// Éú³É·û¿¨ÊÕÈ¡½±Àø
+    /// ç”Ÿæˆç¬¦å¡æ”¶å–å¥–åŠ±
     /// </summary>
     private void SpawnClearRewards()
     {
         if (boss != null && card1ClearRewards != null && card1ClearRewards.Count > 0)
         {
             CreateItem.Instance.SpawnItems(boss.transform.position, card1ClearRewards);
-            Debug.Log("card1·û¿¨ÊÕÈ¡³É¹¦£¬ÒÑ·¢·Å½±Àø");
+            Debug.Log("card1ç¬¦å¡æ”¶å–æˆåŠŸï¼Œå·²å‘æ”¾å¥–åŠ±");
         }
     }
 }

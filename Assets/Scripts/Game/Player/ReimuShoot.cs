@@ -1,48 +1,48 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ReplaySystem;
 
 /// <summary>
-/// ÕâÀïÊÇÁéÃÎµÄ×Ó»úÉä»÷½Å±¾
-/// ×Ó»úÖÖ°üº¬·âÄ§ÕëÓë×·×ÙÒõÑôÓñ
-/// Òò´ËĞèÒª³õÊ¼»¯Á½ÖÖµ¯Ä»³Ø
+/// è¿™é‡Œæ˜¯çµæ¢¦çš„å­æœºå°„å‡»è„šæœ¬
+/// å­æœºç§åŒ…å«å°é­”é’ˆä¸è¿½è¸ªé˜´é˜³ç‰
+/// å› æ­¤éœ€è¦åˆå§‹åŒ–ä¸¤ç§å¼¹å¹•æ± 
 /// </summary>
 public class ReimuShoot : MonoBehaviour
 {
-    public GameObject NeedlePrefab;// ·âÄ§ÕëÔ¤ÖÆÌå
-    public GameObject TrackedPrefab;// ×·×ÙÒõÑôÓñÔ¤ÖÆÌå
+    public GameObject NeedlePrefab;// å°é­”é’ˆé¢„åˆ¶ä½“
+    public GameObject TrackedPrefab;// è¿½è¸ªé˜´é˜³ç‰é¢„åˆ¶ä½“
 
-    [Header("Éä»÷ÅäÖÃ")]
-    [Tooltip("·âÄ§ÕëÉä»÷¼ä¸ô£¨Ãë£©")]
-    public float NeedleInterval = 0.12f; // ·âÄ§ÕëÉä»÷¼ä¸ô
-    [Tooltip("ÒõÑôÓñÉä»÷¼ä¸ô£¨Ãë£©")]
-    public float TrackedInterval = 0.12f; // ×·×ÙÒõÑôÓñÉä»÷¼ä¸ô
+    [Header("å°„å‡»é…ç½®")]
+    [Tooltip("å°é­”é’ˆå°„å‡»é—´éš”ï¼ˆç§’ï¼‰")]
+    public float NeedleInterval = 0.12f; // å°é­”é’ˆå°„å‡»é—´éš”
+    [Tooltip("é˜´é˜³ç‰å°„å‡»é—´éš”ï¼ˆç§’ï¼‰")]
+    public float TrackedInterval = 0.12f; // è¿½è¸ªé˜´é˜³ç‰å°„å‡»é—´éš”
 
-    private float shootTimer = 0f; // Éä»÷ÀäÈ´¼ÆÊ±Æ÷
+    private float shootTimer = 0f; // å°„å‡»å†·å´è®¡æ—¶å™¨
 
-    public GunAnime GunAnime;// ×Ó»úÎäÆ÷¶¯»­½Å±¾
+    public GunAnime GunAnime;// å­æœºæ­¦å™¨åŠ¨ç”»è„šæœ¬
 
     void OnEnable()
     {
-        // ³õÊ¼»¯·âÄ§Õëµ¯Ä»³Ø
+        // åˆå§‹åŒ–å°é­”é’ˆå¼¹å¹•æ± 
         Global_ObjectPool.Instance.InitPool(NeedlePrefab,30);
-        // ³õÊ¼»¯×·×ÙÒõÑôÓñµ¯Ä»³Ø
+        // åˆå§‹åŒ–è¿½è¸ªé˜´é˜³ç‰å¼¹å¹•æ± 
         Global_ObjectPool.Instance.InitPool(TrackedPrefab,0);
     }
 
-    // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         if(Global_GameManager.Instance != null && 
         Global_GameManager.Instance.state != State.Gaming && 
         Global_GameManager.Instance.state != State.NoDead) return;
-        // ¼ÆÊ±Æ÷³ÖĞøÀÛ¼Ó
-        shootTimer += Time.deltaTime;
+        // è®¡æ—¶å™¨æŒç»­ç´¯åŠ 
+        shootTimer += SimClock.FixedTickDt;
         CheckShift();
     }
 
     /// <summary>
-    /// ¼ì²éÊÇ·ñ°´ÏÂÁËShift¼ü
+    /// æ£€æŸ¥æ˜¯å¦æŒ‰ä¸‹äº†Shifté”®
     /// </summary>
     private void CheckShift()
     {
@@ -58,22 +58,22 @@ public class ReimuShoot : MonoBehaviour
 
     private void ShootNeedle()
     {
-        if(Input.GetKey(KeyCode.Z) && shootTimer >= 
+        if(ReplayManager.Input.GetKey(LogicalKey.Fire) && shootTimer >= 
         (NeedleInterval/Global_GameManager.Instance.GetSpeedScale()))
         {
             Global_ObjectPool.Instance.GetObject(NeedlePrefab, transform.position, NeedlePrefab.transform.rotation);
-            // ÖØÖÃ¼ÆÊ±Æ÷
+            // é‡ç½®è®¡æ—¶å™¨
             shootTimer = 0f;
         }
     }
 
     private void ShootTracked()
     {
-        if(Input.GetKey(KeyCode.Z) && shootTimer >= 
+        if(ReplayManager.Input.GetKey(LogicalKey.Fire) && shootTimer >= 
         (TrackedInterval/Global_GameManager.Instance.GetSpeedScale()))
         {
             Global_ObjectPool.Instance.GetObject(TrackedPrefab, transform.position, TrackedPrefab.transform.rotation);
-            // ÖØÖÃ¼ÆÊ±Æ÷
+            // é‡ç½®è®¡æ—¶å™¨
             shootTimer = 0f;
         }
     }

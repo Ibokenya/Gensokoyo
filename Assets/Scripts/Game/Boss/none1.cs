@@ -1,31 +1,31 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class none1 : MonoBehaviour
 {
-    [Header("Ò»·Ç²ÎÊı")]
-    public float shoot_interval1 = 2f; // Éä»÷¼ä¸ô1
-    public float shoot_interval2 = 1f; // Éä»÷¼ä¸ô2
-    public GameObject fanBulletPrefab; // ÉÈĞÎÉä»÷×Óµ¯Ô¤ÖÆ¼ş£¨±ùÓñ£©
-    public GameObject iceBulletPrefab1; // ±ùµãÉä»÷Ô¤ÖÆ¼ş1£¨±ù´Ì£©
-    public GameObject iceBulletPrefab2; // ±ùµãÉä»÷Ô¤ÖÆ¼ş2£¨±ùÖé£©
-    public BossShootSystem bossShootSystem; // Éä»÷ÏµÍ³ÒıÓÃ
+    [Header("ä¸€éå‚æ•°")]
+    public float shoot_interval1 = 2f; // å°„å‡»é—´éš”1
+    public float shoot_interval2 = 1f; // å°„å‡»é—´éš”2
+    public GameObject fanBulletPrefab; // æ‰‡å½¢å°„å‡»å­å¼¹é¢„åˆ¶ä»¶ï¼ˆå†°ç‰ï¼‰
+    public GameObject iceBulletPrefab1; // å†°ç‚¹å°„å‡»é¢„åˆ¶ä»¶1ï¼ˆå†°åˆºï¼‰
+    public GameObject iceBulletPrefab2; // å†°ç‚¹å°„å‡»é¢„åˆ¶ä»¶2ï¼ˆå†°ç ï¼‰
+    public BossShootSystem bossShootSystem; // å°„å‡»ç³»ç»Ÿå¼•ç”¨
     
-    [Header("×Óµ¯ËÙ¶È")]
-    public float icePickSpeed = 5f; // IcePick ËÙ¶È
-    public float iceJadeSpeed = 6f; // IceJade ËÙ¶È
-    public float icePearlSpeed = 4f; // IcePearl ËÙ¶È
-    public float rotationSpeed = 30f; // Ğı×ªËÙ¶È
+    [Header("å­å¼¹é€Ÿåº¦")]
+    public float icePickSpeed = 5f; // IcePick é€Ÿåº¦
+    public float iceJadeSpeed = 6f; // IceJade é€Ÿåº¦
+    public float icePearlSpeed = 4f; // IcePearl é€Ÿåº¦
+    public float rotationSpeed = 30f; // æ—‹è½¬é€Ÿåº¦
 
-    [Header("½Å±¾ÒıÓÃ")]
-    public BossUI bossUI; // BossUI½Å±¾ÒıÓÃ
-    public BossBase bossBase; // Boss»ù´¡ÊôĞÔÒıÓÃ
+    [Header("è„šæœ¬å¼•ç”¨")]
+    public BossUI bossUI; // BossUIè„šæœ¬å¼•ç”¨
+    public BossBase bossBase; // BossåŸºç¡€å±æ€§å¼•ç”¨
     
        
     private void OnEnable()
     {
-        // ³õÊ¼»¯µ¯Ä»³Ø
+        // åˆå§‹åŒ–å¼¹å¹•æ± 
         if (fanBulletPrefab != null)
         {
             Global_ObjectPool.Instance.InitPool(fanBulletPrefab, 30);
@@ -38,23 +38,23 @@ public class none1 : MonoBehaviour
         {
             Global_ObjectPool.Instance.InitPool(iceBulletPrefab2, 30);
         }
-        // ¿ªÊ¼Éä»÷
+        // å¼€å§‹å°„å‡»
         StartShooting();
     }
     private void OnDisable()
     {
-        // Í£Ö¹ËùÓĞĞ­³Ì
+        // åœæ­¢æ‰€æœ‰åç¨‹
         StopAllCoroutines();
-        // È¡ÏûËùÓĞ Invoke µ÷ÓÃ
+        // å–æ¶ˆæ‰€æœ‰ Invoke è°ƒç”¨
         CancelInvoke();
         
-        // Í£Ö¹ BossShootSystem ÖĞµÄËùÓĞÉä»÷Ğ­³Ì
+        // åœæ­¢ BossShootSystem ä¸­çš„æ‰€æœ‰å°„å‡»åç¨‹
         if (bossShootSystem != null)
         {
             bossShootSystem.StopAllShooting();
             bossShootSystem.ClearBullet();
         }
-        // È¡Ïû±ùµãÉä»÷
+        // å–æ¶ˆå†°ç‚¹å°„å‡»
         bossShootSystem.CancelIcePoint();
     }
     
@@ -62,10 +62,10 @@ public class none1 : MonoBehaviour
     {
         if (bossShootSystem != null)
         {
-            // Æô¶¯¶¨Î»ÉÈĞÎÉä»÷
+            // å¯åŠ¨å®šä½æ‰‡å½¢å°„å‡»
             bossShootSystem.Pos_FanShaped_Shoot(fanBulletPrefab, iceJadeSpeed);
             
-            // Æô¶¯±ùµãÉä»÷£¨´«µİ²ÎÊı£©
+            // å¯åŠ¨å†°ç‚¹å°„å‡»ï¼ˆä¼ é€’å‚æ•°ï¼‰
             bossShootSystem.IcePointAttack();
 
             Invoke(nameof(IcePointAttack), 2f);
@@ -79,8 +79,8 @@ public class none1 : MonoBehaviour
     }
     
     /// <summary>
-    /// ¼ì²ébossÊÇ·ñÒÑ¾­ËÀÍö»ò´¦ÓÚËøÑª×´Ì¬
-    /// Èç¹ûboss´¦ÓÚËøÑª×´Ì¬£¬ËµÃ÷Íæ¼Ò³É¹¦ÌÖ·¥µ±Ç°½×¶Î
+    /// æ£€æŸ¥bossæ˜¯å¦å·²ç»æ­»äº¡æˆ–å¤„äºé”è¡€çŠ¶æ€
+    /// å¦‚æœbosså¤„äºé”è¡€çŠ¶æ€ï¼Œè¯´æ˜ç©å®¶æˆåŠŸè®¨ä¼å½“å‰é˜¶æ®µ
     /// </summary>
     public void CheckOver()
     {
@@ -89,13 +89,13 @@ public class none1 : MonoBehaviour
             bool isDefeated = bossBase.CheckOver();
             if (isDefeated)
             {
-                Debug.Log("none1½×¶Î£ºÍæ¼Ò³É¹¦ÌÖ·¥Boss£¡");
-                // ¿ÉÒÔÔÚÕâÀïÌí¼ÓÌÖ·¥³É¹¦µÄĞ§¹û»ò½±ÀøÂß¼­
+                Debug.Log("none1é˜¶æ®µï¼šç©å®¶æˆåŠŸè®¨ä¼Bossï¼");
+                // å¯ä»¥åœ¨è¿™é‡Œæ·»åŠ è®¨ä¼æˆåŠŸçš„æ•ˆæœæˆ–å¥–åŠ±é€»è¾‘
             }
             else
             {
-                Debug.Log("none1½×¶Î£ºBossÈÔÈ»´æ»î£¬Ê±¼äµ½");
-                // ¿ÉÒÔÔÚÕâÀïÌí¼ÓÊ±¼äµ½µÄĞ§¹ûÂß¼­
+                Debug.Log("none1é˜¶æ®µï¼šBossä»ç„¶å­˜æ´»ï¼Œæ—¶é—´åˆ°");
+                // å¯ä»¥åœ¨è¿™é‡Œæ·»åŠ æ—¶é—´åˆ°çš„æ•ˆæœé€»è¾‘
             }
         }
     }

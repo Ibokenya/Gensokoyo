@@ -1,107 +1,107 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 public enum Shoot_Mode
 {
-    diverge,// ·¢É¢Ô²
-    random,// Ëæ»ú
-    sprial,// ÂİĞı
-    none// ÎŞÉä»÷
+    diverge,// å‘æ•£åœ†
+    random,// éšæœº
+    sprial,// èºæ—‹
+    none// æ— å°„å‡»
 }
 
 [System.Serializable]
 public class TrackBulletConfig
 {
-    [Header("ÒÆ¶¯ËÙ¶È")]
+    [Header("ç§»åŠ¨é€Ÿåº¦")]
     public float Speed = 5f;
-    [Header("Ç°Ò¡Ê±¼ä")]
+    [Header("å‰æ‘‡æ—¶é—´")]
     public float WindUp = 0f;
 }
 
 [System.Serializable]
 public class TailBulletConfig
 {
-    [Header("ÊÇ·ñ¿ÉÒÔ×ÔÎÒ¸´ÖÆ")]
+    [Header("æ˜¯å¦å¯ä»¥è‡ªæˆ‘å¤åˆ¶")]
     public bool CanClone = false;
-    [Header("ÒÆ¶¯ËÙ¶È")]
+    [Header("ç§»åŠ¨é€Ÿåº¦")]
     public float Speed = 5f;
-    [Header("¸´ÖÆ¼ä¸ô")]
+    [Header("å¤åˆ¶é—´éš”")]
     public float CloneSpeed = 1f;
-    [Header("Ë¥¼õÏµÊı")]
+    [Header("è¡°å‡ç³»æ•°")]
     public float attenuation = 0.5f;
-    [Header("×îĞ¡ËÙ¶È")]
+    [Header("æœ€å°é€Ÿåº¦")]
     public float MinSpeed = 3f;
 }
 
 [System.Serializable]
 public class RemainBulletConfig
 {
-    [Header("Éú´æÊ±¼ä")]
+    [Header("ç”Ÿå­˜æ—¶é—´")]
     public float LifeTime = 5f;
-    [Header("ÒÆ¶¯ËÙ¶È")]
+    [Header("ç§»åŠ¨é€Ÿåº¦")]
     public float Speed = 0f;
-    [Header("Ç°Ò¡Ê±¼ä")]
+    [Header("å‰æ‘‡æ—¶é—´")]
     public float WindUp = 0f;
 }
 
 [System.Serializable]
 public class NormalBulletConfig
 {
-    [Header("ÒÆ¶¯ËÙ¶È")]
+    [Header("ç§»åŠ¨é€Ÿåº¦")]
     public float Speed = 5f;
 }
 
 [System.Serializable]
 public class InvisibleBulletConfig
 {
-    [Header("ÊÇ·ñ¿É¼û")]
+    [Header("æ˜¯å¦å¯è§")]
     public bool isVisible = true;
-    [Header("ÒÆ¶¯ËÙ¶È")]
+    [Header("ç§»åŠ¨é€Ÿåº¦")]
     public float Speed = 5f;
-    [Header("Íæ¼Ò")]
+    [Header("ç©å®¶")]
     public GameObject player;
 
-    [Header("¿¿½üÏÔĞÎ¾àÀë")]
+    [Header("é è¿‘æ˜¾å½¢è·ç¦»")]
     public float ShowDistance = 10f;
-    [Header("µ­ÈëÊ±¼ä")]
+    [Header("æ·¡å…¥æ—¶é—´")]
     public float ShowTime = 1f;
 }
 
 [System.Serializable]
 public class ShootMode
 {
-    [Header("³ÖĞøÊ±¼ä")]
+    [Header("æŒç»­æ—¶é—´")]
     public float duration = 5f;
     
-    [Header("Éä»÷Ä£Ê½")]
+    [Header("å°„å‡»æ¨¡å¼")]
     public Shoot_Mode shootMode = Shoot_Mode.none;
     
-    [Header("Éä»÷¼ä¸ô")]
+    [Header("å°„å‡»é—´éš”")]
     public float shootInterval = 1f;
     
-    [Header("×Óµ¯ÊıÁ¿")]
+    [Header("å­å¼¹æ•°é‡")]
     public int bulletCount = 1;
     
-    [Header("×Óµ¯Ô¤ÖÆÌå")]
+    [Header("å­å¼¹é¢„åˆ¶ä½“")]
     public GameObject bulletPrefab;
     
-    [Header("Éä»÷½Ç¶È")]
+    [Header("å°„å‡»è§’åº¦")]
     public float shootAngle = 0f;
     
-    [Header("½Ç¶È·¶Î§")]
+    [Header("è§’åº¦èŒƒå›´")]
     public float angleRange = 360f;
     
-    [Header("×·×Ù×Óµ¯²ÎÊı")]
+    [Header("è¿½è¸ªå­å¼¹å‚æ•°")]
     public TrackBulletConfig trackBulletConfig = new TrackBulletConfig();
     
-    [Header("ÍÏÎ²×Óµ¯²ÎÊı")]
+    [Header("æ‹–å°¾å­å¼¹å‚æ•°")]
     public TailBulletConfig tailBulletConfig = new TailBulletConfig();
     
-    [Header("ÆÕÍ¨×Óµ¯²ÎÊı")]
+    [Header("æ™®é€šå­å¼¹å‚æ•°")]
     public NormalBulletConfig normalBulletConfig = new NormalBulletConfig();
     
-    [Header("²»¿É¼û×Óµ¯²ÎÊı")]
+    [Header("ä¸å¯è§å­å¼¹å‚æ•°")]
     public InvisibleBulletConfig invisibleBulletConfig = new InvisibleBulletConfig();
     
-    [Header("ÖÍÁô×Óµ¯²ÎÊı")]
+    [Header("æ»ç•™å­å¼¹å‚æ•°")]
     public RemainBulletConfig remainBulletConfig = new RemainBulletConfig();
 }

@@ -1,20 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ReplaySystem;
 
 /// <summary>
-/// ÆÕÍ¨×Óµ¯Normal
-/// ¿ÉÒÔÍ¨¹ıÉèÖÃÒÆËÙµÄ·½Ê½ÊµÏÖ¿ìÂıĞ§¹û
-/// Ğ¡Óñ£¬³Ö¹úÌì£¬Ğ¡Ã×µ¯£¬´óÃ×µ¯
+/// æ™®é€šå­å¼¹Normal
+/// å¯ä»¥é€šè¿‡è®¾ç½®ç§»é€Ÿçš„æ–¹å¼å®ç°å¿«æ…¢æ•ˆæœ
+/// å°ç‰ï¼ŒæŒå›½å¤©ï¼Œå°ç±³å¼¹ï¼Œå¤§ç±³å¼¹
 /// </summary>
 public class Normal : MonoBehaviour
 {
     public float Speed = 5f;
-    public List<Sprite> spriteVariants = new List<Sprite>(); // ×Óµ¯ÑÕÉ«±äÌå
+    public List<Sprite> spriteVariants = new List<Sprite>(); // å­å¼¹é¢œè‰²å˜ä½“
     private Rigidbody2D rb2D;
     public SpriteRenderer spriteRenderer;
     
-    // ±ß½ç·¶Î§
+    // è¾¹ç•ŒèŒƒå›´
     private readonly float minX = -11f;
     private readonly float maxX = 5f;
     private readonly float minY = -7.5f;
@@ -22,36 +23,36 @@ public class Normal : MonoBehaviour
     
     void Start()
     {
-        // »ñÈ¡¸ÕÌå×é¼ş
+        // è·å–åˆšä½“ç»„ä»¶
         rb2D = GetComponent<Rigidbody2D>();
-        // »ñÈ¡¾«ÁéäÖÈ¾Æ÷
+        // è·å–ç²¾çµæ¸²æŸ“å™¨
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
     
     void OnEnable()
     {
-        // È·±£¸ÕÌå×é¼ş´æÔÚ
+        // ç¡®ä¿åˆšä½“ç»„ä»¶å­˜åœ¨
         if (rb2D == null)
         {
             rb2D = GetComponent<Rigidbody2D>();
         }
         
-        // È·±£¾«ÁéäÖÈ¾Æ÷´æÔÚ
+        // ç¡®ä¿ç²¾çµæ¸²æŸ“å™¨å­˜åœ¨
         if (spriteRenderer == null)
         {
             spriteRenderer = GetComponent<SpriteRenderer>();
         }
         
-        // ÉèÖÃ¸ÕÌåËÙ¶È
+        // è®¾ç½®åˆšä½“é€Ÿåº¦
         if (rb2D != null)
         {
             Vector2 direction = transform.up;
             rb2D.velocity = direction * Speed;
-            // È·±£¸ÕÌå²»ÊÇÔË¶¯Ñ§µÄ
+            // ç¡®ä¿åˆšä½“ä¸æ˜¯è¿åŠ¨å­¦çš„
             rb2D.isKinematic = false;
         }
         
-        // Ëæ»úÑ¡ÔñÒ»¸ösprite±äÌå
+        // éšæœºé€‰æ‹©ä¸€ä¸ªspriteå˜ä½“
         if (spriteRenderer != null && spriteVariants.Count > 0)
         {
             int randomIndex = Random.Range(0, spriteVariants.Count);
@@ -59,14 +60,14 @@ public class Normal : MonoBehaviour
         }
     }
     
-    void Update()
+    void FixedUpdate()
     {
-        // ±ß½ç¼ì²â
+        // è¾¹ç•Œæ£€æµ‹
         CheckBounds();
     }
     
     /// <summary>
-    /// ¼ì²é±ß½ç£¬³¬³ö±ß½çÔò»ØÊÕ
+    /// æ£€æŸ¥è¾¹ç•Œï¼Œè¶…å‡ºè¾¹ç•Œåˆ™å›æ”¶
     /// </summary>
     private void CheckBounds()
     {

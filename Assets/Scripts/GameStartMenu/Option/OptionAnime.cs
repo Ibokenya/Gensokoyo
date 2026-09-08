@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class OptionAnime : MonoBehaviour
 {
-    [Header("´æ´¢ÉèÖÃ½çÃæÍ¼Æ¬µÄÁÁ°µĞÎÌ¬")]
+    [Header("å­˜å‚¨è®¾ç½®ç•Œé¢å›¾ç‰‡çš„äº®æš—å½¢æ€")]
     public List<Image> OptionButtons;
     public List<Sprite> DarkImages;
     public List<Sprite> LightImages;
@@ -21,35 +21,35 @@ public class OptionAnime : MonoBehaviour
     private int Index = 0;
     private int LastIndex = 0;
 
-    private int Hundred;// °ÙÎ»
-    private int ten;// Ê®Î»
-    private int one;// ¸öÎ»
-    private float bgmVolume;// ÒôÀÖÒôÁ¿
-    private float sfxVolume;// ÒôĞ§ÒôÁ¿
+    private int Hundred;// ç™¾ä½
+    private int ten;// åä½
+    private int one;// ä¸ªä½
+    private float bgmVolume;// éŸ³ä¹éŸ³é‡
+    private float sfxVolume;// éŸ³æ•ˆéŸ³é‡
 
     private Color NoneColor = new (1f,1f,1f,0f);
     private Color FullColor = new (1f,1f,1f,1f);
 
-    private bool IsOption = false;// ÊÇ·ñ´¦ÓÚÉèÖÃ½çÃæÄÚ²¿±êÖ¾Î»
+    private bool IsOption = false;// æ˜¯å¦å¤„äºè®¾ç½®ç•Œé¢å†…éƒ¨æ ‡å¿—ä½
     public ButtonEvent Event;
 
-    [Header("ÒôĞ§ÉèÖÃ")]
-    [SerializeField] private AudioClip moveoffSound;   // È¡ÏûÑ¡ÖĞÒôĞ§
-    [SerializeField] private AudioClip ZSound;    // ZÒôĞ§
-    [SerializeField] private AudioClip XSound;    // XÒôĞ§
-    [SerializeField] private AudioClip ErrorSound;    // È¡ÏûÒôĞ§
+    [Header("éŸ³æ•ˆè®¾ç½®")]
+    [SerializeField] private AudioClip moveoffSound;   // å–æ¶ˆé€‰ä¸­éŸ³æ•ˆ
+    [SerializeField] private AudioClip ZSound;    // ZéŸ³æ•ˆ
+    [SerializeField] private AudioClip XSound;    // XéŸ³æ•ˆ
+    [SerializeField] private AudioClip ErrorSound;    // å–æ¶ˆéŸ³æ•ˆ
 
     // Start is called before the first frame update
     void Start()
     {
         if(DarkImages.Count == 0|| LightImages.Count == 0|| DarkImages.Count != LightImages.Count)
         {
-            Debug.LogWarning("ÉèÖÃ½çÃæµÄÍ¼Æ¬²»ÄÜÎª¿Õ»ò²»ÏàµÈ");
+            Debug.LogWarning("è®¾ç½®ç•Œé¢çš„å›¾ç‰‡ä¸èƒ½ä¸ºç©ºæˆ–ä¸ç›¸ç­‰");
             enabled = false;
         }
         if(DarkNumbers.Count == 0|| LightNumbers.Count == 0|| DarkNumbers.Count != LightNumbers.Count)
         {
-            Debug.LogWarning("ÉèÖÃ½çÃæµÄÊı×Ö²»ÄÜÎª¿Õ»ò²»ÏàµÈ");
+            Debug.LogWarning("è®¾ç½®ç•Œé¢çš„æ•°å­—ä¸èƒ½ä¸ºç©ºæˆ–ä¸ç›¸ç­‰");
             enabled = false;
         }
         BeChoose(Index);
@@ -100,7 +100,7 @@ public class OptionAnime : MonoBehaviour
         }
         if(Input.GetKeyDown(KeyCode.Z))
         {
-            if(IsOption)// ´¦ÓÚÉèÖÃ½çÃæÄÚ²¿£¨Ö´ĞĞ¶ÔÓ¦IndexµÄÂß¼­£©
+            if(IsOption)// å¤„äºè®¾ç½®ç•Œé¢å†…éƒ¨ï¼ˆæ‰§è¡Œå¯¹åº”Indexçš„é€»è¾‘ï¼‰
             {
 
             }
@@ -169,7 +169,7 @@ public class OptionAnime : MonoBehaviour
             {
                 Global_AudioManager.Instance.PlaySFX(ErrorSound, false);
             }
-            Debug.Log("ÔİÎ´Êµ×°");
+            Debug.Log("æš‚æœªå®è£…");
             IsOption = false;
         }
         else
@@ -180,22 +180,22 @@ public class OptionAnime : MonoBehaviour
             }
             switch(index)
             {
-                case 0:// µ÷ÕûÒôÀÖÒôÁ¿´óĞ¡
+                case 0:// è°ƒæ•´éŸ³ä¹éŸ³é‡å¤§å°
                     SetNumber();
                     break;
-                case 1:// µ÷ÕûÒôĞ§ÒôÁ¿´óĞ¡
+                case 1:// è°ƒæ•´éŸ³æ•ˆéŸ³é‡å¤§å°
                     SetNumber();
                     break;
-                case 3:// »Ö¸´Ä¬ÈÏ
+                case 3:// æ¢å¤é»˜è®¤
                     IsOption = false;
                     ResetDefault();
                     break;
-                case 4:// ÍË³öÉèÖÃ½çÃæ
+                case 4:// é€€å‡ºè®¾ç½®ç•Œé¢
                     IsOption = false;
                     Quit();
                     break;
                 default:
-                    Debug.LogWarning("Ñ¡ÏîË÷Òı´íÎó");
+                    Debug.LogWarning("é€‰é¡¹ç´¢å¼•é”™è¯¯");
                     break;
             }
         }
@@ -218,14 +218,14 @@ public class OptionAnime : MonoBehaviour
     {
         bgmVolume = Global_AudioManager.Instance.GetBGMVolume();
         sfxVolume = Global_AudioManager.Instance.GetSFXVolume();
-        if(Index == 0)// ÒôÀÖÒôÁ¿
+        if(Index == 0)// éŸ³ä¹éŸ³é‡
         {
             int percentage = Mathf.RoundToInt(bgmVolume * 100);
             Hundred = percentage / 100;
             ten = percentage / 10;
             if(ten == 10) ten =0;
             one = percentage % 10;
-            if(IsOption)// ´¦ÓÚ²Ëµ¥Ì¬£¬¸ßÁÁÑ¡ÖĞ
+            if(IsOption)// å¤„äºèœå•æ€ï¼Œé«˜äº®é€‰ä¸­
             {
                 Numbers[0].sprite = LightNumbers[ten];
                 Numbers[1].sprite = LightNumbers[one];
@@ -254,7 +254,7 @@ public class OptionAnime : MonoBehaviour
                 Numbers[3].color = FullColor;
             }
         }
-        else if(Index == 1)// ÒôĞ§ÒôÁ¿
+        else if(Index == 1)// éŸ³æ•ˆéŸ³é‡
         {
             int percentage = Mathf.RoundToInt(sfxVolume * 100);
             Hundred = percentage / 100;
@@ -301,7 +301,7 @@ public class OptionAnime : MonoBehaviour
 
     private void ChangeVolume(float volume)
     {
-        if(Index == 0)// ÒôÀÖÒôÁ¿
+        if(Index == 0)// éŸ³ä¹éŸ³é‡
         {
             bgmVolume += volume;
             if(bgmVolume < 0)
@@ -315,7 +315,7 @@ public class OptionAnime : MonoBehaviour
             Global_AudioManager.Instance.SetBGMVolume(bgmVolume);
             SetNumber();
         }
-        else if(Index == 1)// ÒôĞ§ÒôÁ¿
+        else if(Index == 1)// éŸ³æ•ˆéŸ³é‡
         {
             sfxVolume += volume;
             if(sfxVolume < 0)

@@ -2,27 +2,28 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using ReplaySystem;
 
 public class FreezeSystem : MonoBehaviour
 {
-    [Header("¶³½áÏµÍ³×é¼şÒıÓÃ")]
-    public Image FrozenBar;//¶³½á½ø¶ÈÌõ
-    public Image FrozenEffect;//¶³½áÌØĞ§
-    public SpriteRenderer FrozenSprite;//¶³½áÌØĞ§¾«Áé
+    [Header("å†»ç»“ç³»ç»Ÿç»„ä»¶å¼•ç”¨")]
+    public Image FrozenBar;//å†»ç»“è¿›åº¦æ¡
+    public Image FrozenEffect;//å†»ç»“ç‰¹æ•ˆ
+    public SpriteRenderer FrozenSprite;//å†»ç»“ç‰¹æ•ˆç²¾çµ
 
-    [Header("¶³½áÏà¹Ø²ÎÊı")]
-    public AudioClip freezeSound;//¶³½áÒôĞ§
-    public bool IsStop;//ÊÇ·ñÍ£Ö¹¶³½áÏµÍ³
+    [Header("å†»ç»“ç›¸å…³å‚æ•°")]
+    public AudioClip freezeSound;//å†»ç»“éŸ³æ•ˆ
+    public bool IsStop;//æ˜¯å¦åœæ­¢å†»ç»“ç³»ç»Ÿ
 
-    [Header("Íæ¼Ò¶¯»­ÒıÓÃ")]
-    public PlayerAnime playerAnime; // ÒıÓÃÍæ¼Ò¶¯»­½Å±¾
+    [Header("ç©å®¶åŠ¨ç”»å¼•ç”¨")]
+    public PlayerAnime playerAnime; // å¼•ç”¨ç©å®¶åŠ¨ç”»è„šæœ¬
 
-    private float FrozenDegree;//¶³½á½ø¶È 0-1
-    public bool IsFrozen;//ÊÇ·ñ¶³½á£¨¹«¿ª¹©Íâ²¿¼ì²â£©
+    private float FrozenDegree;//å†»ç»“è¿›åº¦ 0-1
+    public bool IsFrozen;//æ˜¯å¦å†»ç»“ï¼ˆå…¬å¼€ä¾›å¤–éƒ¨æ£€æµ‹ï¼‰
 
-    public float FrozenScale = 1f;//¶³½áËõ·Å±ÈÀı(Ä¬ÈÏ1£¬ÓĞµÄ·û¿¨³Ì¶È»á¼Ó¿ì¶³½áËÙ¶È)
+    public float FrozenScale = 1f;//å†»ç»“ç¼©æ”¾æ¯”ä¾‹(é»˜è®¤1ï¼Œæœ‰çš„ç¬¦å¡ç¨‹åº¦ä¼šåŠ å¿«å†»ç»“é€Ÿåº¦)
 
-    private const float BASE_FROZEN_SPEED = 0.04f;//»ù´¡¶³½áËÙ¶È£¬Ã¿ÃëÉÏÕÇ4%
+    private const float BASE_FROZEN_SPEED = 0.04f;//åŸºç¡€å†»ç»“é€Ÿåº¦ï¼Œæ¯ç§’ä¸Šæ¶¨4%
 
     private void Awake()
     {
@@ -30,19 +31,19 @@ public class FreezeSystem : MonoBehaviour
         IsFrozen = false;
     }
 
-    void Update()
+    void FixedUpdate()
     {
         if (!IsFrozen && Global_GameManager.Instance.state == State.Gaming && !IsStop)
         {
-            // ËæÊ±¼äÔö³¤±ù¶³½ø¶È
-            FrozenDegree += BASE_FROZEN_SPEED * FrozenScale * Time.deltaTime;
+            // éšæ—¶é—´å¢é•¿å†°å†»è¿›åº¦
+            FrozenDegree += BASE_FROZEN_SPEED * FrozenScale * SimClock.FixedTickDt;
             FrozenDegree = Mathf.Clamp01(FrozenDegree);
 
             Global_GameManager.Instance.SetSpeedScale(1f-(0.5f*FrozenDegree));
-            // ¸üĞÂUI
+            // æ›´æ–°UI
             UpdateUI();
 
-            // ¼ì²éÊÇ·ñ´ïµ½¶³½áÌõ¼ş
+            // æ£€æŸ¥æ˜¯å¦è¾¾åˆ°å†»ç»“æ¡ä»¶
             if (FrozenDegree >= 1f && !IsFrozen)
             {
                 Freeze();
@@ -56,20 +57,20 @@ public class FreezeSystem : MonoBehaviour
     }
 
     /// <summary>
-    /// ¸üĞÂ¶³½áÏà¹ØUI
+    /// æ›´æ–°å†»ç»“ç›¸å…³UI
     /// </summary>
     private void UpdateUI()
     {
-        // ¸üĞÂ¶³½á½ø¶ÈÌõ
+        // æ›´æ–°å†»ç»“è¿›åº¦æ¡
         if (FrozenBar != null)
         {
             FrozenBar.fillAmount = FrozenDegree;
         }
 
-        // ¼ÆËãÍ¸Ã÷¶È£¨0-0.2fµÄÆ½»¬²åÖµ£©
+        // è®¡ç®—é€æ˜åº¦ï¼ˆ0-0.2fçš„å¹³æ»‘æ’å€¼ï¼‰
         float alpha = Mathf.Lerp(0f, 0.2f, FrozenDegree);
 
-        // ¸üĞÂ¶³½áÌØĞ§Í¸Ã÷¶È
+        // æ›´æ–°å†»ç»“ç‰¹æ•ˆé€æ˜åº¦
         if (FrozenEffect != null)
         {
             Color effectColor = FrozenEffect.color;
@@ -77,7 +78,7 @@ public class FreezeSystem : MonoBehaviour
             FrozenEffect.color = effectColor;
         }
 
-        // ¸üĞÂ¶³½á¾«ÁéÍ¸Ã÷¶È
+        // æ›´æ–°å†»ç»“ç²¾çµé€æ˜åº¦
         if (FrozenSprite != null)
         {
             Color spriteColor = FrozenSprite.color;
@@ -87,9 +88,9 @@ public class FreezeSystem : MonoBehaviour
     }
 
     /// <summary>
-    /// ¼õÉÙ¶³½á½ø¶È£¨²Áµ¯Ê±µ÷ÓÃ£©
+    /// å‡å°‘å†»ç»“è¿›åº¦ï¼ˆæ“¦å¼¹æ—¶è°ƒç”¨ï¼‰
     /// </summary>
-    /// <param name="amount">¼õÉÙµÄÁ¿£¨Ä¬ÈÏ0.01¼´1%£©</param>
+    /// <param name="amount">å‡å°‘çš„é‡ï¼ˆé»˜è®¤0.01å³1%ï¼‰</param>
     public void ReduceFrozenDegree(float amount = 0.01f)
     {
         if (!IsFrozen)
@@ -101,9 +102,9 @@ public class FreezeSystem : MonoBehaviour
     }
 
     /// <summary>
-    /// Ôö¼Ó¶³½á½ø¶È£¨±ùÔÆÅö×²Ê±µ÷ÓÃ£©
+    /// å¢åŠ å†»ç»“è¿›åº¦ï¼ˆå†°äº‘ç¢°æ’æ—¶è°ƒç”¨ï¼‰
     /// </summary>
-    /// <param name="amount">Ôö¼ÓµÄÁ¿</param>
+    /// <param name="amount">å¢åŠ çš„é‡</param>
     public void IncreaseFrozenDegree(float amount)
     {
         if (!IsFrozen)
@@ -112,7 +113,7 @@ public class FreezeSystem : MonoBehaviour
             FrozenDegree = Mathf.Min(1f, FrozenDegree);
             UpdateUI();
             
-            // ¼ì²éÊÇ·ñ´ïµ½¶³½áÌõ¼ş
+            // æ£€æŸ¥æ˜¯å¦è¾¾åˆ°å†»ç»“æ¡ä»¶
             if (FrozenDegree >= 1f)
             {
                 Freeze();
@@ -121,7 +122,7 @@ public class FreezeSystem : MonoBehaviour
     }
 
     /// <summary>
-    /// ¶³½á·½·¨
+    /// å†»ç»“æ–¹æ³•
     /// </summary>
     private void Freeze()
     {
@@ -145,12 +146,12 @@ public class FreezeSystem : MonoBehaviour
             FrozenEffect.color = color;
             yield return null;
         }
-        // ²¥·Å¶³½áÒôĞ§
+        // æ’­æ”¾å†»ç»“éŸ³æ•ˆ
         if (freezeSound != null)
         {
             Global_AudioManager.Instance.PlaySFX(freezeSound);
         }      
-        // ¼¤»îPlayerAnimeÖĞµÄIceÎïÌå²¢Æô¶¯QTE
+        // æ¿€æ´»PlayerAnimeä¸­çš„Iceç‰©ä½“å¹¶å¯åŠ¨QTE
         if (playerAnime != null)
         {
             playerAnime.ActivateFrozenQTE();
@@ -159,7 +160,7 @@ public class FreezeSystem : MonoBehaviour
     }
 
     /// <summary>
-    /// ÖØÖÃ¶³½áÏµÍ³
+    /// é‡ç½®å†»ç»“ç³»ç»Ÿ
     /// </summary>
     public void ResetFreeze()
     {
@@ -169,16 +170,16 @@ public class FreezeSystem : MonoBehaviour
     }
 
     /// <summary>
-    /// ÉèÖÃ¶³½áËõ·Å±ÈÀı
+    /// è®¾ç½®å†»ç»“ç¼©æ”¾æ¯”ä¾‹
     /// </summary>
-    /// <param name="scale">Ëõ·Å±ÈÀıÖµ</param>
+    /// <param name="scale">ç¼©æ”¾æ¯”ä¾‹å€¼</param>
     public void SetFrozenScale(float scale)
     {
         FrozenScale = scale;
     }
 
     /// <summary>
-    /// ÖØÖÃ¶³½áËõ·Å±ÈÀıÎªÄ¬ÈÏÖµ1
+    /// é‡ç½®å†»ç»“ç¼©æ”¾æ¯”ä¾‹ä¸ºé»˜è®¤å€¼1
     /// </summary>
     public void ResetFrozenScale()
     {

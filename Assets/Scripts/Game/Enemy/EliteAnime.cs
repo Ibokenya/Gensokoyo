@@ -1,18 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
+using ReplaySystem;
 using UnityEngine;
 
 public class EliteAnime : Enemy
 {
-    public List<Sprite> EnemySprites;// ¾«Ó¢µĞÈË¾«Áé
+    public List<Sprite> EnemySprites;// ç²¾è‹±æ•Œäººç²¾çµ
 
-    [Header("¶¯»­²ÎÊı")]
+    [Header("åŠ¨ç”»å‚æ•°")]
     [SerializeField]
     private int _currentIndex = 0;
     private float TimeClock;
     public int AnimeSpeed = 4;
 
-    [Header("±´Èû¶ûÇúÏß²ÎÊı")]
+    [Header("è´å¡å°”æ›²çº¿å‚æ•°")]
     private float t = 0f;
     public float bezierSpeed = 0.5f;
     private Vector2 startPoint;
@@ -47,16 +48,16 @@ public class EliteAnime : Enemy
         InitializeFadeIn();
     }
 
-    protected override void Update()
+    protected override void FixedUpdate()
     {
-        // ²¥·Å¶¯»­
+        // æ’­æ”¾åŠ¨ç”»
         PlayAnimation();
 
-        // ´¦Àíµ­ÈëĞ§¹û
+        // å¤„ç†æ·¡å…¥æ•ˆæœ
         HandleFadeIn();
 
-        // µ÷ÓÃ»ùÀàµÄUpdate´¦ÀíÒÆ¶¯Âß¼­
-        base.Update();
+        // è°ƒç”¨åŸºç±»çš„FixedUpdateå¤„ç†ç§»åŠ¨é€»è¾‘
+        base.FixedUpdate();
     }
 
     public override void SetMovePoints(List<GameObject> movePoints)
@@ -84,7 +85,7 @@ public class EliteAnime : Enemy
             return;
         }
 
-        // ¼ì²éÊÇ·ñÎªÁ½¸öµãµÄ¼òµ¥Â·¾¶£¬Èç¹ûÊÇÔòÖ±½ÓÖ±ÏßÒÆ¶¯£¨²»Ê¹ÓÃ±´Èû¶û£©
+        // æ£€æŸ¥æ˜¯å¦ä¸ºä¸¤ä¸ªç‚¹çš„ç®€å•è·¯å¾„ï¼Œå¦‚æœæ˜¯åˆ™ç›´æ¥ç›´çº¿ç§»åŠ¨ï¼ˆä¸ä½¿ç”¨è´å¡å°”ï¼‰
         if (MovePoints.Count == 2)
         {
             MoveToNextPointLinear(MovePoints[currentPointIndex]);
@@ -137,7 +138,7 @@ public class EliteAnime : Enemy
     }
 
     /// <summary>
-    /// Ö±ÏßÒÆ¶¯µ½Ä¿±êµã£¨ÓÃÓÚÁ½¸öµãµÄ¼òµ¥Â·¾¶£©
+    /// ç›´çº¿ç§»åŠ¨åˆ°ç›®æ ‡ç‚¹ï¼ˆç”¨äºä¸¤ä¸ªç‚¹çš„ç®€å•è·¯å¾„ï¼‰
     /// </summary>
     protected override void MoveToNextPointLinear(GameObject targetPoint)
     {
@@ -153,7 +154,7 @@ public class EliteAnime : Enemy
         rb2D.velocity = direction * MoveSpeed;
         moveDirection = direction;
 
-        // ¼ì²éÊÇ·ñµ½´ïÄ¿±êµã
+        // æ£€æŸ¥æ˜¯å¦åˆ°è¾¾ç›®æ ‡ç‚¹
         if (Vector2.Distance(currentPos, targetPos) < ArrivalDistance)
         {
             currentPointIndex++;
@@ -169,7 +170,7 @@ public class EliteAnime : Enemy
     }
 
     /// <summary>
-    /// ³õÊ¼»¯µ­ÈëĞ§¹û
+    /// åˆå§‹åŒ–æ·¡å…¥æ•ˆæœ
     /// </summary>
     private void InitializeFadeIn()
     {
@@ -181,13 +182,13 @@ public class EliteAnime : Enemy
     }
 
     /// <summary>
-    /// ´¦Àíµ­ÈëĞ§¹û
+    /// å¤„ç†æ·¡å…¥æ•ˆæœ
     /// </summary>
     private void HandleFadeIn()
     {
         if (fadeTimer < fadeTime)
         {
-            fadeTimer += Time.deltaTime;
+            fadeTimer += SimClock.FixedTickDt;
             float alpha = Mathf.Clamp01(fadeTimer / fadeTime);
             if (spriteRenderer != null)
             {
@@ -197,11 +198,11 @@ public class EliteAnime : Enemy
     }
 
     /// <summary>
-    /// ²¥·Å¶¯»­
+    /// æ’­æ”¾åŠ¨ç”»
     /// </summary>
     private void PlayAnimation()
     {
-        TimeClock += Time.deltaTime;
+        TimeClock += SimClock.FixedTickDt;
         int currentFrame = Mathf.FloorToInt(TimeClock * 60f);
 
         if (currentFrame >= AnimeSpeed && EnemySprites != null && EnemySprites.Count > 0)

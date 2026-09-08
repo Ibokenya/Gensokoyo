@@ -1,26 +1,25 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 /// <summary>
-/// Unity MonoBehaviourÍ¨ÓÃµ¥Àı»ùÀà
-/// ÌØµã£ºÈ«¾ÖÎ¨Ò»¡¢¿ç³¡¾°´æ»î¡¢Íâ²¿¿ÉÍ¨¹ı Instance ·ÃÎÊ
+/// Unity MonoBehaviouré€šç”¨å•ä¾‹åŸºç±»
+/// ç‰¹ç‚¹ï¼šå…¨å±€å”¯ä¸€ã€è·¨åœºæ™¯å­˜æ´»ã€å¤–éƒ¨å¯é€šè¿‡ Instance è®¿é—®
 /// </summary>
-/// <typeparam name="T">Òª×ö³Éµ¥ÀıµÄ½Å±¾ÀàĞÍ£¨ÈçGameManager¡¢AudioManager£©</typeparam>
 public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
 {
-    // ¾²Ì¬ÊµÀı£¨ºËĞÄ£ºÍâ²¿Í¨¹ı Instance ·ÃÎÊ£©
+    // é™æ€å®ä¾‹ï¼ˆæ ¸å¿ƒï¼šå¤–éƒ¨é€šè¿‡ Instance è®¿é—®ï¼‰
     private static T _instance;
 
-    // ¹«¿ªµÄÊµÀı·ÃÎÊÆ÷£¨¼ÓËø±£Ö¤Ïß³Ì°²È«£¬¿ÉÑ¡µ«ÍÆ¼ö£©
+    // å…¬å¼€çš„å®ä¾‹è®¿é—®å™¨ï¼ˆåŠ é”ä¿è¯çº¿ç¨‹å®‰å…¨ï¼Œå¯é€‰ä½†æ¨èï¼‰
     public static T Instance
     {
         get
         {
-            // 1. Èç¹ûÊµÀıÎª¿Õ£¬ÏÈÔÚ³¡¾°ÖĞ²éÕÒ
+            // 1. å¦‚æœå®ä¾‹ä¸ºç©ºï¼Œå…ˆåœ¨åœºæ™¯ä¸­æŸ¥æ‰¾
             if (_instance == null)
             {
                 _instance = FindObjectOfType<T>();
 
-                // 2. ³¡¾°ÖĞÕÒ²»µ½£¬×Ô¶¯´´½¨Ò»¸ö¿ÕÎïÌå¹ÒÔØ¸Ã½Å±¾
+                // 2. åœºæ™¯ä¸­æ‰¾ä¸åˆ°ï¼Œè‡ªåŠ¨åˆ›å»ºä¸€ä¸ªç©ºç‰©ä½“æŒ‚è½½è¯¥è„šæœ¬
                 if (_instance == null)
                 {
                     GameObject singletonObj = new GameObject(typeof(T).Name);
@@ -31,14 +30,14 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
         }
     }
 
-    // ³õÊ¼»¯Âß¼­£¨AwakeÊÇUnity×îÔçµÄÉúÃüÖÜÆÚ£¬ÊÊºÏ×öµ¥Àı³õÊ¼»¯£©
+    // åˆå§‹åŒ–é€»è¾‘ï¼ˆAwakeæ˜¯Unityæœ€æ—©çš„ç”Ÿå‘½å‘¨æœŸï¼Œé€‚åˆåšå•ä¾‹åˆå§‹åŒ–ï¼‰
     protected virtual void Awake()
     {
-        // ±£Ö¤µ¥ÀıÎ¨Ò»£ºÈç¹ûÒÑÓĞÊµÀı£¬Ïú»Ùµ±Ç°ÖØ¸´µÄ
+        // ä¿è¯å•ä¾‹å”¯ä¸€ï¼šå¦‚æœå·²æœ‰å®ä¾‹ï¼Œé”€æ¯å½“å‰é‡å¤çš„
         if (_instance == null)
         {
             _instance = this as T;
-            // ±ê¼ÇÎª¿ç³¡¾°²»Ïú»Ù£¨ºËĞÄ£¡£©
+            // æ ‡è®°ä¸ºè·¨åœºæ™¯ä¸é”€æ¯ï¼ˆæ ¸å¿ƒï¼ï¼‰
             DontDestroyOnLoad(gameObject);
         }
         else if (_instance != this)

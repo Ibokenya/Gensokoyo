@@ -1,49 +1,77 @@
+using ReplaySystem;
 using UnityEngine;
 
 public class Game1 : MonoBehaviour
 {
-    [Header("BGMÉèÖÃ")]
-    public AudioClip bgmClip1; // Ö¸¶¨Òª²¥·ÅµÄBGMÎÄ¼ş
-    public AudioClip bgmClip2; // Ö¸¶¨Òª²¥·ÅµÄBGMÎÄ¼ş2
+    [Header("BGMè®¾ç½®")]
+    public AudioClip bgmClip1; // æŒ‡å®šè¦æ’­æ”¾çš„BGMæ–‡ä»¶
+    public AudioClip bgmClip2; // æŒ‡å®šè¦æ’­æ”¾çš„BGMæ–‡ä»¶2
 
-    public ClearAllBullet clearAllBullet;// Çå³ıËùÓĞ×Óµ¯×é¼ş
+    public ClearAllBullet clearAllBullet;// æ¸…é™¤æ‰€æœ‰å­å¼¹ç»„ä»¶
 
-    [Header("Ê±¼ä²é¿´Æ÷")]
+    [Header("æ—¶é—´æŸ¥çœ‹å™¨")]
     public float currentTime;
-    [Header("½øÈë¶Ô»°Ïà¹Ø")]
+    [Header("è¿›å…¥å¯¹è¯ç›¸å…³")]
     public GameObject DialogBox;
     
 
-    [Header("¾µÍ·¶¶¶¯ÉèÖÃ")]
-    [Range(0f, 1f)] public float defaultShakeIntensity = 0.5f; // Ä¬ÈÏÕğ¶¯Ç¿¶È
-    [Range(5f, 20f)] public float defaultShakeFrequency = 12f; // Ä¬ÈÏÕğ¶¯ÆµÂÊ
-    [Range(0.5f, 5f)] public float defaultDecaySpeed = 2f; // Ä¬ÈÏË¥¼õËÙ¶È
-    private Vector3 originalPos; // Ô­Ê¼Î»ÖÃ
-    private float shakeIntensity = 0f; // µ±Ç°Õğ¶¯Ç¿¶È
-    private float shakeFrequency = 10f; // Õğ¶¯ÆµÂÊ
-    private float decaySpeed = 2f; // Ë¥¼õËÙ¶È
-    private float shakeDuration = 0f; // ¶¶¶¯Ê£ÓàÊ±³¤
+    [Header("é•œå¤´æŠ–åŠ¨è®¾ç½®")]
+    [Range(0f, 1f)] public float defaultShakeIntensity = 0.5f; // é»˜è®¤éœ‡åŠ¨å¼ºåº¦
+    [Range(5f, 20f)] public float defaultShakeFrequency = 12f; // é»˜è®¤éœ‡åŠ¨é¢‘ç‡
+    [Range(0.5f, 5f)] public float defaultDecaySpeed = 2f; // é»˜è®¤è¡°å‡é€Ÿåº¦
+    private Vector3 originalPos; // åŸå§‹ä½ç½®
+    private float shakeIntensity = 0f; // å½“å‰éœ‡åŠ¨å¼ºåº¦
+    private float shakeFrequency = 10f; // éœ‡åŠ¨é¢‘ç‡
+    private float decaySpeed = 2f; // è¡°å‡é€Ÿåº¦
+    private float shakeDuration = 0f; // æŠ–åŠ¨å‰©ä½™æ—¶é•¿
 
     private bool isfirst = true;
 
     void Awake()
     {
-        // ±£´æÉãÏñ»úÔ­Ê¼Î»ÖÃ
+        // ä¿å­˜æ‘„åƒæœºåŸå§‹ä½ç½®
         originalPos = transform.localPosition;
+
+        // ç§å­/å½•åˆ¶ç”Ÿå‘½å‘¨æœŸæŒ‰"å±€"ç®¡ç†ï¼ˆGame1 æ˜¯æ¯å±€å…¥å£ï¼‰
+        // å¦‚æœ ReplayManager è¿˜æ²¡èµ·æ¥ï¼Œå…ˆç¡®ä¿å®ƒå­˜åœ¨
+        if (ReplayManager.Instance == null)
+        {
+            var go = new GameObject("ReplaySystem");
+            go.AddComponent<ReplayManager>();
+        }
+
+        var mode = ReplayManager.Instance.CurrentMode;
+        if (mode == ReplayManager.Mode.Idle)
+        {
+            ReplayManager.BeginRecord();
+        }
+        else if (mode == ReplayManager.Mode.Record)
+        {
+            ReplayManager.DiscardRecording();
+            ReplayManager.BeginRecord();
+        }
+        else if (mode == ReplayManager.Mode.Playback)
+        {
+            Debug.Log($"[ReplayManager] è¿›å…¥ Game1 å›æ”¾æ¨¡å¼ï¼ŒSimTime={SimClock.SimTime:F2}");
+        }
+
+        // æ— è®ºä»€ä¹ˆè·¯å¾„èµ°åˆ°è¿™é‡Œï¼Œéƒ½æ˜¾å¼ Reset SimClock åˆ° 0 â€”â€” ç¡®ä¿æ¸¸æˆé€»è¾‘æ—¶é—´ä» 0 å¼€å§‹
+        SimClock.Reset();
+        Debug.Log($"[ReplayManager] Game1.Awake å¼ºåˆ¶ Reset SimClock â†’ SimTime={SimClock.SimTime:F2}");
     }
     
     void Update()
     {
-        // ¸üĞÂµ±Ç°ÒôÀÖÊ±¼ä
+        // æ›´æ–°å½“å‰éŸ³ä¹æ—¶é—´
         currentTime = Global_AudioManager.Instance.CurrentBGMTime;
         if(currentTime >= 118f && currentTime <= 119f && isfirst)
         {
-            // ¼¤»î¶Ô»°¿ò£¬µ­³ö±³¾°ÒôÀÖÓÉAboutDialog´¦Àí
+            // æ¿€æ´»å¯¹è¯æ¡†ï¼Œæ·¡å‡ºèƒŒæ™¯éŸ³ä¹ç”±AboutDialogå¤„ç†
             DialogBox.SetActive(true);
             isfirst = false;
         }
         
-        // ´¦Àí¾µÍ·¶¶¶¯
+        // å¤„ç†é•œå¤´æŠ–åŠ¨
         HandleCameraShake();
     }
 
@@ -54,32 +82,32 @@ public class Game1 : MonoBehaviour
     }
 
     /// <summary>
-    /// ´¦Àí¾µÍ·¶¶¶¯
+    /// å¤„ç†é•œå¤´æŠ–åŠ¨
     /// </summary>
     private void HandleCameraShake()
     {
         if (shakeIntensity > 0 && shakeDuration > 0)
         {
-            // Ê¹ÓÃ Perlin ÔëÉù×öÆ½»¬Õğ¶¯£¨²»³é´¤ºËĞÄ£©
+            // ä½¿ç”¨ Perlin å™ªå£°åšå¹³æ»‘éœ‡åŠ¨ï¼ˆä¸æŠ½ææ ¸å¿ƒï¼‰
             float x = Mathf.PerlinNoise(Time.time * shakeFrequency, 10f) * 2f - 1f;
             float y = Mathf.PerlinNoise(10f, Time.time * shakeFrequency) * 2f - 1f;
             
-            // ½«Æ«ÒÆÏŞÖÆÔÚ (-1, -1, 0) µ½ (1, 1, 0) Ö®¼ä
+            // å°†åç§»é™åˆ¶åœ¨ (-1, -1, 0) åˆ° (1, 1, 0) ä¹‹é—´
             x = Mathf.Clamp(x, -1f, 1f);
             y = Mathf.Clamp(y, -1f, 1f);
             
-            // ÉèÖÃ¶¶¶¯ºóµÄÎ»ÖÃ
+            // è®¾ç½®æŠ–åŠ¨åçš„ä½ç½®
             transform.localPosition = originalPos + new Vector3(x, y, 0) * shakeIntensity;
             
-            // Ç¿¶ÈÖğ½¥Ë¥¼õ
+            // å¼ºåº¦é€æ¸è¡°å‡
             shakeIntensity -= decaySpeed * Time.unscaledDeltaTime;
             
-            // ¸üĞÂÊ£ÓàÊ±³¤
+            // æ›´æ–°å‰©ä½™æ—¶é•¿
             shakeDuration -= Time.unscaledDeltaTime;
         }
         else
         {
-            // Õğ¶¯½áÊø£¬»Øµ½Ô­Î»
+            // éœ‡åŠ¨ç»“æŸï¼Œå›åˆ°åŸä½
             shakeIntensity = 0;
             shakeDuration = 0;
             transform.localPosition = originalPos;
@@ -87,12 +115,12 @@ public class Game1 : MonoBehaviour
     }
     
     /// <summary>
-    /// ´¥·¢¾µÍ·¶¶¶¯
+    /// è§¦å‘é•œå¤´æŠ–åŠ¨
     /// </summary>
-    /// <param name="duration">¶¶¶¯Ê±³¤£¨Ãë£©</param>
-    /// <param name="strength">Õğ¶¯Ç¿¶È£¨Ä¬ÈÏ0.5£©</param>
-    /// <param name="frequency">Õğ¶¯ÆµÂÊ£¨Ä¬ÈÏ12£©</param>
-    /// <param name="decay">Ë¥¼õËÙ¶È£¨Ä¬ÈÏ2£©</param>
+    /// <param name="duration">æŠ–åŠ¨æ—¶é•¿ï¼ˆç§’ï¼‰</param>
+    /// <param name="strength">éœ‡åŠ¨å¼ºåº¦ï¼ˆé»˜è®¤0.5ï¼‰</param>
+    /// <param name="frequency">éœ‡åŠ¨é¢‘ç‡ï¼ˆé»˜è®¤12ï¼‰</param>
+    /// <param name="decay">è¡°å‡é€Ÿåº¦ï¼ˆé»˜è®¤2ï¼‰</param>
     public void Shake(float duration = 0.5f, float strength = -1f, float frequency = -1f, float decay = -1f)
     {
         shakeDuration = duration;

@@ -1,54 +1,55 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ReplaySystem;
 
 /// <summary>
-/// ×·×Ù·ÉĞĞÎï£¨Tracked Flying Object£©
-/// ×·×Ù¾àÀë×î½üµÄµĞÈË
+/// è¿½è¸ªé£è¡Œç‰©ï¼ˆTracked Flying Objectï¼‰
+/// è¿½è¸ªè·ç¦»æœ€è¿‘çš„æ•Œäºº
 /// </summary>
 public class TrackedFO : MonoBehaviour
 {
-    [Header("×·×ÙÅäÖÃ")]
-    public float TrackSpeed = 5f; // ×·×Ùµ¯·ÉĞĞËÙ¶È
-    public float TurnSpeed = 10f; // ×ªÏòËÙ¶È
+    [Header("è¿½è¸ªé…ç½®")]
+    public float TrackSpeed = 5f; // è¿½è¸ªå¼¹é£è¡Œé€Ÿåº¦
+    public float TurnSpeed = 10f; // è½¬å‘é€Ÿåº¦
 
-    public int damage = 10;// ÉËº¦Öµ
+    public int damage = 10;// ä¼¤å®³å€¼
     private readonly float minX = -9.5f;
     private readonly float maxX = 3.5f;
     private readonly float minY = -5.5f;
     private readonly float maxY = 5.5f;
-    private GameObject target; // Ä¿±ê
+    private GameObject target; // ç›®æ ‡
     private Rigidbody2D rb2D;
-    private int scanFrameCounter = 0; // É¨ÃèÖ¡¼ÆÊıÆ÷
-    private const int SCAN_INTERVAL = 10; // Ã¿10Ö¡É¨ÃèÒ»´ÎÄ¿±ê
+    private int scanFrameCounter = 0; // æ‰«æå¸§è®¡æ•°å™¨
+    private const int SCAN_INTERVAL = 10; // æ¯10å¸§æ‰«æä¸€æ¬¡ç›®æ ‡
 
     void OnEnable()
     {
-        // »ñÈ¡¸ÕÌå×é¼ş
+        // è·å–åˆšä½“ç»„ä»¶
         rb2D = GetComponent<Rigidbody2D>();
         if (rb2D == null)
         {
-            Debug.LogError("Ò»¸ö×·×Ù·ÉĞĞÎïÎ´ÕÒµ½¸ÕÌå");
+            Debug.LogError("ä¸€ä¸ªè¿½è¸ªé£è¡Œç‰©æœªæ‰¾åˆ°åˆšä½“");
         }
         
-        // ³õÊ¼»¯Ö¡¼ÆÊıÆ÷
+        // åˆå§‹åŒ–å¸§è®¡æ•°å™¨
         scanFrameCounter = 0;
         
-        // Ñ°ÕÒ³õÊ¼Ä¿±ê
+        // å¯»æ‰¾åˆå§‹ç›®æ ‡
         FindTarget();
         
-        // ³õÊ¼»¯ËÙ¶È
+        // åˆå§‹åŒ–é€Ÿåº¦
         if (rb2D != null)
         {
-            // ³õÊ¼Ä¬ÈÏÏòÉÏ·ÉĞĞ
+            // åˆå§‹é»˜è®¤å‘ä¸Šé£è¡Œ
             rb2D.velocity = TrackSpeed * Vector2.up;
         }
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-        // Ã¿SCAN_INTERVALÖ¡É¨ÃèÒ»´ÎÄ¿±ê
+        // æ¯SCAN_INTERVALå¸§æ‰«æä¸€æ¬¡ç›®æ ‡
         scanFrameCounter++;
         if (scanFrameCounter >= SCAN_INTERVAL)
         {
@@ -61,7 +62,7 @@ public class TrackedFO : MonoBehaviour
     }
 
     /// <summary>
-    /// ¼ì²éÄ¿±êÊÇ·ñ´æÔÚ£¬Èç¹û²»´æÔÚÔòÖØĞÂÑ°ÕÒ
+    /// æ£€æŸ¥ç›®æ ‡æ˜¯å¦å­˜åœ¨ï¼Œå¦‚æœä¸å­˜åœ¨åˆ™é‡æ–°å¯»æ‰¾
     /// </summary>
     private void CheckAndFindTarget()
     {
@@ -69,14 +70,14 @@ public class TrackedFO : MonoBehaviour
     }
 
     /// <summary>
-    /// Ñ°ÕÒ¾àÀë×î½üµÄµĞÈË×÷ÎªÄ¿±ê£¨°üÀ¨Boss£©
+    /// å¯»æ‰¾è·ç¦»æœ€è¿‘çš„æ•Œäººä½œä¸ºç›®æ ‡ï¼ˆåŒ…æ‹¬Bossï¼‰
     /// </summary>
     private void FindTarget()
     {
         GameObject closestEnemy = null;
         float closestDistance = float.MaxValue;
         
-        // ±éÀúµĞÈËÁĞ±í
+        // éå†æ•Œäººåˆ—è¡¨
         if (Global_GameManager.Instance != null)
         {
             foreach (GameObject enemy in Global_GameManager.Instance.EnemyList)
@@ -93,7 +94,7 @@ public class TrackedFO : MonoBehaviour
             }
         }
         
-        // ¼ì²éBossÊÇ·ñ±Èµ±Ç°Ä¿±ê¸ü½ü
+        // æ£€æŸ¥Bossæ˜¯å¦æ¯”å½“å‰ç›®æ ‡æ›´è¿‘
         GameObject boss = FindActiveBoss();
         if (boss != null && boss.activeSelf && boss.GetComponent<Collider2D>().enabled)
         {
@@ -104,14 +105,14 @@ public class TrackedFO : MonoBehaviour
             }
         }
         
-        // ¸üĞÂÄ¿±ê
+        // æ›´æ–°ç›®æ ‡
         target = closestEnemy;
     }
     
     /// <summary>
-    /// ²éÕÒ»îÔ¾µÄBoss
+    /// æŸ¥æ‰¾æ´»è·ƒçš„Boss
     /// </summary>
-    /// <returns>µ±Ç°³¡¾°ÖĞµÄBoss¶ÔÏó</returns>
+    /// <returns>å½“å‰åœºæ™¯ä¸­çš„Bosså¯¹è±¡</returns>
     private GameObject FindActiveBoss()
     {
         GameObject[] bosses = GameObject.FindGameObjectsWithTag("Boss");
@@ -126,37 +127,37 @@ public class TrackedFO : MonoBehaviour
     }
 
     /// <summary>
-    /// ×·×Ù·ÉĞĞÎïµÄÒÆ¶¯
+    /// è¿½è¸ªé£è¡Œç‰©çš„ç§»åŠ¨
     /// </summary>
     public void TrackedMove()
     {
         if (rb2D != null)
         {
-            // Èç¹ûÓĞÄ¿±ê£¬Æ½»¬×ªÏòÄ¿±ê
+            // å¦‚æœæœ‰ç›®æ ‡ï¼Œå¹³æ»‘è½¬å‘ç›®æ ‡
             if (target != null && target.activeSelf)
             {
-                // ¼ÆËãÄ¿±ê·½Ïò
+                // è®¡ç®—ç›®æ ‡æ–¹å‘
                 Vector2 targetDirection = (target.transform.position - transform.position).normalized;
                 
-                // ¼ÆËãµ±Ç°ËÙ¶È·½Ïò
+                // è®¡ç®—å½“å‰é€Ÿåº¦æ–¹å‘
                 Vector2 currentDirection = rb2D.velocity.normalized;
                 
-                // Æ½»¬×ªÏò
-                Vector2 newDirection = Vector2.Lerp(currentDirection, targetDirection, Time.deltaTime * TurnSpeed);
+                // å¹³æ»‘è½¬å‘
+                Vector2 newDirection = Vector2.Lerp(currentDirection, targetDirection, SimClock.FixedTickDt * TurnSpeed);
                 
-                // Ó¦ÓÃĞÂËÙ¶È
+                // åº”ç”¨æ–°é€Ÿåº¦
                 rb2D.velocity = newDirection * TrackSpeed;
             }
             else if (rb2D.velocity == Vector2.zero)
             {
-                // Ã»ÓĞÄ¿±êÇÒËÙ¶ÈÎª0Ê±£¬Ä¬ÈÏÏòÉÏ·ÉĞĞ
+                // æ²¡æœ‰ç›®æ ‡ä¸”é€Ÿåº¦ä¸º0æ—¶ï¼Œé»˜è®¤å‘ä¸Šé£è¡Œ
                 rb2D.velocity = TrackSpeed * Vector2.up;
             }
         }
     }
 
     /// <summary>
-    /// ±ß½ç¼ì²é
+    /// è¾¹ç•Œæ£€æŸ¥
     /// </summary>
     public void MoveCheck()
     {
@@ -167,7 +168,7 @@ public class TrackedFO : MonoBehaviour
     }
 
     /// <summary>
-    /// Åö×²¼ì²â
+    /// ç¢°æ’æ£€æµ‹
     /// </summary>
     void OnTriggerEnter2D(Collider2D collision)
     {

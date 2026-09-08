@@ -1,22 +1,23 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ReplaySystem;
 
 public class FrozenStar : MonoBehaviour
 {
-    [Header("åçĞÇ²ÎÊı")]
-    public float initialSpeed = 5f; // ³õÊ¼ËÙ¶È
-    public float deceleration = 0.5f; // ¼õËÙ¶È
-    public float minSpeed = 0.5f; // ×îĞ¡ËÙ¶È
-    public float y1 = 3f; // µÚÒ»¸öËÙ¶È±ä¸üµãµÄy×ø±ê
-    public float y2 = -3f; // µÚ¶ş¸öËÙ¶È±ä¸üµãµÄy×ø±ê
-    public float v1 = 2f; // µÚÒ»¸öËÙ¶È³£Á¿
-    public float v2 = 0.5f; // µÚ¶ş¸öËÙ¶È³£Á¿
+    [Header("å½—æ˜Ÿå‚æ•°")]
+    public float initialSpeed = 5f; // åˆå§‹é€Ÿåº¦
+    public float deceleration = 0.5f; // å‡é€Ÿåº¦
+    public float minSpeed = 0.5f; // æœ€å°é€Ÿåº¦
+    public float y1 = 3f; // ç¬¬ä¸€ä¸ªé€Ÿåº¦å˜æ›´ç‚¹çš„yåæ ‡
+    public float y2 = -3f; // ç¬¬äºŒä¸ªé€Ÿåº¦å˜æ›´ç‚¹çš„yåæ ‡
+    public float v1 = 2f; // ç¬¬ä¸€ä¸ªé€Ÿåº¦å¸¸é‡
+    public float v2 = 0.5f; // ç¬¬äºŒä¸ªé€Ÿåº¦å¸¸é‡
     
     private Rigidbody2D rb2D;
     private float currentSpeed;
-    private bool hasReachedY1 = false; // ÊÇ·ñµ½´ïy1
-    private bool hasReachedY2 = false; // ÊÇ·ñµ½´ïy2
+    private bool hasReachedY1 = false; // æ˜¯å¦åˆ°è¾¾y1
+    private bool hasReachedY2 = false; // æ˜¯å¦åˆ°è¾¾y2
     
     private void OnEnable()
     {
@@ -26,41 +27,41 @@ public class FrozenStar : MonoBehaviour
         hasReachedY2 = false;
     }
     
-    private void Update()
+    private void FixedUpdate()
     {
-        // ¼ì²éÊÇ·ñµ½´ïËÙ¶È±ä¸üµã
+        // æ£€æŸ¥æ˜¯å¦åˆ°è¾¾é€Ÿåº¦å˜æ›´ç‚¹
         CheckSpeedChangePoints();
         
-        // Èç¹û»¹Ã»µ½´ïy1£¬¼ÌĞø¼õËÙ
+        // å¦‚æœè¿˜æ²¡åˆ°è¾¾y1ï¼Œç»§ç»­å‡é€Ÿ
         if (!hasReachedY1)
         {
-            currentSpeed = Mathf.Max(minSpeed, currentSpeed - deceleration * Time.deltaTime);
+            currentSpeed = Mathf.Max(minSpeed, currentSpeed - deceleration * SimClock.FixedTickDt);
         }
         
-        // ÏòÏÂÒÆ¶¯
+        // å‘ä¸‹ç§»åŠ¨
         if (rb2D != null)
         {
             rb2D.velocity = new Vector2(0, -currentSpeed);
         }
         
-        // ±ß½ç¼ì²â
+        // è¾¹ç•Œæ£€æµ‹
         CheckBounds();
     }
     
     /// <summary>
-    /// ¼ì²éËÙ¶È±ä¸üµã
+    /// æ£€æŸ¥é€Ÿåº¦å˜æ›´ç‚¹
     /// </summary>
     private void CheckSpeedChangePoints()
     {
         float currentY = transform.position.y;
         
-        // µ½´ïy1£¬ËÙ¶È¸ÄÎªv1
+        // åˆ°è¾¾y1ï¼Œé€Ÿåº¦æ”¹ä¸ºv1
         if (!hasReachedY1 && currentY <= y1)
         {
             hasReachedY1 = true;
             currentSpeed = v1;
         }
-        // µ½´ïy2£¬ËÙ¶È¸ÄÎªv2
+        // åˆ°è¾¾y2ï¼Œé€Ÿåº¦æ”¹ä¸ºv2
         else if (hasReachedY1 && !hasReachedY2 && currentY <= y2)
         {
             hasReachedY2 = true;
@@ -69,19 +70,19 @@ public class FrozenStar : MonoBehaviour
     }
     
     /// <summary>
-    /// ±ß½ç¼ì²â
+    /// è¾¹ç•Œæ£€æµ‹
     /// </summary>
     private void CheckBounds()
     {
         Vector2 position = transform.position;
-        if (position.y < -10.5f) // ³¬³öÏÂ±ß½ç
+        if (position.y < -10.5f) // è¶…å‡ºä¸‹è¾¹ç•Œ
         {
             Recycle();
         }
     }
     
     /// <summary>
-    /// »ØÊÕåçĞÇ
+    /// å›æ”¶å½—æ˜Ÿ
     /// </summary>
     private void Recycle()
     {

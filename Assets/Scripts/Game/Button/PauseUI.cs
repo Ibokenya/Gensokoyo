@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ReplaySystem;
 
 public class PauseUI : MonoBehaviour
 {
@@ -9,14 +10,15 @@ public class PauseUI : MonoBehaviour
     private float currentBGMPosition = 0f;
     public GameObject PausePanel;
     private State pastState;
-   void Update()
+    // 暂停切换在 Update：timeScale=0 后也要能响应继续
+    void Update()
     {
         CheckInput();
     }
 
     private void CheckInput()
     {
-        if(Input.GetKeyDown(KeyCode.Escape) && 
+        if(ReplayManager.Input.GetKeyDown(LogicalKey.Cancel) && 
         Global_GameManager.Instance.state != State.Over)
         {
             if(!isPaused)
@@ -32,7 +34,7 @@ public class PauseUI : MonoBehaviour
 
     private void Pause()
     {
-        // ����Ƿ���ʱͣ״̬��ʱͣ�ڼ䲻������ͣ
+        // 检查是否处于时停状态，时停期间不允许暂停
         if (Global_GameManager.Instance.state == State.TimeStop)
         {
             return;
@@ -43,7 +45,7 @@ public class PauseUI : MonoBehaviour
         pastState = Global_GameManager.Instance.state;
         Global_GameManager.Instance.state = State.Pause;
         
-        // ��¼��ǰBGM״̬
+        // 记录当前BGM状态
         if(Global_AudioManager.Instance != null)
         {
             currentBGMName = Global_AudioManager.Instance.GetCurrentBGMName();
@@ -64,7 +66,7 @@ public class PauseUI : MonoBehaviour
         isPaused = false;
         Time.timeScale = 1;
         
-        // �ָ�����֮ǰ��BGM
+        // 恢复播放之前的BGM
         if(Global_AudioManager.Instance != null && !string.IsNullOrEmpty(currentBGMName))
         {
             Global_AudioManager.Instance.PlayBGM(currentBGMName);

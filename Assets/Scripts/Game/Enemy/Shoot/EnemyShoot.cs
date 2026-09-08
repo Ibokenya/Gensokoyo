@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using ReplaySystem;
 using UnityEngine;
 using static Track;
 using static Tail;
@@ -9,7 +10,7 @@ using static Invisible;
 
 public class EnemyShoot : MonoBehaviour
 {
-    [Header("Éä»÷ÅäÖÃÁĞ±í")]
+    [Header("å°„å‡»é…ç½®åˆ—è¡¨")]
     public List<ShootMode> shootConfigs = new List<ShootMode>();
     
     private int currentShootConfigIndex = 0;
@@ -17,27 +18,27 @@ public class EnemyShoot : MonoBehaviour
     private float modeDurationTimer = 0f;
     private GameObject player;
     private float currentSprialAngle = 0f;
-    private int bulletColorIndex = 0; // µ±Ç°²¨´ÎµÄ×Óµ¯ÑÕÉ«Ë÷Òı
-    private int enemyIndex = 0; // µĞÈËÔÚ²¨´ÎÖĞµÄË÷Òı
-    private float angleOffset = 0f; // ½Ç¶ÈÆ«ÒÆ
-    private float timeOffset = 0f; // Ê±¼äÆ«ÒÆ
+    private int bulletColorIndex = 0; // å½“å‰æ³¢æ¬¡çš„å­å¼¹é¢œè‰²ç´¢å¼•
+    private int enemyIndex = 0; // æ•Œäººåœ¨æ³¢æ¬¡ä¸­çš„ç´¢å¼•
+    private float angleOffset = 0f; // è§’åº¦åç§»
+    private float timeOffset = 0f; // æ—¶é—´åç§»
     
     void OnEnable()
     {
-        // ÖØÖÃÉä»÷¼ÆÊ±Æ÷
+        // é‡ç½®å°„å‡»è®¡æ—¶å™¨
         shootTimer = 0f;
-        // ÖØÖÃÄ£Ê½³ÖĞøÊ±¼ä¼ÆÊ±Æ÷
+        // é‡ç½®æ¨¡å¼æŒç»­æ—¶é—´è®¡æ—¶å™¨
         modeDurationTimer = 0f;
-        // ÖØÖÃÂİĞı½Ç¶È
+        // é‡ç½®èºæ—‹è§’åº¦
         currentSprialAngle = 0f;
-        // ÖØÖÃÅäÖÃË÷Òı
+        // é‡ç½®é…ç½®ç´¢å¼•
         currentShootConfigIndex = 0;
-        // Ëæ»ú³õÊ¼»¯×Óµ¯ÑÕÉ«Ë÷Òı
-        bulletColorIndex = Random.Range(0, 6); // Éú³ÉÒ»¸öÓÃÓÚ¾ö¶¨×Óµ¯±äÌåµÄËæ»úÊı
-        // »ùÓÚenemyIndex¼ÆËãËæ»úÆ«ÒÆÖµ
-        Random.InitState(enemyIndex * 37); // Ê¹ÓÃ¹Ì¶¨µÄÖÖ×ÓÈ·±£ÏàÍ¬Ë÷ÒıµÄµĞÈËÓĞÏàÍ¬µÄÆ«ÒÆ
-        angleOffset = Random.Range(-20f, 20f); // ½Ç¶ÈÆ«ÒÆ·¶Î§£º-20¶Èµ½20¶È
-        timeOffset = Random.Range(-0.1f, 0.1f); // Ê±¼äÆ«ÒÆ·¶Î§£º-0.1Ãëµ½0.1Ãë
+        // éšæœºåˆå§‹åŒ–å­å¼¹é¢œè‰²ç´¢å¼•
+        bulletColorIndex = Random.Range(0, 6); // ç”Ÿæˆä¸€ä¸ªç”¨äºå†³å®šå­å¼¹å˜ä½“çš„éšæœºæ•°
+        // åŸºäºenemyIndexè®¡ç®—éšæœºåç§»å€¼
+        Random.InitState(enemyIndex * 37); // ä½¿ç”¨å›ºå®šçš„ç§å­ç¡®ä¿ç›¸åŒç´¢å¼•çš„æ•Œäººæœ‰ç›¸åŒçš„åç§»
+        angleOffset = Random.Range(-20f, 20f); // è§’åº¦åç§»èŒƒå›´ï¼š-20åº¦åˆ°20åº¦
+        timeOffset = Random.Range(-0.1f, 0.1f); // æ—¶é—´åç§»èŒƒå›´ï¼š-0.1ç§’åˆ°0.1ç§’
         
         if(player == null)
         {
@@ -45,7 +46,7 @@ public class EnemyShoot : MonoBehaviour
         }
     }
     
-    void Update()
+    void FixedUpdate()
     {
         if(Global_GameManager.Instance.state == State.SpellCard)
         {
@@ -53,25 +54,25 @@ public class EnemyShoot : MonoBehaviour
         }
         if (shootConfigs.Count > 0)
         {
-            // »ñÈ¡µ±Ç°Éä»÷ÅäÖÃ
+            // è·å–å½“å‰å°„å‡»é…ç½®
             ShootMode currentConfig = shootConfigs[currentShootConfigIndex];
             
             if (currentConfig.shootMode != Shoot_Mode.none && currentConfig.bulletPrefab != null)
             {
-                shootTimer += Time.deltaTime;
+                shootTimer += SimClock.FixedTickDt;
                 if (shootTimer >= currentConfig.shootInterval + timeOffset)
                 {
                     shootTimer = 0f;
-                    // ·¢Éä×Óµ¯
+                    // å‘å°„å­å¼¹
                     FireBullet();
                 }
             }
             
-            // ¼ì²éÄ£Ê½³ÖĞøÊ±¼ä
-            modeDurationTimer += Time.deltaTime;
+            // æ£€æŸ¥æ¨¡å¼æŒç»­æ—¶é—´
+            modeDurationTimer += SimClock.FixedTickDt;
             if (modeDurationTimer >= currentConfig.duration && shootConfigs.Count > 1)
             {
-                // ÇĞ»»µ½ÏÂÒ»¸öÉä»÷Ä£Ê½
+                // åˆ‡æ¢åˆ°ä¸‹ä¸€ä¸ªå°„å‡»æ¨¡å¼
                 currentShootConfigIndex = (currentShootConfigIndex + 1) % shootConfigs.Count;
                 modeDurationTimer = 0f;
                 shootTimer = 0f;
@@ -81,7 +82,7 @@ public class EnemyShoot : MonoBehaviour
     }
     
     /// <summary>
-    /// ·¢Éä×Óµ¯
+    /// å‘å°„å­å¼¹
     /// </summary>
     private void FireBullet()
     {
@@ -107,8 +108,8 @@ public class EnemyShoot : MonoBehaviour
     }
     
     /// <summary>
-    /// ·¢Éä·¢É¢Ô²×Óµ¯
-    /// ĞèÒªµÄ²ÎÊıÓĞ£º×Óµ¯ÊıÁ¿¡¢ÆğÊ¼½Ç¶È¡¢½Ç¶È·¶Î§¡¢·¢Éä¼ä¸ô
+    /// å‘å°„å‘æ•£åœ†å­å¼¹
+    /// éœ€è¦çš„å‚æ•°æœ‰ï¼šå­å¼¹æ•°é‡ã€èµ·å§‹è§’åº¦ã€è§’åº¦èŒƒå›´ã€å‘å°„é—´éš”
     /// </summary>
     private void FireDivergeBullets()
     {
@@ -127,15 +128,15 @@ public class EnemyShoot : MonoBehaviour
             float angle = startAngle + i * angleStep;
             Quaternion rotation = Quaternion.Euler(0, 0, angle);
             
-            // ´Ó¶ÔÏó³Ø»ñÈ¡×Óµ¯
+            // ä»å¯¹è±¡æ± è·å–å­å¼¹
             GameObject bullet = Global_ObjectPool.Instance.GetObject(currentConfig.bulletPrefab, transform.position, rotation);
             if (bullet != null)
             {
-                // ÏÈ½ûÓÃ×Óµ¯
+                // å…ˆç¦ç”¨å­å¼¹
                 bullet.SetActive(false);
-                // ÉèÖÃ×Óµ¯²ÎÊı
+                // è®¾ç½®å­å¼¹å‚æ•°
                 SetBulletParameters(bullet);
-                // ÔÙ¼¤»î×Óµ¯
+                // å†æ¿€æ´»å­å¼¹
                 bullet.SetActive(true);
             } else {
                 Debug.LogError($"Failed to get bullet from pool: {currentConfig.bulletPrefab?.name}");
@@ -144,8 +145,8 @@ public class EnemyShoot : MonoBehaviour
     }
     
     /// <summary>
-    /// ·¢ÉäËæ»ú×Óµ¯
-    /// ĞèÒªµÄ²ÎÊıÓĞ£º×Óµ¯ÊıÁ¿¡¢ÆğÊ¼½Ç¶È¡¢½Ç¶È·¶Î§£¨ÔÚ·¶Î§ÄÚËæ»ú»¯£©¡¢·¢Éä¼ä¸ô
+    /// å‘å°„éšæœºå­å¼¹
+    /// éœ€è¦çš„å‚æ•°æœ‰ï¼šå­å¼¹æ•°é‡ã€èµ·å§‹è§’åº¦ã€è§’åº¦èŒƒå›´ï¼ˆåœ¨èŒƒå›´å†…éšæœºåŒ–ï¼‰ã€å‘å°„é—´éš”
     /// </summary>
     private void FireRandomBullets()
     {
@@ -155,19 +156,19 @@ public class EnemyShoot : MonoBehaviour
         int bulletCount = currentConfig.bulletCount;
         for (int i = 0; i < bulletCount; i++)
         {
-            // Ëæ»ú½Ç¶È
+            // éšæœºè§’åº¦
             float randomAngle = currentConfig.shootAngle + angleOffset + Random.Range(0f, currentConfig.angleRange);
             Quaternion rotation = Quaternion.Euler(0, 0, randomAngle);
             
-            // Éú³É×Óµ¯
+            // ç”Ÿæˆå­å¼¹
             GameObject bullet = Global_ObjectPool.Instance.GetObject(currentConfig.bulletPrefab, transform.position, rotation);
             if (bullet != null)
             {
-                // ÏÈ½ûÓÃ×Óµ¯
+                // å…ˆç¦ç”¨å­å¼¹
                 bullet.SetActive(false);
-                // ÉèÖÃ×Óµ¯²ÎÊı
+                // è®¾ç½®å­å¼¹å‚æ•°
                 SetBulletParameters(bullet);
-                // ÔÙ¼¤»î×Óµ¯
+                // å†æ¿€æ´»å­å¼¹
                 bullet.SetActive(true);
             }
         }
@@ -176,62 +177,62 @@ public class EnemyShoot : MonoBehaviour
 
     
     /// <summary>
-    /// ·¢ÉäÂİĞı×Óµ¯
-    /// ĞèÒªµÄ²ÎÊıÓĞ£ºÆğÊ¼½Ç¶È¡¢½Ç¶È·¶Î§£¨Ã¿´ÎĞı×ªµÄ½Ç¶È²î£©¡¢·¢Éä¼ä¸ô
+    /// å‘å°„èºæ—‹å­å¼¹
+    /// éœ€è¦çš„å‚æ•°æœ‰ï¼šèµ·å§‹è§’åº¦ã€è§’åº¦èŒƒå›´ï¼ˆæ¯æ¬¡æ—‹è½¬çš„è§’åº¦å·®ï¼‰ã€å‘å°„é—´éš”
     /// </summary>
     private void FireSprialBullets()
     {
         if (shootConfigs.Count == 0) return;
         
         ShootMode currentConfig = shootConfigs[currentShootConfigIndex];
-        // ¼ÆËãµ±Ç°ÂİĞı½Ç¶È
+        // è®¡ç®—å½“å‰èºæ—‹è§’åº¦
         float angle = currentConfig.shootAngle + angleOffset + currentSprialAngle;
         Quaternion rotation = Quaternion.Euler(0, 0, angle);
         
-        // ´Ó¶ÔÏó³Ø»ñÈ¡×Óµ¯
+        // ä»å¯¹è±¡æ± è·å–å­å¼¹
         GameObject bullet = Global_ObjectPool.Instance.GetObject(currentConfig.bulletPrefab, transform.position, rotation);
         if (bullet != null)
         {
-            // ÏÈ½ûÓÃ×Óµ¯
+            // å…ˆç¦ç”¨å­å¼¹
             bullet.SetActive(false);
-            // ÉèÖÃ×Óµ¯²ÎÊı
+            // è®¾ç½®å­å¼¹å‚æ•°
             SetBulletParameters(bullet);
-            // ÔÙ¼¤»î×Óµ¯
+            // å†æ¿€æ´»å­å¼¹
             bullet.SetActive(true);
         }
         
-        // ¸üĞÂÂİĞı½Ç¶È
+        // æ›´æ–°èºæ—‹è§’åº¦
         currentSprialAngle += currentConfig.angleRange;
     }
     
 
     
     /// <summary>
-    /// ÉèÖÃ×Óµ¯²ÎÊı
+    /// è®¾ç½®å­å¼¹å‚æ•°
     /// </summary>
-    /// <param name="bullet">×Óµ¯¶ÔÏó</param>
+    /// <param name="bullet">å­å¼¹å¯¹è±¡</param>
     private void SetBulletParameters(GameObject bullet)
     {
         if (shootConfigs.Count == 0) return;
         
         ShootMode currentConfig = shootConfigs[currentShootConfigIndex];
         
-        // ÉèÖÃ¸ú×Ù×Óµ¯²ÎÊı
+        // è®¾ç½®è·Ÿè¸ªå­å¼¹å‚æ•°
         Track trackBullet = bullet.GetComponent<Track>();
         if (trackBullet != null)
         {
             trackBullet.Speed = currentConfig.trackBulletConfig.Speed;
             trackBullet.WindUp = currentConfig.trackBulletConfig.WindUp;
-            // ´«µİÍæ¼Ò¶ÔÏó
+            // ä¼ é€’ç©å®¶å¯¹è±¡
             if (player != null)
             {
                 trackBullet.SetTarget(player);
             }
-            // ÉèÖÃ×Óµ¯ÑÕÉ«±äÌå
+            // è®¾ç½®å­å¼¹é¢œè‰²å˜ä½“
             SetBulletSpriteVariant(trackBullet.spriteRenderer, trackBullet.spriteVariants);
         }
         
-        // ÉèÖÃÍÏÎ²×Óµ¯²ÎÊı
+        // è®¾ç½®æ‹–å°¾å­å¼¹å‚æ•°
         Tail tailBullet = bullet.GetComponent<Tail>();
         if (tailBullet != null)
         {
@@ -240,18 +241,18 @@ public class EnemyShoot : MonoBehaviour
             tailBullet.CloneSpeed = currentConfig.tailBulletConfig.CloneSpeed;
             tailBullet.attenuation = currentConfig.tailBulletConfig.attenuation;
             tailBullet.MinSpeed = currentConfig.tailBulletConfig.MinSpeed;
-            // ÉèÖÃ×Óµ¯ÑÕÉ«±äÌå
+            // è®¾ç½®å­å¼¹é¢œè‰²å˜ä½“
             SetBulletSpriteVariant(tailBullet.spriteRenderer, tailBullet.spriteVariants);
         }
         
-        // ÉèÖÃÖÍÁô×Óµ¯²ÎÊı
+        // è®¾ç½®æ»ç•™å­å¼¹å‚æ•°
         Remain remainBullet = bullet.GetComponent<Remain>();
         if (remainBullet != null && currentConfig.remainBulletConfig != null)
         {
             remainBullet.LifeTime = currentConfig.remainBulletConfig.LifeTime;
             remainBullet.Speed = currentConfig.remainBulletConfig.Speed;
             remainBullet.WindUp = currentConfig.remainBulletConfig.WindUp;
-            // ¸üĞÂ×Óµ¯ËÙ¶ÈÏòÁ¿
+            // æ›´æ–°å­å¼¹é€Ÿåº¦å‘é‡
             Rigidbody2D remainRb = bullet.GetComponent<Rigidbody2D>();
             if (remainRb != null)
             {
@@ -259,16 +260,16 @@ public class EnemyShoot : MonoBehaviour
                 remainRb.velocity = direction * remainBullet.Speed;
                 remainRb.isKinematic = false;
             }
-            // ÉèÖÃ×Óµ¯ÑÕÉ«±äÌå
+            // è®¾ç½®å­å¼¹é¢œè‰²å˜ä½“
             SetBulletSpriteVariant(remainBullet.spriteRenderer, remainBullet.spriteVariants);
         }
         
-        // ÉèÖÃÆÕÍ¨×Óµ¯²ÎÊı
+        // è®¾ç½®æ™®é€šå­å¼¹å‚æ•°
         Normal normalBullet = bullet.GetComponent<Normal>();
         if (normalBullet != null)
         {
             normalBullet.Speed = currentConfig.normalBulletConfig.Speed;
-            // ¸üĞÂ×Óµ¯ËÙ¶ÈÏòÁ¿
+            // æ›´æ–°å­å¼¹é€Ÿåº¦å‘é‡
             Rigidbody2D normalRb = bullet.GetComponent<Rigidbody2D>();
             if (normalRb != null)
             {
@@ -276,11 +277,11 @@ public class EnemyShoot : MonoBehaviour
                 normalRb.velocity = direction * normalBullet.Speed;
                 normalRb.isKinematic = false;
             }
-            // ÉèÖÃ×Óµ¯ÑÕÉ«±äÌå
+            // è®¾ç½®å­å¼¹é¢œè‰²å˜ä½“
             SetBulletSpriteVariant(normalBullet.spriteRenderer, normalBullet.spriteVariants);
         }
         
-        // ÉèÖÃ²»¿É¼û×Óµ¯²ÎÊı
+        // è®¾ç½®ä¸å¯è§å­å¼¹å‚æ•°
         Invisible invisibleBullet = bullet.GetComponent<Invisible>();
         if (invisibleBullet != null)
         {
@@ -288,12 +289,12 @@ public class EnemyShoot : MonoBehaviour
             invisibleBullet.Speed = currentConfig.invisibleBulletConfig.Speed;
             invisibleBullet.ShowDistance = currentConfig.invisibleBulletConfig.ShowDistance;
             invisibleBullet.ShowTime = currentConfig.invisibleBulletConfig.ShowTime;
-            // ´«µİÍæ¼Ò¶ÔÏó
+            // ä¼ é€’ç©å®¶å¯¹è±¡
             if (player != null)
             {
                 invisibleBullet.SetPlayer(player);
             }
-            // ¸üĞÂ×Óµ¯ËÙ¶ÈÏòÁ¿
+            // æ›´æ–°å­å¼¹é€Ÿåº¦å‘é‡
             Rigidbody2D invisibleRb = bullet.GetComponent<Rigidbody2D>();
             if (invisibleRb != null)
             {
@@ -301,12 +302,12 @@ public class EnemyShoot : MonoBehaviour
                 invisibleRb.velocity = direction * invisibleBullet.Speed;
                 invisibleRb.isKinematic = false;
             }
-            // ÉèÖÃ×Óµ¯ÑÕÉ«±äÌå
+            // è®¾ç½®å­å¼¹é¢œè‰²å˜ä½“
             SetBulletSpriteVariant(invisibleBullet.spriteRenderer, invisibleBullet.spriteVariants);
         }
         
-        // ÉèÖÃ¸ú×Ù×Óµ¯ËÙ¶ÈÏòÁ¿
-        // »ñÈ¡Track×é¼şÓÃÓÚÉèÖÃËÙ¶ÈÏòÁ¿£¨Ç°ÃæÒÑÉèÖÃ¹ı²ÎÊı£¬ÕâÀïÖ»´¦ÀíRigidbody2D£©
+        // è®¾ç½®è·Ÿè¸ªå­å¼¹é€Ÿåº¦å‘é‡
+        // è·å–Trackç»„ä»¶ç”¨äºè®¾ç½®é€Ÿåº¦å‘é‡ï¼ˆå‰é¢å·²è®¾ç½®è¿‡å‚æ•°ï¼Œè¿™é‡Œåªå¤„ç†Rigidbody2Dï¼‰
         Track trackBulletForVelocity = bullet.GetComponent<Track>();
         if (trackBulletForVelocity != null)
         {
@@ -319,7 +320,7 @@ public class EnemyShoot : MonoBehaviour
             }
         }
         
-        // ÉèÖÃÍÏÎ²×Óµ¯ËÙ¶ÈÏòÁ¿
+        // è®¾ç½®æ‹–å°¾å­å¼¹é€Ÿåº¦å‘é‡
         Tail tailBulletForVelocity = bullet.GetComponent<Tail>();
         if (tailBulletForVelocity != null)
         {
@@ -336,42 +337,42 @@ public class EnemyShoot : MonoBehaviour
     }
     
     /// <summary>
-    /// ÉèÖÃ×Óµ¯µÄ¾«Áé±äÌå
+    /// è®¾ç½®å­å¼¹çš„ç²¾çµå˜ä½“
     /// </summary>
-    /// <param name="spriteRenderer">¾«ÁéäÖÈ¾Æ÷</param>
-    /// <param name="spriteVariants">¾«Áé±äÌåÁĞ±í</param>
+    /// <param name="spriteRenderer">ç²¾çµæ¸²æŸ“å™¨</param>
+    /// <param name="spriteVariants">ç²¾çµå˜ä½“åˆ—è¡¨</param>
     private void SetBulletSpriteVariant(SpriteRenderer spriteRenderer, List<Sprite> spriteVariants)
     {
         if (spriteRenderer != null && spriteVariants != null && spriteVariants.Count > 0)
         {
-            // Ê¹ÓÃbulletColorIndexÈ·±£Í¬Ò»²¨´ÎµÄ×Óµ¯ÑÕÉ«ÏàÍ¬
+            // ä½¿ç”¨bulletColorIndexç¡®ä¿åŒä¸€æ³¢æ¬¡çš„å­å¼¹é¢œè‰²ç›¸åŒ
             int index = bulletColorIndex % spriteVariants.Count;
             spriteRenderer.sprite = spriteVariants[index];
         }
     }
     
     /// <summary>
-    /// ÉèÖÃÉä»÷ÅäÖÃÁĞ±í
+    /// è®¾ç½®å°„å‡»é…ç½®åˆ—è¡¨
     /// </summary>
-    /// <param name="configs">Éä»÷ÅäÖÃÁĞ±í</param>
+    /// <param name="configs">å°„å‡»é…ç½®åˆ—è¡¨</param>
     public void SetShootConfig(List<ShootMode> configs)
     {
         shootConfigs = configs;
     }
     
     /// <summary>
-    /// ÉèÖÃÍæ¼Ò¶ÔÏó
+    /// è®¾ç½®ç©å®¶å¯¹è±¡
     /// </summary>
-    /// <param name="playerObj">Íæ¼Ò¶ÔÏó</param>
+    /// <param name="playerObj">ç©å®¶å¯¹è±¡</param>
     public void SetPlayer(GameObject playerObj)
     {
         player = playerObj;
     }
     
     /// <summary>
-    /// ÉèÖÃµĞÈËÔÚ²¨´ÎÖĞµÄË÷Òı
+    /// è®¾ç½®æ•Œäººåœ¨æ³¢æ¬¡ä¸­çš„ç´¢å¼•
     /// </summary>
-    /// <param name="index">µĞÈËÔÚ²¨´ÎÖĞµÄË÷Òı</param>
+    /// <param name="index">æ•Œäººåœ¨æ³¢æ¬¡ä¸­çš„ç´¢å¼•</param>
     public void SetEnemyIndex(int index)
     {
         enemyIndex = index;

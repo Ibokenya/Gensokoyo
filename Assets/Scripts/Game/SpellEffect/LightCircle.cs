@@ -1,42 +1,43 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ReplaySystem;
 
 /// <summary>
-/// ¹âÈ¦¹ÜÀíÆ÷½Å±¾
-/// ¹ÜÀí4¸ö¹âÈ¦µÄ¶¯»­ºÍÒÆ¶¯
+/// å…‰åœˆç®¡ç†å™¨è„šæœ¬
+/// ç®¡ç†4ä¸ªå…‰åœˆçš„åŠ¨ç”»å’Œç§»åŠ¨
 /// </summary>
 public class LightCircle : MonoBehaviour
 {
-    [Header("»ù±¾ÉèÖÃ")]
-    public GameObject player; // Íæ¼ÒÎïÌåÒıÓÃ
-    public List<Sprite> circleSprites; // ¹âÈ¦Ğı×ªÖ¡¶¯»­
-    public List<GameObject> lightCircles; // 4¸ö¹âÈ¦×ÓÎïÌå
-    public GameObject laser; // ¼¤¹âÎïÌå
-    public float moveSpeed = 0.5f; // ¹Ì¶¨ÒÆ¶¯ËÙ¶È£¨Ã¿Ãë£©
+    [Header("åŸºæœ¬è®¾ç½®")]
+    public GameObject player; // ç©å®¶ç‰©ä½“å¼•ç”¨
+    public List<Sprite> circleSprites; // å…‰åœˆæ—‹è½¬å¸§åŠ¨ç”»
+    public List<GameObject> lightCircles; // 4ä¸ªå…‰åœˆå­ç‰©ä½“
+    public GameObject laser; // æ¿€å…‰ç‰©ä½“
+    public float moveSpeed = 0.5f; // å›ºå®šç§»åŠ¨é€Ÿåº¦ï¼ˆæ¯ç§’ï¼‰
     
-    [Header("¹âÈ¦ÅäÖÃ")]
-    public List<CircleConfig> circleConfigs; // Ã¿¸ö¹âÈ¦µÄÅäÖÃ
+    [Header("å…‰åœˆé…ç½®")]
+    public List<CircleConfig> circleConfigs; // æ¯ä¸ªå…‰åœˆçš„é…ç½®
     
-    private int circleIndex = 0; // µ±Ç°¼¤»îµÄ¹âÈ¦Ë÷Òı
-    private bool[] isCircleActive; // ¼ÇÂ¼Ã¿¸ö¹âÈ¦ÊÇ·ñÒÑ¼¤»î
-    private Dictionary<GameObject, Coroutine> rotatingCoroutines = new Dictionary<GameObject, Coroutine>(); // ´æ´¢Ã¿¸ö¹âÈ¦µÄĞı×ªĞ­³Ì
+    private int circleIndex = 0; // å½“å‰æ¿€æ´»çš„å…‰åœˆç´¢å¼•
+    private bool[] isCircleActive; // è®°å½•æ¯ä¸ªå…‰åœˆæ˜¯å¦å·²æ¿€æ´»
+    private Dictionary<GameObject, Coroutine> rotatingCoroutines = new Dictionary<GameObject, Coroutine>(); // å­˜å‚¨æ¯ä¸ªå…‰åœˆçš„æ—‹è½¬åç¨‹
     
     /// <summary>
-    /// ¹âÈ¦ÅäÖÃÀà
+    /// å…‰åœˆé…ç½®ç±»
     /// </summary>
     [System.Serializable]
     public class CircleConfig
     {
-        public Vector3 startPosition; // ÆğÊ¼×ø±ê£¨Ïà¶ÔÓÚ¸¸¶ÔÏó£©
-        public Vector3 endPosition; // ÖÕµã×ø±ê£¨Ïà¶ÔÓÚ¸¸¶ÔÏó£©
-        public float moveTime; // Î»ÒÆÊ±¼ä
-        public float animationSpeed; // Ö¡¶¯»­ËÙ¶È
+        public Vector3 startPosition; // èµ·å§‹åæ ‡ï¼ˆç›¸å¯¹äºçˆ¶å¯¹è±¡ï¼‰
+        public Vector3 endPosition; // ç»ˆç‚¹åæ ‡ï¼ˆç›¸å¯¹äºçˆ¶å¯¹è±¡ï¼‰
+        public float moveTime; // ä½ç§»æ—¶é—´
+        public float animationSpeed; // å¸§åŠ¨ç”»é€Ÿåº¦
     }
     
     private void Start()
     {
-        // ³õÊ¼»¯
+        // åˆå§‹åŒ–
         if (lightCircles != null)
         {
             isCircleActive = new bool[lightCircles.Count];
@@ -48,33 +49,33 @@ public class LightCircle : MonoBehaviour
         }
     }
     
-    private void Update()
+    private void FixedUpdate()
     {
-        // Ã¿Ö¡Í¬²½Î»ÖÃµ½Íæ¼Ò
+        // æ¯å¸§åŒæ­¥ä½ç½®åˆ°ç©å®¶
         SyncPositionsToPlayer();
     }
     
     /// <summary>
-    /// Í¬²½Î»ÖÃµ½Íæ¼Ò
+    /// åŒæ­¥ä½ç½®åˆ°ç©å®¶
     /// </summary>
     private void SyncPositionsToPlayer()
     {
         if (player == null)
             return;
         
-        // Í¬²½¹âÈ¦Î»ÖÃ - ±£³ÖxÖáÓëÍæ¼ÒÍ¬²½
+        // åŒæ­¥å…‰åœˆä½ç½® - ä¿æŒxè½´ä¸ç©å®¶åŒæ­¥
         foreach (var circle in lightCircles)
         {
             if (circle != null && circle.activeInHierarchy)
             {
-                // ¼ÆËãµ±Ç°Ïà¶ÔÎ»ÖÃ£¨Ö»±£ÁôyÖá£©
+                // è®¡ç®—å½“å‰ç›¸å¯¹ä½ç½®ï¼ˆåªä¿ç•™yè½´ï¼‰
                 float relativeY = circle.transform.position.y - player.transform.position.y;
-                // ÉèÖÃĞÂÎ»ÖÃ£¨±£³ÖyÖá²»±ä£¬xÖáÓëÍæ¼ÒÍ¬²½£©
+                // è®¾ç½®æ–°ä½ç½®ï¼ˆä¿æŒyè½´ä¸å˜ï¼Œxè½´ä¸ç©å®¶åŒæ­¥ï¼‰
                 circle.transform.position = new Vector3(player.transform.position.x, player.transform.position.y + relativeY, player.transform.position.z);
             }
         }
         
-        // Í¬²½¼¤¹âÎ»ÖÃ - ÊÀ½ç×ø±êÏµÖĞ¼¤¹âĞèÒªÔÚplayerÉÏ·½5.48f´¦
+        // åŒæ­¥æ¿€å…‰ä½ç½® - ä¸–ç•Œåæ ‡ç³»ä¸­æ¿€å…‰éœ€è¦åœ¨playerä¸Šæ–¹5.48få¤„
         if (laser != null)
         {
             laser.transform.position = player.transform.position + new Vector3(0, 5.48f, 0);
@@ -82,8 +83,8 @@ public class LightCircle : MonoBehaviour
     }
     
     /// <summary>
-    /// ¼¤»î¹âÈ¦
-    /// ÓÉ¶¯»­ÊÂ¼şµ÷ÓÃ
+    /// æ¿€æ´»å…‰åœˆ
+    /// ç”±åŠ¨ç”»äº‹ä»¶è°ƒç”¨
     /// </summary>
     public void ActivateCircle()
     {
@@ -92,52 +93,52 @@ public class LightCircle : MonoBehaviour
         
         if (circleIndex < lightCircles.Count && circleIndex < circleConfigs.Count)
         {
-            // ¼¤»î¶ÔÓ¦Ë÷ÒıµÄ¹âÈ¦
+            // æ¿€æ´»å¯¹åº”ç´¢å¼•çš„å…‰åœˆ
             GameObject circle = lightCircles[circleIndex];
             if (circle != null)
             {
                 circle.SetActive(true);
                 isCircleActive[circleIndex] = true;
                 
-                // ¿ªÊ¼Ö´ĞĞÎ»ÒÆ
+                // å¼€å§‹æ‰§è¡Œä½ç§»
                 StartCoroutine(MoveCircle(circleIndex));
                 
-                // ¿ªÊ¼Ğı×ª¶¯»­
+                // å¼€å§‹æ—‹è½¬åŠ¨ç”»
                 StartRotateAnimation(circle, circleIndex);
             }
             
-            // Ë÷Òı+1
+            // ç´¢å¼•+1
             circleIndex++;
         }
     }
     
     /// <summary>
-    /// ¿ªÊ¼Ğı×ª¶¯»­
+    /// å¼€å§‹æ—‹è½¬åŠ¨ç”»
     /// </summary>
-    /// <param name="circle">¹âÈ¦ÎïÌå</param>
-    /// <param name="index">¹âÈ¦Ë÷Òı</param>
+    /// <param name="circle">å…‰åœˆç‰©ä½“</param>
+    /// <param name="index">å…‰åœˆç´¢å¼•</param>
     private void StartRotateAnimation(GameObject circle, int index)
     {
         if (circleSprites == null || circleSprites.Count == 0)
             return;
         
-        // Í£Ö¹Ö®Ç°µÄĞı×ªĞ­³Ì
+        // åœæ­¢ä¹‹å‰çš„æ—‹è½¬åç¨‹
         if (rotatingCoroutines.ContainsKey(circle))
         {
             StopCoroutine(rotatingCoroutines[circle]);
             rotatingCoroutines.Remove(circle);
         }
         
-        // ¿ªÊ¼ĞÂµÄĞı×ªĞ­³Ì
+        // å¼€å§‹æ–°çš„æ—‹è½¬åç¨‹
         Coroutine coroutine = StartCoroutine(RotateAnimation(circle, index));
         rotatingCoroutines[circle] = coroutine;
     }
     
     /// <summary>
-    /// Ğı×ª¶¯»­Ğ­³Ì
+    /// æ—‹è½¬åŠ¨ç”»åç¨‹
     /// </summary>
-    /// <param name="circle">¹âÈ¦ÎïÌå</param>
-    /// <param name="index">¹âÈ¦Ë÷Òı</param>
+    /// <param name="circle">å…‰åœˆç‰©ä½“</param>
+    /// <param name="index">å…‰åœˆç´¢å¼•</param>
     private IEnumerator RotateAnimation(GameObject circle, int index)
     {
         if (circle == null || circleConfigs == null || index >= circleConfigs.Count)
@@ -152,21 +153,21 @@ public class LightCircle : MonoBehaviour
         
         while (isCircleActive != null && index < isCircleActive.Length && isCircleActive[index])
         {
-            // ÉèÖÃµ±Ç°Ö¡
+            // è®¾ç½®å½“å‰å¸§
             spriteRenderer.sprite = circleSprites[currentSpriteIndex];
             
-            // ¼ÆËãÏÂÒ»Ö¡
+            // è®¡ç®—ä¸‹ä¸€å¸§
             currentSpriteIndex = (currentSpriteIndex + 1) % circleSprites.Count;
             
-            // ¸ù¾İËÙ¶ÈµÈ´ı
+            // æ ¹æ®é€Ÿåº¦ç­‰å¾…
             yield return new WaitForSeconds(1f / config.animationSpeed);
         }
     }
     
     /// <summary>
-    /// ÒÆ¶¯¹âÈ¦
+    /// ç§»åŠ¨å…‰åœˆ
     /// </summary>
-    /// <param name="index">¹âÈ¦Ë÷Òı</param>
+    /// <param name="index">å…‰åœˆç´¢å¼•</param>
     private IEnumerator MoveCircle(int index)
     {
         if (lightCircles == null || circleConfigs == null || index >= lightCircles.Count || index >= circleConfigs.Count)
@@ -178,16 +179,16 @@ public class LightCircle : MonoBehaviour
         if (circle == null)
             yield break;
         
-        // ¿ªÊ¼ÒÆ¶¯
+        // å¼€å§‹ç§»åŠ¨
         float elapsedTime = 0f;
         while (elapsedTime < config.moveTime && isCircleActive != null && index < isCircleActive.Length && isCircleActive[index])
         {
             float t = elapsedTime / config.moveTime;
             
-            // ¼ÆËã±¾µØÎ»ÖÃ
+            // è®¡ç®—æœ¬åœ°ä½ç½®
             Vector3 localPosition = Vector3.Lerp(config.startPosition, config.endPosition, t);
             
-            // ×ª»»ÎªÊÀ½çÎ»ÖÃ - Ö±½ÓÒÔÍæ¼ÒÎª»ù×¼
+            // è½¬æ¢ä¸ºä¸–ç•Œä½ç½® - ç›´æ¥ä»¥ç©å®¶ä¸ºåŸºå‡†
             if (player != null)
             {
                 circle.transform.position = player.transform.position + localPosition;
@@ -197,7 +198,7 @@ public class LightCircle : MonoBehaviour
             yield return null;
         }
         
-        // È·±£µ½´ïÖÕµã
+        // ç¡®ä¿åˆ°è¾¾ç»ˆç‚¹
         if (isCircleActive != null && index < isCircleActive.Length && isCircleActive[index])
         {
             if (player != null)
@@ -206,13 +207,13 @@ public class LightCircle : MonoBehaviour
             }
         }
         
-        // ¿ªÊ¼ÒÔ¹Ì¶¨ËÙ¶ÈÏòÉÏÒÆ¶¯
+        // å¼€å§‹ä»¥å›ºå®šé€Ÿåº¦å‘ä¸Šç§»åŠ¨
         while (isCircleActive != null && index < isCircleActive.Length && isCircleActive[index])
         {
-            // ¼ÆËãÏòÉÏÒÆ¶¯µÄ¾àÀë
+            // è®¡ç®—å‘ä¸Šç§»åŠ¨çš„è·ç¦»
             float moveDistance = moveSpeed * Time.deltaTime;
             
-            // ÏòÉÏÒÆ¶¯
+            // å‘ä¸Šç§»åŠ¨
             circle.transform.position += new Vector3(0, moveDistance, 0);
             
             yield return null;
@@ -220,11 +221,11 @@ public class LightCircle : MonoBehaviour
     }
     
     /// <summary>
-    /// ÖØÖÃËùÓĞ¹âÈ¦
+    /// é‡ç½®æ‰€æœ‰å…‰åœˆ
     /// </summary>
     public void ResetCircles()
     {
-        // Í£Ö¹ËùÓĞĞı×ªĞ­³Ì
+        // åœæ­¢æ‰€æœ‰æ—‹è½¬åç¨‹
         foreach (var coroutine in rotatingCoroutines.Values)
         {
             if (coroutine != null)

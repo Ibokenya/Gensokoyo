@@ -1,13 +1,13 @@
-using System.Collections.Generic;
+ï»¿using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
 public class SpeelCard : MonoBehaviour
 {
-    public List<GameObject> BombHearts; // ·û¿¨Í¼±ê
-    public TextMeshProUGUI BombText; // ·û¿¨ÎÄ±¾¿ò
-    public List<Sprite> BombHeartSprites; // ·û¿¨ËéÆ¬Í¼±ê¾«Áé£¨´æ´¢0 ,1/3 ,2/3 ,1×´Ì¬µÄËéÆ¬Í¼±ê£©
+    public List<GameObject> BombHearts; // ç¬¦å¡å›¾æ ‡
+    public TextMeshProUGUI BombText; // ç¬¦å¡æ–‡æœ¬æ¡†
+    public List<Sprite> BombHeartSprites; // ç¬¦å¡ç¢ç‰‡å›¾æ ‡ç²¾çµï¼ˆå­˜å‚¨0 ,1/3 ,2/3 ,1çŠ¶æ€çš„ç¢ç‰‡å›¾æ ‡ï¼‰
 
     public void SetBomb(int bomb, int cardPiece)
     {
@@ -19,7 +19,7 @@ public class SpeelCard : MonoBehaviour
         int i = 0;
         while(i < bomb)
         {
-            BombHearts[i].GetComponent<Image>().sprite = BombHeartSprites[3]; // 1×´Ì¬µÄËéÆ¬Í¼±ê
+            BombHearts[i].GetComponent<Image>().sprite = BombHeartSprites[3]; // 1çŠ¶æ€çš„ç¢ç‰‡å›¾æ ‡
             i++;
         }
         if(i < BombHearts.Count)

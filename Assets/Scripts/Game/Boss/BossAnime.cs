@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using ReplaySystem;
 
 public enum BossAnimeType
 {
@@ -13,17 +14,17 @@ public enum BossAnimeType
 public class BossAnime : MonoBehaviour
 {
     public BossBeheve bossBeheve;
-    public Animator ChrinoAnimator;// ç÷Â¶Åµ¶¯»­
-    public Animator CircleAnimator;// ºçÈË»·¶¯»­
-    [Header("ç÷Â¶ÅµµÄÖ¡¶¯»­")]
-    public List<Sprite> sprites;// ç÷Â¶ÅµµÄÖ¡¶¯»­
+    public Animator ChrinoAnimator;// çªéœ²è¯ºåŠ¨ç”»
+    public Animator CircleAnimator;// è™¹äººç¯åŠ¨ç”»
+    [Header("çªéœ²è¯ºçš„å¸§åŠ¨ç”»")]
+    public List<Sprite> sprites;// çªéœ²è¯ºçš„å¸§åŠ¨ç”»
     private int CurrentAnimeIndex =0;
     private float TimeClock =0;
-    private const int AnimeSpeed = 12;// Ã¿Ãë12Ö¡
+    private const int AnimeSpeed = 12;// æ¯ç§’12å¸§
     private SpriteRenderer spriteRenderer;
-    [Header("ç÷Â¶ÅµµÄÏà¹ØÎïÌå")]
-    public GameObject HP;// ç÷Â¶ÅµµÄÑªÌõ
-    public GameObject Mark;// ç÷Â¶ÅµµÄ±ê¼ÇÎï
+    [Header("çªéœ²è¯ºçš„ç›¸å…³ç‰©ä½“")]
+    public GameObject HP;// çªéœ²è¯ºçš„è¡€æ¡
+    public GameObject Mark;// çªéœ²è¯ºçš„æ ‡è®°ç‰©
     
     private BossAnimeType currentState = BossAnimeType.Idle;
 
@@ -34,9 +35,9 @@ public class BossAnime : MonoBehaviour
         SetState(BossAnimeType.Idle);
     }
 
-    void Update()
+    void FixedUpdate()
     {
-        // ´¦Àí¶¯»­
+        // å¤„ç†åŠ¨ç”»
         if(Global_GameManager.Instance.state == State.Pause ||
            Global_GameManager.Instance.state == State.TimeStop)
         {
@@ -47,37 +48,37 @@ public class BossAnime : MonoBehaviour
     
     void LateUpdate()
     {
-        // ¸üĞÂÑªÌõÎ»ÖÃ£¬½«ÊÀ½ç×ø±ê×ª»»ÎªUI×ø±ê
-        // Ê¹ÓÃLateUpdateÈ·±£ÔÚËùÓĞUpdateÖ´ĞĞÍê±ÏºóÖ´ĞĞ£¬ÇÒ²»ÊÜÊ±¼äËõ·ÅÓ°Ïì
+        // æ›´æ–°è¡€æ¡ä½ç½®ï¼Œå°†ä¸–ç•Œåæ ‡è½¬æ¢ä¸ºUIåæ ‡
+        // ä½¿ç”¨LateUpdateç¡®ä¿åœ¨æ‰€æœ‰Updateæ‰§è¡Œå®Œæ¯•åæ‰§è¡Œï¼Œä¸”ä¸å—æ—¶é—´ç¼©æ”¾å½±å“
         UpdateHPBarPosition();
         UpdateMarkPosition();
     }
     
     /// <summary>
-    /// ¸üĞÂÑªÌõÏà¶ÔÎ»ÖÃ£¬²»ÊÜÊ±¼äËõ·ÅÓ°Ïì
+    /// æ›´æ–°è¡€æ¡ç›¸å¯¹ä½ç½®ï¼Œä¸å—æ—¶é—´ç¼©æ”¾å½±å“
     /// </summary>
     private void UpdateHPBarPosition()
     {
         if(HP != null)
         {
-            // »ñÈ¡Ö÷Ïà»ú
+            // è·å–ä¸»ç›¸æœº
             Camera mainCamera = Camera.main;
             if(mainCamera != null)
             {
-                // ½«bossµÄÊÀ½ç×ø±ê×ª»»ÎªÆÁÄ»×ø±ê
+                // å°†bossçš„ä¸–ç•Œåæ ‡è½¬æ¢ä¸ºå±å¹•åæ ‡
                 Vector3 screenPos = mainCamera.WorldToScreenPoint(transform.position);
                 
-                // »ñÈ¡ÑªÌõËùÔÚµÄCanvas
+                // è·å–è¡€æ¡æ‰€åœ¨çš„Canvas
                 Canvas canvas = HP.GetComponentInParent<Canvas>();
                 if(canvas != null)
                 {
-                    // ½«ÆÁÄ»×ø±ê×ª»»ÎªCanvas¾Ö²¿×ø±ê
+                    // å°†å±å¹•åæ ‡è½¬æ¢ä¸ºCanvaså±€éƒ¨åæ ‡
                     RectTransform canvasRect = canvas.GetComponent<RectTransform>();
                     Vector2 localPos;
                     RectTransformUtility.ScreenPointToLocalPointInRectangle
                     (canvasRect, screenPos, canvas.worldCamera, out localPos);
                     
-                    // ÉèÖÃÑªÌõµÄ¾Ö²¿×ø±ê
+                    // è®¾ç½®è¡€æ¡çš„å±€éƒ¨åæ ‡
                     HP.GetComponent<RectTransform>().localPosition = localPos;
                 }
             }
@@ -85,7 +86,7 @@ public class BossAnime : MonoBehaviour
     }
 
     /// <summary>
-    /// ¸üĞÂ±ê¼ÇÎïÏà¶ÔÎ»ÖÃ£¬²»ÊÜÊ±¼äËõ·ÅÓ°Ïì
+    /// æ›´æ–°æ ‡è®°ç‰©ç›¸å¯¹ä½ç½®ï¼Œä¸å—æ—¶é—´ç¼©æ”¾å½±å“
     /// </summary>
     private void UpdateMarkPosition()
     {
@@ -96,26 +97,26 @@ public class BossAnime : MonoBehaviour
      
     private void PlayAnime()
     {
-        TimeClock += Time.deltaTime;
+        TimeClock += SimClock.FixedTickDt;
         if(TimeClock >= 1f/AnimeSpeed)
         {
             TimeClock = 0;
             
-            // ¸ù¾İµ±Ç°×´Ì¬¸üĞÂÖ¡Ë÷Òı
+            // æ ¹æ®å½“å‰çŠ¶æ€æ›´æ–°å¸§ç´¢å¼•
             switch(currentState)
             {
                 case BossAnimeType.Idle:
-                    CurrentAnimeIndex = (CurrentAnimeIndex + 1) % 4; // 0-3Ö¡Ñ­»·
+                    CurrentAnimeIndex = (CurrentAnimeIndex + 1) % 4; // 0-3å¸§å¾ªç¯
                     break;
                 case BossAnimeType.Right:
-                    CurrentAnimeIndex = 4 + (CurrentAnimeIndex - 4 + 1) % 4; // 4-7Ö¡Ñ­»·
+                    CurrentAnimeIndex = 4 + (CurrentAnimeIndex - 4 + 1) % 4; // 4-7å¸§å¾ªç¯
                     break;
                 case BossAnimeType.Left:
-                    CurrentAnimeIndex = 8 + (CurrentAnimeIndex - 8 + 1) % 4; // 8-11Ö¡Ñ­»·
+                    CurrentAnimeIndex = 8 + (CurrentAnimeIndex - 8 + 1) % 4; // 8-11å¸§å¾ªç¯
                     break;
             }
             
-            // ¸üĞÂ¾«Áé
+            // æ›´æ–°ç²¾çµ
             if(CurrentAnimeIndex < sprites.Count)
             {
                 spriteRenderer.sprite = sprites[CurrentAnimeIndex];
@@ -124,16 +125,16 @@ public class BossAnime : MonoBehaviour
     }
     
     /// <summary>
-    /// ÉèÖÃBossµÄ¶¯»­×´Ì¬
+    /// è®¾ç½®Bossçš„åŠ¨ç”»çŠ¶æ€
     /// </summary>
-    /// <param name="newState">ĞÂµÄ×´Ì¬</param>
+    /// <param name="newState">æ–°çš„çŠ¶æ€</param>
     public void SetState(BossAnimeType newState)
     {
         if(currentState != newState)
         {
             currentState = newState;
             
-            // ÇĞ»»×´Ì¬Ê±£¬½«Ö¡Ë÷ÒıÖØÖÃÎª¶ÔÓ¦×´Ì¬µÄµÚÒ»ÕÅÖ¡Í¼Æ¬
+            // åˆ‡æ¢çŠ¶æ€æ—¶ï¼Œå°†å¸§ç´¢å¼•é‡ç½®ä¸ºå¯¹åº”çŠ¶æ€çš„ç¬¬ä¸€å¼ å¸§å›¾ç‰‡
             switch(newState)
             {
                 case BossAnimeType.Idle:
@@ -147,7 +148,7 @@ public class BossAnime : MonoBehaviour
                     break;
             }
             
-            // Á¢¼´¸üĞÂ¾«Áé
+            // ç«‹å³æ›´æ–°ç²¾çµ
             if(CurrentAnimeIndex < sprites.Count)
             {
                 spriteRenderer.sprite = sprites[CurrentAnimeIndex];
@@ -177,7 +178,7 @@ public class BossAnime : MonoBehaviour
     }
     
     /// <summary>
-    /// Æ½»¬Ìî³äÑªÌõĞ­³Ì
+    /// å¹³æ»‘å¡«å……è¡€æ¡åç¨‹
     /// </summary>
     /// <returns></returns>
     private IEnumerator SmoothHPFill()
@@ -202,7 +203,7 @@ public class BossAnime : MonoBehaviour
                     yield return null;
                 }
                 
-                // È·±£×îÖÕÌî³ä¶ÈÎª1
+                // ç¡®ä¿æœ€ç»ˆå¡«å……åº¦ä¸º1
                 hpImage.fillAmount = targetFill;
             }
         }
@@ -214,10 +215,10 @@ public class BossAnime : MonoBehaviour
     }
     
     /// <summary>
-    /// ÉèÖÃÑªÌõÌî³ä±ÈÀı
+    /// è®¾ç½®è¡€æ¡å¡«å……æ¯”ä¾‹
     /// </summary>
-    /// <param name="currenthp">µ±Ç°ÑªÁ¿</param>
-    /// <param name="maxhp">×î´óÑªÁ¿</param>
+    /// <param name="currenthp">å½“å‰è¡€é‡</param>
+    /// <param name="maxhp">æœ€å¤§è¡€é‡</param>
     public void SetHpBar(float currenthp, float maxhp)
     {
         if(HP != null)
@@ -225,9 +226,9 @@ public class BossAnime : MonoBehaviour
             Image hpImage = HP.GetComponent<Image>();
             if(hpImage != null)
             {
-                // ¼ÆËãÑªÁ¿±ÈÀı£¬È·±£ÔÚ0-1Ö®¼ä
+                // è®¡ç®—è¡€é‡æ¯”ä¾‹ï¼Œç¡®ä¿åœ¨0-1ä¹‹é—´
                 float fillAmount = Mathf.Clamp01(currenthp / maxhp);
-                // ÉèÖÃÌî³ä×ÜÊı
+                // è®¾ç½®å¡«å……æ€»æ•°
                 hpImage.fillAmount = fillAmount;
             }
         }
@@ -251,8 +252,8 @@ public class BossAnime : MonoBehaviour
     }
     
     /// <summary>
-    /// Òş²ØBoss·½·¨
-    /// ÔÚ1ÃëÄÚ½«Boss¶ÔÏóµÄÍ¸Ã÷¶ÈÆ½»¬µ­³öÎª0.5f£¬µ­³öÍê³ÉºóÒş²ØÑªÌõ
+    /// éšè—Bossæ–¹æ³•
+    /// åœ¨1ç§’å†…å°†Bosså¯¹è±¡çš„é€æ˜åº¦å¹³æ»‘æ·¡å‡ºä¸º0.5fï¼Œæ·¡å‡ºå®Œæˆåéšè—è¡€æ¡
     /// </summary>
     public void Conceal()
     {
@@ -283,7 +284,7 @@ public class BossAnime : MonoBehaviour
             sprite.color = targetColor;
         }
         
-        // µ­³öÍê³ÉºóÒş²ØÑªÌõ
+        // æ·¡å‡ºå®Œæˆåéšè—è¡€æ¡
         HideHP();
     }
 

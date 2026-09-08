@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ReplaySystem;
 
 public enum Dir
 {
@@ -11,20 +12,20 @@ public enum Dir
 
 public class EnemyAnime : Enemy
 {
-    [Header("²»Í¬·½ÏòµĞÈËµÄ¾«ÁéÍ¼")]
+    [Header("ä¸åŒæ–¹å‘æ•Œäººçš„ç²¾çµå›¾")]
     public List<Sprite> enemySprites1;
     public List<Sprite> enemySprites2;
     public List<Sprite> enemySprites3;
     public List<Sprite> enemySprites4;
     private List<Sprite> currentEnemySprites;
 
-    [Header("¶¯»­²ÎÊı")]
+    [Header("åŠ¨ç”»å‚æ•°")]
     [SerializeField]
     private int _currentIndex = 0;
     private float TimeClock;
     public int AnimeSpeed = 4;
 
-    [Header("±´Èû¶ûÇúÏß²ÎÊı")]
+    [Header("è´å¡å°”æ›²çº¿å‚æ•°")]
     private float t = 0f;
     public float bezierSpeed = 0.5f;
     private Vector2 startPoint;
@@ -67,16 +68,16 @@ public class EnemyAnime : Enemy
         InitializeFadeIn();
     }
 
-    protected override void Update()
+    protected override void FixedUpdate()
     {
-        // ²¥·Å¶¯»­
+        // æ’­æ”¾åŠ¨ç”»
         PlayAnimation();
 
-        // ´¦Àíµ­ÈëĞ§¹û
+        // å¤„ç†æ·¡å…¥æ•ˆæœ
         HandleFadeIn();
 
-        // µ÷ÓÃ»ùÀàµÄUpdate´¦ÀíÒÆ¶¯Âß¼­
-        base.Update();
+        // è°ƒç”¨åŸºç±»çš„FixedUpdateå¤„ç†ç§»åŠ¨é€»è¾‘
+        base.FixedUpdate();
     }
 
     public override void SetMovePoints(List<GameObject> movePoints)
@@ -95,7 +96,7 @@ public class EnemyAnime : Enemy
     }
 
     /// <summary>
-    /// ÉèÖÃµĞÈËµÄÒÆ¶¯·½Ïò
+    /// è®¾ç½®æ•Œäººçš„ç§»åŠ¨æ–¹å‘
     /// </summary>
     public void SetDirection(Dir newDir)
     {
@@ -161,7 +162,7 @@ public class EnemyAnime : Enemy
     }
 
     /// <summary>
-    /// ³õÊ¼»¯µ­ÈëĞ§¹û
+    /// åˆå§‹åŒ–æ·¡å…¥æ•ˆæœ
     /// </summary>
     private void InitializeFadeIn()
     {
@@ -173,13 +174,13 @@ public class EnemyAnime : Enemy
     }
 
     /// <summary>
-    /// ´¦Àíµ­ÈëĞ§¹û
+    /// å¤„ç†æ·¡å…¥æ•ˆæœ
     /// </summary>
     private void HandleFadeIn()
     {
         if (fadeTimer < fadeTime)
         {
-            fadeTimer += Time.deltaTime;
+            fadeTimer += SimClock.FixedTickDt;
             float alpha = Mathf.Clamp01(fadeTimer / fadeTime);
             if (spriteRenderer != null)
             {
@@ -189,11 +190,11 @@ public class EnemyAnime : Enemy
     }
 
     /// <summary>
-    /// ²¥·Å¶¯»­
+    /// æ’­æ”¾åŠ¨ç”»
     /// </summary>
     private void PlayAnimation()
     {
-        TimeClock += Time.deltaTime;
+        TimeClock += SimClock.FixedTickDt;
         int currentFrame = Mathf.FloorToInt(TimeClock * 60f);
 
         if (currentFrame >= AnimeSpeed && currentEnemySprites != null && currentEnemySprites.Count > 0)
@@ -205,7 +206,7 @@ public class EnemyAnime : Enemy
     }
 
     /// <summary>
-    /// ¸üĞÂ¾«ÁéÍ¼
+    /// æ›´æ–°ç²¾çµå›¾
     /// </summary>
     private void UpdateSprite()
     {

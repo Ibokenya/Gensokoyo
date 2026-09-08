@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ReplaySystem;
 
 public class ShootNormal : MonoBehaviour
 {
@@ -8,28 +9,28 @@ public class ShootNormal : MonoBehaviour
     public GameObject MarisaNormal;
     private GameObject Normal;
 
-    [Header("Ç¹¹ÜÅäÖÃ")]
-    [Tooltip("µÚÒ»¸öÇ¹¹ÜÎ»ÖÃ")]
+    [Header("æªç®¡é…ç½®")]
+    [Tooltip("ç¬¬ä¸€ä¸ªæªç®¡ä½ç½®")]
     public Transform GunLeft;
-    [Tooltip("µÚ¶ş¸öÇ¹¹ÜÎ»ÖÃ")]
+    [Tooltip("ç¬¬äºŒä¸ªæªç®¡ä½ç½®")]
     public Transform GunRight;
 
-    [Header("Éä»÷ÅäÖÃ")]
-    [Tooltip("Éä»÷¼ä¸ô£¨Ãë£©")]
-    public float shootInterval = 0.12f; // Éä»÷¼ä¸ô
-    private float shootTimer; // Éä»÷ÀäÈ´¼ÆÊ±Æ÷
+    [Header("å°„å‡»é…ç½®")]
+    [Tooltip("å°„å‡»é—´éš”ï¼ˆç§’ï¼‰")]
+    public float shootInterval = 0.12f; // å°„å‡»é—´éš”
+    private float shootTimer; // å°„å‡»å†·å´è®¡æ—¶å™¨
 
-    private bool IsLimited = false; // ÊÇ·ñÏŞÖÆÉä»÷(Æßê×¹¥»÷ÆÚ¼äÍ£Ö¹)
+    private bool IsLimited = false; // æ˜¯å¦é™åˆ¶å°„å‡»(ä¸ƒæ›œæ”»å‡»æœŸé—´åœæ­¢)
 
     void OnEnable()
     {
-        // ³õÊ¼»¯¶ÔÓ¦½ÇÉ«µÄµ¯Ä»Ô¤ÖÆÌå
+        // åˆå§‹åŒ–å¯¹åº”è§’è‰²çš„å¼¹å¹•é¢„åˆ¶ä½“
         UpdateNormalPrefab();
 
-        // ³õÊ¼»¯¼ÆÊ±Æ÷£¨È·±£ÓÎÏ·¿ªÊ¼¼´¿ÉÉä»÷£©
+        // åˆå§‹åŒ–è®¡æ—¶å™¨ï¼ˆç¡®ä¿æ¸¸æˆå¼€å§‹å³å¯å°„å‡»ï¼‰
         shootTimer = shootInterval;
         
-        // ³õÊ¼»¯µ¯Ä»³Ø
+        // åˆå§‹åŒ–å¼¹å¹•æ± 
         if (Normal != null)
         {
             Global_ObjectPool.Instance.InitPool(Normal, 0);
@@ -40,29 +41,28 @@ public class ShootNormal : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-        // ¶³½á×´Ì¬ÏÂ½ûÖ¹Éä»÷
+        // å†»ç»“çŠ¶æ€ä¸‹ç¦æ­¢å°„å‡»
         if(Global_GameManager.Instance == null || 
         Global_GameManager.Instance.state != State.Gaming && 
         Global_GameManager.Instance.state != State.NoDead) return;
         
-        // È·±£NormalÔ¤ÖÆÌåÒÑ³õÊ¼»¯
+        // ç¡®ä¿Normalé¢„åˆ¶ä½“å·²åˆå§‹åŒ–
         if (Normal == null)
         {
             UpdateNormalPrefab();
         }
         
-        // ¼ÆÊ±Æ÷³ÖĞøÀÛ¼Ó
-        shootTimer += Time.deltaTime;
+        // è®¡æ—¶å™¨æŒç»­ç´¯åŠ 
+        shootTimer += SimClock.FixedTickDt;
         if(IsLimited)
             return;
         Shoot();
     }
 
     /// <summary>
-    /// ¸üĞÂNormalÔ¤ÖÆÌåÒıÓÃ
+    /// æ›´æ–°Normalé¢„åˆ¶ä½“å¼•ç”¨
     /// </summary>
     private void UpdateNormalPrefab()
     {
@@ -81,30 +81,30 @@ public class ShootNormal : MonoBehaviour
 
     private void Shoot()
     {
-        // Ö»ÓĞ°´ÏÂZ¼ü + ¼ÆÊ±Æ÷´ïµ½¼ä¸ôÊ±¼ä + NormalÔ¤ÖÆÌå²»Îªnull£¬²ÅÔÊĞíÉä»÷
-        if (Input.GetKey(KeyCode.Z) && shootTimer >= 
+        // åªæœ‰æŒ‰ä¸‹Zé”® + è®¡æ—¶å™¨è¾¾åˆ°é—´éš”æ—¶é—´ + Normalé¢„åˆ¶ä½“ä¸ä¸ºnullï¼Œæ‰å…è®¸å°„å‡»
+        if (ReplayManager.Input.GetKey(LogicalKey.Fire) && shootTimer >= 
         (shootInterval/Global_GameManager.Instance.GetSpeedScale()) && Normal != null)
         {
             try
             {
-                // Èç¹ûÇ¹¹Ü²»Îª¿Õ£¬Ôò´Ó¶ÔÓ¦Ç¹¹ÜÎ»ÖÃ·¢Éä×Óµ¯
+                // å¦‚æœæªç®¡ä¸ä¸ºç©ºï¼Œåˆ™ä»å¯¹åº”æªç®¡ä½ç½®å‘å°„å­å¼¹
                 if (GunLeft != null && GunRight != null)
                 {
-                    // ´Ó¶ÔÏó³Ø»ñÈ¡µ¯Ä»
+                    // ä»å¯¹è±¡æ± è·å–å¼¹å¹•
                     Global_ObjectPool.Instance.GetObject
                     (Normal, GunLeft.position, Normal.transform.rotation);
                     Global_ObjectPool.Instance.GetObject
                     (Normal, GunRight.position, Normal.transform.rotation);
-                    shootTimer = 0; // Éä»÷ºóÖØÖÃ¼ÆÊ±Æ÷£¬¿ªÊ¼ÀäÈ´
+                    shootTimer = 0; // å°„å‡»åé‡ç½®è®¡æ—¶å™¨ï¼Œå¼€å§‹å†·å´
                 }
                 else
                 {
-                    Debug.LogWarning("Ç¹¹ÜÎ»ÖÃÎ´ÉèÖÃ£¬ÎŞ·¨·¢Éä×Óµ¯");
+                    Debug.LogWarning("æªç®¡ä½ç½®æœªè®¾ç½®ï¼Œæ— æ³•å‘å°„å­å¼¹");
                 }
             }
             catch (System.Exception e)
             {
-                Debug.LogError("·¢ÉäÆÕÍ¨×Óµ¯Ê§°Ü: " + e.Message);
+                Debug.LogError("å‘å°„æ™®é€šå­å¼¹å¤±è´¥: " + e.Message);
             }
         }
     }

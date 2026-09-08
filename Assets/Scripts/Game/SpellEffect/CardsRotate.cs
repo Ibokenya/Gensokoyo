@@ -1,23 +1,24 @@
 using System.Collections;
 using System.Collections.Generic;
+using ReplaySystem;
 using UnityEngine;
 
 public class CardsRotate : MonoBehaviour
 {
-    public List<GameObject> cards = new List<GameObject>(); // ´æ´¢ËùÓĞ·û¿¨×ÓÎïÌå
-    public float fadeInDuration = 0.5f; // µ­Èë³ÖĞøÊ±¼ä
-    public float fadeOutDuration = 0.3f; // µ­³ö³ÖĞøÊ±¼ä
+    public List<GameObject> cards = new List<GameObject>(); // å­˜å‚¨æ‰€æœ‰ç¬¦å¡å­ç‰©ä½“
+    public float fadeInDuration = 0.5f; // æ·¡å…¥æŒç»­æ—¶é—´
+    public float fadeOutDuration = 0.3f; // æ·¡å‡ºæŒç»­æ—¶é—´
 
-    public float maxAlpha = 0.8f; // ×î´óÍ¸Ã÷¶È
-    public float rotationSpeed = 120f; // Ğı×ªËÙ¶È£¨¶È/Ãë£©
-    public Transform targetTransform; // Î§ÈÆĞı×ªµÄÄ¿±êÎïÌå£¨SpellCardEffectËùÔÚÎïÌå£©
+    public float maxAlpha = 0.8f; // æœ€å¤§é€æ˜åº¦
+    public float rotationSpeed = 120f; // æ—‹è½¬é€Ÿåº¦ï¼ˆåº¦/ç§’ï¼‰
+    public Transform targetTransform; // å›´ç»•æ—‹è½¬çš„ç›®æ ‡ç‰©ä½“ï¼ˆSpellCardEffectæ‰€åœ¨ç‰©ä½“ï¼‰
     private float fadeTimer = 0f;
 
     void OnEnable()
     {
         fadeTimer = 0f;
         
-        // ³õÊ¼»¯ËùÓĞ·û¿¨µÄÍ¸Ã÷¶ÈÎª0
+        // åˆå§‹åŒ–æ‰€æœ‰ç¬¦å¡çš„é€æ˜åº¦ä¸º0
         foreach (var card in cards)
         {
             if (card != null)
@@ -26,35 +27,35 @@ public class CardsRotate : MonoBehaviour
             }
         }
         
-        // ¿ªÊ¼µ­ÈëĞ­³Ì
+        // å¼€å§‹æ·¡å…¥åç¨‹
         StartCoroutine(FadeInCoroutine());
     }
 
-    void Update()
+    void FixedUpdate()
     {
-        // ÈÃÃ¿¸öÊµ¼Ê·û¿¨ÎïÌåÎ§ÈÆÄ¿±êÎïÌåĞı×ª
+        // è®©æ¯ä¸ªå®é™…ç¬¦å¡ç‰©ä½“å›´ç»•ç›®æ ‡ç‰©ä½“æ—‹è½¬
         for (int i = 0; i < cards.Count; i++)
         {
             var card = cards[i];
             if (card != null)
             {
-                // Ã¿¸ö·û¿¨¸ù¾İ×ÔÉíË÷Òı£¬½«Ğı×ªËÙ¶ÈÌí¼Óindex*10
+                // æ¯ä¸ªç¬¦å¡æ ¹æ®è‡ªèº«ç´¢å¼•ï¼Œå°†æ—‹è½¬é€Ÿåº¦æ·»åŠ index*10
                 float adjustedSpeed = rotationSpeed + (i * 10);
                 
                 if (targetTransform != null)
                 {
-                    card.transform.RotateAround(targetTransform.position, Vector3.up, adjustedSpeed * Time.deltaTime);
+                    card.transform.RotateAround(targetTransform.position, Vector3.up, adjustedSpeed * SimClock.FixedTickDt);
                 }
                 else
                 {
-                    Debug.Log("Ã»ÓĞÄ¿±êÎïÌå");
+                    Debug.Log("æ²¡æœ‰ç›®æ ‡ç‰©ä½“");
                 }
             }
         }
     }
 
     /// <summary>
-    /// µ­ÈëĞ­³Ì
+    /// æ·¡å…¥åç¨‹
     /// </summary>
     private IEnumerator FadeInCoroutine()
     {
@@ -74,7 +75,7 @@ public class CardsRotate : MonoBehaviour
             yield return null;
         }
         
-        // È·±£ËùÓĞ·û¿¨´ïµ½×î´óÍ¸Ã÷¶È
+        // ç¡®ä¿æ‰€æœ‰ç¬¦å¡è¾¾åˆ°æœ€å¤§é€æ˜åº¦
         foreach (var card in cards)
         {
             if (card != null)
@@ -85,7 +86,7 @@ public class CardsRotate : MonoBehaviour
     }
 
     /// <summary>
-    /// µ­³ö·½·¨£¨¹©¶¯»­ÊÂ¼şµ÷ÓÃ£©
+    /// æ·¡å‡ºæ–¹æ³•ï¼ˆä¾›åŠ¨ç”»äº‹ä»¶è°ƒç”¨ï¼‰
     /// </summary>
     public void FadeOut()
     {
@@ -93,7 +94,7 @@ public class CardsRotate : MonoBehaviour
     }
 
     /// <summary>
-    /// µ­³öĞ­³Ì
+    /// æ·¡å‡ºåç¨‹
     /// </summary>
     private IEnumerator FadeOutCoroutine()
     {
@@ -114,7 +115,7 @@ public class CardsRotate : MonoBehaviour
             yield return null;
         }
         
-        // È·±£ËùÓĞ·û¿¨Í¸Ã÷¶ÈÎª0
+        // ç¡®ä¿æ‰€æœ‰ç¬¦å¡é€æ˜åº¦ä¸º0
         foreach (var card in cards)
         {
             if (card != null)
@@ -125,11 +126,11 @@ public class CardsRotate : MonoBehaviour
     }
 
     /// <summary>
-    /// ÉèÖÃ·û¿¨µÄÍ¸Ã÷¶È
+    /// è®¾ç½®ç¬¦å¡çš„é€æ˜åº¦
     /// </summary>
     private void SetCardAlpha(GameObject card, float alpha)
     {
-        // »ñÈ¡·û¿¨µÄËùÓĞäÖÈ¾Æ÷×é¼ş
+        // è·å–ç¬¦å¡çš„æ‰€æœ‰æ¸²æŸ“å™¨ç»„ä»¶
         Renderer[] renderers = card.GetComponentsInChildren<Renderer>();
         foreach (var renderer in renderers)
         {
@@ -144,7 +145,7 @@ public class CardsRotate : MonoBehaviour
             }
         }
         
-        // ´¦ÀíSpriteRenderer
+        // å¤„ç†SpriteRenderer
         SpriteRenderer spriteRenderer = card.GetComponentInChildren<SpriteRenderer>();
         if (spriteRenderer != null)
         {

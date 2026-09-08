@@ -1,28 +1,28 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class ParticleConection : MonoBehaviour
 {
-    [Header("ÖÊµãÉèÖÃ")]
-    public List<Transform> particles; // ´æ´¢12¸öÖÊµãµÄTransform
-    public Sprite secondSprite; // ´æ´¢Ã¿¸öÖÊµãµÄµÚ¶ş×ËÌ¬Í¼Æ¬
+    [Header("è´¨ç‚¹è®¾ç½®")]
+    public List<Transform> particles; // å­˜å‚¨12ä¸ªè´¨ç‚¹çš„Transform
+    public Sprite secondSprite; // å­˜å‚¨æ¯ä¸ªè´¨ç‚¹çš„ç¬¬äºŒå§¿æ€å›¾ç‰‡
     
-    [Header("Á¬ÏßÉèÖÃ")]
-    public LineRenderer[] lineRenderers; // ´æ´¢ËùÓĞÁ¬ÏßµÄLineRenderer
-    public int totalFrames; // Á¬ÏßÆÚ¼ä×ÜÊ±³¤£¨Ö¡£©
+    [Header("è¿çº¿è®¾ç½®")]
+    public LineRenderer[] lineRenderers; // å­˜å‚¨æ‰€æœ‰è¿çº¿çš„LineRenderer
+    public int totalFrames; // è¿çº¿æœŸé—´æ€»æ—¶é•¿ï¼ˆå¸§ï¼‰
     
-    [Header("Á¬ÏßÒôĞ§")]
-    public AudioClip lineClip; // Á¬ÏßÒôĞ§clip
+    [Header("è¿çº¿éŸ³æ•ˆ")]
+    public AudioClip lineClip; // è¿çº¿éŸ³æ•ˆclip
 
-    private int currentIndex = 0; // µ±Ç°ÖÊµãË÷Òı
-    private int nextIndex = 1; // ÏÂÒ»¸öÖÊµãË÷Òı
-    private readonly int maxLines = 11; // ĞèÒª´´½¨µÄÁ¬ÏßÊıÁ¿
-    private int createdLines = 0; // ÒÑ´´½¨µÄÁ¬ÏßÊıÁ¿
+    private int currentIndex = 0; // å½“å‰è´¨ç‚¹ç´¢å¼•
+    private int nextIndex = 1; // ä¸‹ä¸€ä¸ªè´¨ç‚¹ç´¢å¼•
+    private readonly int maxLines = 11; // éœ€è¦åˆ›å»ºçš„è¿çº¿æ•°é‡
+    private int createdLines = 0; // å·²åˆ›å»ºçš„è¿çº¿æ•°é‡
     
     void OnDisable()
     {   
-        // ÇåÀíËùÓĞÁ¬Ïß
+        // æ¸…ç†æ‰€æœ‰è¿çº¿
         foreach (LineRenderer lineRenderer in lineRenderers)
         {
             lineRenderer.gameObject.SetActive(false);
@@ -30,30 +30,30 @@ public class ParticleConection : MonoBehaviour
     }
 
     /// <summary>
-    /// ¿ªÊ¼´´½¨Á¬Ïß
-    /// ÓÉ¶¯»­ÊÂ¼şµ÷ÓÃ
+    /// å¼€å§‹åˆ›å»ºè¿çº¿
+    /// ç”±åŠ¨ç”»äº‹ä»¶è°ƒç”¨
     /// </summary>
     public void StartCreateLines()
     {
         currentIndex = 0;
         nextIndex = 1;
         createdLines = 0;
-        int framesPerLine = totalFrames / maxLines; // Ã¿¸ùÁ¬ÏßµÄÖ¡Êı
+        int framesPerLine = totalFrames / maxLines; // æ¯æ ¹è¿çº¿çš„å¸§æ•°
         StartCoroutine(CreateLinesCoroutine(framesPerLine));
     }
     
     /// <summary>
-    /// ´´½¨Á¬ÏßµÄĞ­³Ì
+    /// åˆ›å»ºè¿çº¿çš„åç¨‹
     /// </summary>
-    /// <param name="framesPerLine">Ã¿¸ùÁ¬ÏßµÄÖ¡Êı</param>
+    /// <param name="framesPerLine">æ¯æ ¹è¿çº¿çš„å¸§æ•°</param>
     private IEnumerator CreateLinesCoroutine(int framesPerLine)
     {
         while (createdLines < maxLines && currentIndex < particles.Count && nextIndex < particles.Count && createdLines < lineRenderers.Length)
         {
-            // ÏÔÊ¾Á¬Ïß£¬µÈ´ıÍê³É
+            // æ˜¾ç¤ºè¿çº¿ï¼Œç­‰å¾…å®Œæˆ
             yield return StartCoroutine(ShowLine(lineRenderers[createdLines], particles[currentIndex], particles[nextIndex], framesPerLine));
             
-            // Ôö¼ÓË÷Òı
+            // å¢åŠ ç´¢å¼•
             currentIndex++;
             nextIndex++;
             createdLines++;
@@ -61,30 +61,30 @@ public class ParticleConection : MonoBehaviour
     }
     
     /// <summary>
-    /// ÏÔÊ¾Á¬Ïß£¬´ÓÆğµã»º»º»­µ½ÖÕµã
+    /// æ˜¾ç¤ºè¿çº¿ï¼Œä»èµ·ç‚¹ç¼“ç¼“ç”»åˆ°ç»ˆç‚¹
     /// </summary>
-    /// <param name="lineRenderer">Á¬ÏßµÄLineRenderer</param>
-    /// <param name="start">Æğµã</param>
-    /// <param name="end">ÖÕµã</param>
-    /// <param name="frames">»æÖÆÁ¬ÏßµÄÖ¡Êı</param>
+    /// <param name="lineRenderer">è¿çº¿çš„LineRenderer</param>
+    /// <param name="start">èµ·ç‚¹</param>
+    /// <param name="end">ç»ˆç‚¹</param>
+    /// <param name="frames">ç»˜åˆ¶è¿çº¿çš„å¸§æ•°</param>
     private IEnumerator ShowLine(LineRenderer lineRenderer, Transform start, Transform end, int frames)
     {
         if (lineRenderer == null || start == null || end == null)
             yield break;
         
-        // ÆôÓÃÁ¬Ïß
+        // å¯ç”¨è¿çº¿
         lineRenderer.gameObject.SetActive(true);
         lineRenderer.gameObject.GetComponent<LineRenderer>().material.color = Color.white;
         
-        // Ìí¼ÓÆ«ÒÆÁ¿
+        // æ·»åŠ åç§»é‡
         Vector3 offset = new Vector3(3, 0, 0);
         
-        // ÉèÖÃ³õÊ¼Î»ÖÃ
+        // è®¾ç½®åˆå§‹ä½ç½®
         lineRenderer.positionCount = 2;
         lineRenderer.SetPosition(0, start.position + offset);
         lineRenderer.SetPosition(1, start.position + offset);
         
-        // ÔÚÖ¸¶¨Ö¡ÊıÄÚ»æÖÆÁ¬Ïß
+        // åœ¨æŒ‡å®šå¸§æ•°å†…ç»˜åˆ¶è¿çº¿
         for (int i = 0; i <= frames; i++)
         {
             float t = (float)i / frames;
@@ -93,16 +93,16 @@ public class ParticleConection : MonoBehaviour
             yield return null;
         }
         
-        // ²¥·ÅÁ¬ÏßÒôĞ§
+        // æ’­æ”¾è¿çº¿éŸ³æ•ˆ
         if (lineClip != null)
         {
             Global_AudioManager.Instance.PlaySFX(lineClip);
         }
         
-        // È·±£µ½´ïÖÕµã
+        // ç¡®ä¿åˆ°è¾¾ç»ˆç‚¹
         lineRenderer.SetPosition(1, end.position + offset);
         
-        // ÇĞ»»Ä¿±êÖÊµãÎªµÚ¶ş×ËÌ¬
+        // åˆ‡æ¢ç›®æ ‡è´¨ç‚¹ä¸ºç¬¬äºŒå§¿æ€
         if (end != null && secondSprite != null)
         {
             int particleIndex = particles.IndexOf(end);
@@ -118,8 +118,8 @@ public class ParticleConection : MonoBehaviour
     }
     
     /// <summary>
-    /// µ­³öËùÓĞÁ¬ÏßºÍÖÊµã
-    /// ÔÚ0.5ÃëÄÚ½«ËùÓĞÁ¬ÏßºÍÖÊµãµ­³ö
+    /// æ·¡å‡ºæ‰€æœ‰è¿çº¿å’Œè´¨ç‚¹
+    /// åœ¨0.5ç§’å†…å°†æ‰€æœ‰è¿çº¿å’Œè´¨ç‚¹æ·¡å‡º
     /// </summary>
     public void ClearLines()
     {
@@ -127,11 +127,11 @@ public class ParticleConection : MonoBehaviour
     }
     
     /// <summary>
-    /// µ­³öĞ§¹ûµÄĞ­³Ì
+    /// æ·¡å‡ºæ•ˆæœçš„åç¨‹
     /// </summary>
     private IEnumerator FadeOutCoroutine()
     {
-        // µ­³öËùÓĞÁ¬Ïß
+        // æ·¡å‡ºæ‰€æœ‰è¿çº¿
         float duration = 0.5f;
         float elapsedTime = 0f;
         
@@ -140,19 +140,19 @@ public class ParticleConection : MonoBehaviour
             elapsedTime += Time.deltaTime;
             float t = Mathf.Clamp01(elapsedTime / duration);
             
-            // µ­³öÁ¬Ïß
+            // æ·¡å‡ºè¿çº¿
             foreach (LineRenderer lineRenderer in lineRenderers)
             {
                 if (lineRenderer != null && lineRenderer.gameObject.activeInHierarchy)
                 {
-                    // µ­³öĞ§¹û
+                    // æ·¡å‡ºæ•ˆæœ
                     Color color = lineRenderer.material.color;
                     color.a = 1f - t;
                     lineRenderer.material.color = color;
                 }
             }
             
-            // µ­³öÖÊµã
+            // æ·¡å‡ºè´¨ç‚¹
             foreach (Transform particle in particles)
             {
                 if (particle != null)

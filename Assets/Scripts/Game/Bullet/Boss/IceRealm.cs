@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ReplaySystem;
 
 public class IceRealm : MonoBehaviour
 {
@@ -23,7 +24,7 @@ public class IceRealm : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         Collider2D = GetComponent<Collider2D>();
         
-        // ³õÊ¼»¯×´Ì¬£º½Å±¾±£³Ö¼¤»î£¬Åö×²Æ÷³õÊ¼Î´¼¤»î
+        // åˆå§‹åŒ–çŠ¶æ€ï¼šè„šæœ¬ä¿æŒæ¿€æ´»ï¼Œç¢°æ’å™¨åˆå§‹æœªæ¿€æ´»
         if (Collider2D != null)
         {
             Collider2D.enabled = false;
@@ -42,9 +43,9 @@ public class IceRealm : MonoBehaviour
         isColliderActive = false;
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
-        // È·±£playerÒıÓÃ²»Îª¿Õ
+        // ç¡®ä¿playerå¼•ç”¨ä¸ä¸ºç©º
         if (player == null)
         {
             return;
@@ -82,13 +83,13 @@ public class IceRealm : MonoBehaviour
     
     public void Activate()
     {
-        // Èç¹ûÕıÔÚµ­³ö¡¢µ­Èë»òÅö×²Æ÷ÒÑ¼¤»î£¬Ôò²»Ö´ĞĞ¼¤»î
+        // å¦‚æœæ­£åœ¨æ·¡å‡ºã€æ·¡å…¥æˆ–ç¢°æ’å™¨å·²æ¿€æ´»ï¼Œåˆ™ä¸æ‰§è¡Œæ¿€æ´»
         if (isFadingOut || isFadingIn || isColliderActive)
         {
             return;
         }
         
-        // ¿ªÊ¼µ­Èë
+        // å¼€å§‹æ·¡å…¥
         StartFadeIn();
     }
     
@@ -131,11 +132,11 @@ public class IceRealm : MonoBehaviour
             Collider2D.enabled = true;
             isColliderActive = true;
         }
-        Debug.Log("±ùÇôÁıµ­Èë");
+        Debug.Log("å†°å›šç¬¼æ·¡å…¥");
     }
     
     /// <summary>
-    /// ¿ªÊ¼µ­³ö±ùÁìÓò²¢½ûÓÃÅö×²Æ÷
+    /// å¼€å§‹æ·¡å‡ºå†°é¢†åŸŸå¹¶ç¦ç”¨ç¢°æ’å™¨
     /// </summary>
     public void StartFadeOut()
     {
@@ -188,6 +189,6 @@ public class IceRealm : MonoBehaviour
         {
             Collider2D.enabled = false;
         }
-        Debug.Log("±ùÇôÁıµ­³ö");
+        Debug.Log("å†°å›šç¬¼æ·¡å‡º");
     }
 }

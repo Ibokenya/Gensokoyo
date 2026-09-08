@@ -1,49 +1,50 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ReplaySystem;
 
 public class GunAnime : MonoBehaviour
 {
-    public List<GameObject> NormalGuns = new();// ÆÕÍ¨³£¹æ»úÌå
-    public GameObject ReimuGun;// ÁéÃÎ×Ó»ú
-    public List<GameObject> ReimuGuns;// ÁéÃÎ×Ó»úÃÇ
-    public GameObject MarisaGun;// Ä§ÀíÉ³×Ó»ú
-    public List<GameObject> MarisaGuns;// Ä§ÀíÉ³×Ó»úÃÇ
-    public GameObject MagicGun;// Æßê×Ä§·¨×Ó»ú
-    public ShootNormal ShootNormal;// ÆÕÍ¨³£¹æ»úÌåÒıÓÃ
+    public List<GameObject> NormalGuns = new();// æ™®é€šå¸¸è§„æœºä½“
+    public GameObject ReimuGun;// çµæ¢¦å­æœº
+    public List<GameObject> ReimuGuns;// çµæ¢¦å­æœºä»¬
+    public GameObject MarisaGun;// é­”ç†æ²™å­æœº
+    public List<GameObject> MarisaGuns;// é­”ç†æ²™å­æœºä»¬
+    public GameObject MagicGun;// ä¸ƒæ›œé­”æ³•å­æœº
+    public ShootNormal ShootNormal;// æ™®é€šå¸¸è§„æœºä½“å¼•ç”¨
 
     private readonly List<Vector2> GunPos = new()
     {
-        // »ğÁ¦Îª1Ê±µÄÎ»ÖÃ
+        // ç«åŠ›ä¸º1æ—¶çš„ä½ç½®
         new Vector2(0f, 0.4f),// 0
-        // »ğÁ¦Îª2Ê±µÄÎ»ÖÃ
+        // ç«åŠ›ä¸º2æ—¶çš„ä½ç½®
         new Vector2(-0.18f, 0.22f),
         new Vector2(0.18f, 0.22f),
-        new Vector2(-0.1f, 0.25f),// 3°´ÏÂshiftºóµÄÎ»ÖÃ
+        new Vector2(-0.1f, 0.25f),// 3æŒ‰ä¸‹shiftåçš„ä½ç½®
         new Vector2(0.1f, 0.25f),
-        // »ğÁ¦Îª3Ê±µÄÎ»ÖÃ
+        // ç«åŠ›ä¸º3æ—¶çš„ä½ç½®
         new Vector2(0f, 0.32f),// 5
         new Vector2(-0.2f, 0.15f),
         new Vector2(0.2f, 0.15f),
-        new Vector2(-0.17f, 0.22f),// 8°´ÏÂshiftºóµÄÎ»ÖÃ
+        new Vector2(-0.17f, 0.22f),// 8æŒ‰ä¸‹shiftåçš„ä½ç½®
         new Vector2(0.17f, 0.22f),
-        // »ğÁ¦Îª4Ê±µÄÎ»ÖÃ
+        // ç«åŠ›ä¸º4æ—¶çš„ä½ç½®
         new Vector2(-0.19f, 0.23f),// 10
         new Vector2(0.19f, 0.23f),
         new Vector2(-0.35f, -0.01f),
         new Vector2(0.35f, -0.01f),
-        new Vector2(-0.1f, 0.25f),// 14°´ÏÂshiftºóµÄÎ»ÖÃ
+        new Vector2(-0.1f, 0.25f),// 14æŒ‰ä¸‹shiftåçš„ä½ç½®
         new Vector2(0.1f, 0.25f),
         new Vector2(-0.22f, 0.1f),
         new Vector2(0.22f, 0.1f),
     };
 
-    public int Index;//0:ÁéÃÎ×Ó»ú 1:Ä§ÀíÉ³×Ó»ú 2:Æßê×Ä§·¨×Ó»ú
-    private int GunNumber = 1;// ×Ó»úÊıÁ¿
+    public int Index;//0:çµæ¢¦å­æœº 1:é­”ç†æ²™å­æœº 2:ä¸ƒæ›œé­”æ³•å­æœº
+    private int GunNumber = 1;// å­æœºæ•°é‡
 
-    private bool isShifted = false;// ÊÇ·ñ°´ÏÂShift
-    public bool IsShiftedNow => isShifted;// ÊÇ·ñ°´ÏÂShift
-    public bool isExitingMagic = false; // ÊÇ·ñÕıÔÚÍË³öÄ§·¨×´Ì¬
+    private bool isShifted = false;// æ˜¯å¦æŒ‰ä¸‹Shift
+    public bool IsShiftedNow => isShifted;// æ˜¯å¦æŒ‰ä¸‹Shift
+    public bool isExitingMagic = false; // æ˜¯å¦æ­£åœ¨é€€å‡ºé­”æ³•çŠ¶æ€
 
     void OnEnable()
     {
@@ -58,12 +59,12 @@ public class GunAnime : MonoBehaviour
         SwitchGun();
         GunNumber = 1;
         
-        // Í¬²½×Ó»ú¼¤»î×´Ì¬
+        // åŒæ­¥å­æœºæ¿€æ´»çŠ¶æ€
         if (Index == 0) UpdateGuns(ReimuGuns);
         else if (Index == 1) UpdateGuns(MarisaGuns);
         UpdateGunPos();
 
-        // ¶©ÔÄÁéÁ¦±ä¸üÊÂ¼ş
+        // è®¢é˜…çµåŠ›å˜æ›´äº‹ä»¶
         Global_GameManager.Instance.OnPowerChanged += UpdateGunNumber;
         Global_GameManager.Instance.OnReincarnation += CancelGun;
     }
@@ -74,8 +75,7 @@ public class GunAnime : MonoBehaviour
         Global_GameManager.Instance.OnReincarnation -= CancelGun;
     }
 
-    // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         if(Global_GameManager.Instance.state == State.Pause || 
         Global_GameManager.Instance.state == State.FinalUI) return;
@@ -118,33 +118,33 @@ public class GunAnime : MonoBehaviour
 
     private void CheckUpdate()
     {
-        if(Input.GetKeyDown(KeyCode.LeftShift))
+        if(ReplayManager.Input.GetKeyDown(LogicalKey.Slow))
         {
             isShifted = true;
-            if(Index==0)// Èç¹ûÊÇÁéÃÎ³£Ì¬
+            if(Index==0)// å¦‚æœæ˜¯çµæ¢¦å¸¸æ€
             {
                 UpdateGunPos();
             }
-            if(Index==1 && !isExitingMagic)// Èç¹ûÊÇÄ§ÀíÉ³³£Ì¬°´ÏÂShift½øÈëÆßê×Ì¬
+            if(Index==1 && !isExitingMagic)// å¦‚æœæ˜¯é­”ç†æ²™å¸¸æ€æŒ‰ä¸‹Shiftè¿›å…¥ä¸ƒæ›œæ€
             {
                 Index = 2;
                 SwitchGun();
                 UpdateGunPos();
             }
         }
-        else if(Input.GetKeyUp(KeyCode.LeftShift))
+        else if(ReplayManager.Input.GetKeyUp(LogicalKey.Slow))
         {
             isShifted = false;
-            if(Index==2 && !isExitingMagic)// Èç¹ûÊÇÆßê×Ì¬ËÉ¿ªShift½øÈëÄ§ÀíÉ³³£Ì¬
+            if(Index==2 && !isExitingMagic)// å¦‚æœæ˜¯ä¸ƒæ›œæ€æ¾å¼€Shiftè¿›å…¥é­”ç†æ²™å¸¸æ€
             {
-                // ²»Á¢¼´ÇĞ»»£¬ÓÉMagicAnimeÍê³ÉÍË³ö¶¯»­ºóµ÷ÓÃSwitchToMarisaNormal
+                // ä¸ç«‹å³åˆ‡æ¢ï¼Œç”±MagicAnimeå®Œæˆé€€å‡ºåŠ¨ç”»åè°ƒç”¨SwitchToMarisaNormal
                 isExitingMagic = true;
             }
             UpdateGunPos();
         }
     }
 
-    // ÓÉMagicAnimeµ÷ÓÃ£¬Íê³ÉÍË³ö¶¯»­ºóÇĞ»»µ½Ä§ÀíÉ³³£Ì¬
+    // ç”±MagicAnimeè°ƒç”¨ï¼Œå®Œæˆé€€å‡ºåŠ¨ç”»ååˆ‡æ¢åˆ°é­”ç†æ²™å¸¸æ€
     public void SwitchToMarisaNormal()
     {
         Index = 1;
@@ -196,7 +196,7 @@ public class GunAnime : MonoBehaviour
 
     public void UpdateGunPos()
     {
-        if(Index==0)// ÁéÃÎ×Ó»ú
+        if(Index==0)// çµæ¢¦å­æœº
         {
             if(isShifted)
             {
@@ -247,7 +247,7 @@ public class GunAnime : MonoBehaviour
                 }
             }
         }
-        else if(Index==1)// Ä§ÀíÉ³×Ó»ú
+        else if(Index==1)// é­”ç†æ²™å­æœº
         {
             switch (GunNumber)
             {

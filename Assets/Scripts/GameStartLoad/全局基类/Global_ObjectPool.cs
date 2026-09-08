@@ -3,39 +3,37 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// È«¾Ö¡°³Ø¡±ĞÍµ¥ÀıÀà
-/// ¹ÜÀíÑı¾«³Ø£¬µ¯Ä»³Ø£¬µÃµãµÀ¾ß³Ø
-/// ¶¼ÊÇÎªÁËÓÅ»¯ĞÔÄÜ
+/// å…¨å±€"æ± "å‹å•ä¾‹ç±» â€”â€” å·²æ”¹ä¸ºç¡®å®šæ€§å®ç°ã€‚
+/// æ‰€æœ‰æ´»è·ƒå¯¹è±¡é›†åˆç”¨ Listï¼ˆé¡ºåºç¨³å®šï¼‰ï¼Œä¸ç¢° HashSetï¼ˆéå†é¡ºåºä¸ä¿è¯ï¼‰ã€‚
 /// </summary>
 public class Global_ObjectPool : Singleton<Global_ObjectPool>   
 {
-    // ´æ´¢²»Í¬ÀàĞÍµÄÎïÆ·³Ø
+    // å­˜å‚¨ä¸åŒç±»å‹çš„ç‰©å“æ± 
     private readonly Dictionary<string, Queue<GameObject>> ObjectPool = new();
-    // ´æ´¢Ã¿¸ö¶ÔÏó³ØµÄ³õÊ¼ÈİÁ¿
+    // å­˜å‚¨æ¯ä¸ªå¯¹è±¡æ± çš„åˆå§‹å®¹é‡
     private readonly Dictionary<string, int> PoolInitialCapacities = new();
-    // ´æ´¢µ±Ç°»îÔ¾µÄ¶ÔÏó£¨ÒÑ´Ó³ØÖĞÈ¡³öµ«ÉĞÎ´»ØÊÕ£©
-    private readonly Dictionary<string, HashSet<GameObject>> ActiveObjects = new();
-    [Header("Ô¤Éú³ÉÊıÁ¿")]
+    // å­˜å‚¨å½“å‰æ´»è·ƒçš„å¯¹è±¡ â€”â€” æ”¹ä¸º Listï¼Œéå†é¡ºåºç¨³å®šï¼ˆGet/Recycle çš„æ—¶é—´é¡ºåºï¼‰
+    private readonly Dictionary<string, List<GameObject>> ActiveObjects = new();
+
+    [Header("é¢„ç”Ÿæˆæ•°é‡")]
     public int ObjectsInPool_Count = 40;
 
     protected override void Awake()
     {
-        base.Awake(); // µ÷ÓÃ»ùÀàµÄAwake£¬±£Ö¤µ¥ÀıÉúĞ§
+        base.Awake(); // è°ƒç”¨åŸºç±»çš„Awakeï¼Œä¿è¯å•ä¾‹ç”Ÿæ•ˆ
     }
 
     /// <summary>
-    /// ³õÊ¼»¯ÎïÆ·³Ø
+    /// åˆå§‹åŒ–ç‰©å“æ± 
     /// </summary>
-    /// <param name="itemPrefab">¶ÔÏóÔ¤ÖÆÌå</param>
-    /// <param name="count">Ô¤Éú³ÉÊıÁ¿</param>
-    public void InitPool(GameObject itemPrefab,int count)   
+    public void InitPool(GameObject itemPrefab, int count)   
     {
         if(count == 0) count = ObjectsInPool_Count;
         string poolKey = itemPrefab.name;
-        if (ObjectPool.ContainsKey(poolKey)) return;// Èç¹ûÒÑ¾­³õÊ¼»¯¹ı£¬Ö±½Ó·µ»Ø
+        if (ObjectPool.ContainsKey(poolKey)) return;
         Queue<GameObject> pool = new();
         ObjectPool.Add(poolKey, pool);
-        PoolInitialCapacities.Add(poolKey, count); // ¼ÇÂ¼³õÊ¼ÈİÁ¿
+        PoolInitialCapacities.Add(poolKey, count);
         for (int i = 0; i < count; i++)
         {
             GameObject item = Instantiate(itemPrefab);
@@ -45,12 +43,8 @@ public class Global_ObjectPool : Singleton<Global_ObjectPool>
     }
 
     /// <summary>
-    /// ´Ó¶ÔÏó³Ø»ñÈ¡¶ÔÏó
+    /// ä»å¯¹è±¡æ± è·å–å¯¹è±¡
     /// </summary>
-    /// <param name="itemPrefab">¶ÔÏóÔ¤ÖÆÌå</param>
-    /// <param name="position">Éú³ÉÎ»ÖÃ</param>
-    /// <param name="rotation">Éú³ÉĞı×ª</param>
-    /// <returns>»ñÈ¡µ½µÄ¶ÔÏó</returns>
     public GameObject GetObject(GameObject itemPrefab, Vector3 position, Quaternion rotation)
     {
         if (itemPrefab == null) {
@@ -61,13 +55,11 @@ public class Global_ObjectPool : Singleton<Global_ObjectPool>
         string poolKey = itemPrefab.name;
         
         GameObject item;
-        // ¼ì²éÊÇ·ñÓĞ³õÊ¼»¯¹ı¸ÃÀàĞÍµÄ³Ø
         if (!ObjectPool.ContainsKey(poolKey))
         {
-            InitPool(itemPrefab,10); // Î´³õÊ¼»¯Ôò×Ô¶¯³õÊ¼»¯
+            InitPool(itemPrefab, 10);
         }
         
-        // ¼ì²é³ØÈİÁ¿²¢¶¯Ì¬À©Èİ
         CheckAndExpandPool(itemPrefab);
         
         if(ObjectPool[poolKey].Count > 0)
@@ -81,10 +73,10 @@ public class Global_ObjectPool : Singleton<Global_ObjectPool>
         item.transform.SetPositionAndRotation(position, rotation);
         item.SetActive(true);
         
-        // ½«¶ÔÏóÌí¼Óµ½»îÔ¾¶ÔÏó¼¯ºÏ
+        // æ·»åŠ åˆ°æ´»è·ƒ Listï¼ˆé¡ºåº = GetObject è°ƒç”¨é¡ºåºï¼Œç¨³å®šï¼‰
         if (!ActiveObjects.ContainsKey(poolKey))
         {
-            ActiveObjects[poolKey] = new HashSet<GameObject>();
+            ActiveObjects[poolKey] = new List<GameObject>();
         }
         ActiveObjects[poolKey].Add(item);
         
@@ -92,27 +84,22 @@ public class Global_ObjectPool : Singleton<Global_ObjectPool>
     }
     
     /// <summary>
-    /// ¼ì²é²¢¶¯Ì¬À©Èİ¶ÔÏó³Ø
+    /// æ£€æŸ¥å¹¶åŠ¨æ€æ‰©å®¹å¯¹è±¡æ± 
     /// </summary>
-    /// <param name="itemPrefab">¶ÔÏóÔ¤ÖÆÌå</param>
     private void CheckAndExpandPool(GameObject itemPrefab)
     {
         string poolKey = itemPrefab.name;
         if (!ObjectPool.ContainsKey(poolKey) || !PoolInitialCapacities.ContainsKey(poolKey)) return;
         
         Queue<GameObject> pool = ObjectPool[poolKey];
-        int idleCount = pool.Count; // µ±Ç°¿ÕÏĞ¶ÔÏóÊıÁ¿
-        int totalCapacity = PoolInitialCapacities[poolKey]; // ×ÜÈİÁ¿
+        int idleCount = pool.Count;
+        int totalCapacity = PoolInitialCapacities[poolKey];
         
-        // ¼ì²é¿ÕÏĞÈİÁ¿ÊÇ·ñĞ¡ÓÚ10%
         if (idleCount < totalCapacity * 0.1f)
         {
-            // Debug.Log($"¶ÔÏó³Ø {poolKey} ¿ÕÏĞÈİÁ¿Ğ¡ÓÚ10%{idleCount}/{totalCapacity}£¬´¥·¢À©Èİ");
-            // À©Èİ50%
             int expandCount = Mathf.CeilToInt(totalCapacity * 0.5f);
             int newTotalCapacity = totalCapacity + expandCount;
             
-            // Ïò³ØÖĞÌí¼ÓĞÂ¶ÔÏó
             for (int i = 0; i < expandCount; i++)
             {
                 GameObject item = Instantiate(itemPrefab, transform);
@@ -120,173 +107,134 @@ public class Global_ObjectPool : Singleton<Global_ObjectPool>
                 pool.Enqueue(item);
             }
             
-            // ¸üĞÂ×ÜÈİÁ¿
             PoolInitialCapacities[poolKey] = newTotalCapacity;
-            
-            //Debug.Log($"¶ÔÏó³Ø {poolKey} ÒÑÀ©Èİ£¬ĞÂÔö {expandCount} ¸ö¶ÔÏó£¬×ÜÈİÁ¿: {newTotalCapacity}£¬µ±Ç°¿ÕÏĞ: {pool.Count}");
         }
     }
 
     /// <summary>
-    /// »ØÊÕÎïÆ·µ½³Ø×ÓÀï
+    /// å›æ”¶ç‰©å“åˆ°æ± å­é‡Œ
     /// </summary>
-    /// <param name="item">Òª»ØÊÕµÄÎïÆ·</param>
     public void Recycle(GameObject item)
     {
-        if (item == null || !item) return; // °²È«¼ì²é£ºÈ·±£ÎïÆ·´æÔÚ
+        if (item == null || !item) return;
         bool wasActive;
-        // ¼ì²éÎïÆ·ÊÇ·ñÕıÔÚ±»¼¤»î»ò½ûÓÃ
         try
         {
-            // ³¢ÊÔ·ÃÎÊÎïÆ·µÄactiveSelfÊôĞÔ£¬Èç¹ûÕıÔÚ±»¼¤»î/½ûÓÃ»áÅ×³öÒì³£
             wasActive = item.activeSelf;
         }
         catch
         {
-            // ÎïÆ·ÕıÔÚ±»¼¤»î»ò½ûÓÃ£¬ÑÓ³ÙÒ»Ö¡ÔÙ´¦Àí
             StartCoroutine(DelayedRecycle(item));
             return;
         }
         
-        string poolKey = item.name.Replace("(Clone)", ""); // ÒÆ³ı¿ËÂ¡ºó×º£¬Æ¥ÅäÔ¤ÖÆÌåÃû
-        
-        // ÏÈ±£´æµ±Ç°×´Ì¬
+        string poolKey = item.name.Replace("(Clone)", "");
         wasActive = item.activeSelf;
         
-        // ½ûÓÃÎïÆ·
-        if (wasActive)
-        {
-            item.SetActive(false);
-        }
+        if (wasActive) item.SetActive(false);
         
-        // ÏÈ½â³ıµ±Ç°¸¸ÎïÌå¹ØÏµ
         try
         {
-            if (item.transform.parent != null)
-            {
-                item.transform.SetParent(null);
-            }
+            if (item.transform.parent != null) item.transform.SetParent(null);
         }
         catch (System.Exception e)
         {
-            Debug.LogWarning($"»ØÊÕÎïÆ·Ê±½â³ı¸¸ÎïÌå¹ØÏµÊ§°Ü£º{e.Message}");
+            Debug.LogWarning($"å›æ”¶ç‰©å“æ—¶è§£é™¤çˆ¶ç‰©ä½“å…³ç³»å¤±è´¥ï¼š{e.Message}");
         }
         
-        // ÔÙÉèÖÃÎª¶ÔÏó³ØµÄ×ÓÎïÌå
         try
         {
-            // È·±£¶ÔÏó³ØÓÎÏ·¶ÔÏóÊÇ»îÔ¾µÄÇÒ³¡¾°ÒÑ¼ÓÔØ
             if (gameObject != null && gameObject.scene != null && gameObject.scene.isLoaded && gameObject.activeInHierarchy)
-            {
-                item.transform.SetParent(transform); // ¹éÎ»µ½¶ÔÏó³Ø¸¸ÎïÌå
-            }
+                item.transform.SetParent(transform);
         }
         catch (System.Exception e)
         {
-            Debug.LogWarning($"»ØÊÕÎïÆ·Ê±ÉèÖÃ¸¸ÎïÌåÊ§°Ü£º{e.Message}");
-            // ·¢ÉúÒì³£Ê±£¬È·±£¸¸ÎïÌåÎªnull
-            try
-            {
-                item.transform.SetParent(null);
-            }
-            catch { }
+            Debug.LogWarning($"å›æ”¶ç‰©å“æ—¶è®¾ç½®çˆ¶ç‰©ä½“å¤±è´¥ï¼š{e.Message}");
+            try { item.transform.SetParent(null); } catch { }
         }
 
-        // ´Ó»îÔ¾¶ÔÏó¼¯ºÏÖĞÒÆ³ı
-        if (ActiveObjects.ContainsKey(poolKey))
+        // ä»æ´»è·ƒ List ä¸­ç§»é™¤
+        if (ActiveObjects.TryGetValue(poolKey, out var list))
         {
-            ActiveObjects[poolKey].Remove(item);
+            list.Remove(item);
         }
         
-        // È·±£³Ø´æÔÚ£¬ÔÙ·Å»Ø
         if (ObjectPool.ContainsKey(poolKey))
         {
             ObjectPool[poolKey].Enqueue(item);
         }
         else
         {
-            // Î´³õÊ¼»¯µÄ³Ø£ºÖ±½ÓÏú»Ù
             Destroy(item);
-            //  Debug.LogWarning($"»ØÊÕÒ»¸ö²»ÔÚÎïÆ·³ØµÄÎïÆ·£º{poolKey}");
         }
     }
     
-    /// <summary>
-    /// ÑÓ³Ù»ØÊÕÎïÆ·£¬±ÜÃâÔÚ¼¤»î/½ûÓÃ¹ı³ÌÖĞĞŞ¸Ä¸¸ÎïÌå
-    /// </summary>
     private IEnumerator DelayedRecycle(GameObject item)
     {
-        yield return null; // µÈ´ıÒ»Ö¡
-        if (item != null && item)
-        {
-            Recycle(item);
-        }
+        yield return null;
+        if (item != null && item) Recycle(item);
     }
 
     /// <summary>
-    /// ½ûÓÃ²¢»ØÊÕËùÓĞ»îÔ¾¶ÔÏó£¨³¡¾°ÇĞ»»Ê±Ê¹ÓÃ£©
+    /// å…¬å…±æŸ¥è¯¢ï¼šéå†æŸç±»å‹çš„æ‰€æœ‰æ´»è·ƒå¯¹è±¡ï¼ˆList é¡ºåºç¨³å®šï¼‰
+    /// ç”¨äº ClearAllBullet / BossShootSystem ç­‰è„šæœ¬ï¼Œæ›¿ä»£ FindGameObjectsWithTagï¼ˆé¡ºåºä¸ä¿è¯ï¼‰ã€‚
+    /// </summary>
+    public IReadOnlyList<GameObject> GetActiveObjects(string poolKey)
+    {
+        return ActiveObjects.TryGetValue(poolKey, out var list) ? list : System.Array.Empty<GameObject>();
+    }
+
+    /// <summary>éå†æ‰€æœ‰æ´»è·ƒå¯¹è±¡ç±»å‹çš„ keyï¼ˆä¾›éå†æ‰€æœ‰æ´»è·ƒæ± ç”¨ï¼‰</summary>
+    public IEnumerable<string> GetAllActivePoolKeys() => ActiveObjects.Keys;
+
+    /// <summary>æ˜¯å¦æœ‰ä»»æ„æ´»è·ƒå¯¹è±¡</summary>
+    public bool HasActiveObjects => ActiveObjects.Count > 0;
+
+    /// <summary>
+    /// ç¦ç”¨å¹¶å›æ”¶æ‰€æœ‰æ´»è·ƒå¯¹è±¡ï¼ˆåœºæ™¯åˆ‡æ¢æ—¶ä½¿ç”¨ï¼‰
     /// </summary>
     public void DisableAndRecycleAllActiveObjects()
     {
-        // ±éÀúËùÓĞ»îÔ¾¶ÔÏóÀàĞÍ
         foreach (var kvp in ActiveObjects)
         {
             string poolKey = kvp.Key;
-            HashSet<GameObject> activeSet = kvp.Value;
+            List<GameObject> activeList = kvp.Value;
             
-            // ´´½¨ÁÙÊ±ÁĞ±í±ÜÃâÔÚ±éÀú¹ı³ÌÖĞĞŞ¸Ä¼¯ºÏ
-            List<GameObject> activeList = new List<GameObject>(activeSet);
-            
-            foreach (GameObject item in activeList)
+            // List å¯ä»¥ç›´æ¥éå†ï¼Œä¸å¿…å…ˆæ‹·è´
+            for (int i = 0; i < activeList.Count; i++)
             {
+                GameObject item = activeList[i];
                 if (item != null)
                 {
                     try
                     {
-                        // ½ûÓÃ¶ÔÏó
                         item.SetActive(false);
-                        
-                        // ½â³ı¸¸ÎïÌå¹ØÏµ
-                        if (item.transform.parent != null)
-                        {
-                            item.transform.SetParent(null);
-                        }
-                        
-                        // ÉèÖÃÎª¶ÔÏó³ØµÄ×ÓÎïÌå
+                        if (item.transform.parent != null) item.transform.SetParent(null);
                         if (gameObject != null && gameObject.scene != null && gameObject.scene.isLoaded)
-                        {
                             item.transform.SetParent(transform);
-                        }
-                        
-                        // ·Å»Ø¶ÔÏó³Ø
                         if (ObjectPool.ContainsKey(poolKey))
-                        {
                             ObjectPool[poolKey].Enqueue(item);
-                        }
                     }
                     catch (System.Exception e)
                     {
-                        Debug.LogWarning($"»ØÊÕ»îÔ¾¶ÔÏóÊ§°Ü£º{e.Message}");
+                        Debug.LogWarning($"å›æ”¶æ´»è·ƒå¯¹è±¡å¤±è´¥ï¼š{e.Message}");
                     }
                 }
             }
             
-            // Çå¿Õ¸ÃÀàĞÍµÄ»îÔ¾¶ÔÏó¼¯ºÏ
-            activeSet.Clear();
+            activeList.Clear();
         }
         
-        Debug.Log("ÒÑ½ûÓÃ²¢»ØÊÕËùÓĞ»îÔ¾¶ÔÏó");
+        Debug.Log("å·²ç¦ç”¨å¹¶å›æ”¶æ‰€æœ‰æ´»è·ƒå¯¹è±¡");
     }
     
     /// <summary>
-    /// Çå¿ÕËùÓĞÎïÆ·³Ø
+    /// æ¸…ç©ºæ‰€æœ‰ç‰©å“æ± 
     /// </summary>
     public void ClearAllPools()
     {
-        // ÏÈ½ûÓÃ²¢»ØÊÕËùÓĞ»îÔ¾¶ÔÏó
         DisableAndRecycleAllActiveObjects();
         
-        // Ïú»Ù³ØÖĞËùÓĞ¶ÔÏó
         foreach (var pool in ObjectPool.Values)
         {
             while (pool.Count > 0)
@@ -296,8 +244,8 @@ public class Global_ObjectPool : Singleton<Global_ObjectPool>
             }
         }
         ObjectPool.Clear();
-        PoolInitialCapacities.Clear(); // Çå¿Õ³õÊ¼ÈİÁ¿×Öµä
-        ActiveObjects.Clear(); // Çå¿Õ»îÔ¾¶ÔÏó¼¯ºÏ
-        Debug.Log("Çå¿ÕËùÓĞÎïÆ·³Ø");
+        PoolInitialCapacities.Clear();
+        ActiveObjects.Clear();
+        Debug.Log("æ¸…ç©ºæ‰€æœ‰ç‰©å“æ± ");
     }
 }

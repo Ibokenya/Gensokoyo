@@ -1,68 +1,93 @@
 using System.Collections;
 using System.Collections.Generic;
+using ReplaySystem;
 using UnityEngine;
 
 
 /// <summary>
-/// È«¾ÖÒôÆµ¹ÜÀíµ¥ÀıÀà
-/// ¸ºÔğ¹ÜÀíÓÎÏ·ÖĞµÄ±³¾°ÒôÀÖºÍÒôĞ§
+/// å…¨å±€éŸ³é¢‘ç®¡ç†å•ä¾‹ç±»
+/// è´Ÿè´£ç®¡ç†æ¸¸æˆä¸­çš„èƒŒæ™¯éŸ³ä¹å’ŒéŸ³æ•ˆ
 /// </summary>
 public class Global_AudioManager : Singleton<Global_AudioManager>
 {
-    #region ÒôÆµÔ´×é¼ş
+    #region éŸ³é¢‘æºç»„ä»¶
 
-    private AudioSource bgmSource;      // ±³¾°ÒôÀÖÒôÆµÔ´
-    private List<AudioSource> sfxPool;  // ÒôĞ§³Ø
-    private readonly int maxSFXPoolSize = 10;    // ÒôĞ§³Ø×î´óÈİÁ¿
-
-    #endregion
-
-    #region ±³¾°ÒôÀÖÁĞ±í
-
-    [Header("±³¾°ÒôÀÖÁĞ±í")]
-    public AudioClip menuBGM;      // ²Ëµ¥ÒôÀÖ
-    public AudioClip game1BGM;     // ÓÎÏ·ÒôÀÖ1
-    public AudioClip bossBGM;      // BossÒôÀÖ
-    public AudioClip overBGM;      // ½áÊøÒôÀÖ
-    public AudioClip endingBGM;    // ½á¾ÖÒôÀÖ
-
-    private Dictionary<string, AudioClip> bgmDictionary;  // ±³¾°ÒôÀÖ×Öµä
+    private AudioSource bgmSource;      // èƒŒæ™¯éŸ³ä¹éŸ³é¢‘æº
+    private List<AudioSource> sfxPool;  // éŸ³æ•ˆæ± 
+    private readonly int maxSFXPoolSize = 10;    // éŸ³æ•ˆæ± æœ€å¤§å®¹é‡
 
     #endregion
 
-    #region ÒôÁ¿ÉèÖÃ
+    #region èƒŒæ™¯éŸ³ä¹åˆ—è¡¨
 
-    private float bgmVolume = 0.70f;     // ±³¾°ÒôÀÖÒôÁ¿
-    private float sfxVolume = 0.80f;     // ÒôĞ§ÒôÁ¿
+    [Header("èƒŒæ™¯éŸ³ä¹åˆ—è¡¨")]
+    public AudioClip menuBGM;      // èœå•éŸ³ä¹
+    public AudioClip game1BGM;     // æ¸¸æˆéŸ³ä¹1
+    public AudioClip bossBGM;      // BosséŸ³ä¹
+    public AudioClip overBGM;      // ç»“æŸéŸ³ä¹
+    public AudioClip endingBGM;    // ç»“å±€éŸ³ä¹
+
+    private Dictionary<string, AudioClip> bgmDictionary;  // èƒŒæ™¯éŸ³ä¹å­—å…¸
+
+    #endregion
+
+    #region éŸ³é‡è®¾ç½®
+
+    private float bgmVolume = 0.70f;     // èƒŒæ™¯éŸ³ä¹éŸ³é‡
+    private float sfxVolume = 0.80f;     // éŸ³æ•ˆéŸ³é‡
     public float CurrentTime;
-    private Coroutine fadeOutCoroutine; // ´æ´¢µ­³öĞ­³ÌÒıÓÃ
+    private Coroutine fadeOutCoroutine; // å­˜å‚¨æ·¡å‡ºåç¨‹å¼•ç”¨
 
     #endregion
 
     protected override void Awake()
     {
-        base.Awake(); // µ÷ÓÃ»ùÀàµÄAwake£¬±£Ö¤µ¥ÀıÉúĞ§
+        base.Awake(); // è°ƒç”¨åŸºç±»çš„Awakeï¼Œä¿è¯å•ä¾‹ç”Ÿæ•ˆ
         
-        // È·±£³¡¾°ÖĞÖ»ÓĞÒ»¸öAudioListener
+        // ç¡®ä¿åœºæ™¯ä¸­åªæœ‰ä¸€ä¸ªAudioListener
         ManageAudioListener();
         
-        // ³õÊ¼»¯ÒôĞ§³Ø
+        // åˆå§‹åŒ–éŸ³æ•ˆæ± 
         InitializeSFXPool();
         
-        // ¼ÓÔØ±£´æµÄÒôÁ¿ÉèÖÃ
+        // åŠ è½½ä¿å­˜çš„éŸ³é‡è®¾ç½®
         LoadVolumeSettings();
         
-        // ³õÊ¼»¯±³¾°ÒôÀÖ×Öµä
+        // åˆå§‹åŒ–èƒŒæ™¯éŸ³ä¹å­—å…¸
         InitializeBGMDictionary();
     }
 
-    void Update()
+    /// <summary>
+    /// è®°å½•å½“å‰ BGM çš„é€»è¾‘æ’­æ”¾ä½ç½®ï¼Œä¾›å¤–éƒ¨æŸ¥è¯¢ã€‚
+    /// AudioSource æœ¬èº«çš„æ’­æ”¾å®Œå…¨ç”± PlayBGM/StopBGM ç­‰æ–¹æ³•æ§åˆ¶ï¼Œ
+    /// æœ¬æ–¹æ³•**ä¸ç¡¬æ”¹** bgmSource.timeï¼ˆåªæœ‰ç»­å…³æ¢å¤ä½ç½®ç­‰ç‰¹æ®Šåœºæ™¯æ‰æ‰‹åŠ¨ Setï¼‰ã€‚
+    /// </summary>
+    void FixedUpdate()
     {
-        CurrentTime = bgmSource.time;
+        if (bgmSource == null || !bgmSource.isPlaying || bgmSource.clip == null)
+        {
+            CurrentTime = 0f;
+            return;
+        }
+
+        bool synced = ReplayManager.Instance != null &&
+                      (ReplayManager.Instance.CurrentMode == ReplayManager.Mode.Record ||
+                       ReplayManager.Instance.CurrentMode == ReplayManager.Mode.Playback);
+
+        if (synced)
+        {
+            // æ¸¸æˆé€»è¾‘æ—¶é’Ÿï¼šåªè®°å½•ï¼Œä¸ç¡¬æ”¹ AudioSource
+            CurrentTime = SimClock.SimTime % bgmSource.clip.length;
+        }
+        else
+        {
+            // èœå•/éŸ³ä¹å®¤ï¼šè·Ÿéš AudioSource è‡ªç„¶æ’­æ”¾
+            CurrentTime = bgmSource.time;
+        }
     }
     
     /// <summary>
-    /// ³õÊ¼»¯±³¾°ÒôÀÖ×Öµä
+    /// åˆå§‹åŒ–èƒŒæ™¯éŸ³ä¹å­—å…¸
     /// </summary>
     private void InitializeBGMDictionary()
     {
@@ -77,28 +102,28 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
     }
     
     /// <summary>
-    /// ¹ÜÀíAudioListener£¬È·±£³¡¾°ÖĞÖ»ÓĞÒ»¸ö
+    /// ç®¡ç†AudioListenerï¼Œç¡®ä¿åœºæ™¯ä¸­åªæœ‰ä¸€ä¸ª
     /// </summary>
     private void ManageAudioListener()
     {
-        // »ñÈ¡³¡¾°ÖĞËùÓĞµÄAudioListener
+        // è·å–åœºæ™¯ä¸­æ‰€æœ‰çš„AudioListener
         AudioListener[] listeners = FindObjectsOfType<AudioListener>();
         
-        // Èç¹ûÃ»ÓĞAudioListener£¬Îªµ±Ç°¶ÔÏóÌí¼ÓÒ»¸ö
+        // å¦‚æœæ²¡æœ‰AudioListenerï¼Œä¸ºå½“å‰å¯¹è±¡æ·»åŠ ä¸€ä¸ª
         if (listeners.Length == 0)
         {
             gameObject.AddComponent<AudioListener>();
         }
         else
         {
-            // ±£ÁôµÚÒ»¸öAudioListener£¬Ïú»ÙÆäËûµÄ
+            // ä¿ç•™ç¬¬ä¸€ä¸ªAudioListenerï¼Œé”€æ¯å…¶ä»–çš„
             AudioListener mainListener = listeners[0];
             for (int i = 1; i < listeners.Length; i++)
             {
                 Destroy(listeners[i]);
             }
             
-            // Èç¹ûµÚÒ»¸öAudioListener²»ÔÚµ±Ç°¶ÔÏóÉÏ£¬½«ÆäÒÆ¶¯µ½µ±Ç°¶ÔÏó
+            // å¦‚æœç¬¬ä¸€ä¸ªAudioListenerä¸åœ¨å½“å‰å¯¹è±¡ä¸Šï¼Œå°†å…¶ç§»åŠ¨åˆ°å½“å‰å¯¹è±¡
             if (mainListener.gameObject != gameObject)
             {
                 mainListener.transform.SetParent(transform);
@@ -106,10 +131,10 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
         }
     }
   
-    #region ¹«¹²·ÃÎÊÊôĞÔ
+    #region å…¬å…±è®¿é—®å±æ€§
     
     /// <summary>
-    /// µ±Ç°²¥·ÅµÄ±³¾°ÒôÀÖ
+    /// å½“å‰æ’­æ”¾çš„èƒŒæ™¯éŸ³ä¹
     /// </summary>
     public AudioClip CurrentBGM
     {
@@ -117,16 +142,33 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
     }
     
     /// <summary>
-    /// µ±Ç°±³¾°ÒôÀÖµÄ²¥·ÅÎ»ÖÃ£¨Ãë£©
+    /// å½“å‰ BGM çš„é€»è¾‘æ—¶é—´ï¼ˆç§’ï¼‰ã€‚
+    ///
+    /// æ¸¸æˆæ€ä¸”åœ¨å½•åˆ¶/å›æ”¾ä¸­ â†’ è¿”å› SimClock.SimTimeï¼ˆç¡®å®šæ€§ä¸»æ—¶é’Ÿï¼‰ï¼›
+    /// å…¶ä»–çŠ¶æ€ï¼ˆèœå•/éŸ³ä¹å®¤ç­‰ï¼‰ â†’ è¿”å› bgmSource.timeï¼ˆè‡ªç„¶æ’­æ”¾çš„ç¡¬ä»¶æ—¶é’Ÿï¼‰ã€‚
+    ///
+    /// æ‰€æœ‰æ¸¸æˆé€»è¾‘ï¼ˆå‡ºæ€ª/Boss é˜¶æ®µ/æ¸…å±/å¯¹è¯è§¦å‘ï¼‰è¯»è¿™ä¸ªã€‚
+    /// set ä»…åœ¨"ç»­å…³æ¢å¤ BGM ä½ç½®"ç­‰åœºæ™¯ä½¿ç”¨ã€‚
     /// </summary>
     public float CurrentBGMTime
     {
-        get { return bgmSource != null ? bgmSource.time : 0f; }
+        get
+        {
+            if (Global_GameManager.Instance != null &&
+                ReplayManager.Instance != null &&
+                Global_GameManager.Instance.IsGameplayState() &&
+                (ReplayManager.Instance.CurrentMode == ReplayManager.Mode.Record ||
+                 ReplayManager.Instance.CurrentMode == ReplayManager.Mode.Playback))
+            {
+                return SimClock.SimTime;
+            }
+            return bgmSource != null ? bgmSource.time : 0f;
+        }
         set { if (bgmSource != null) bgmSource.time = value; }
     }
     
     /// <summary>
-    /// ±³¾°ÒôÀÖÊÇ·ñÕıÔÚ²¥·Å
+    /// èƒŒæ™¯éŸ³ä¹æ˜¯å¦æ­£åœ¨æ’­æ”¾
     /// </summary>
     public bool IsBGMPlaying
     {
@@ -134,7 +176,7 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
     }
     
     /// <summary>
-    /// ±³¾°ÒôÀÖÊÇ·ñÒÑÔİÍ£
+    /// èƒŒæ™¯éŸ³ä¹æ˜¯å¦å·²æš‚åœ
     /// </summary>
     public bool IsBGMPaused
     {
@@ -146,7 +188,7 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
     // Start is called before the first frame update
     void Start()
     {
-        // Ìí¼ÓAudioSource×é¼şÓÃÓÚ²¥·ÅBGM
+        // æ·»åŠ AudioSourceç»„ä»¶ç”¨äºæ’­æ”¾BGM
         bgmSource = gameObject.AddComponent<AudioSource>();
         bgmSource.loop = true;
         bgmSource.volume = bgmVolume;
@@ -162,16 +204,16 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
         return sfxVolume;
     }
 
-    #region ÒôĞ§³Ø¹ÜÀí
+    #region éŸ³æ•ˆæ± ç®¡ç†
     
     /// <summary>
-    /// ³õÊ¼»¯ÒôĞ§³Ø
+    /// åˆå§‹åŒ–éŸ³æ•ˆæ± 
     /// </summary>
     private void InitializeSFXPool()
     {
         sfxPool = new List<AudioSource>();
         
-        // Ô¤´´½¨Ö¸¶¨ÊıÁ¿µÄAudioSource
+        // é¢„åˆ›å»ºæŒ‡å®šæ•°é‡çš„AudioSource
         for (int i = 0; i < maxSFXPoolSize; i++)
         {
             AudioSource source = gameObject.AddComponent<AudioSource>();
@@ -182,12 +224,12 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
     }
     
     /// <summary>
-    /// ´ÓÒôĞ§³ØÖĞ»ñÈ¡¿ÉÓÃµÄAudioSource
+    /// ä»éŸ³æ•ˆæ± ä¸­è·å–å¯ç”¨çš„AudioSource
     /// </summary>
-    /// <returns>¿ÉÓÃµÄAudioSource£¬Èç¹ûÃ»ÓĞÔò´´½¨ĞÂµÄ</returns>
+    /// <returns>å¯ç”¨çš„AudioSourceï¼Œå¦‚æœæ²¡æœ‰åˆ™åˆ›å»ºæ–°çš„</returns>
     private AudioSource GetAvailableSFXSource()
     {
-        // ²éÕÒÎ´ÔÚ²¥·ÅµÄAudioSource
+        // æŸ¥æ‰¾æœªåœ¨æ’­æ”¾çš„AudioSource
         foreach (AudioSource source in sfxPool)
         {
             if (!source.isPlaying)
@@ -196,21 +238,21 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
             }
         }
         
-        // Èç¹ûÃ»ÓĞ¿ÉÓÃµÄ£¬¼ì²éÊÇ·ñĞèÒªÀ©Èİ
-        if (sfxPool.Count < 30) // ×î´óÈİÁ¿ÏŞÖÆÎª30
+        // å¦‚æœæ²¡æœ‰å¯ç”¨çš„ï¼Œæ£€æŸ¥æ˜¯å¦éœ€è¦æ‰©å®¹
+        if (sfxPool.Count < 30) // æœ€å¤§å®¹é‡é™åˆ¶ä¸º30
         {
-            // À©³ämaxSFXPoolSize¸öÈİÁ¿
+            // æ‰©å……maxSFXPoolSizeä¸ªå®¹é‡
             int expandCount = maxSFXPoolSize;
             int newTotalCapacity = sfxPool.Count + expandCount;
             
-            // È·±£²»³¬¹ı30µÄÏŞÖÆ
+            // ç¡®ä¿ä¸è¶…è¿‡30çš„é™åˆ¶
             if (newTotalCapacity > 30)
             {
                 expandCount = 30 - sfxPool.Count;
                 newTotalCapacity = 30;
             }
             
-            // ´´½¨ĞÂµÄAudioSource
+            // åˆ›å»ºæ–°çš„AudioSource
             for (int i = 0; i < expandCount; i++)
             {
                 AudioSource newSource = gameObject.AddComponent<AudioSource>();
@@ -219,37 +261,37 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
                 sfxPool.Add(newSource);
             }
             
-            Debug.Log($"ÒôĞ§³ØÀ©Èİ£¬ĞÂÔö {expandCount} ¸öAudioSource£¬×ÜÈİÁ¿: {newTotalCapacity}");
+            Debug.Log($"éŸ³æ•ˆæ± æ‰©å®¹ï¼Œæ–°å¢ {expandCount} ä¸ªAudioSourceï¼Œæ€»å®¹é‡: {newTotalCapacity}");
             
-            // ·µ»ØµÚÒ»¸öĞÂ´´½¨µÄAudioSource
+            // è¿”å›ç¬¬ä¸€ä¸ªæ–°åˆ›å»ºçš„AudioSource
             return sfxPool[sfxPool.Count - expandCount];
         }
         
-        // Èç¹û´ïµ½×î´óÈİÁ¿30£¬·µ»ØµÚÒ»¸ö£¨»á¸²¸ÇÕıÔÚ²¥·ÅµÄ£©²¢·¢³ö¾¯¸æ
-        Debug.LogError("ÒôĞ§³ØÒÑ´ïµ½×î´óÈİÁ¿30£¬½«¸²¸ÇÕıÔÚ²¥·ÅµÄÒôĞ§");
+        // å¦‚æœè¾¾åˆ°æœ€å¤§å®¹é‡30ï¼Œè¿”å›ç¬¬ä¸€ä¸ªï¼ˆä¼šè¦†ç›–æ­£åœ¨æ’­æ”¾çš„ï¼‰å¹¶å‘å‡ºè­¦å‘Š
+        Debug.LogError("éŸ³æ•ˆæ± å·²è¾¾åˆ°æœ€å¤§å®¹é‡30ï¼Œå°†è¦†ç›–æ­£åœ¨æ’­æ”¾çš„éŸ³æ•ˆ");
         return sfxPool[0];
     }
     
     #endregion
     
-    #region ÒôĞ§²¥·Å·½·¨
+    #region éŸ³æ•ˆæ’­æ”¾æ–¹æ³•
     
     /// <summary>
-    /// ÒôĞ§²¥·Å
-    /// ¿ÉÒÔÔÚ²¥·Å±³¾°ÒôÀÖµÄÍ¬Ê±²¥·ÅÒôĞ§
+    /// éŸ³æ•ˆæ’­æ”¾
+    /// å¯ä»¥åœ¨æ’­æ”¾èƒŒæ™¯éŸ³ä¹çš„åŒæ—¶æ’­æ”¾éŸ³æ•ˆ
     /// </summary>
-    /// <param name="clip">ÒôĞ§¼ô¼­</param>
-    /// <param name="isLoop">ÊÇ·ñÑ­»·²¥·Å</param>
-    /// <param name="volume">ÒôÁ¿£¨0-1£©</param>
+    /// <param name="clip">éŸ³æ•ˆå‰ªè¾‘</param>
+    /// <param name="isLoop">æ˜¯å¦å¾ªç¯æ’­æ”¾</param>
+    /// <param name="volume">éŸ³é‡ï¼ˆ0-1ï¼‰</param>
     public void PlaySFX(AudioClip clip, bool isLoop = false, float volume = 1f)
     {
         if (clip == null)
         {
-            Debug.LogWarning("ÒôĞ§¼ô¼­Îª¿Õ£¬ÎŞ·¨²¥·Å");
+            Debug.LogWarning("éŸ³æ•ˆå‰ªè¾‘ä¸ºç©ºï¼Œæ— æ³•æ’­æ”¾");
             return;
         }
         
-        // ´ÓÒôĞ§³Ø»ñÈ¡¿ÉÓÃµÄAudioSource
+        // ä»éŸ³æ•ˆæ± è·å–å¯ç”¨çš„AudioSource
         AudioSource source = GetAvailableSFXSource();
         if (source != null)
         {
@@ -260,31 +302,31 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
         }
     }
     
-    // ÊÕ¼¯ÒôĞ§¼ÆÊıÆ÷
+    // æ”¶é›†éŸ³æ•ˆè®¡æ•°å™¨
     private int collectSoundCount = 0;
-    // ÊÕ¼¯ÒôĞ§×î´óÍ¬Ê±²¥·ÅÊıÁ¿
+    // æ”¶é›†éŸ³æ•ˆæœ€å¤§åŒæ—¶æ’­æ”¾æ•°é‡
     private const int maxCollectSoundCount = 3;
     
     /// <summary>
-    /// ²¥·ÅÊÕ¼¯ÒôĞ§£¨ÏŞÖÆÍ¬Ê±²¥·ÅÊıÁ¿£©
+    /// æ’­æ”¾æ”¶é›†éŸ³æ•ˆï¼ˆé™åˆ¶åŒæ—¶æ’­æ”¾æ•°é‡ï¼‰
     /// </summary>
-    /// <param name="clip">ÒôĞ§¼ô¼­</param>
-    /// <param name="volume">ÒôÁ¿£¨0-1£©</param>
+    /// <param name="clip">éŸ³æ•ˆå‰ªè¾‘</param>
+    /// <param name="volume">éŸ³é‡ï¼ˆ0-1ï¼‰</param>
     public void PlayCollectSFX(AudioClip clip, float volume = 1f)
     {
         if (clip == null)
         {
-            Debug.LogWarning("ÊÕ¼¯ÒôĞ§¼ô¼­Îª¿Õ£¬ÎŞ·¨²¥·Å");
+            Debug.LogWarning("æ”¶é›†éŸ³æ•ˆå‰ªè¾‘ä¸ºç©ºï¼Œæ— æ³•æ’­æ”¾");
             return;
         }
         
-        // ¼ì²éµ±Ç°ÊÕ¼¯ÒôĞ§ÊıÁ¿ÊÇ·ñ´ïµ½ÏŞÖÆ
+        // æ£€æŸ¥å½“å‰æ”¶é›†éŸ³æ•ˆæ•°é‡æ˜¯å¦è¾¾åˆ°é™åˆ¶
         if (collectSoundCount >= maxCollectSoundCount)
         {
-            return; // ´ïµ½ÏŞÖÆ£¬Ìø¹ı²¥·Å
+            return; // è¾¾åˆ°é™åˆ¶ï¼Œè·³è¿‡æ’­æ”¾
         }
         
-        // ´ÓÒôĞ§³Ø»ñÈ¡¿ÉÓÃµÄAudioSource
+        // ä»éŸ³æ•ˆæ± è·å–å¯ç”¨çš„AudioSource
         AudioSource source = GetAvailableSFXSource();
         if (source != null)
         {
@@ -294,15 +336,15 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
             source.volume = Mathf.Clamp01(volume) * sfxVolume;
             source.Play();
             
-            // ¼àÌıÒôĞ§²¥·ÅÍê³ÉÊÂ¼ş
+            // ç›‘å¬éŸ³æ•ˆæ’­æ”¾å®Œæˆäº‹ä»¶
             StartCoroutine(MonitorCollectSound(source));
         }
     }
     
     /// <summary>
-    /// ¼àÌıÊÕ¼¯ÒôĞ§²¥·ÅÍê³É
+    /// ç›‘å¬æ”¶é›†éŸ³æ•ˆæ’­æ”¾å®Œæˆ
     /// </summary>
-    /// <param name="source">ÒôÆµÔ´</param>
+    /// <param name="source">éŸ³é¢‘æº</param>
     private IEnumerator MonitorCollectSound(AudioSource source)
     {
         yield return new WaitWhile(() => source.isPlaying);
@@ -311,58 +353,51 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
     
     #endregion
     
-    #region ±³¾°ÒôÀÖ·½·¨
+    #region èƒŒæ™¯éŸ³ä¹æ–¹æ³•
     
     /// <summary>
-    /// ²¥·Å±³¾°ÒôÀÖ£¨Í¨¹ıÃû³Æ£©
-    /// Í¬Ò»Ê±¼äÄÚÖ»ÄÜ²¥·ÅÒ»Ê×±³¾°ÒôÀÖ£¬ÇĞ»»Ê±±ØĞëÍ£Ö¹ÕıÔÚ½øĞĞµÄ
+    /// æ’­æ”¾èƒŒæ™¯éŸ³ä¹ï¼ˆé€šè¿‡åç§°ï¼‰
+    /// åŒä¸€æ—¶é—´å†…åªèƒ½æ’­æ”¾ä¸€é¦–èƒŒæ™¯éŸ³ä¹ï¼Œåˆ‡æ¢æ—¶å¿…é¡»åœæ­¢æ­£åœ¨è¿›è¡Œçš„
     /// </summary>
-    /// <param name="bgmName">±³¾°ÒôÀÖÃû³Æ£¨Menu, Game1, Boss, Over, Ending£©</param>
-    /// <param name="volume">ÒôÁ¿£¨0-1£©</param>
+    /// <param name="bgmName">èƒŒæ™¯éŸ³ä¹åç§°ï¼ˆMenu, Game1, Boss, Over, Endingï¼‰</param>
+    /// <param name="volume">éŸ³é‡ï¼ˆ0-1ï¼‰</param>
     public void PlayBGM(string bgmName, float volume = 1.0f)
     {
         if (bgmSource == null)
         {
-            Debug.LogWarning("±³¾°ÒôÀÖÒôÆµÔ´Î´³õÊ¼»¯");
+            Debug.LogWarning("èƒŒæ™¯éŸ³ä¹éŸ³é¢‘æºæœªåˆå§‹åŒ–");
             return;
         }
         
-        // ´Ó×ÖµäÖĞ»ñÈ¡¶ÔÓ¦µÄÒôÀÖ¼ô¼­
+        // ä»å­—å…¸ä¸­è·å–å¯¹åº”çš„éŸ³ä¹å‰ªè¾‘
         if (bgmDictionary.TryGetValue(bgmName, out AudioClip clip))
         {
             if (clip == null)
             {
-                Debug.LogWarning($"±³¾°ÒôÀÖ '{bgmName}' Î´·ÖÅäÒôÆµ¼ô¼­");
+                Debug.LogWarning($"èƒŒæ™¯éŸ³ä¹ '{bgmName}' æœªåˆ†é…éŸ³é¢‘å‰ªè¾‘");
                 return;
             }
             
-            // Èç¹ûÕıÔÚ²¥·ÅÍ¬Ò»Ê×ÒôÀÖ£¬Ôò²»ÖØ¸´²¥·Å
-            if (bgmSource.clip == clip && bgmSource.isPlaying)
-            {
-                return;
-            }
-            
-            // Í£Ö¹µ±Ç°±³¾°ÒôÀÖ
+            // é‡ç½®å¹¶æ’­æ”¾ â€”â€” å»æ‰"åŒ clip æ­£åœ¨æ’­å°± return"çš„ guardï¼š
+            // MusicRoom é‡Œç©å®¶è¿ç»­ Z ç‚¹å‡»åŒä¸€æ›²ç›®ä¹Ÿè¦èƒ½ä»å¤´å¼€å§‹ã€‚
             bgmSource.Stop();
-            
-            // ÖØÖÃ²¥·ÅÊ±¼ä
             bgmSource.time = 0f;
             
-            // ²¥·ÅĞÂµÄ±³¾°ÒôÀÖ
+            // æ’­æ”¾æ–°çš„èƒŒæ™¯éŸ³ä¹
             bgmSource.clip = clip;
             bgmSource.volume = Mathf.Clamp01(volume) * bgmVolume;
             bgmSource.Play();
             
-            Debug.Log($"²¥·Å±³¾°ÒôÀÖ: {bgmName}");
+            Debug.Log($"æ’­æ”¾èƒŒæ™¯éŸ³ä¹: {bgmName}");
         }
         else
         {
-            Debug.LogWarning($"Î´ÕÒµ½ÃûÎª '{bgmName}' µÄ±³¾°ÒôÀÖ");
+            Debug.LogWarning($"æœªæ‰¾åˆ°åä¸º '{bgmName}' çš„èƒŒæ™¯éŸ³ä¹");
         }
     }
     
     /// <summary>
-    /// Í£Ö¹µ±Ç°²¥·ÅµÄ±³¾°ÒôÀÖ
+    /// åœæ­¢å½“å‰æ’­æ”¾çš„èƒŒæ™¯éŸ³ä¹
     /// </summary>
     public void StopBGM()
     {
@@ -374,12 +409,12 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
     
     #endregion
     
-    #region ÒôÁ¿¿ØÖÆ·½·¨
+    #region éŸ³é‡æ§åˆ¶æ–¹æ³•
     
     /// <summary>
-    /// µ÷Õû±³¾°ÒôÀÖÒôÁ¿
+    /// è°ƒæ•´èƒŒæ™¯éŸ³ä¹éŸ³é‡
     /// </summary>
-    /// <param name="volume">ÒôÁ¿Öµ£¨0-1£©</param>
+    /// <param name="volume">éŸ³é‡å€¼ï¼ˆ0-1ï¼‰</param>
     public void SetBGMVolume(float volume)
     {
         bgmVolume = Mathf.Clamp01(volume);
@@ -389,19 +424,19 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
             bgmSource.volume = bgmVolume;
         }
         
-        // ±£´æÒôÁ¿ÉèÖÃ
+        // ä¿å­˜éŸ³é‡è®¾ç½®
         SaveVolumeSettings();
     }
     
     /// <summary>
-    /// µ÷ÕûÒôĞ§ÒôÁ¿
+    /// è°ƒæ•´éŸ³æ•ˆéŸ³é‡
     /// </summary>
-    /// <param name="volume">ÒôÁ¿Öµ£¨0-1£©</param>
+    /// <param name="volume">éŸ³é‡å€¼ï¼ˆ0-1ï¼‰</param>
     public void SetSFXVolume(float volume)
     {
         sfxVolume = Mathf.Clamp01(volume);
         
-        // ¸üĞÂÒôĞ§³ØÖĞµÄËùÓĞAudioSourceÒôÁ¿
+        // æ›´æ–°éŸ³æ•ˆæ± ä¸­çš„æ‰€æœ‰AudioSourceéŸ³é‡
         foreach (AudioSource source in sfxPool)
         {
             if (source != null)
@@ -410,12 +445,12 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
             }
         }
         
-        // ±£´æÒôÁ¿ÉèÖÃ
+        // ä¿å­˜éŸ³é‡è®¾ç½®
         SaveVolumeSettings();
     }
     
     /// <summary>
-    /// ±£´æÒôÁ¿ÉèÖÃµ½PlayerPrefs
+    /// ä¿å­˜éŸ³é‡è®¾ç½®åˆ°PlayerPrefs
     /// </summary>
     private void SaveVolumeSettings()
     {
@@ -425,20 +460,20 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
     }
     
     /// <summary>
-    /// ´ÓPlayerPrefs¼ÓÔØÒôÁ¿ÉèÖÃ
+    /// ä»PlayerPrefsåŠ è½½éŸ³é‡è®¾ç½®
     /// </summary>
     private void LoadVolumeSettings()
     {
-        bgmVolume = PlayerPrefs.GetFloat("BGMVolume", 0.7f); // Ä¬ÈÏÖµ0.7
-        sfxVolume = PlayerPrefs.GetFloat("SFXVolume", 0.8f); // Ä¬ÈÏÖµ0.8
+        bgmVolume = PlayerPrefs.GetFloat("BGMVolume", 0.7f); // é»˜è®¤å€¼0.7
+        sfxVolume = PlayerPrefs.GetFloat("SFXVolume", 0.8f); // é»˜è®¤å€¼0.8
     }
     
     #endregion
     
-    #region ¶îÍâ¹¦ÄÜ
+    #region é¢å¤–åŠŸèƒ½
     
     /// <summary>
-    /// Í£Ö¹ËùÓĞÒôĞ§
+    /// åœæ­¢æ‰€æœ‰éŸ³æ•ˆ
     /// </summary>
     public void StopAllSFX()
     {
@@ -452,9 +487,9 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
     }
     
     /// <summary>
-    /// Í£Ö¹Ö¸¶¨µÄÑ­»·ÒôĞ§
+    /// åœæ­¢æŒ‡å®šçš„å¾ªç¯éŸ³æ•ˆ
     /// </summary>
-    /// <param name="clip">ÒªÍ£Ö¹µÄÒôĞ§¼ô¼­</param>
+    /// <param name="clip">è¦åœæ­¢çš„éŸ³æ•ˆå‰ªè¾‘</param>
     public void StopLoopSFX(AudioClip clip)
     {
         foreach (AudioSource source in sfxPool)
@@ -467,9 +502,9 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
     }
     
     /// <summary>
-    /// »ñÈ¡µ±Ç°²¥·ÅµÄ±³¾°ÒôÀÖÃû³Æ
+    /// è·å–å½“å‰æ’­æ”¾çš„èƒŒæ™¯éŸ³ä¹åç§°
     /// </summary>
-    /// <returns>µ±Ç°±³¾°ÒôÀÖÃû³Æ£¬Èç¹ûÃ»ÓĞ²¥·ÅÔò·µ»Ø¿Õ×Ö·û´®</returns>
+    /// <returns>å½“å‰èƒŒæ™¯éŸ³ä¹åç§°ï¼Œå¦‚æœæ²¡æœ‰æ’­æ”¾åˆ™è¿”å›ç©ºå­—ç¬¦ä¸²</returns>
     public string GetCurrentBGMName()
     {
         if (bgmSource == null || bgmSource.clip == null)
@@ -477,7 +512,7 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
             return "";
         }
         
-        // ´Ó×ÖµäÖĞ²éÕÒµ±Ç°¼ô¼­¶ÔÓ¦µÄÃû³Æ
+        // ä»å­—å…¸ä¸­æŸ¥æ‰¾å½“å‰å‰ªè¾‘å¯¹åº”çš„åç§°
         foreach (var kvp in bgmDictionary)
         {
             if (kvp.Value == bgmSource.clip)
@@ -490,18 +525,18 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
     }
     
     /// <summary>
-    /// »ñÈ¡µ±Ç°±³¾°ÒôÀÖµÄ²¥·ÅÎ»ÖÃ
+    /// è·å–å½“å‰èƒŒæ™¯éŸ³ä¹çš„æ’­æ”¾ä½ç½®
     /// </summary>
-    /// <returns>µ±Ç°²¥·ÅÎ»ÖÃ£¨Ãë£©</returns>
+    /// <returns>å½“å‰æ’­æ”¾ä½ç½®ï¼ˆç§’ï¼‰</returns>
     public float GetCurrentBGMPosition()
     {
         return bgmSource != null ? bgmSource.time : 0f;
     }
     
     /// <summary>
-    /// ÉèÖÃ±³¾°ÒôÀÖµÄ²¥·ÅÎ»ÖÃ
+    /// è®¾ç½®èƒŒæ™¯éŸ³ä¹çš„æ’­æ”¾ä½ç½®
     /// </summary>
-    /// <param name="position">²¥·ÅÎ»ÖÃ£¨Ãë£©</param>
+    /// <param name="position">æ’­æ”¾ä½ç½®ï¼ˆç§’ï¼‰</param>
     public void SetBGMPosition(float position)
     {
         if (bgmSource != null)
@@ -511,33 +546,33 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
     }
 
     /// <summary>
-    /// ÒôÀÖµ­³ö
-    /// ÔÚÖ¸¶¨Ê±¼äÄÚ½«µ±Ç°²¥·ÅµÄ±³¾°ÒôÀÖÒôÁ¿¾ùÔÈ½µµÍµ½0
+    /// éŸ³ä¹æ·¡å‡º
+    /// åœ¨æŒ‡å®šæ—¶é—´å†…å°†å½“å‰æ’­æ”¾çš„èƒŒæ™¯éŸ³ä¹éŸ³é‡å‡åŒ€é™ä½åˆ°0
     /// </summary>
-    /// <param name="fadeOutTime">µ­³öÊ±¼ä£¨Ãë£©</param>
+    /// <param name="fadeOutTime">æ·¡å‡ºæ—¶é—´ï¼ˆç§’ï¼‰</param>
     public void FadeOutMusic(float fadeOutTime)
     {
         if (bgmSource != null && bgmSource.isPlaying)
         {
-            // Í£Ö¹Ö®Ç°¿ÉÄÜÕıÔÚ½øĞĞµÄµ­³öĞ­³Ì
+            // åœæ­¢ä¹‹å‰å¯èƒ½æ­£åœ¨è¿›è¡Œçš„æ·¡å‡ºåç¨‹
             if (fadeOutCoroutine != null)
             {
                 StopCoroutine(fadeOutCoroutine);
             }
-            // Æô¶¯ĞÂµÄµ­³öĞ­³Ì²¢±£´æÒıÓÃ
+            // å¯åŠ¨æ–°çš„æ·¡å‡ºåç¨‹å¹¶ä¿å­˜å¼•ç”¨
             fadeOutCoroutine = StartCoroutine(FadeOutMusicCoroutine(fadeOutTime));
         }
     }
     
     /// <summary>
-    /// ÒôÀÖµ­³öĞ­³Ì
+    /// éŸ³ä¹æ·¡å‡ºåç¨‹
     /// </summary>
-    /// <param name="fadeOutTime">µ­³öÊ±¼ä£¨Ãë£©</param>
+    /// <param name="fadeOutTime">æ·¡å‡ºæ—¶é—´ï¼ˆç§’ï¼‰</param>
     private IEnumerator FadeOutMusicCoroutine(float fadeOutTime)
     {
         if (fadeOutTime <= 0f)
         {
-            // Èç¹ûµ­³öÊ±¼äĞ¡ÓÚµÈÓÚ0£¬Ö±½ÓÍ£Ö¹ÒôÀÖ
+            // å¦‚æœæ·¡å‡ºæ—¶é—´å°äºç­‰äº0ï¼Œç›´æ¥åœæ­¢éŸ³ä¹
             bgmSource.Stop();
             fadeOutCoroutine = null;
             yield break;
@@ -554,31 +589,31 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
             yield return null;
         }
         
-        // µ­³öÍê³ÉºóÍ£Ö¹ÒôÀÖ
+        // æ·¡å‡ºå®Œæˆååœæ­¢éŸ³ä¹
         bgmSource.Stop();
-        // ÖØÖÃÒôÁ¿£¬ÒÔ±ãÏÂ´Î²¥·Å
+        // é‡ç½®éŸ³é‡ï¼Œä»¥ä¾¿ä¸‹æ¬¡æ’­æ”¾
         bgmSource.volume = startVolume;
-        // ÖØÖÃĞ­³ÌÒıÓÃ
+        // é‡ç½®åç¨‹å¼•ç”¨
         fadeOutCoroutine = null;
     }
     
     /// <summary>
-    /// Í£Ö¹µ­³öĞ­³Ì²¢ÇåÀí±³¾°ÒôÀÖ
+    /// åœæ­¢æ·¡å‡ºåç¨‹å¹¶æ¸…ç†èƒŒæ™¯éŸ³ä¹
     /// </summary>
     public void StopFadeOutAndClearBGM()
     {
-        // Í£Ö¹µ­³öĞ­³Ì
+        // åœæ­¢æ·¡å‡ºåç¨‹
         if (fadeOutCoroutine != null)
         {
             StopCoroutine(fadeOutCoroutine);
             fadeOutCoroutine = null;
         }
         
-        // Í£Ö¹±³¾°ÒôÀÖ²¢ÖØÖÃÒôÁ¿
+        // åœæ­¢èƒŒæ™¯éŸ³ä¹å¹¶é‡ç½®éŸ³é‡
         if (bgmSource != null)
         {
             bgmSource.Stop();
-            // ÖØÖÃÒôÁ¿µ½Ä¬ÈÏÖµ
+            // é‡ç½®éŸ³é‡åˆ°é»˜è®¤å€¼
             bgmSource.volume = bgmVolume;
         }
     }

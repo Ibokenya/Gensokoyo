@@ -1,69 +1,70 @@
 using System.Collections;
 using System.Collections.Generic;
+using ReplaySystem;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    [Header("»ù´¡ÊôĞÔ")]
-    public int Hp = 100;// µĞÈËÉúÃüÖµ
-    public int maxHp = 100;// µĞÈË×î´óÉúÃüÖµ
+    [Header("åŸºç¡€å±æ€§")]
+    public int Hp = 100;// æ•Œäººç”Ÿå‘½å€¼
+    public int maxHp = 100;// æ•Œäººæœ€å¤§ç”Ÿå‘½å€¼
 
-    [Header("ÒÆ¶¯²ÎÊı")]
-    public float MoveSpeed = 5f;// µĞÈËÒÆ¶¯ËÙ¶È
-    public MoveMode moveMode = MoveMode.Path;// µĞÈËÒÆ¶¯Ä£Ê½
-    public SecondaryMode secondaryMoveMode = SecondaryMode.Stationary;// ¶ş¶ÎÒÆ¶¯Ä£Ê½
+    [Header("ç§»åŠ¨å‚æ•°")]
+    public float MoveSpeed = 5f;// æ•Œäººç§»åŠ¨é€Ÿåº¦
+    public MoveMode moveMode = MoveMode.Path;// æ•Œäººç§»åŠ¨æ¨¡å¼
+    public SecondaryMode secondaryMoveMode = SecondaryMode.Stationary;// äºŒæ®µç§»åŠ¨æ¨¡å¼
 
-    [Header("ÒÆ¶¯Â·¾¶")]
-    protected List<GameObject> MovePoints;// ÒÆ¶¯µãÁĞ±í
-    protected int currentPointIndex = 0;// µ±Ç°Ä¿±êÒÆ¶¯µãË÷Òı
-    public float ArrivalDistance = 0.1f;// µ½´ïÒÆ¶¯µãÅĞ¶Ï¾àÀë
-    protected Vector2 moveDirection;// ÒÆ¶¯·½ÏòÏòÁ¿
+    [Header("ç§»åŠ¨è·¯å¾„")]
+    protected List<GameObject> MovePoints;// ç§»åŠ¨ç‚¹åˆ—è¡¨
+    protected int currentPointIndex = 0;// å½“å‰ç›®æ ‡ç§»åŠ¨ç‚¹ç´¢å¼•
+    public float ArrivalDistance = 0.1f;// åˆ°è¾¾ç§»åŠ¨ç‚¹åˆ¤æ–­è·ç¦»
+    protected Vector2 moveDirection;// ç§»åŠ¨æ–¹å‘å‘é‡
     
-    [Header("±´Èû¶ûÇúÏßÒÆ¶¯²ÎÊı")]
-    protected float bezierT = 0f;// µ±Ç°ÇúÏß²ÎÊıt
-    protected float bezierStep = 0.02f;// ÇúÏß²½³¤£¨Ã¿Ö¡tµÄÔöÁ¿£©
-    protected Vector2[] bezierControlPoints = new Vector2[4];// µ±Ç°±´Èû¶ûÇúÏßµÄ4¸ö¿ØÖÆµã
-    protected Vector2 bezierStartPosition;// µ±Ç°ÇúÏß¶ÎµÄÆğÊ¼Î»ÖÃ
-    protected Vector2 bezierEndPosition;// µ±Ç°ÇúÏß¶ÎµÄ½áÊøÎ»ÖÃ
+    [Header("è´å¡å°”æ›²çº¿ç§»åŠ¨å‚æ•°")]
+    protected float bezierT = 0f;// å½“å‰æ›²çº¿å‚æ•°t
+    protected float bezierStep = 0.02f;// æ›²çº¿æ­¥é•¿ï¼ˆæ¯å¸§tçš„å¢é‡ï¼‰
+    protected Vector2[] bezierControlPoints = new Vector2[4];// å½“å‰è´å¡å°”æ›²çº¿çš„4ä¸ªæ§åˆ¶ç‚¹
+    protected Vector2 bezierStartPosition;// å½“å‰æ›²çº¿æ®µçš„èµ·å§‹ä½ç½®
+    protected Vector2 bezierEndPosition;// å½“å‰æ›²çº¿æ®µçš„ç»“æŸä½ç½®
 
-    [Header("ÉÁË¸²ÎÊı")]
-    public float FlickerLifeTime = 8f;// ÉÁË¸Ä£Ê½ÏÂµÄÉú´æÊ±¼ä
-    protected float flickerTimer = 0f;// ÉÁË¸Ä£Ê½¼ÆÊ±Æ÷
-    public float fadeTime = 2f;// µ­ÈëÊ±¼ä
-    protected float fadeTimer = 0f;// µ­Èë¼ÆÊ±Æ÷
+    [Header("é—ªçƒå‚æ•°")]
+    public float FlickerLifeTime = 8f;// é—ªçƒæ¨¡å¼ä¸‹çš„ç”Ÿå­˜æ—¶é—´
+    protected float flickerTimer = 0f;// é—ªçƒæ¨¡å¼è®¡æ—¶å™¨
+    public float fadeTime = 2f;// æ·¡å…¥æ—¶é—´
+    protected float fadeTimer = 0f;// æ·¡å…¥è®¡æ—¶å™¨
 
-    [Header("ÖØÁ¦²ÎÊı")]
-    public float gravityScale = 1f;// ÖØÁ¦Ëõ·Å
+    [Header("é‡åŠ›å‚æ•°")]
+    public float gravityScale = 1f;// é‡åŠ›ç¼©æ”¾
 
-    [Header("×·×Ù²ÎÊı")]
-    protected Vector2 trackDirection;// ×·×Ù·½ÏòÏòÁ¿
-    protected GameObject player;// Íæ¼Ò¶ÔÏó
+    [Header("è¿½è¸ªå‚æ•°")]
+    protected Vector2 trackDirection;// è¿½è¸ªæ–¹å‘å‘é‡
+    protected GameObject player;// ç©å®¶å¯¹è±¡
 
-    [Header("×é¼ş")]
-    protected SpriteRenderer spriteRenderer;// ¾«ÁéäÖÈ¾Æ÷
-    protected Rigidbody2D rb2D;// ¸ÕÌå
-    protected bool isFirstMoveCompleted = false;// ÊÇ·ñµÚÒ»¶ÎÒÆ¶¯Íê³É
+    [Header("ç»„ä»¶")]
+    protected SpriteRenderer spriteRenderer;// ç²¾çµæ¸²æŸ“å™¨
+    protected Rigidbody2D rb2D;// åˆšä½“
+    protected bool isFirstMoveCompleted = false;// æ˜¯å¦ç¬¬ä¸€æ®µç§»åŠ¨å®Œæˆ
 
-    // ±ß½çÖµ
+    // è¾¹ç•Œå€¼
     protected readonly float minX = -11f;
     protected readonly float maxX = 5f;
     protected readonly float minY = -7.5f;
     protected readonly float maxY = 6.5f;
 
-    // µôÂäÎïÅäÖÃ
+    // æ‰è½ç‰©é…ç½®
     public List<ItemDropConfig> itemDrops = new List<ItemDropConfig>();
 
-    // Ãé×¼±ê¼Ç
-    public GameObject aimMarker; // Ãé×¼±ê¼Ç¶ÔÏó
-    public bool isMarked = false; // ÊÇ·ñÒÑ±»±ê¼Ç
+    // ç„å‡†æ ‡è®°
+    public GameObject aimMarker; // ç„å‡†æ ‡è®°å¯¹è±¡
+    public bool isMarked = false; // æ˜¯å¦å·²è¢«æ ‡è®°
 
-    // ÑÕÉ«¿ØÖÆ
-    private Color originalColor; // Ô­Ê¼ÑÕÉ«
-    private float redIntensity = 0f; // ºìÉ«Ç¿¶È
+    // é¢œè‰²æ§åˆ¶
+    private Color originalColor; // åŸå§‹é¢œè‰²
+    private float redIntensity = 0f; // çº¢è‰²å¼ºåº¦
     
-    // ËÀÍö×´Ì¬
-    private bool isDead = false; // µĞÈËÊÇ·ñÒÑ¾­ËÀÍö
-    private bool isKilled = false; // µĞÈËÊÇ·ñ±»»÷É±£¨¶ø·Ç×ÔÈ»»ØÊÕ£©
+    // æ­»äº¡çŠ¶æ€
+    private bool isDead = false; // æ•Œäººæ˜¯å¦å·²ç»æ­»äº¡
+    private bool isKilled = false; // æ•Œäººæ˜¯å¦è¢«å‡»æ€ï¼ˆè€Œéè‡ªç„¶å›æ”¶ï¼‰
 
     protected virtual void OnEnable()
     {
@@ -74,12 +75,12 @@ public class Enemy : MonoBehaviour
         moveDirection = Vector2.zero;
         flickerTimer = 0f;
         fadeTimer = 0f;
-        isMarked = false; // ÖØÖÃ±ê¼Ç×´Ì¬
-        isDead = false; // ÖØÖÃËÀÍö×´Ì¬
-        isKilled = false; // ÖØÖÃ±»»÷É±±ê¼Ç
+        isMarked = false; // é‡ç½®æ ‡è®°çŠ¶æ€
+        isDead = false; // é‡ç½®æ­»äº¡çŠ¶æ€
+        isKilled = false; // é‡ç½®è¢«å‡»æ€æ ‡è®°
         maxHp = Hp;
         
-        // ÖØÖÃ±´Èû¶ûÇúÏß²ÎÊı
+        // é‡ç½®è´å¡å°”æ›²çº¿å‚æ•°
         bezierT = 0f;
         bezierStartPosition = Vector2.zero;
         bezierEndPosition = Vector2.zero;
@@ -90,10 +91,10 @@ public class Enemy : MonoBehaviour
 
         if (rb2D != null)
         {
-            rb2D.gravityScale = 0f; // Ä¬ÈÏ½ûÓÃÖØÁ¦
+            rb2D.gravityScale = 0f; // é»˜è®¤ç¦ç”¨é‡åŠ›
         }
 
-        // ³õÊ¼»¯¸÷ÖÖÒÆ¶¯Ä£Ê½
+        // åˆå§‹åŒ–å„ç§ç§»åŠ¨æ¨¡å¼
         if (moveMode == MoveMode.Path)
         {
             InitializePath();
@@ -111,16 +112,20 @@ public class Enemy : MonoBehaviour
             InitializeGravity();
         }
 
-        // ÖØÖÃÑÕÉ«
+        // é‡ç½®é¢œè‰²
         ResetColor();
     }
 
-    protected virtual void Update()
+    protected virtual void FixedUpdate()
     {
-        // ¼ì²é±ß½ç
+        if(Global_GameManager.Instance.state == State.Pause)
+        {
+            return;
+        }
+        // æ£€æŸ¥è¾¹ç•Œ
         CheckBounds();
 
-        // ¸ù¾İÒÆ¶¯Ä£Ê½Ö´ĞĞ²»Í¬µÄÒÆ¶¯Âß¼­
+        // æ ¹æ®ç§»åŠ¨æ¨¡å¼æ‰§è¡Œä¸åŒçš„ç§»åŠ¨é€»è¾‘
         switch (moveMode)
         {
             case MoveMode.Path:
@@ -136,7 +141,7 @@ public class Enemy : MonoBehaviour
                 break;
         }
 
-        // ´¦ÀíFlickerOutÄ£Ê½
+        // å¤„ç†FlickerOutæ¨¡å¼
         if (secondaryMoveMode == SecondaryMode.FlickerOut && isFirstMoveCompleted)
         {
             FlickerOutUpdate();
@@ -144,7 +149,7 @@ public class Enemy : MonoBehaviour
     }
 
     /// <summary>
-    /// ÉèÖÃÍæ¼Ò¶ÔÏó
+    /// è®¾ç½®ç©å®¶å¯¹è±¡
     /// </summary>
     public virtual void SetPlayer(GameObject playerObj)
     {
@@ -152,7 +157,7 @@ public class Enemy : MonoBehaviour
     }
 
     /// <summary>
-    /// ÉèÖÃÒÆ¶¯µãÁĞ±í
+    /// è®¾ç½®ç§»åŠ¨ç‚¹åˆ—è¡¨
     /// </summary>
     public virtual void SetMovePoints(List<GameObject> movePoints)
     {
@@ -165,7 +170,7 @@ public class Enemy : MonoBehaviour
     }
 
     /// <summary>
-    /// ÉèÖÃµôÂäÎïÅäÖÃ
+    /// è®¾ç½®æ‰è½ç‰©é…ç½®
     /// </summary>
     public virtual void SetItemDrops(List<ItemDropConfig> drops)
     {
@@ -173,7 +178,7 @@ public class Enemy : MonoBehaviour
     }
 
     /// <summary>
-    /// ÉËº¦µĞÈË
+    /// ä¼¤å®³æ•Œäºº
     /// </summary>
     public virtual void Damage(int damage)
     {
@@ -185,99 +190,99 @@ public class Enemy : MonoBehaviour
     }
 
     /// <summary>
-    /// ´¦ÀíµĞÈËËÀÍö
+    /// å¤„ç†æ•Œäººæ­»äº¡
     /// </summary>
     public virtual void Die()
     {
-        // ·ÀÖ¹ÖØ¸´µ÷ÓÃ
+        // é˜²æ­¢é‡å¤è°ƒç”¨
         if (isDead)
         {
             return;
         }
         
         isDead = true;
-        isKilled = true; // ±ê¼ÇµĞÈË±»»÷É±
+        isKilled = true; // æ ‡è®°æ•Œäººè¢«å‡»æ€
         
-        // ¼ì²éÊÇ·ñ´¦ÓÚÊ±Í£×´Ì¬
+        // æ£€æŸ¥æ˜¯å¦å¤„äºæ—¶åœçŠ¶æ€
         if (Global_GameManager.Instance.state == State.TimeStop)
         {
-            // Ê±Í£ÆÚ¼ä£¬ÑÓ³Ùµ½·ÇÊ±Í£×´Ì¬Ê±ÔÙ´¦Àí
+            // æ—¶åœæœŸé—´ï¼Œå»¶è¿Ÿåˆ°éæ—¶åœçŠ¶æ€æ—¶å†å¤„ç†
             return;
         }
         
-        // ¼ì²éÊÇ·ñÂú×ã´¦¾öÌõ¼ş
+        // æ£€æŸ¥æ˜¯å¦æ»¡è¶³å¤„å†³æ¡ä»¶
         if (CheckExecuteCondition())
         {
-            // Âú×ã´¦¾öÌõ¼ş£¬ÑÓ³Ù»ØÊÕ
+            // æ»¡è¶³å¤„å†³æ¡ä»¶ï¼Œå»¶è¿Ÿå›æ”¶
             StartCoroutine(DelayedDelete());
         }
         else
         {
-            // ²»Âú×ã´¦¾öÌõ¼ş£¬Á¢¼´»ØÊÕ
+            // ä¸æ»¡è¶³å¤„å†³æ¡ä»¶ï¼Œç«‹å³å›æ”¶
             Delete();
         } 
     }
     
     /// <summary>
-    /// ¼ì²éÊÇ·ñÂú×ã´¦¾öÌõ¼ş
+    /// æ£€æŸ¥æ˜¯å¦æ»¡è¶³å¤„å†³æ¡ä»¶
     /// </summary>
-    /// <returns>ÊÇ·ñÂú×ã´¦¾öÌõ¼ş</returns>
+    /// <returns>æ˜¯å¦æ»¡è¶³å¤„å†³æ¡ä»¶</returns>
     private bool CheckExecuteCondition()
     {
-        // ¼ì²éµĞÈË³õÊ¼ÑªÁ¿ÊÇ·ñ>=700
+        // æ£€æŸ¥æ•Œäººåˆå§‹è¡€é‡æ˜¯å¦>=700
         if (maxHp >= 700)
         {
-            // ²éÕÒ¶ñÄ§Ö®ÑÛ¹¥»÷½Å±¾ÊµÀı
+            // æŸ¥æ‰¾æ¶é­”ä¹‹çœ¼æ”»å‡»è„šæœ¬å®ä¾‹
             EvilEyeAttack evilEyeAttack = FindObjectOfType<EvilEyeAttack>();
             if (evilEyeAttack != null)
             {
-                // ¼ì²é¶ñÄ§Ö®ÑÛµÄÍ¸Ã÷¶ÈÊÇ·ñÎª1
+                // æ£€æŸ¥æ¶é­”ä¹‹çœ¼çš„é€æ˜åº¦æ˜¯å¦ä¸º1
                 SpriteRenderer evilEyeRenderer = evilEyeAttack.GetComponent<SpriteRenderer>();
                 if (evilEyeRenderer != null && evilEyeRenderer.color.a >= 0.99f)
                 {
-                    // Í£Ö¹µĞÈËµÄÒ»ÇĞĞĞÎª
+                    // åœæ­¢æ•Œäººçš„ä¸€åˆ‡è¡Œä¸º
                     StopEnemyActions();
                     
-                    // ´¥·¢´¦¾öĞ§¹û
+                    // è§¦å‘å¤„å†³æ•ˆæœ
                     evilEyeAttack.ExecuteEnemy(transform.position);
                     return true;
                 }
             }
             else
             {
-                Debug.LogWarning("Î´ÕÒµ½¶ñÄ§Ö®ÑÛ¹¥»÷½Å±¾ÊµÀı");
+                Debug.LogWarning("æœªæ‰¾åˆ°æ¶é­”ä¹‹çœ¼æ”»å‡»è„šæœ¬å®ä¾‹");
             }
         }
         return false;
     }
     
     /// <summary>
-    /// Í£Ö¹µĞÈËµÄÒ»ÇĞĞĞÎª
+    /// åœæ­¢æ•Œäººçš„ä¸€åˆ‡è¡Œä¸º
     /// </summary>
     private void StopEnemyActions()
     {
-        // Í£Ö¹ÒÆ¶¯
+        // åœæ­¢ç§»åŠ¨
         if (rb2D != null)
         {
             rb2D.velocity = Vector2.zero;
             rb2D.isKinematic = true;
         }
         
-        // ½ûÓÃÅö×²
+        // ç¦ç”¨ç¢°æ’
         Collider2D[] colliders = GetComponents<Collider2D>();
         foreach (Collider2D collider in colliders)
         {
             collider.enabled = false;
         }
         
-        // ½ûÓÃ¶¯»­
+        // ç¦ç”¨åŠ¨ç”»
         Animator animator = GetComponent<Animator>();
         if (animator != null)
         {
             animator.enabled = false;
         }
         
-        // ½ûÓÃ½Å±¾
+        // ç¦ç”¨è„šæœ¬
         MonoBehaviour[] scripts = GetComponents<MonoBehaviour>();
         foreach (MonoBehaviour script in scripts)
         {
@@ -289,28 +294,28 @@ public class Enemy : MonoBehaviour
     }
     
     /// <summary>
-    /// ÑÓ³Ù»ØÊÕµĞÈË
+    /// å»¶è¿Ÿå›æ”¶æ•Œäºº
     /// </summary>
     private IEnumerator DelayedDelete()
     {
-        // µÈ´ı1Ãë£¬ÈÃ´¦¾ö¶¯»­Íê³É
+        // ç­‰å¾…1ç§’ï¼Œè®©å¤„å†³åŠ¨ç”»å®Œæˆ
         yield return new WaitForSeconds(1f);
         Delete();
     }
 
     public virtual void Delete()
     {
-        // Ö»ÓĞ±»»÷É±µÄµĞÈË²ÅÉú³ÉµôÂäÎï
+        // åªæœ‰è¢«å‡»æ€çš„æ•Œäººæ‰ç”Ÿæˆæ‰è½ç‰©
         if (isKilled)
         {
             SpawnItemDrops();
             CreateItem.Instance.SpawnScoreItems(transform.position);
         }
-        // ½â³ı±ê¼ÇÓëµĞÈËµÄ¸¸×Ó¹ØÏµ£¬·ÀÖ¹¶ÔÏó³Ø¸´ÓÃÊ±³öÏÖÒì³£
+        // è§£é™¤æ ‡è®°ä¸æ•Œäººçš„çˆ¶å­å…³ç³»ï¼Œé˜²æ­¢å¯¹è±¡æ± å¤ç”¨æ—¶å‡ºç°å¼‚å¸¸
         if (aimMarker != null)
         {
             aimMarker.transform.parent = null;
-            // ²éÕÒMagicAttackÊµÀı²¢»ØÊÕ±ê¼Ç
+            // æŸ¥æ‰¾MagicAttackå®ä¾‹å¹¶å›æ”¶æ ‡è®°
             MagicAttack magicAttack = FindObjectOfType<MagicAttack>();
             if (magicAttack != null)
             {
@@ -321,17 +326,17 @@ public class Enemy : MonoBehaviour
         isMarked = false;
         
         transform.parent = null;
-        // ´ÓÓÎÏ·¹ÜÀíÆ÷ÖĞÒÆ³ı
+        // ä»æ¸¸æˆç®¡ç†å™¨ä¸­ç§»é™¤
         if (Global_GameManager.Instance != null)
         {
             Global_GameManager.Instance.RemoveEnemy(gameObject);
         }
-        // »ØÊÕµĞÈË
+        // å›æ”¶æ•Œäºº
         Global_ObjectPool.Instance.Recycle(gameObject);
     }
 
     /// <summary>
-    /// Éú³ÉµôÂäÎï
+    /// ç”Ÿæˆæ‰è½ç‰©
     /// </summary>
     protected virtual void SpawnItemDrops()
     {
@@ -344,7 +349,7 @@ public class Enemy : MonoBehaviour
     }
 
     /// <summary>
-    /// ¸üĞÂÒÆ¶¯·½Ïò
+    /// æ›´æ–°ç§»åŠ¨æ–¹å‘
     /// </summary>
     protected virtual void UpdateMoveDirection()
     {
@@ -362,14 +367,14 @@ public class Enemy : MonoBehaviour
     }
 
     /// <summary>
-    /// ¼ÆËã3´Î±´Èû¶ûÇúÏßÉÏµÄµã
+    /// è®¡ç®—3æ¬¡è´å¡å°”æ›²çº¿ä¸Šçš„ç‚¹
     /// </summary>
-    /// <param name="t">ÇúÏß²ÎÊı£¬·¶Î§[0,1]</param>
-    /// <param name="p0">¿ØÖÆµã0</param>
-    /// <param name="p1">¿ØÖÆµã1</param>
-    /// <param name="p2">¿ØÖÆµã2</param>
-    /// <param name="p3">¿ØÖÆµã3</param>
-    /// <returns>ÇúÏßÉÏµÄµã</returns>
+    /// <param name="t">æ›²çº¿å‚æ•°ï¼ŒèŒƒå›´[0,1]</param>
+    /// <param name="p0">æ§åˆ¶ç‚¹0</param>
+    /// <param name="p1">æ§åˆ¶ç‚¹1</param>
+    /// <param name="p2">æ§åˆ¶ç‚¹2</param>
+    /// <param name="p3">æ§åˆ¶ç‚¹3</param>
+    /// <returns>æ›²çº¿ä¸Šçš„ç‚¹</returns>
     protected Vector2 CalculateCubicBezierPoint(float t, Vector2 p0, Vector2 p1, Vector2 p2, Vector2 p3)
     {
         float u = 1f - t;
@@ -387,7 +392,7 @@ public class Enemy : MonoBehaviour
     }
 
     /// <summary>
-    /// ³õÊ¼»¯±´Èû¶ûÇúÏß¿ØÖÆµã
+    /// åˆå§‹åŒ–è´å¡å°”æ›²çº¿æ§åˆ¶ç‚¹
     /// </summary>
     protected virtual void InitializeBezierCurve()
     {
@@ -396,7 +401,7 @@ public class Enemy : MonoBehaviour
             return;
         }
 
-        // »ñÈ¡ÆğÊ¼µãºÍ½áÊøµã
+        // è·å–èµ·å§‹ç‚¹å’Œç»“æŸç‚¹
         bezierStartPosition = transform.position;
         GameObject endPointObj = MovePoints[currentPointIndex];
         if (endPointObj == null)
@@ -405,30 +410,31 @@ public class Enemy : MonoBehaviour
         }
         bezierEndPosition = endPointObj.transform.position;
 
-        // ¼ÆËã¿ØÖÆµã
+        // è®¡ç®—æ§åˆ¶ç‚¹
         Vector2 direction = (bezierEndPosition - bezierStartPosition).normalized;
         float distance = Vector2.Distance(bezierStartPosition, bezierEndPosition);
 
-        // ¿ØÖÆµã1£º´ÓÆğµãÑØ·½ÏòÑÓÉì1/3¾àÀë
+        // æ§åˆ¶ç‚¹1ï¼šä»èµ·ç‚¹æ²¿æ–¹å‘å»¶ä¼¸1/3è·ç¦»
         bezierControlPoints[0] = bezierStartPosition;
         bezierControlPoints[1] = bezierStartPosition + direction * (distance * 0.33f);
 
-        // ¿ØÖÆµã2£º´ÓÖÕµãÑØ·´·½ÏòÑÓÉì1/3¾àÀë
+        // æ§åˆ¶ç‚¹2ï¼šä»ç»ˆç‚¹æ²¿åæ–¹å‘å»¶ä¼¸1/3è·ç¦»
         bezierControlPoints[2] = bezierEndPosition - direction * (distance * 0.33f);
         bezierControlPoints[3] = bezierEndPosition;
 
-        // ¼ÆËãºÏÊÊµÄ²½³¤£º»ùÓÚÒÆ¶¯ËÙ¶ÈºÍÇúÏß³¤¶È
-        // ±´Èû¶ûÇúÏßµÄ½üËÆ³¤¶ÈÔ¼ÎªÖ±Ïß¾àÀëµÄ1.1±¶
+        // è®¡ç®—åˆé€‚çš„æ­¥é•¿ï¼šåŸºäºç§»åŠ¨é€Ÿåº¦å’Œæ›²çº¿é•¿åº¦
+        // è´å¡å°”æ›²çº¿çš„è¿‘ä¼¼é•¿åº¦çº¦ä¸ºç›´çº¿è·ç¦»çš„1.1å€
         float curveLength = distance * 1.1f;
         float timeToComplete = curveLength / (MoveSpeed * 0.8f);
-        bezierStep = Time.deltaTime / timeToComplete;
+        // å›ºå®š tick æ­¥é•¿ï¼šæ¯ tick è´å¡å°”å‚æ•°æ¨è¿› delta / timeToComplete
+        bezierStep = SimClock.FixedTickDt / timeToComplete;
 
-        // ÖØÖÃtÖµ
+        // é‡ç½®tå€¼
         bezierT = 0f;
     }
 
     /// <summary>
-    /// ÒÆ¶¯µ½ÏÂÒ»¸öµã£¨Ê¹ÓÃ3´Î±´Èû¶ûÇúÏß£©
+    /// ç§»åŠ¨åˆ°ä¸‹ä¸€ä¸ªç‚¹ï¼ˆä½¿ç”¨3æ¬¡è´å¡å°”æ›²çº¿ï¼‰
     /// </summary>
     protected virtual void MoveToNextPoint()
     {
@@ -445,20 +451,20 @@ public class Enemy : MonoBehaviour
             return;
         }
 
-        // ¼ì²éÊÇ·ñÎªÁ½¸öµãµÄ¼òµ¥Â·¾¶£¬Èç¹ûÊÇÔòÖ±½ÓÖ±ÏßÒÆ¶¯
+        // æ£€æŸ¥æ˜¯å¦ä¸ºä¸¤ä¸ªç‚¹çš„ç®€å•è·¯å¾„ï¼Œå¦‚æœæ˜¯åˆ™ç›´æ¥ç›´çº¿ç§»åŠ¨
         if (MovePoints.Count == 2)
         {
             MoveToNextPointLinear(targetPoint);
         }
         else
         {
-            // Ê¹ÓÃ±´Èû¶ûÇúÏßÒÆ¶¯
+            // ä½¿ç”¨è´å¡å°”æ›²çº¿ç§»åŠ¨
             MoveWithBezierCurve();
         }
     }
 
     /// <summary>
-    /// Ê¹ÓÃ±´Èû¶ûÇúÏßÒÆ¶¯
+    /// ä½¿ç”¨è´å¡å°”æ›²çº¿ç§»åŠ¨
     /// </summary>
     protected virtual void MoveWithBezierCurve()
     {
@@ -467,16 +473,16 @@ public class Enemy : MonoBehaviour
             return;
         }
 
-        // Èç¹ûÊÇµÚÒ»´ÎÒÆ¶¯£¬³õÊ¼»¯±´Èû¶ûÇúÏß
+        // å¦‚æœæ˜¯ç¬¬ä¸€æ¬¡ç§»åŠ¨ï¼Œåˆå§‹åŒ–è´å¡å°”æ›²çº¿
         if (bezierT <= 0f)
         {
             InitializeBezierCurve();
         }
 
-        // Ôö¼ÓtÖµ
+        // å¢åŠ tå€¼
         bezierT += bezierStep;
 
-        // ¼ÆËãµ±Ç°ÇúÏßÉÏµÄµã
+        // è®¡ç®—å½“å‰æ›²çº¿ä¸Šçš„ç‚¹
         Vector2 currentPos = CalculateCubicBezierPoint(
             Mathf.Clamp01(bezierT),
             bezierControlPoints[0],
@@ -485,10 +491,10 @@ public class Enemy : MonoBehaviour
             bezierControlPoints[3]
         );
 
-        // ÉèÖÃÎ»ÖÃ
+        // è®¾ç½®ä½ç½®
         transform.position = currentPos;
 
-        // ¼ÆËãÒÆ¶¯·½Ïò£¨ÓÃÓÚÆäËû¿ÉÄÜĞèÒª·½ÏòµÄµØ·½£©
+        // è®¡ç®—ç§»åŠ¨æ–¹å‘ï¼ˆç”¨äºå…¶ä»–å¯èƒ½éœ€è¦æ–¹å‘çš„åœ°æ–¹ï¼‰
         Vector2 nextPos = CalculateCubicBezierPoint(
             Mathf.Clamp01(bezierT + 0.01f),
             bezierControlPoints[0],
@@ -498,7 +504,7 @@ public class Enemy : MonoBehaviour
         );
         moveDirection = (nextPos - currentPos).normalized;
 
-        // ¼ì²éÊÇ·ñµ½´ïÖÕµã
+        // æ£€æŸ¥æ˜¯å¦åˆ°è¾¾ç»ˆç‚¹
         if (bezierT >= 1f)
         {
             currentPointIndex++;
@@ -514,14 +520,14 @@ public class Enemy : MonoBehaviour
             }
             else
             {
-                // ×¼±¸ÏÂÒ»¸öÇúÏß¶Î
+                // å‡†å¤‡ä¸‹ä¸€ä¸ªæ›²çº¿æ®µ
                 bezierT = 0f;
             }
         }
     }
 
     /// <summary>
-    /// Ö±ÏßÒÆ¶¯µ½Ä¿±êµã£¨ÓÃÓÚÁ½¸öµãµÄ¼òµ¥Â·¾¶£©
+    /// ç›´çº¿ç§»åŠ¨åˆ°ç›®æ ‡ç‚¹ï¼ˆç”¨äºä¸¤ä¸ªç‚¹çš„ç®€å•è·¯å¾„ï¼‰
     /// </summary>
     protected virtual void MoveToNextPointLinear(GameObject targetPoint)
     {
@@ -535,10 +541,10 @@ public class Enemy : MonoBehaviour
         Vector2 direction = (targetPos - currentPos).normalized;
         float distance = Vector2.Distance(currentPos, targetPos);
 
-        // ¼ÆËã±¾Ö¡ÒÆ¶¯¾àÀë
-        float moveDistance = MoveSpeed * 0.8f * Time.deltaTime;
+        // è®¡ç®—æœ¬å¸§ç§»åŠ¨è·ç¦»
+        float moveDistance = MoveSpeed * 0.8f * SimClock.FixedTickDt;
 
-        // Èç¹û¾àÀëĞ¡ÓÚ±¾Ö¡ÒÆ¶¯¾àÀë£¬Ö±½Óµ½´ïÄ¿±êµã
+        // å¦‚æœè·ç¦»å°äºæœ¬å¸§ç§»åŠ¨è·ç¦»ï¼Œç›´æ¥åˆ°è¾¾ç›®æ ‡ç‚¹
         if (distance <= moveDistance)
         {
             transform.position = targetPos;
@@ -559,24 +565,23 @@ public class Enemy : MonoBehaviour
         }
         else
         {
-            // Õı³£ÒÆ¶¯
+            // æ­£å¸¸ç§»åŠ¨
             transform.position += (Vector3)(direction * moveDistance);
             moveDirection = direction;
-            rb2D.velocity = direction * MoveSpeed;
         }
     }
 
     /// <summary>
-    /// ³õÊ¼»¯Â·¾¶ÒÆ¶¯Ä£Ê½
+    /// åˆå§‹åŒ–è·¯å¾„ç§»åŠ¨æ¨¡å¼
     /// </summary>
     protected virtual void InitializePath()
     {
-        // ³õÊ¼»¯±´Èû¶ûÇúÏß
+        // åˆå§‹åŒ–è´å¡å°”æ›²çº¿
         InitializeBezierCurve();
     }
 
     /// <summary>
-    /// ³õÊ¼»¯×·×ÙÄ£Ê½
+    /// åˆå§‹åŒ–è¿½è¸ªæ¨¡å¼
     /// </summary>
     protected virtual void InitializeTracking()
     {
@@ -588,7 +593,7 @@ public class Enemy : MonoBehaviour
     }
 
     /// <summary>
-    /// ×·×ÙÊ½ÒÆ¶¯
+    /// è¿½è¸ªå¼ç§»åŠ¨
     /// </summary>
     protected virtual void TrackMove()
     {
@@ -604,7 +609,7 @@ public class Enemy : MonoBehaviour
     }
 
     /// <summary>
-    /// ³õÊ¼»¯ÉÁË¸Ä£Ê½
+    /// åˆå§‹åŒ–é—ªçƒæ¨¡å¼
     /// </summary>
     protected virtual void InitializeFlicker()
     {
@@ -617,13 +622,13 @@ public class Enemy : MonoBehaviour
     }
 
     /// <summary>
-    /// ÉÁË¸Ä£Ê½¸üĞÂ
+    /// é—ªçƒæ¨¡å¼æ›´æ–°
     /// </summary>
     protected virtual void FlickerUpdate()
     {
         if (fadeTimer < fadeTime)
         {
-            fadeTimer += Time.deltaTime;
+            fadeTimer += SimClock.FixedTickDt;
             float alpha = Mathf.Clamp01(fadeTimer / fadeTime);
             if (spriteRenderer != null)
             {
@@ -632,7 +637,7 @@ public class Enemy : MonoBehaviour
         }
         else
         {
-            flickerTimer += Time.deltaTime;
+            flickerTimer += SimClock.FixedTickDt;
             if (flickerTimer >= FlickerLifeTime)
             {
                 SwitchToSecondaryMoveMode();
@@ -642,7 +647,7 @@ public class Enemy : MonoBehaviour
     }
 
     /// <summary>
-    /// ³õÊ¼»¯ÖØÁ¦Ä£Ê½
+    /// åˆå§‹åŒ–é‡åŠ›æ¨¡å¼
     /// </summary>
     public virtual void InitializeGravity()
     {
@@ -654,7 +659,7 @@ public class Enemy : MonoBehaviour
     }
 
     /// <summary>
-    /// ÇĞ»»µ½¶ş¶ÎÒÆ¶¯Ä£Ê½
+    /// åˆ‡æ¢åˆ°äºŒæ®µç§»åŠ¨æ¨¡å¼
     /// </summary>
     protected virtual void SwitchToSecondaryMoveMode()
     {
@@ -681,7 +686,7 @@ public class Enemy : MonoBehaviour
     }
 
     /// <summary>
-    /// ³õÊ¼»¯ÉÁË¸µ­³öÄ£Ê½
+    /// åˆå§‹åŒ–é—ªçƒæ·¡å‡ºæ¨¡å¼
     /// </summary>
     protected virtual void InitializeFlickerOut()
     {
@@ -697,11 +702,11 @@ public class Enemy : MonoBehaviour
     }
 
     /// <summary>
-    /// ÉÁË¸µ­³öÄ£Ê½¸üĞÂ
+    /// é—ªçƒæ·¡å‡ºæ¨¡å¼æ›´æ–°
     /// </summary>
     protected virtual void FlickerOutUpdate()
     {
-        flickerTimer += Time.deltaTime;
+        flickerTimer += SimClock.FixedTickDt;
         float alpha = Mathf.Clamp01(1f - (flickerTimer / 1f));
         if (spriteRenderer != null)
         {
@@ -715,7 +720,7 @@ public class Enemy : MonoBehaviour
     }
 
     /// <summary>
-    /// ¼ì²é±ß½ç
+    /// æ£€æŸ¥è¾¹ç•Œ
     /// </summary>
     protected virtual void CheckBounds()
     {
@@ -727,7 +732,7 @@ public class Enemy : MonoBehaviour
     }
 
     /// <summary>
-    /// ÖØÖÃÑÕÉ«
+    /// é‡ç½®é¢œè‰²
     /// </summary>
     public void ResetColor()
     {
@@ -740,10 +745,10 @@ public class Enemy : MonoBehaviour
     }
 
     /// <summary>
-    /// ¸üĞÂºìÉ«¶È£¨»ùÓÚÊ£ÓàÑªÁ¿£©
+    /// æ›´æ–°çº¢è‰²åº¦ï¼ˆåŸºäºå‰©ä½™è¡€é‡ï¼‰
     /// </summary>
-    /// <param name="currentHp">µ±Ç°ÑªÁ¿</param>
-    /// <param name="maxHpValue">×î´óÑªÁ¿</param>
+    /// <param name="currentHp">å½“å‰è¡€é‡</param>
+    /// <param name="maxHpValue">æœ€å¤§è¡€é‡</param>
     public void UpdateRedIntensity()
     {
         if (spriteRenderer == null)
@@ -751,13 +756,13 @@ public class Enemy : MonoBehaviour
             return;
         }
 
-        // ¼ÆËãÑªÁ¿°Ù·Ö±È
+        // è®¡ç®—è¡€é‡ç™¾åˆ†æ¯”
         float hpPercentage = Mathf.Clamp01((float)Hp / maxHp);
 
-        // ¼ÆËãºìÉ«¶È£¨0ÑªÊ±ºì80%£©
+        // è®¡ç®—çº¢è‰²åº¦ï¼ˆ0è¡€æ—¶çº¢80%ï¼‰
         redIntensity = (1f - hpPercentage) * 0.8f;
 
-        // Ó¦ÓÃºìÉ«¶È£ºÄ¬ÈÏ³õÉ«Îª1,1,1£¬ÒªÇóºìÉ«¶ÈÎª0ÔògÓëb¶¼²»½µ£¬ÒªÇóºìÉ«¶È0.25Ôò½µµÍgÓëb0.25µÄÖµ
+        // åº”ç”¨çº¢è‰²åº¦ï¼šé»˜è®¤åˆè‰²ä¸º1,1,1ï¼Œè¦æ±‚çº¢è‰²åº¦ä¸º0åˆ™gä¸béƒ½ä¸é™ï¼Œè¦æ±‚çº¢è‰²åº¦0.25åˆ™é™ä½gä¸b0.25çš„å€¼
         Color newColor = originalColor;
         newColor.g = Mathf.Clamp01(originalColor.g - redIntensity);
         newColor.b = Mathf.Clamp01(originalColor.b - redIntensity);

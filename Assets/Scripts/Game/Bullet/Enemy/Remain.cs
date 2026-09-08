@@ -1,18 +1,19 @@
 using UnityEngine;
 using System.Collections.Generic;
+using ReplaySystem;
 
 /// <summary>
-/// ÖÍÁô×Óµ¯Remain
-/// ÁôÔÚ³¡ÉÏ²»»áÒÆ¶¯£¬µÈµ½ÁËÉúÃüÖÜÆÚºóÏûÊ§
-/// »áĞı×ª
-/// Ğ¡ĞÇĞÇ£¬´óĞÇĞÇ
+/// æ»ç•™å­å¼¹Remain
+/// ç•™åœ¨åœºä¸Šä¸ä¼šç§»åŠ¨ï¼Œç­‰åˆ°äº†ç”Ÿå‘½å‘¨æœŸåæ¶ˆå¤±
+/// ä¼šæ—‹è½¬
+/// å°æ˜Ÿæ˜Ÿï¼Œå¤§æ˜Ÿæ˜Ÿ
 /// </summary>
 public class Remain : MonoBehaviour
 {
-    public float LifeTime = 5f;// Éú´æÊ±¼ä
-    public float Speed = 0f;// ÒÆ¶¯ËÙ¶È
-    public float WindUp = 0f;// Ç°Ò¡Ê±¼ä£¨Ãë£©
-    public List<Sprite> spriteVariants = new List<Sprite>(); // ×Óµ¯ÑÕÉ«±äÌå
+    public float LifeTime = 5f;// ç”Ÿå­˜æ—¶é—´
+    public float Speed = 0f;// ç§»åŠ¨é€Ÿåº¦
+    public float WindUp = 0f;// å‰æ‘‡æ—¶é—´ï¼ˆç§’ï¼‰
+    public List<Sprite> spriteVariants = new List<Sprite>(); // å­å¼¹é¢œè‰²å˜ä½“
     private float lifeTimer = 0f;
     private float windUpTimer = 0f;
     private bool isFading = false;
@@ -25,7 +26,7 @@ public class Remain : MonoBehaviour
     
     void Start()
     {
-        // È·±£×é¼ş´æÔÚ
+        // ç¡®ä¿ç»„ä»¶å­˜åœ¨
         if (rb2D == null)
         {
             rb2D = GetComponent<Rigidbody2D>();
@@ -36,7 +37,7 @@ public class Remain : MonoBehaviour
             spriteRenderer = GetComponent<SpriteRenderer>();
         }
         
-        // »ñÈ¡Ô­Ê¼ÑÕÉ«
+        // è·å–åŸå§‹é¢œè‰²
         if (spriteRenderer != null)
         {
             originalColor = spriteRenderer.color;
@@ -45,7 +46,7 @@ public class Remain : MonoBehaviour
     
     void OnEnable()
     {
-        // È·±£×é¼ş´æÔÚ
+        // ç¡®ä¿ç»„ä»¶å­˜åœ¨
         if (rb2D == null)
         {
             rb2D = GetComponent<Rigidbody2D>();
@@ -56,24 +57,24 @@ public class Remain : MonoBehaviour
             spriteRenderer = GetComponent<SpriteRenderer>();
         }
         
-        // ³õÊ¼»¯Ç°Ò¡×´Ì¬
+        // åˆå§‹åŒ–å‰æ‘‡çŠ¶æ€
         windUpTimer = 0f;
         isWindingUp = true;
         lifeTimer = 0f;
         isFading = false;
         fadeTimer = 0f;
         
-        // Ëæ»úÑ¡ÔñÒ»¸ösprite±äÌå
+        // éšæœºé€‰æ‹©ä¸€ä¸ªspriteå˜ä½“
         if (spriteRenderer != null && spriteVariants.Count > 0)
         {
             int randomIndex = Random.Range(0, spriteVariants.Count);
             spriteRenderer.sprite = spriteVariants[randomIndex];
         }
         
-        // ÖØÖÃÑÕÉ«
+        // é‡ç½®é¢œè‰²
         if (spriteRenderer != null)
         {
-            // È·±£originalColorÓĞÖµ
+            // ç¡®ä¿originalColoræœ‰å€¼
             if (originalColor.a == 0)
             {
                 originalColor = Color.white;
@@ -81,7 +82,7 @@ public class Remain : MonoBehaviour
             spriteRenderer.color = originalColor;
         }
         
-        // ÉèÖÃ³õÊ¼ËÙ¶È£¨Ö±ÏßÒÆ¶¯£©
+        // è®¾ç½®åˆå§‹é€Ÿåº¦ï¼ˆç›´çº¿ç§»åŠ¨ï¼‰
         if (rb2D != null)
         {
             Vector2 direction = transform.up;
@@ -89,25 +90,25 @@ public class Remain : MonoBehaviour
             rb2D.isKinematic = false;
         }
         
-        // È·±£ÎïÌåÊÇ¼¤»î×´Ì¬
+        // ç¡®ä¿ç‰©ä½“æ˜¯æ¿€æ´»çŠ¶æ€
         gameObject.SetActive(true);
     }
     
-    // Ğı×ªËÙ¶È£¨¹ÌÓĞ²ÎÊı£©
-    private readonly float rotationSpeed = 180f; // Ã¿ÃëĞı×ª180¶È
+    // æ—‹è½¬é€Ÿåº¦ï¼ˆå›ºæœ‰å‚æ•°ï¼‰
+    private readonly float rotationSpeed = 180f; // æ¯ç§’æ—‹è½¬180åº¦
     
-    void Update()
+    void FixedUpdate()
     {
-        // ×ÔĞı×ª¶¯»­
-        transform.Rotate(0, 0, rotationSpeed * Time.deltaTime);
+        // è‡ªæ—‹è½¬åŠ¨ç”»
+        transform.Rotate(0, 0, rotationSpeed * SimClock.FixedTickDt);
         
-        // Ç°Ò¡Âß¼­
+        // å‰æ‘‡é€»è¾‘
         if (isWindingUp)
         {
-            windUpTimer += Time.deltaTime;
+            windUpTimer += SimClock.FixedTickDt;
             if (windUpTimer >= WindUp)
             {
-                // Ç°Ò¡½áÊø£¬Í£Ö¹ÒÆ¶¯
+                // å‰æ‘‡ç»“æŸï¼Œåœæ­¢ç§»åŠ¨
                 isWindingUp = false;
                 if (rb2D != null)
                 {
@@ -118,19 +119,19 @@ public class Remain : MonoBehaviour
         }
         else if (!isFading)
         {
-            // ¼ÆÊ±
-            lifeTimer += Time.deltaTime;
+            // è®¡æ—¶
+            lifeTimer += SimClock.FixedTickDt;
             if (lifeTimer >= LifeTime)
             {
-                // ¿ªÊ¼µ­³ö
+                // å¼€å§‹æ·¡å‡º
                 isFading = true;
                 fadeTimer = 0f;
             }
         }
         else
         {
-            // µ­³öĞ§¹û
-            fadeTimer += Time.deltaTime;
+            // æ·¡å‡ºæ•ˆæœ
+            fadeTimer += SimClock.FixedTickDt;
             float alpha = Mathf.Clamp01(1f - (fadeTimer / fadeDuration));
             
             if (spriteRenderer != null)
@@ -138,7 +139,7 @@ public class Remain : MonoBehaviour
                 spriteRenderer.color = new Color(originalColor.r, originalColor.g, originalColor.b, alpha);
             }
             
-            // µ­³öÍê³É£¬»ØÊÕ×Óµ¯
+            // æ·¡å‡ºå®Œæˆï¼Œå›æ”¶å­å¼¹
             if (alpha <= 0f)
             {
                 RecycleBullet();
@@ -147,11 +148,11 @@ public class Remain : MonoBehaviour
     }
     
     /// <summary>
-    /// »ØÊÕ×Óµ¯
+    /// å›æ”¶å­å¼¹
     /// </summary>
     private void RecycleBullet()
     {
-        // ÖØÖÃ×´Ì¬
+        // é‡ç½®çŠ¶æ€
         ResetState();
         
         if (Global_ObjectPool.Instance != null)
@@ -165,7 +166,7 @@ public class Remain : MonoBehaviour
     }
     
     /// <summary>
-    /// ÖØÖÃ×´Ì¬
+    /// é‡ç½®çŠ¶æ€
     /// </summary>
     private void ResetState()
     {

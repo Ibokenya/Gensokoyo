@@ -1,48 +1,49 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ReplaySystem;
 
 public class none2 : MonoBehaviour
 {
-    [Header("¶ş·Ç²ÎÊı")]
-    public List<Vector3> movePositions = new List<Vector3>(); // ÒÆ¶¯×ø±êÁĞ±í
-    public float moveInterval = 3f; // ÒÆ¶¯Ê±¼ä¼ä¸ô
-    public float shootInterval = 2f; // Éä»÷¼ä¸ô
-    public int bulletCount = 5; // Ã¿ÂÖÉä»÷×Óµ¯Êı
-    public GameObject randomBulletPrefab; // Ëæ»úÉä»÷×Óµ¯Ô¤ÖÆ¼ş£¨miniIceBall£©
-    public BossShootSystem bossShootSystem; // Éä»÷ÏµÍ³ÒıÓÃ
-    public BossAnime bossAnime; // Boss¶¯»­ÒıÓÃ
-    public GameObject boss; // Boss¶ÔÏóÒıÓÃ
+    [Header("äºŒéå‚æ•°")]
+    public List<Vector3> movePositions = new List<Vector3>(); // ç§»åŠ¨åæ ‡åˆ—è¡¨
+    public float moveInterval = 3f; // ç§»åŠ¨æ—¶é—´é—´éš”
+    public float shootInterval = 2f; // å°„å‡»é—´éš”
+    public int bulletCount = 5; // æ¯è½®å°„å‡»å­å¼¹æ•°
+    public GameObject randomBulletPrefab; // éšæœºå°„å‡»å­å¼¹é¢„åˆ¶ä»¶ï¼ˆminiIceBallï¼‰
+    public BossShootSystem bossShootSystem; // å°„å‡»ç³»ç»Ÿå¼•ç”¨
+    public BossAnime bossAnime; // BossåŠ¨ç”»å¼•ç”¨
+    public GameObject boss; // Bosså¯¹è±¡å¼•ç”¨
     
-    [Header("×Óµ¯ËÙ¶È")]
-    public float bulletSpeed = 5f; // ×Óµ¯ËÙ¶È
+    [Header("å­å¼¹é€Ÿåº¦")]
+    public float bulletSpeed = 5f; // å­å¼¹é€Ÿåº¦
     
-    [Header("½Å±¾ÒıÓÃ")]
-    public BossUI bossUI; // BossUI½Å±¾ÒıÓÃ
-    public BossBase bossBase; // Boss»ù´¡ÊôĞÔÒıÓÃ
+    [Header("è„šæœ¬å¼•ç”¨")]
+    public BossUI bossUI; // BossUIè„šæœ¬å¼•ç”¨
+    public BossBase bossBase; // BossåŸºç¡€å±æ€§å¼•ç”¨
     
-    private int currentPositionIndex = 0; // µ±Ç°Î»ÖÃË÷Òı
+    private int currentPositionIndex = 0; // å½“å‰ä½ç½®ç´¢å¼•
     
     private void OnEnable()
     {
-        // ³õÊ¼»¯µ¯Ä»³Ø
+        // åˆå§‹åŒ–å¼¹å¹•æ± 
         if (randomBulletPrefab != null)
         {
             Global_ObjectPool.Instance.InitPool(randomBulletPrefab, 30);
         }
         bossShootSystem.HideTerrain();
-        // ¿ªÊ¼¹¥»÷
+        // å¼€å§‹æ”»å‡»
         StartAttacks();
     }
     
     private void OnDisable()
     {
-        // Í£Ö¹ËùÓĞĞ­³Ì
+        // åœæ­¢æ‰€æœ‰åç¨‹
         StopAllCoroutines();
-        // È¡ÏûËùÓĞ Invoke µ÷ÓÃ
+        // å–æ¶ˆæ‰€æœ‰ Invoke è°ƒç”¨
         CancelInvoke();
         
-        // Í£Ö¹ BossShootSystem ÖĞµÄËùÓĞÉä»÷Ğ­³Ì
+        // åœæ­¢ BossShootSystem ä¸­çš„æ‰€æœ‰å°„å‡»åç¨‹
         if (bossShootSystem != null)
         {
             bossShootSystem.StopAllShooting();
@@ -59,11 +60,11 @@ public class none2 : MonoBehaviour
         
         if (bossShootSystem != null)
         {
-            // Æô¶¯¶ş·ÇËæ»úÉä»÷£¬·½·¨ÄÚ²¿»á»ñÈ¡µ±Ç°bossÎ»ÖÃ×÷ÎªÄ¿±êÎ»ÖÃ
+            // å¯åŠ¨äºŒééšæœºå°„å‡»ï¼Œæ–¹æ³•å†…éƒ¨ä¼šè·å–å½“å‰bossä½ç½®ä½œä¸ºç›®æ ‡ä½ç½®
             bossShootSystem.none2RandomShoot(randomBulletPrefab, bulletSpeed, shootInterval, bulletCount);
         }
         
-        // Æô¶¯ÒÆ¶¯Ğ­³Ì
+        // å¯åŠ¨ç§»åŠ¨åç¨‹
         StartCoroutine(MoveBossCoroutine());
     }
 
@@ -76,18 +77,18 @@ public class none2 : MonoBehaviour
             float duration = 2f;
             float elapsedTime = 0f;
             
-            // Æ½»¬ÒÆ¶¯bossµ½ÖĞĞÄÎ»ÖÃ
+            // å¹³æ»‘ç§»åŠ¨bossåˆ°ä¸­å¿ƒä½ç½®
             while (elapsedTime < duration)
             {
                 float t = elapsedTime / duration;
-                // Ê¹ÓÃÆ½»¬µÄ»º¶¯º¯Êı
+                // ä½¿ç”¨å¹³æ»‘çš„ç¼“åŠ¨å‡½æ•°
                 t = Mathf.SmoothStep(0f, 1f, t);
                 boss.transform.position = Vector3.Lerp(startPosition, targetPosition, t);
                 elapsedTime += Time.deltaTime;
                 yield return null;
             }
             
-            // È·±£bossµ½´ï¾«È·Î»ÖÃ
+            // ç¡®ä¿bossåˆ°è¾¾ç²¾ç¡®ä½ç½®
             boss.transform.position = targetPosition;
         }
     }
@@ -96,25 +97,25 @@ public class none2 : MonoBehaviour
     {
         while (true)
         {
-            // µÈ´ıÒÆ¶¯¼ä¸ô
+            // ç­‰å¾…ç§»åŠ¨é—´éš”
             yield return new WaitForSeconds(moveInterval);
             
             if (boss != null && movePositions.Count > 1)
             {
-                // Ëæ»úÑ¡ÔñÏÂÒ»¸öÎ»ÖÃ£¬ÅÅ³ıµ±Ç°Î»ÖÃ
+                // éšæœºé€‰æ‹©ä¸‹ä¸€ä¸ªä½ç½®ï¼Œæ’é™¤å½“å‰ä½ç½®
                 int nextPositionIndex = currentPositionIndex;
                 while (nextPositionIndex == currentPositionIndex)
                 {
-                    nextPositionIndex = Random.Range(0, movePositions.Count);
+                    nextPositionIndex = GameRNG.Range(0, movePositions.Count);
                 }
                 
                 Vector3 targetPosition = movePositions[nextPositionIndex];
                 Vector3 startPosition = boss.transform.position;
                 
-                // È·¶¨ÒÆ¶¯·½Ïò²¢ÉèÖÃ¶¯»­×´Ì¬
+                // ç¡®å®šç§»åŠ¨æ–¹å‘å¹¶è®¾ç½®åŠ¨ç”»çŠ¶æ€
                 if (targetPosition.x < startPosition.x)
                 {
-                    // Ïò×óÒÆ¶¯
+                    // å‘å·¦ç§»åŠ¨
                     if (bossAnime != null)
                     {
                         bossAnime.SetLeft();
@@ -122,14 +123,14 @@ public class none2 : MonoBehaviour
                 }
                 else if (targetPosition.x > startPosition.x)
                 {
-                    // ÏòÓÒÒÆ¶¯
+                    // å‘å³ç§»åŠ¨
                     if (bossAnime != null)
                     {
                         bossAnime.SetRight();
                     }
                 }
                 
-                // Æ½»¬ÒÆ¶¯µ½Ä¿±êÎ»ÖÃ
+                // å¹³æ»‘ç§»åŠ¨åˆ°ç›®æ ‡ä½ç½®
                 float duration = 1f;
                 float elapsedTime = 0f;
                 
@@ -142,21 +143,21 @@ public class none2 : MonoBehaviour
                     yield return null;
                 }
                 
-                // È·±£bossµ½´ï¾«È·Î»ÖÃ
+                // ç¡®ä¿bossåˆ°è¾¾ç²¾ç¡®ä½ç½®
                 boss.transform.position = targetPosition;
                 currentPositionIndex = nextPositionIndex;
                 
-                // »Ö¸´idle×´Ì¬
+                // æ¢å¤idleçŠ¶æ€
                 if (bossAnime != null)
                 {
                     bossAnime.SetIdle();
                 }
                 
-                // ÖØĞÂÆô¶¯Éä»÷Ğ­³Ì£¬´«µİĞÂµÄÄ¿±êÎ»ÖÃ
+                // é‡æ–°å¯åŠ¨å°„å‡»åç¨‹ï¼Œä¼ é€’æ–°çš„ç›®æ ‡ä½ç½®
                 if (bossShootSystem != null)
                 {
-                    // ÖØĞÂÆô¶¯¶ş·ÇËæ»úÉä»÷£¬´«µİµ±Ç°bossÎ»ÖÃ×÷ÎªÄ¿±êÎ»ÖÃ
-                    // ×¢Òâ£ºnone2RandomShoot·½·¨ÄÚ²¿»áÍ£Ö¹Ö®Ç°µÄÉä»÷Ğ­³Ì
+                    // é‡æ–°å¯åŠ¨äºŒééšæœºå°„å‡»ï¼Œä¼ é€’å½“å‰bossä½ç½®ä½œä¸ºç›®æ ‡ä½ç½®
+                    // æ³¨æ„ï¼šnone2RandomShootæ–¹æ³•å†…éƒ¨ä¼šåœæ­¢ä¹‹å‰çš„å°„å‡»åç¨‹
                     bossShootSystem.none2RandomShoot(randomBulletPrefab, bulletSpeed, shootInterval, bulletCount);
                 }
             }
@@ -164,8 +165,8 @@ public class none2 : MonoBehaviour
     }
     
     /// <summary>
-    /// ¼ì²ébossÊÇ·ñÒÑ¾­ËÀÍö»ò´¦ÓÚËøÑª×´Ì¬
-    /// Èç¹ûboss´¦ÓÚËøÑª×´Ì¬£¬ËµÃ÷Íæ¼Ò³É¹¦ÌÖ·¥µ±Ç°½×¶Î
+    /// æ£€æŸ¥bossæ˜¯å¦å·²ç»æ­»äº¡æˆ–å¤„äºé”è¡€çŠ¶æ€
+    /// å¦‚æœbosså¤„äºé”è¡€çŠ¶æ€ï¼Œè¯´æ˜ç©å®¶æˆåŠŸè®¨ä¼å½“å‰é˜¶æ®µ
     /// </summary>
     public void CheckOver()
     {
@@ -174,13 +175,13 @@ public class none2 : MonoBehaviour
             bool isDefeated = bossBase.CheckOver();
             if (isDefeated)
             {
-                Debug.Log("none2½×¶Î£ºÍæ¼Ò³É¹¦ÌÖ·¥Boss£¡");
-                // ¿ÉÒÔÔÚÕâÀïÌí¼ÓÌÖ·¥³É¹¦µÄĞ§¹û»ò½±ÀøÂß¼­
+                Debug.Log("none2é˜¶æ®µï¼šç©å®¶æˆåŠŸè®¨ä¼Bossï¼");
+                // å¯ä»¥åœ¨è¿™é‡Œæ·»åŠ è®¨ä¼æˆåŠŸçš„æ•ˆæœæˆ–å¥–åŠ±é€»è¾‘
             }
             else
             {
-                Debug.Log("none2½×¶Î£ºBossÈÔÈ»´æ»î£¬Ê±¼äµ½");
-                // ¿ÉÒÔÔÚÕâÀïÌí¼ÓÊ±¼äµ½µÄĞ§¹ûÂß¼­
+                Debug.Log("none2é˜¶æ®µï¼šBossä»ç„¶å­˜æ´»ï¼Œæ—¶é—´åˆ°");
+                // å¯ä»¥åœ¨è¿™é‡Œæ·»åŠ æ—¶é—´åˆ°çš„æ•ˆæœé€»è¾‘
             }
         }
     }

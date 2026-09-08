@@ -1,41 +1,42 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ReplaySystem;
 
 /// <summary>
-/// Ä§ÀíÉ³µÄÃé×¼¹¥»÷
-/// µ±ÍêÈ«½øÈëÄ§·¨Ì¬Ê±£¬ËÑÑ°³¡¾°ÖĞÉĞÎ´±»±ê¼ÇµÄµĞÈË²¢±ê¼ÇËüÃÇ
+/// é­”ç†æ²™çš„ç„å‡†æ”»å‡»
+/// å½“å®Œå…¨è¿›å…¥é­”æ³•æ€æ—¶ï¼Œæœå¯»åœºæ™¯ä¸­å°šæœªè¢«æ ‡è®°çš„æ•Œäººå¹¶æ ‡è®°å®ƒä»¬
 /// </summary>
 public class MagicAttack : MonoBehaviour
 {
-    [Header("±ê¼ÇÔ¤ÖÆÌå")]
-    public GameObject markerPrefab; // Ãé×¼±ê¼ÇÔ¤ÖÆÌå
+    [Header("æ ‡è®°é¢„åˆ¶ä½“")]
+    public GameObject markerPrefab; // ç„å‡†æ ‡è®°é¢„åˆ¶ä½“
     
-    [Header("ÉñÃØÖéÔ¤ÖÆÌå")]
-    public GameObject pearlPrefab; // ÉñÃØÖéÔ¤ÖÆÌå
+    [Header("ç¥ç§˜ç é¢„åˆ¶ä½“")]
+    public GameObject pearlPrefab; // ç¥ç§˜ç é¢„åˆ¶ä½“
     
-    [Header("³¡¾°¶ÔÏó")]
-    public GameObject evilEye; // ³¡¾°ÖĞµÄ¶ñÄ§Ö®ÑÛ¶ÔÏó
-    public GameObject evilShadow; // ³¡¾°ÖĞµÄ EvilShadow ¶ÔÏó
-    public GameObject boss; // Boss¶ÔÏó£¨Í¨¹ıÍâ²¿ÒıÓÃ£©
+    [Header("åœºæ™¯å¯¹è±¡")]
+    public GameObject evilEye; // åœºæ™¯ä¸­çš„æ¶é­”ä¹‹çœ¼å¯¹è±¡
+    public GameObject evilShadow; // åœºæ™¯ä¸­çš„ EvilShadow å¯¹è±¡
+    public GameObject boss; // Bosså¯¹è±¡ï¼ˆé€šè¿‡å¤–éƒ¨å¼•ç”¨ï¼‰
     
-    [Header("Éú³É²ÎÊı")]
-    public float spawnDelayMin = 1f; // Éú³ÉÃé×¼µãµÄ×îĞ¡ÑÓ³ÙÊ±¼ä
-    public float spawnDelayMax = 2f; // Éú³ÉÃé×¼µãµÄ×î´óÑÓ³ÙÊ±¼ä
-    public float markerSpawnChance = 0.4f; // ÎªµĞÈËÌí¼ÓÃé×¼µãµÄ¸ÅÂÊ£¨40%£©
-    public float switchToEvilEyeTime = 7f; // ÇĞ»»µ½¶ñÄ§Ö®ÑÛ¹¥»÷µÄÊ±¼ä£¨Ãë£©
-    public float evilEyeFadeDuration = 1f; // ¶ñÄ§Ö®ÑÛµ­Èëµ­³öÊ±¼ä
-    public float evilShadowFadeOutDuration = 3f; // EvilShadow µ­³öÊ±¼ä
+    [Header("ç”Ÿæˆå‚æ•°")]
+    public float spawnDelayMin = 1f; // ç”Ÿæˆç„å‡†ç‚¹çš„æœ€å°å»¶è¿Ÿæ—¶é—´
+    public float spawnDelayMax = 2f; // ç”Ÿæˆç„å‡†ç‚¹çš„æœ€å¤§å»¶è¿Ÿæ—¶é—´
+    public float markerSpawnChance = 0.4f; // ä¸ºæ•Œäººæ·»åŠ ç„å‡†ç‚¹çš„æ¦‚ç‡ï¼ˆ40%ï¼‰
+    public float switchToEvilEyeTime = 7f; // åˆ‡æ¢åˆ°æ¶é­”ä¹‹çœ¼æ”»å‡»çš„æ—¶é—´ï¼ˆç§’ï¼‰
+    public float evilEyeFadeDuration = 1f; // æ¶é­”ä¹‹çœ¼æ·¡å…¥æ·¡å‡ºæ—¶é—´
+    public float evilShadowFadeOutDuration = 3f; // EvilShadow æ·¡å‡ºæ—¶é—´
     
-    private readonly float fadeInDuration = 1f; // ±ê¼Çµ­ÈëÊ±¼ä
+    private readonly float fadeInDuration = 1f; // æ ‡è®°æ·¡å…¥æ—¶é—´
     
-    private bool isMagicActive = false; // Ä§·¨Ì¬ÊÇ·ñ¼¤»î
-    private bool isEvilEyeActive = false; // ¶ñÄ§Ö®ÑÛÊÇ·ñ¼¤»î
-    private float magicTimer = 0f; // Ä§·¨Ì¬¼ÆÊ±Æ÷
-    private List<GameObject> activeMarkers = new (); // µ±Ç°»îÔ¾µÄ±ê¼ÇÁĞ±í
-    private int frameCounter = 0; // Ö¡¼ÆÊıÆ÷£¬ÓÃÓÚÃ¿10Ö¡É¨ÃèÒ»´ÎµĞÈË
+    private bool isMagicActive = false; // é­”æ³•æ€æ˜¯å¦æ¿€æ´»
+    private bool isEvilEyeActive = false; // æ¶é­”ä¹‹çœ¼æ˜¯å¦æ¿€æ´»
+    private float magicTimer = 0f; // é­”æ³•æ€è®¡æ—¶å™¨
+    private List<GameObject> activeMarkers = new (); // å½“å‰æ´»è·ƒçš„æ ‡è®°åˆ—è¡¨
+    private int frameCounter = 0; // å¸§è®¡æ•°å™¨ï¼Œç”¨äºæ¯10å¸§æ‰«æä¸€æ¬¡æ•Œäºº
 
-    public EvilEyeAttack evilEyeAttack; // ¶ñÄ§Ö®ÑÛ¹¥»÷½Å±¾
+    public EvilEyeAttack evilEyeAttack; // æ¶é­”ä¹‹çœ¼æ”»å‡»è„šæœ¬
 
     void Awake()
     {
@@ -49,10 +50,10 @@ public class MagicAttack : MonoBehaviour
         magicTimer = 0f;
         frameCounter = 0;
         
-        // È·±£¶ñÄ§Ö®ÑÛºÍ EvilShadow ³õÊ¼Í¸Ã÷¶ÈÎª0
+        // ç¡®ä¿æ¶é­”ä¹‹çœ¼å’Œ EvilShadow åˆå§‹é€æ˜åº¦ä¸º0
         if (evilEye != null)
         {
-            // È·±£³õÊ¼Í¸Ã÷¶ÈÎª0
+            // ç¡®ä¿åˆå§‹é€æ˜åº¦ä¸º0
             if (evilEye.TryGetComponent<SpriteRenderer>(out var evilEyeRenderer))
             {
                 Color color = evilEyeRenderer.color;
@@ -62,7 +63,7 @@ public class MagicAttack : MonoBehaviour
         }
         if (evilShadow != null)
         {
-            // È·±£³õÊ¼Í¸Ã÷¶ÈÎª0
+            // ç¡®ä¿åˆå§‹é€æ˜åº¦ä¸º0
             if (evilShadow.TryGetComponent<SpriteRenderer>(out var evilShadowRenderer))
             {
                 Color color = evilShadowRenderer.color;
@@ -71,20 +72,20 @@ public class MagicAttack : MonoBehaviour
             }
         }
         
-        // 2Ãëºó½øÈëÄ§·¨Ì¬
+        // 2ç§’åè¿›å…¥é­”æ³•æ€
         Invoke(nameof(EnterMagicState), 2f);
     }
 
     void OnDisable()
     {
         Time.timeScale = 1f;
-        // È¡ÏûInvokeµ÷ÓÃ
+        // å–æ¶ˆInvokeè°ƒç”¨
         CancelInvoke(nameof(EnterMagicState));
         
-        // ÇåÀíËùÓĞ»îÔ¾µÄ±ê¼Ç
+        // æ¸…ç†æ‰€æœ‰æ´»è·ƒçš„æ ‡è®°
         ClearAllMarkers();
         
-        // µ÷ÓÃ¶ñÄ§Ö®ÑÛµÄµ­³ö·½·¨
+        // è°ƒç”¨æ¶é­”ä¹‹çœ¼çš„æ·¡å‡ºæ–¹æ³•
         if (evilEye != null)
         {
             if (evilEye.TryGetComponent<EvilEyeAttack>(out var evilEyeAttack))
@@ -95,7 +96,7 @@ public class MagicAttack : MonoBehaviour
             }
         }
         
-        // µ÷ÓÃ EvilShadow µÄµ­³ö·½·¨
+        // è°ƒç”¨ EvilShadow çš„æ·¡å‡ºæ–¹æ³•
         if (evilShadow != null)
         {
             EvilShadow evilShadowScript = evilShadow.GetComponent<EvilShadow>();
@@ -106,28 +107,28 @@ public class MagicAttack : MonoBehaviour
         }
     }
     
-    void Update()
+    void FixedUpdate()
     {
-        // ¶³½á×´Ì¬ÏÂ½ûÖ¹Ä§·¨¹¥»÷
+        // å†»ç»“çŠ¶æ€ä¸‹ç¦æ­¢é­”æ³•æ”»å‡»
         if(Global_GameManager.Instance != null && 
            Global_GameManager.Instance.state == State.Frozen)
         {
             return;
         }
         
-        // µ±Ä§·¨Ì¬¼¤»îÇÒÎ´ÇĞ»»µ½¶ñÄ§Ö®ÑÛÊ±£¬¸üĞÂ¼ÆÊ±Æ÷
+        // å½“é­”æ³•æ€æ¿€æ´»ä¸”æœªåˆ‡æ¢åˆ°æ¶é­”ä¹‹çœ¼æ—¶ï¼Œæ›´æ–°è®¡æ—¶å™¨
         if (isMagicActive && !isEvilEyeActive)
         {
-            magicTimer += Time.deltaTime;
+            magicTimer += SimClock.FixedTickDt;
             
-            // ¼ì²éÊÇ·ñ´ïµ½ÇĞ»»Ê±¼ä£¬»òÕßBoss¼¤»îÊ±°´ÏÂshift¼ü
+            // æ£€æŸ¥æ˜¯å¦è¾¾åˆ°åˆ‡æ¢æ—¶é—´ï¼Œæˆ–è€…Bossæ¿€æ´»æ—¶æŒ‰ä¸‹shifté”®
             bool shouldSwitchToEvilEye = false;
             if (magicTimer >= switchToEvilEyeTime)
             {
                 shouldSwitchToEvilEye = true;
             }
-            // Èç¹ûBoss¼¤»îÇÒ°´ÏÂshift¼ü£¬Ìø¹ı±ê¼Ç¹¥»÷Ö±½Ó½øÈë¶ñÄ§Ö®ÑÛ¹¥»÷
-            else if (boss != null && boss.activeInHierarchy && Input.GetKey(KeyCode.LeftShift))
+            // å¦‚æœBossæ¿€æ´»ä¸”æŒ‰ä¸‹shifté”®ï¼Œè·³è¿‡æ ‡è®°æ”»å‡»ç›´æ¥è¿›å…¥æ¶é­”ä¹‹çœ¼æ”»å‡»
+            else if (boss != null && boss.activeInHierarchy && ReplayManager.Input.GetKey(LogicalKey.Slow))
             {
                 shouldSwitchToEvilEye = true;
             }
@@ -135,11 +136,11 @@ public class MagicAttack : MonoBehaviour
             if (shouldSwitchToEvilEye)
             {
                 SwitchToEvilEyeAttack();
-                return; // Ö±½Ó·µ»Ø£¬²»ÔÙÖ´ĞĞºóĞøÂß¼­
+                return; // ç›´æ¥è¿”å›ï¼Œä¸å†æ‰§è¡Œåç»­é€»è¾‘
             }
             
-            // Ã¿10Ö¡É¨ÃèÒ»´ÎµĞÈË£¨½öÔÚ·ÇBossÕ½»òBossÎ´¼¤»îÊ±Ö´ĞĞ£©
-            if (Input.GetKey(KeyCode.Z) && (boss == null || !boss.activeInHierarchy))
+            // æ¯10å¸§æ‰«æä¸€æ¬¡æ•Œäººï¼ˆä»…åœ¨éBossæˆ˜æˆ–Bossæœªæ¿€æ´»æ—¶æ‰§è¡Œï¼‰
+            if (ReplayManager.Input.GetKey(LogicalKey.Fire) && (boss == null || !boss.activeInHierarchy))
             {
                 frameCounter++;
                 if (frameCounter >= 10)
@@ -153,37 +154,37 @@ public class MagicAttack : MonoBehaviour
 
     private void InitPool()
     {
-        // ³õÊ¼»¯±ê¼Ç¶ÔÏó³ØºÍÉñÃØÖé¶ÔÏó³Ø
+        // åˆå§‹åŒ–æ ‡è®°å¯¹è±¡æ± å’Œç¥ç§˜ç å¯¹è±¡æ± 
         if (Global_ObjectPool.Instance != null)
         {
-            // ³õÊ¼»¯±ê¼Ç¶ÔÏó³Ø
+            // åˆå§‹åŒ–æ ‡è®°å¯¹è±¡æ± 
             if (markerPrefab != null)
             {
                 Global_ObjectPool.Instance.InitPool(markerPrefab, 10);
             }
             else
             {
-                Debug.LogError("MagicAttack: markerPrefab Î´ÉèÖÃ£¬ÎŞ·¨³õÊ¼»¯±ê¼Ç¶ÔÏó³Ø£¡");
+                Debug.LogError("MagicAttack: markerPrefab æœªè®¾ç½®ï¼Œæ— æ³•åˆå§‹åŒ–æ ‡è®°å¯¹è±¡æ± ï¼");
             }
             
-            // ³õÊ¼»¯ÉñÃØÖé¶ÔÏó³Ø£¬ÊıÁ¿Óë±ê¼Ç¶ÔÏó³ØÏàÍ¬
+            // åˆå§‹åŒ–ç¥ç§˜ç å¯¹è±¡æ± ï¼Œæ•°é‡ä¸æ ‡è®°å¯¹è±¡æ± ç›¸åŒ
             if (pearlPrefab != null)
             {
                 Global_ObjectPool.Instance.InitPool(pearlPrefab, 10);
             }
             else
             {
-                Debug.LogError("MagicAttack: pearlPrefab Î´ÉèÖÃ£¬ÎŞ·¨³õÊ¼»¯ÉñÃØÖé¶ÔÏó³Ø£¡");
+                Debug.LogError("MagicAttack: pearlPrefab æœªè®¾ç½®ï¼Œæ— æ³•åˆå§‹åŒ–ç¥ç§˜ç å¯¹è±¡æ± ï¼");
             }
         }
         else
         {
-            Debug.LogError("MagicAttack: Global_ObjectPool ÊµÀıÎ´ÕÒµ½£¬ÎŞ·¨³õÊ¼»¯¶ÔÏó³Ø£¡");
+            Debug.LogError("MagicAttack: Global_ObjectPool å®ä¾‹æœªæ‰¾åˆ°ï¼Œæ— æ³•åˆå§‹åŒ–å¯¹è±¡æ± ï¼");
         }
     }
     
     /// <summary>
-    /// ½øÈëÄ§·¨Ì¬
+    /// è¿›å…¥é­”æ³•æ€
     /// </summary>
     private void EnterMagicState()
     {
@@ -191,7 +192,7 @@ public class MagicAttack : MonoBehaviour
     }
     
     /// <summary>
-    /// ´Ó¶ÔÏó³Ø»ñÈ¡±ê¼Ç
+    /// ä»å¯¹è±¡æ± è·å–æ ‡è®°
     /// </summary>
     private GameObject GetMarkerFromPool()
     {
@@ -201,48 +202,48 @@ public class MagicAttack : MonoBehaviour
         }
         else
         {
-            Debug.LogError("MagicAttack: ÎŞ·¨´Ó¶ÔÏó³Ø»ñÈ¡±ê¼Ç£¬Global_ObjectPool ÊµÀı»ò markerPrefab Î´ÉèÖÃ£¡");
+            Debug.LogError("MagicAttack: æ— æ³•ä»å¯¹è±¡æ± è·å–æ ‡è®°ï¼ŒGlobal_ObjectPool å®ä¾‹æˆ– markerPrefab æœªè®¾ç½®ï¼");
             return null;
         }
     }
     
     /// <summary>
-    /// »ØÊÕ±ê¼Çµ½¶ÔÏó³Ø
+    /// å›æ”¶æ ‡è®°åˆ°å¯¹è±¡æ± 
     /// </summary>
     public void RecycleMarker(GameObject marker)
     {
         if (marker != null && Global_ObjectPool.Instance != null)
         {
-            // ½â³ı¸¸×Ó¹ØÏµ
+            // è§£é™¤çˆ¶å­å…³ç³»
             if (marker.transform.parent != null)
             {
                 marker.transform.parent = null;
             }
             
-            // ÖØÖÃ±ê¼Ç×´Ì¬
+            // é‡ç½®æ ‡è®°çŠ¶æ€
             if (marker.TryGetComponent<SpriteRenderer>(out var spriteRenderer))
             {
                 spriteRenderer.color = new Color(1, 1, 1, 0f);
             }
             
-            // »ØÊÕ±ê¼Çµ½¶ÔÏó³Ø
+            // å›æ”¶æ ‡è®°åˆ°å¯¹è±¡æ± 
             Global_ObjectPool.Instance.Recycle(marker);
         }
     }
     
     /// <summary>
-    /// ±ê¼ÇËùÓĞÎ´±»±ê¼ÇµÄµĞÈË
+    /// æ ‡è®°æ‰€æœ‰æœªè¢«æ ‡è®°çš„æ•Œäºº
     /// </summary>
     private void MarkAllEnemies()
     {
         
         if (Global_GameManager.Instance == null)
         {
-            Debug.LogWarning("[MagicAttack] Global_GameManager ÊµÀıÎ´ÕÒµ½£¡");
+            Debug.LogWarning("[MagicAttack] Global_GameManager å®ä¾‹æœªæ‰¾åˆ°ï¼");
             return;
         }
         
-        // »ñÈ¡ËùÓĞµĞÈË
+        // è·å–æ‰€æœ‰æ•Œäºº
         List<GameObject> enemies = Global_GameManager.Instance.EnemyList;
         
         if (enemies == null || enemies.Count == 0)
@@ -250,7 +251,7 @@ public class MagicAttack : MonoBehaviour
             return;
         }
         
-        // ±éÀúËùÓĞµĞÈË£¬±ê¼ÇÎ´±»±ê¼ÇµÄ
+        // éå†æ‰€æœ‰æ•Œäººï¼Œæ ‡è®°æœªè¢«æ ‡è®°çš„
         int markedCount = 0;
         foreach (GameObject enemyObj in enemies)
         {
@@ -265,64 +266,64 @@ public class MagicAttack : MonoBehaviour
             }
             else
             {
-                Debug.LogWarning($"[MagicAttack] µĞÈË¶ÔÏó {enemyObj.name} Ã»ÓĞEnemy×é¼ş");
+                Debug.LogWarning($"[MagicAttack] æ•Œäººå¯¹è±¡ {enemyObj.name} æ²¡æœ‰Enemyç»„ä»¶");
             }
         }
     }
     
     /// <summary>
-    /// ÎªµĞÈË´´½¨±ê¼Ç
+    /// ä¸ºæ•Œäººåˆ›å»ºæ ‡è®°
     /// </summary>
     private void CreateMarkerForEnemy(Enemy enemy)
     {
-        // 60%µÄ¸ÅÂÊ²»ÎªµĞÈËÌí¼ÓÃé×¼µã
-        if (Random.value > markerSpawnChance)
+        // 60%çš„æ¦‚ç‡ä¸ä¸ºæ•Œäººæ·»åŠ ç„å‡†ç‚¹
+        if (GameRNG.value > markerSpawnChance)
         {
             return;
         }
         
-        // ´Ó¶ÔÏó³Ø»ñÈ¡±ê¼Ç
+        // ä»å¯¹è±¡æ± è·å–æ ‡è®°
         GameObject marker = GetMarkerFromPool();
         if (marker == null)
         {
-            Debug.LogError("[MagicAttack] ÎŞ·¨´Ó¶ÔÏó³Ø»ñÈ¡±ê¼Ç£¡");
+            Debug.LogError("[MagicAttack] æ— æ³•ä»å¯¹è±¡æ± è·å–æ ‡è®°ï¼");
             return;
         }
         
-        // ÉèÖÃ±ê¼ÇÎ»ÖÃºÍ¸¸ÎïÌå
+        // è®¾ç½®æ ‡è®°ä½ç½®å’Œçˆ¶ç‰©ä½“
         marker.transform.position = enemy.transform.position;
         marker.transform.SetParent(enemy.transform);
         
-        // ÖØÖÃ±ê¼Ç×´Ì¬
+        // é‡ç½®æ ‡è®°çŠ¶æ€
         if (marker.TryGetComponent<SpriteRenderer>(out var spriteRenderer))
         {
             spriteRenderer.color = new Color(1, 1, 1, 0f);
         }
         
-        // ±ê¼ÇµĞÈË
+        // æ ‡è®°æ•Œäºº
         enemy.aimMarker = marker;
         enemy.isMarked = true;
         
-        // Ìí¼Óµ½»îÔ¾±ê¼ÇÁĞ±í
+        // æ·»åŠ åˆ°æ´»è·ƒæ ‡è®°åˆ—è¡¨
         activeMarkers.Add(marker);
         
-        // Ëæ»úÑÓ³Ù¿ªÊ¼µ­Èë¶¯»­
-        float randomDelay = Random.Range(spawnDelayMin, spawnDelayMax);
+        // éšæœºå»¶è¿Ÿå¼€å§‹æ·¡å…¥åŠ¨ç”»
+        float randomDelay = GameRNG.Range(spawnDelayMin, spawnDelayMax);
         StartCoroutine(DelayedFadeIn(marker, randomDelay, pearlPrefab));
     }
     
     /// <summary>
-    /// ÑÓ³Ùµ­ÈëĞ­³Ì
+    /// å»¶è¿Ÿæ·¡å…¥åç¨‹
     /// </summary>
-    /// <param name="marker">±ê¼Ç¶ÔÏó</param>
-    /// <param name="delay">ÑÓ³ÙÊ±¼ä</param>
-    /// <param name="pearlPrefab">ÉñÃØÖéÔ¤ÖÆ¼ş</param>
+    /// <param name="marker">æ ‡è®°å¯¹è±¡</param>
+    /// <param name="delay">å»¶è¿Ÿæ—¶é—´</param>
+    /// <param name="pearlPrefab">ç¥ç§˜ç é¢„åˆ¶ä»¶</param>
     private IEnumerator DelayedFadeIn(GameObject marker, float delay, GameObject swordPrefab)
     {
         yield return new WaitForSeconds(delay);
         yield return StartCoroutine(FadeInMarker(marker));
         
-        // µ­ÈëÍê³ÉºóÉèÖÃÉñÃØÖéÔ¤ÖÆ¼ş²¢Éú³ÉÉñÃØÖé
+        // æ·¡å…¥å®Œæˆåè®¾ç½®ç¥ç§˜ç é¢„åˆ¶ä»¶å¹¶ç”Ÿæˆç¥ç§˜ç 
         if (swordPrefab != null)
         {
             if (marker.TryGetComponent<AimPointAttack>(out var aimPointAttack))
@@ -331,25 +332,25 @@ public class MagicAttack : MonoBehaviour
             }
             else
             {
-                Debug.LogWarning("[MagicAttack] ±ê¼ÇÔ¤ÖÆÌåÃ»ÓĞAimPointAttack×é¼ş£¡");
+                Debug.LogWarning("[MagicAttack] æ ‡è®°é¢„åˆ¶ä½“æ²¡æœ‰AimPointAttackç»„ä»¶ï¼");
             }
         }
     }
     
     /// <summary>
-    /// ±ê¼Çµ­ÈëĞ­³Ì
+    /// æ ‡è®°æ·¡å…¥åç¨‹
     /// </summary>
     private IEnumerator FadeInMarker(GameObject marker)
     {
         if (!marker.TryGetComponent<SpriteRenderer>(out var spriteRenderer))
         {
-            Debug.LogWarning("MagicAttack: ±ê¼ÇÔ¤ÖÆÌåÃ»ÓĞSpriteRenderer×é¼ş£¡");
+            Debug.LogWarning("MagicAttack: æ ‡è®°é¢„åˆ¶ä½“æ²¡æœ‰SpriteRendererç»„ä»¶ï¼");
             yield break;
         }
         
         float elapsedTime = 0f;
         
-        // ´ÓÍ¸Ã÷¶È0½¥Èëµ½1
+        // ä»é€æ˜åº¦0æ¸å…¥åˆ°1
         while (elapsedTime < fadeInDuration)
         {
             elapsedTime += Time.deltaTime;
@@ -358,12 +359,12 @@ public class MagicAttack : MonoBehaviour
             yield return null;
         }
         
-        // È·±£×îÖÕÍ¸Ã÷¶ÈÎª1
+        // ç¡®ä¿æœ€ç»ˆé€æ˜åº¦ä¸º1
         spriteRenderer.color = new Color(1, 1, 1, 1f);
     }
     
     /// <summary>
-    /// ÇåÀíËùÓĞ±ê¼Ç
+    /// æ¸…ç†æ‰€æœ‰æ ‡è®°
     /// </summary>
     private void ClearAllMarkers()
     {
@@ -371,7 +372,7 @@ public class MagicAttack : MonoBehaviour
         {
             if (marker != null)
             {
-                // »ØÊÕ±ê¼Çµ½¶ÔÏó³Ø
+                // å›æ”¶æ ‡è®°åˆ°å¯¹è±¡æ± 
                 RecycleMarker(marker);
             }
         }
@@ -379,14 +380,14 @@ public class MagicAttack : MonoBehaviour
     }
     
     /// <summary>
-    /// ÇĞ»»µ½¶ñÄ§Ö®ÑÛ¹¥»÷·½Ê½
+    /// åˆ‡æ¢åˆ°æ¶é­”ä¹‹çœ¼æ”»å‡»æ–¹å¼
     /// </summary>
     private void SwitchToEvilEyeAttack()
     {
-        // ÇåÀíËùÓĞ»îÔ¾µÄ±ê¼Ç
+        // æ¸…ç†æ‰€æœ‰æ´»è·ƒçš„æ ‡è®°
         ClearAllMarkers();
         
-        // µ­Èë¶ñÄ§Ö®ÑÛ
+        // æ·¡å…¥æ¶é­”ä¹‹çœ¼
         if (evilEye != null)
         {
             if (evilEye.TryGetComponent<EvilEyeAttack>(out var evilEyeAttack))
@@ -394,14 +395,14 @@ public class MagicAttack : MonoBehaviour
                 evilEyeAttack.StartFadeIn();
             }
             else{
-                Debug.LogWarning($"[MagicAttack] ¶ñÄ§Ö®ÑÛ¶ÔÏó {evilEye.name} Ã»ÓĞEvilEyeAttack×é¼ş");
+                Debug.LogWarning($"[MagicAttack] æ¶é­”ä¹‹çœ¼å¯¹è±¡ {evilEye.name} æ²¡æœ‰EvilEyeAttackç»„ä»¶");
             }
         }
         else{
-            Debug.LogWarning("[MagicAttack] ¶ñÄ§Ö®ÑÛ¶ÔÏóÎ´ÉèÖÃ");
+            Debug.LogWarning("[MagicAttack] æ¶é­”ä¹‹çœ¼å¯¹è±¡æœªè®¾ç½®");
         }
         
-        // ¼¤»î EvilShadow
+        // æ¿€æ´» EvilShadow
         if (evilShadow != null)
         {
             EvilShadow evilShadowScript = evilShadow.GetComponent<EvilShadow>();
@@ -411,7 +412,7 @@ public class MagicAttack : MonoBehaviour
             }
         }
         
-        // ÇĞ»»×´Ì¬
+        // åˆ‡æ¢çŠ¶æ€
         isEvilEyeActive = true;
     }
 }

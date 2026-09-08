@@ -1,11 +1,12 @@
 using System.Collections;
+using ReplaySystem;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class ChangeBG : MonoBehaviour
 {
     public BossBeheve bossBeheve;
-    [Header("bossÕ½¶ÔÓÚ±³¾°µÄÒıÓÃ")]
+    [Header("bossæˆ˜å¯¹äºèƒŒæ™¯çš„å¼•ç”¨")]
     public GameObject none1;
     public GameObject card1;
     public GameObject none2;
@@ -16,11 +17,11 @@ public class ChangeBG : MonoBehaviour
     public GameObject Magic_effect;
     public Animator DeadStar_effect;
     
-    [Header("¶³½áĞ§¹û")]
-    public SpriteRenderer freezeSprite; // ¶³½áĞ§¹û¾«Áé¶ÔÏó
-    public Image freezeUI; // ¶³½áĞ§¹ûImage¶ÔÏó
+    [Header("å†»ç»“æ•ˆæœ")]
+    public SpriteRenderer freezeSprite; // å†»ç»“æ•ˆæœç²¾çµå¯¹è±¡
+    public Image freezeUI; // å†»ç»“æ•ˆæœImageå¯¹è±¡
 
-    private GameObject currentBG;// µ±Ç°·û¿¨¶ÔÓ¦µÄ±³¾°
+    private GameObject currentBG;// å½“å‰ç¬¦å¡å¯¹åº”çš„èƒŒæ™¯
 
 
     public void ShowBg(string bgName,float finalAlpha)
@@ -46,7 +47,7 @@ public class ChangeBG : MonoBehaviour
                 currentBG = finalCard;
                 break;
             default:
-                Debug.LogError("Î´ÕÒµ½±³¾°" + bgName);
+                Debug.LogError("æœªæ‰¾åˆ°èƒŒæ™¯" + bgName);
                 break;
         }
         currentBG.SetActive(true);
@@ -99,22 +100,22 @@ public class ChangeBG : MonoBehaviour
     }
     
     /// <summary>
-    /// ÔÚÖ¸¶¨Ê±¼äÄÚ½«¶³½áĞ§¹ûµÄÍ¸Ã÷¶ÈÆ½»¬Ôö³¤µ½1
+    /// åœ¨æŒ‡å®šæ—¶é—´å†…å°†å†»ç»“æ•ˆæœçš„é€æ˜åº¦å¹³æ»‘å¢é•¿åˆ°1
     /// </summary>
-    /// <param name="duration">¹ı¶ÉÊ±¼ä£¨Ãë£©</param>
+    /// <param name="duration">è¿‡æ¸¡æ—¶é—´ï¼ˆç§’ï¼‰</param>
     public void FreezeAll(float duration = 1f)
     {
         StartCoroutine(FreezeAllCoroutine(duration));
     }
     
     /// <summary>
-    /// ¶³½áĞ§¹ûĞ­³Ì
+    /// å†»ç»“æ•ˆæœåç¨‹
     /// </summary>
     private IEnumerator FreezeAllCoroutine(float duration)
     {
         float elapsedTime = 0f;
         
-        // ³õÊ¼»¯Í¸Ã÷¶ÈÎª0
+        // åˆå§‹åŒ–é€æ˜åº¦ä¸º0
         if (freezeSprite != null)
         {
             Color color = freezeSprite.color;
@@ -129,7 +130,7 @@ public class ChangeBG : MonoBehaviour
             freezeUI.color = color;
         }
         
-        // Æ½»¬¹ı¶Éµ½ÍêÈ«²»Í¸Ã÷
+        // å¹³æ»‘è¿‡æ¸¡åˆ°å®Œå…¨ä¸é€æ˜
         while (elapsedTime < duration)
         {
             elapsedTime += Time.unscaledDeltaTime;
@@ -149,12 +150,15 @@ public class ChangeBG : MonoBehaviour
                 freezeUI.color = color;
             }
 
-            Time.timeScale = scale;
+            // å†»ç»“ ramp ç”¨ SimClock.SetScaleï¼Œä¸ç¢° Time.timeScale
+            // è¿™æ · FixedUpdate ç»§ç»­ä»¥ 50Hz è°ƒç”¨ï¼Œä½† SimClock.tick æŒ‰ scale å‡é€Ÿæ¨è¿›
+            // Time.unscaledDeltaTime ç»§ç»­è·‘ï¼Œä¿è¯è§†è§‰åŠ¨ç”»æ­£å¸¸
+            SimClock.SetScale(scale);
             
             yield return null;
         }
         
-        // È·±£×îÖÕÍ¸Ã÷¶ÈÎª1
+        // ç¡®ä¿æœ€ç»ˆé€æ˜åº¦ä¸º1
         if (freezeSprite != null)
         {
             Color color = freezeSprite.color;
@@ -175,6 +179,6 @@ public class ChangeBG : MonoBehaviour
     {
         DeadStar_effect.SetBool("IsAnime", false);
         bossBeheve.ExplosionEnd();
-        Debug.Log("ĞÂĞÇ±¬Õ¨¶¯»­½áÊø");
+        Debug.Log("æ–°æ˜Ÿçˆ†ç‚¸åŠ¨ç”»ç»“æŸ");
     }
 }

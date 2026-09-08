@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,8 +16,8 @@ public class CharacterAnime : MonoBehaviour
 
     public GameObject Logo;
 
-    [Header("ÒôĞ§ÉèÖÃ")]
-    [SerializeField] private AudioClip moveoffSound;   // È¡ÏûÑ¡ÖĞÒôĞ§
+    [Header("éŸ³æ•ˆè®¾ç½®")]
+    [SerializeField] private AudioClip moveoffSound;   // å–æ¶ˆé€‰ä¸­éŸ³æ•ˆ
 
 
     void OnEnable()
@@ -31,7 +31,7 @@ public class CharacterAnime : MonoBehaviour
         isfirst = true;
         Global_GameManager.Instance.character = Character.Reimu;
 
-        // ÖØÖÃ¶¯»­×´Ì¬
+        // é‡ç½®åŠ¨ç”»çŠ¶æ€
         if (reimuAnimator != null)
         {
             reimuAnimator.SetBool("IsFirst", true);
@@ -43,23 +43,23 @@ public class CharacterAnime : MonoBehaviour
             marisaAnimator.SetBool("IsMirror", false);
         }
 
-        // ÖØÖÃ×é¼ş
+        // é‡ç½®ç»„ä»¶
         if (Reimu != null)
         {
-            Reimu.transform.Find("Ä£ºı").gameObject.SetActive(false);
-            Reimu.transform.Find("ÁéÃÎ¼ò½é").gameObject.SetActive(true);
+            Reimu.transform.Find("æ¨¡ç³Š").gameObject.SetActive(false);
+            Reimu.transform.Find("çµæ¢¦ç®€ä»‹").gameObject.SetActive(true);
         }
         if (Marisa != null)
         {
-            Marisa.transform.Find("Ä£ºı").gameObject.SetActive(true);
-            Marisa.transform.Find("Ä§ÀíÉ³¼ò½é").gameObject.SetActive(false);
+            Marisa.transform.Find("æ¨¡ç³Š").gameObject.SetActive(true);
+            Marisa.transform.Find("é­”ç†æ²™ç®€ä»‹").gameObject.SetActive(false);
         }
         Logo.transform.position = new Vector3(1720, 980, 0);
     }
 
     void Update()
     {
-        // ÓÒ¼ü£ºÇĞ¾µÏñÌ¬
+        // å³é”®ï¼šåˆ‡é•œåƒæ€
         if (Input.GetKeyDown(KeyCode.RightArrow)&&!ismirror)
         {
             if (isfirst) 
@@ -70,32 +70,32 @@ public class CharacterAnime : MonoBehaviour
             }
             SetMirrorState(true);
             ismirror = true;
-            Reimu.transform.Find("Ä£ºı").gameObject.SetActive(true);
-            Reimu.transform.Find("ÁéÃÎ¼ò½é").gameObject.SetActive(false);
-            Marisa.transform.Find("Ä£ºı").gameObject.SetActive(false);
-            Marisa.transform.Find("Ä§ÀíÉ³¼ò½é").gameObject.SetActive(true);
+            Reimu.transform.Find("æ¨¡ç³Š").gameObject.SetActive(true);
+            Reimu.transform.Find("çµæ¢¦ç®€ä»‹").gameObject.SetActive(false);
+            Marisa.transform.Find("æ¨¡ç³Š").gameObject.SetActive(false);
+            Marisa.transform.Find("é­”ç†æ²™ç®€ä»‹").gameObject.SetActive(true);
             Logo.transform.position = new Vector3(200, 980, 0);
             Global_GameManager.Instance.character = Character.Marisa;
 
-            // ²¥·ÅÈ¡ÏûÑ¡ÖĞÒôĞ§
+            // æ’­æ”¾å–æ¶ˆé€‰ä¸­éŸ³æ•ˆ
             if (moveoffSound != null)
             {
                 Global_AudioManager.Instance.PlaySFX(moveoffSound, false);
             }
         }
-        // ×ó¼ü£ºÇĞ³õÊ¼Ì¬
+        // å·¦é”®ï¼šåˆ‡åˆå§‹æ€
         else if (Input.GetKeyDown(KeyCode.LeftArrow)&&ismirror)
         {
             SetMirrorState(false);
             ismirror = false;
-            Reimu.transform.Find("Ä£ºı").gameObject.SetActive(false);
-            Reimu.transform.Find("ÁéÃÎ¼ò½é").gameObject.SetActive(true);
-            Marisa.transform.Find("Ä£ºı").gameObject.SetActive(true);
-            Marisa.transform.Find("Ä§ÀíÉ³¼ò½é").gameObject.SetActive(false);
+            Reimu.transform.Find("æ¨¡ç³Š").gameObject.SetActive(false);
+            Reimu.transform.Find("çµæ¢¦ç®€ä»‹").gameObject.SetActive(true);
+            Marisa.transform.Find("æ¨¡ç³Š").gameObject.SetActive(true);
+            Marisa.transform.Find("é­”ç†æ²™ç®€ä»‹").gameObject.SetActive(false);
             Logo.transform.position = new Vector3(1720, 980, 0);
             Global_GameManager.Instance.character = Character.Reimu;
 
-            // ²¥·ÅÈ¡ÏûÑ¡ÖĞÒôĞ§
+            // æ’­æ”¾å–æ¶ˆé€‰ä¸­éŸ³æ•ˆ
             if (moveoffSound != null)
             {
                 Global_AudioManager.Instance.PlaySFX(moveoffSound, false);
@@ -103,10 +103,10 @@ public class CharacterAnime : MonoBehaviour
         }
     }
 
-    // ºËĞÄ£ºÉèÖÃ¾µÏñ×´Ì¬ + ·ÀÖØ¸´´¥·¢
+    // æ ¸å¿ƒï¼šè®¾ç½®é•œåƒçŠ¶æ€ + é˜²é‡å¤è§¦å‘
     void SetMirrorState(bool isMirror)
     {
-        // ´¥·¢¶¯»­
+        // è§¦å‘åŠ¨ç”»
         reimuAnimator.SetBool("IsMirror", isMirror);
         marisaAnimator.SetBool("IsMirror", isMirror);
     }

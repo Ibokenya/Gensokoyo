@@ -1,32 +1,33 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using ReplaySystem;
 using UnityEngine;
 
 /// <summary>
-/// Ä§ÀíÉ³µÄÆßê×¹¥»÷Ö®~
-/// ³¬¼¶ìÅ¿áµÄÆßê×ÔË¶¯
-/// »°ËµÆßê×ÓĞ8¸ö£¬ÊÇÒòÎª¼ÆËã»úÀïµÄË÷Òı´Ó0¿ªÊ¼
-/// Õâ±ß°ó¶¨ÔÚ¡°Æßê×Ö÷Ìå¡±ÉÏ£¬Ö»¹ÜÀíÆßê×Öé×ÓµÄ³õÊ¼¶¯»­ºÍ»·ÈÆÌØĞ§
-/// Æßê×Öé»áÏÈĞı×ªÅÅÁĞ£¬Õâ½«ºÄ·Ñ¼¸Ãë£¨ÆÚ¼äÎŞ·¨¹¥»÷£¬Ëã×÷ÊÇĞîÁ¦ÆğÊÖ½×¶Î£©
-/// Ğı×ªÍê±Ïºó£¬Éú³ÉÖé×Ó¼äÁ¬Ïß£¬²¢±£³Ö»ºÂı¼ÌĞø×ª¶¯
-/// ´ËÊ±¿ªÊ¼ÌØÊâ¹¥»÷
+/// é­”ç†æ²™çš„ä¸ƒæ›œæ”»å‡»ä¹‹~
+/// è¶…çº§ç‚«é…·çš„ä¸ƒæ›œè¿åŠ¨
+/// è¯è¯´ä¸ƒæ›œæœ‰8ä¸ªï¼Œæ˜¯å› ä¸ºè®¡ç®—æœºé‡Œçš„ç´¢å¼•ä»0å¼€å§‹
+/// è¿™è¾¹ç»‘å®šåœ¨â€œä¸ƒæ›œä¸»ä½“â€ä¸Šï¼Œåªç®¡ç†ä¸ƒæ›œç å­çš„åˆå§‹åŠ¨ç”»å’Œç¯ç»•ç‰¹æ•ˆ
+/// ä¸ƒæ›œç ä¼šå…ˆæ—‹è½¬æ’åˆ—ï¼Œè¿™å°†è€—è´¹å‡ ç§’ï¼ˆæœŸé—´æ— æ³•æ”»å‡»ï¼Œç®—ä½œæ˜¯è“„åŠ›èµ·æ‰‹é˜¶æ®µï¼‰
+/// æ—‹è½¬å®Œæ¯•åï¼Œç”Ÿæˆç å­é—´è¿çº¿ï¼Œå¹¶ä¿æŒç¼“æ…¢ç»§ç»­è½¬åŠ¨
+/// æ­¤æ—¶å¼€å§‹ç‰¹æ®Šæ”»å‡»
 /// </summary>
 public class MagicAnime : MonoBehaviour
 {
-    public List<GameObject> MagicBalls = new();// ÕâÀïÊÇÆßê×ÏÍÕßÖ®Ê¯²Ö¿â
-    public Animator animator;// Æßê×Ö÷ÌåµÄ¶¯»­×é¼ş
-    public GunAnime gunAnime;// ÎäÆ÷¶¯»­×é¼ş
+    public List<GameObject> MagicBalls = new();// è¿™é‡Œæ˜¯ä¸ƒæ›œè´¤è€…ä¹‹çŸ³ä»“åº“
+    public Animator animator;// ä¸ƒæ›œä¸»ä½“çš„åŠ¨ç”»ç»„ä»¶
+    public GunAnime gunAnime;// æ­¦å™¨åŠ¨ç”»ç»„ä»¶
 
-    private bool isExiting = false; // ÊÇ·ñÕıÔÚÍË³ö
+    private bool isExiting = false; // æ˜¯å¦æ­£åœ¨é€€å‡º
 
-    // Á¬Ïß²ÄÖÊ£¨¿ÉÔÚInspectorÃæ°å¸³Öµ£©
+    // è¿çº¿æè´¨ï¼ˆå¯åœ¨Inspectoré¢æ¿èµ‹å€¼ï¼‰
     public Material lineMaterial;
-    // Á¬Ïß¿í¶È
+    // è¿çº¿å®½åº¦
     public float lineWidth = 0.1f;
-    // ´æ´¢Á¬Ïß×éºÍ¶ÔÓ¦µÄÇòÌåË÷Òı¶Ô
+    // å­˜å‚¨è¿çº¿ç»„å’Œå¯¹åº”çš„çƒä½“ç´¢å¼•å¯¹
     private readonly Dictionary<LineRenderer, (int startIdx, int endIdx)> linePairs = new();
-    // ¶¨ÒåĞèÒªÁ¬ÏßµÄÇòÌåË÷Òı×éºÏ
+    // å®šä¹‰éœ€è¦è¿çº¿çš„çƒä½“ç´¢å¼•ç»„åˆ
     private readonly (int, int)[] connectPairs = new (int, int)[]
     {
         (0,2), (2,4), (4,6), (6,0),
@@ -37,7 +38,7 @@ public class MagicAnime : MonoBehaviour
     {
         animator.SetBool("IsShift", true);
         isExiting = false;
-        // ³õÊ¼»¯ËùÓĞÁ¬Ïß
+        // åˆå§‹åŒ–æ‰€æœ‰è¿çº¿
         InitLines();
         Global_GameManager.Instance.OnReincarnation += CancelMagic;
     }
@@ -46,17 +47,17 @@ public class MagicAnime : MonoBehaviour
         Global_GameManager.Instance.OnReincarnation -= CancelMagic;
     }
     
-    void Update()
+    void FixedUpdate()
     {
         if(Global_GameManager.Instance != null && 
         Global_GameManager.Instance.state != State.Gaming && 
         Global_GameManager.Instance.state != State.NoDead &&
         Global_GameManager.Instance.state != State.SpellCard) return;
-        if (!isExiting && Input.GetKeyUp(KeyCode.LeftShift))
+        if (!isExiting && ReplayManager.Input.GetKeyUp(LogicalKey.Slow))
         {
             CancelMagic(Global_GameManager.Instance.state);
         }
-        // ÊµÊ±¸üĞÂËùÓĞÁ¬ÏßÎ»ÖÃ
+        // å®æ—¶æ›´æ–°æ‰€æœ‰è¿çº¿ä½ç½®ï¼ˆè§†è§‰å±‚ï¼ŒFixedUpdate 50Hz åˆ·æ–°è¶³å¤Ÿï¼‰
         UpdateLinePositions();
     }
 
@@ -72,24 +73,24 @@ public class MagicAnime : MonoBehaviour
         animator.SetBool("IsShift", false);
         yield return new WaitForSeconds(1f);
 
-        // µ÷ÓÃ GunAnime ÖĞµÄ·½·¨ÇĞ»»µ½Ä§ÀíÉ³³£Ì¬
+        // è°ƒç”¨ GunAnime ä¸­çš„æ–¹æ³•åˆ‡æ¢åˆ°é­”ç†æ²™å¸¸æ€
         if (gunAnime != null)
         {
             gunAnime.SwitchToMarisaNormal();
         }
         isExiting = false;
-        // ÍË³öºóÇåÀíËùÓĞÁ¬Ïß
+        // é€€å‡ºåæ¸…ç†æ‰€æœ‰è¿çº¿
         ClearLines();
     }
 
     /// <summary>
-    /// ³õÊ¼»¯ËùÓĞÁ¬Ïß
+    /// åˆå§‹åŒ–æ‰€æœ‰è¿çº¿
     /// </summary>
     public void InitLines()
     {
-        // ÏÈÇåÀí¾ÉÁ¬Ïß
+        // å…ˆæ¸…ç†æ—§è¿çº¿
         ClearLines();
-        // ÎªÃ¿¸öË÷Òı¶Ô´´½¨Á¬Ïß
+        // ä¸ºæ¯ä¸ªç´¢å¼•å¯¹åˆ›å»ºè¿çº¿
         foreach (var pair in connectPairs)
         {
             CreateLine(pair.Item1, pair.Item2);
@@ -97,7 +98,7 @@ public class MagicAnime : MonoBehaviour
     }
 
     /// <summary>
-    /// ÇåÀíËùÓĞÁ¬Ïß
+    /// æ¸…ç†æ‰€æœ‰è¿çº¿
     /// </summary>
     public void ClearLines()
     {
@@ -112,32 +113,32 @@ public class MagicAnime : MonoBehaviour
     }
 
     /// <summary>
-    /// ´´½¨µ¥ÌõÁ¬Ïß
+    /// åˆ›å»ºå•æ¡è¿çº¿
     /// </summary>
-    /// <param name="startIdx">ÆğÊ¼ÇòÌåË÷Òı</param>
-    /// <param name="endIdx">½áÊøÇòÌåË÷Òı</param>
+    /// <param name="startIdx">èµ·å§‹çƒä½“ç´¢å¼•</param>
+    /// <param name="endIdx">ç»“æŸçƒä½“ç´¢å¼•</param>
     private void CreateLine(int startIdx, int endIdx)
     {
-        // ´´½¨¿ÕÎïÌå³ĞÔØLineRenderer
+        // åˆ›å»ºç©ºç‰©ä½“æ‰¿è½½LineRenderer
         GameObject lineObj = new ($"Line_{startIdx+1}_to_{endIdx+1}");
-        lineObj.transform.SetParent(transform); // ÉèÎª×ÓÎïÌå·½±ã¹ÜÀí
+        lineObj.transform.SetParent(transform); // è®¾ä¸ºå­ç‰©ä½“æ–¹ä¾¿ç®¡ç†
 
-        // Ìí¼ÓLineRenderer×é¼ş
+        // æ·»åŠ LineRendererç»„ä»¶
         LineRenderer lineRenderer = lineObj.AddComponent<LineRenderer>();
         lineRenderer.material = lineMaterial ? lineMaterial : new Material(Shader.Find("Unlit/Color"));
         lineRenderer.widthMultiplier = lineWidth;
-        lineRenderer.positionCount = 2; // Á¬ÏßÖ»ĞèÒªÁ½¸öµã
-        lineRenderer.useWorldSpace = true; // Ê¹ÓÃÊÀ½ç×ø±ê
+        lineRenderer.positionCount = 2; // è¿çº¿åªéœ€è¦ä¸¤ä¸ªç‚¹
+        lineRenderer.useWorldSpace = true; // ä½¿ç”¨ä¸–ç•Œåæ ‡
 
-        lineRenderer.sortingLayerName = "PanDing"; // ¸ÄÎªÄãµÄÇ°¾°²ãÃû³Æ£¨ÈçUI¡¢Player¡¢Effect£©
-        lineRenderer.sortingOrder = 5; // ÊıÖµÔ½´óÔ½ÉÏ²ã£¨È·±£´óÓÚ±³¾°µÄOrder£©
+        lineRenderer.sortingLayerName = "PanDing"; // æ”¹ä¸ºä½ çš„å‰æ™¯å±‚åç§°ï¼ˆå¦‚UIã€Playerã€Effectï¼‰
+        lineRenderer.sortingOrder = 5; // æ•°å€¼è¶Šå¤§è¶Šä¸Šå±‚ï¼ˆç¡®ä¿å¤§äºèƒŒæ™¯çš„Orderï¼‰
 
-        // ´æ´¢Á¬ÏßºÍ¶ÔÓ¦µÄË÷Òı
+        // å­˜å‚¨è¿çº¿å’Œå¯¹åº”çš„ç´¢å¼•
         linePairs.Add(lineRenderer, (startIdx, endIdx));
     }
 
         /// <summary>
-    /// ÊµÊ±¸üĞÂËùÓĞÁ¬ÏßµÄÎ»ÖÃ
+    /// å®æ—¶æ›´æ–°æ‰€æœ‰è¿çº¿çš„ä½ç½®
     /// </summary>
     private void UpdateLinePositions()
     {
@@ -147,13 +148,13 @@ public class MagicAnime : MonoBehaviour
             int startIdx = kvp.Value.startIdx;
             int endIdx = kvp.Value.endIdx;
 
-            // ¼ì²éË÷ÒıÊÇ·ñÓĞĞ§
+            // æ£€æŸ¥ç´¢å¼•æ˜¯å¦æœ‰æ•ˆ
             if (startIdx >= 0 && startIdx < MagicBalls.Count && endIdx >= 0 && endIdx < MagicBalls.Count)
             {
                 GameObject startBall = MagicBalls[startIdx];
                 GameObject endBall = MagicBalls[endIdx];
 
-                // ¸üĞÂÁ¬ÏßµÄÁ½¸ö¶ËµãÎªÇòÌåÖĞĞÄÎ»ÖÃ
+                // æ›´æ–°è¿çº¿çš„ä¸¤ä¸ªç«¯ç‚¹ä¸ºçƒä½“ä¸­å¿ƒä½ç½®
                 if (startBall != null && endBall != null)
                 {
                     line.SetPosition(0, startBall.transform.position);

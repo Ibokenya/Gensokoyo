@@ -1,39 +1,40 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
+using ReplaySystem;
 
 public class AimPointAttack : MonoBehaviour
 {
-    [Header("Ğı×ª²ÎÊı")]
-    public float rotationSpeed = 180f; // Ğı×ªËÙ¶È£¬µ¥Î»£º¶È/Ãë
+    [Header("æ—‹è½¬å‚æ•°")]
+    public float rotationSpeed = 180f; // æ—‹è½¬é€Ÿåº¦ï¼Œå•ä½ï¼šåº¦/ç§’
 
-    [Header("Ä§·¨Öé²ÎÊı")]
-    public float xMin = 20f; // xÖá×îĞ¡Öµ
-    public float xMax = 30f; // xÖá×î´óÖµ
-    public float yMin = 21.8f; // yÖá×îĞ¡Öµ
-    public float yMax = 32.7f; // yÖá×î´óÖµ
-    public float zMin = 34.4f; // zÖá×îĞ¡Öµ
-    public float zMax = 51.6f; // zÖá×î´óÖµ
-    public float PearlSpeed = 20f; // Ä§·¨Öé·ÉĞĞËÙ¶È
-    public float spawnDelayMin = 1f; // Éú³ÉÄ§·¨ÖéµÄ×îĞ¡ÑÓ³ÙÊ±¼ä
-    public float spawnDelayMax = 2f; // Éú³ÉÄ§·¨ÖéµÄ×î´óÑÓ³ÙÊ±¼ä
-    public float reuseDelayMin = 0.1f; // ÔÙ´ÎÕÙ»½Ä§·¨ÖéµÄ×îĞ¡ÑÓ³ÙÊ±¼ä
-    public float reuseDelayMax = 0.5f; // ÔÙ´ÎÕÙ»½Ä§·¨ÖéµÄ×î´óÑÓ³ÙÊ±¼ä
+    [Header("é­”æ³•ç å‚æ•°")]
+    public float xMin = 20f; // xè½´æœ€å°å€¼
+    public float xMax = 30f; // xè½´æœ€å¤§å€¼
+    public float yMin = 21.8f; // yè½´æœ€å°å€¼
+    public float yMax = 32.7f; // yè½´æœ€å¤§å€¼
+    public float zMin = 34.4f; // zè½´æœ€å°å€¼
+    public float zMax = 51.6f; // zè½´æœ€å¤§å€¼
+    public float PearlSpeed = 20f; // é­”æ³•ç é£è¡Œé€Ÿåº¦
+    public float spawnDelayMin = 1f; // ç”Ÿæˆé­”æ³•ç çš„æœ€å°å»¶è¿Ÿæ—¶é—´
+    public float spawnDelayMax = 2f; // ç”Ÿæˆé­”æ³•ç çš„æœ€å¤§å»¶è¿Ÿæ—¶é—´
+    public float reuseDelayMin = 0.1f; // å†æ¬¡å¬å”¤é­”æ³•ç çš„æœ€å°å»¶è¿Ÿæ—¶é—´
+    public float reuseDelayMax = 0.5f; // å†æ¬¡å¬å”¤é­”æ³•ç çš„æœ€å¤§å»¶è¿Ÿæ—¶é—´
 
-    [Header("±¬Õ¨¶¯»­")]
-    public Sprite[] markerSprites; // Ãé×¼µã¾«ÁéÊı×é£¨4ÕÅ£º1ÕÅÃé×¼µã + 3ÕÅ±¬Õ¨¶¯»­£©
-    public float explosionFrameInterval = 10f; // ±¬Õ¨¶¯»­Ö¡¼ä¸ô
+    [Header("çˆ†ç‚¸åŠ¨ç”»")]
+    public Sprite[] markerSprites; // ç„å‡†ç‚¹ç²¾çµæ•°ç»„ï¼ˆ4å¼ ï¼š1å¼ ç„å‡†ç‚¹ + 3å¼ çˆ†ç‚¸åŠ¨ç”»ï¼‰
+    public float explosionFrameInterval = 10f; // çˆ†ç‚¸åŠ¨ç”»å¸§é—´éš”
 
-    private GameObject pearlPrefab; // Ä§·¨ÖéÔ¤ÖÆÌå£¨Í¨¹ı½Å±¾´«µİ£©
-    private GameObject pearl; // µ±Ç°Ä§·¨ÖéÊµÀı
-    private readonly float fadeInDuration = 0.5f; // Ä§·¨ÖéµÄµ­ÈëÊ±¼ä
-    private SpriteRenderer spriteRenderer; // Ãé×¼µãµÄSpriteRenderer×é¼ş
+    private GameObject pearlPrefab; // é­”æ³•ç é¢„åˆ¶ä½“ï¼ˆé€šè¿‡è„šæœ¬ä¼ é€’ï¼‰
+    private GameObject pearl; // å½“å‰é­”æ³•ç å®ä¾‹
+    private readonly float fadeInDuration = 0.5f; // é­”æ³•ç çš„æ·¡å…¥æ—¶é—´
+    private SpriteRenderer spriteRenderer; // ç„å‡†ç‚¹çš„SpriteRendererç»„ä»¶
 
     void OnDisable()
     {
         CancelInvoke();
 
-        // »ØÊÕµ±Ç°Ä§·¨ÖéÊµÀı
+        // å›æ”¶å½“å‰é­”æ³•ç å®ä¾‹
         if (pearl != null && Global_ObjectPool.Instance != null)
         {
             Global_ObjectPool.Instance.Recycle(pearl);
@@ -51,7 +52,7 @@ public class AimPointAttack : MonoBehaviour
     }
 
     /// <summary>
-    /// ´Ó¶ÔÏó³Ø»ñÈ¡Ä§·¨Öé
+    /// ä»å¯¹è±¡æ± è·å–é­”æ³•ç 
     /// </summary>
     private void SpawnPearl()
     {
@@ -71,38 +72,38 @@ public class AimPointAttack : MonoBehaviour
             }
             else
             {
-                Debug.LogWarning("[AimPointAttack] ÎŞ·¨´Ó¶ÔÏó³Ø»ñÈ¡Ä§·¨Öé£¡");
+                Debug.LogWarning("[AimPointAttack] æ— æ³•ä»å¯¹è±¡æ± è·å–é­”æ³•ç ï¼");
             }
         }
         else
         {
-            Debug.LogWarning("[AimPointAttack] pearlPrefab»òGlobal_ObjectPool.InstanceÎ´ÉèÖÃ£¡");
+            Debug.LogWarning("[AimPointAttack] pearlPrefabæˆ–Global_ObjectPool.Instanceæœªè®¾ç½®ï¼");
         }
     }
 
     /// <summary>
-    /// »ñÈ¡Ëæ»úÉú³ÉÎ»ÖÃ
+    /// è·å–éšæœºç”Ÿæˆä½ç½®
     /// </summary>
     private Vector3 GetRandomSpawnPosition()
     {
         float x;
-        if (Random.value > 0.5f)
+        if (GameRNG.value > 0.5f)
         {
-            x = Random.Range(xMin, xMax);
+            x = GameRNG.Range(xMin, xMax);
         }
         else
         {
-            x = Random.Range(-xMax, -xMin);
+            x = GameRNG.Range(-xMax, -xMin);
         }
 
-        float y = Random.Range(yMin, yMax);
-        float z = Random.Range(zMin, zMax);
+        float y = GameRNG.Range(yMin, yMax);
+        float z = GameRNG.Range(zMin, zMax);
 
         return new Vector3(x, y, z);
     }
 
     /// <summary>
-    /// Ä§·¨ÖéµÄµ­ÈëĞ­³Ì
+    /// é­”æ³•ç çš„æ·¡å…¥åç¨‹
     /// </summary>
     private IEnumerator FadeInPearl(GameObject pearlObj)
     {
@@ -125,16 +126,16 @@ public class AimPointAttack : MonoBehaviour
         sr.color = new Color(originalColor.r, originalColor.g, originalColor.b, 1f);
     }
 
-    void Update()
+    void FixedUpdate()
     {
-        transform.Rotate(0f, 0f, rotationSpeed * Time.deltaTime);
+        transform.Rotate(0f, 0f, rotationSpeed * SimClock.FixedTickDt);
 
-        // Ã¿Ö¡¸üĞÂÄ§·¨Öé×´Ì¬£¬È·±£Á÷³©ÒÆ¶¯
+        // æ¯å¸§æ›´æ–°é­”æ³•ç çŠ¶æ€ï¼Œç¡®ä¿æµç•…ç§»åŠ¨
         UpdatePearl();
     }
 
     /// <summary>
-    /// ¸üĞÂÄ§·¨Öé×´Ì¬
+    /// æ›´æ–°é­”æ³•ç çŠ¶æ€
     /// </summary>
     private void UpdatePearl()
     {
@@ -165,13 +166,13 @@ public class AimPointAttack : MonoBehaviour
             return;
         }
 
-        pearl.transform.Rotate(0f, 0f, 360f * Time.deltaTime);
-        Vector3 moveAmount = direction * PearlSpeed * Time.deltaTime;
+        pearl.transform.Rotate(0f, 0f, 360f * SimClock.FixedTickDt);
+        Vector3 moveAmount = direction * PearlSpeed * SimClock.FixedTickDt;
         pearl.transform.position += moveAmount;
     }
 
     /// <summary>
-    /// ¼ÆËãÉËº¦
+    /// è®¡ç®—ä¼¤å®³
     /// </summary>
     private int CalculateDamage()
     {
@@ -187,7 +188,7 @@ public class AimPointAttack : MonoBehaviour
     }
 
     /// <summary>
-    /// ¶ÔµĞÈËÔì³ÉÉËº¦
+    /// å¯¹æ•Œäººé€ æˆä¼¤å®³
     /// </summary>
     private void DealDamageToEnemy(int damage)
     {
@@ -202,7 +203,7 @@ public class AimPointAttack : MonoBehaviour
     }
 
     /// <summary>
-    /// ²¥·Å±¬Õ¨¶¯»­
+    /// æ’­æ”¾çˆ†ç‚¸åŠ¨ç”»
     /// </summary>
     private IEnumerator PlayExplosionAnimation()
     {
@@ -224,7 +225,7 @@ public class AimPointAttack : MonoBehaviour
             spriteRenderer.sprite = markerSprites[0];
         }
 
-        float randomDelay = Random.Range(reuseDelayMin, reuseDelayMax);
+        float randomDelay = GameRNG.Range(reuseDelayMin, reuseDelayMax);
         yield return new WaitForSeconds(randomDelay);
 
         if (gameObject.activeInHierarchy)
@@ -234,17 +235,17 @@ public class AimPointAttack : MonoBehaviour
     }
 
     /// <summary>
-    /// ÉèÖÃÄ§·¨ÖéÔ¤ÖÆ¼ş£¨Í¨¹ı½Å±¾´«µİ£©
+    /// è®¾ç½®é­”æ³•ç é¢„åˆ¶ä»¶ï¼ˆé€šè¿‡è„šæœ¬ä¼ é€’ï¼‰
     /// </summary>
     public void SetPearlPrefab(GameObject prefab)
     {
         CancelInvoke(nameof(SpawnPearl));
         spriteRenderer = GetComponent<SpriteRenderer>();
 
-        // ´æ´¢Ô¤ÖÆÌåÒıÓÃ£¨¶ø²»ÊÇÊµÀı£©
+        // å­˜å‚¨é¢„åˆ¶ä½“å¼•ç”¨ï¼ˆè€Œä¸æ˜¯å®ä¾‹ï¼‰
         pearlPrefab = prefab;
 
-        // Èç¹ûµ±Ç°Ã»ÓĞÄ§·¨ÖéÊµÀı£¬Á¢¼´Éú³É
+        // å¦‚æœå½“å‰æ²¡æœ‰é­”æ³•ç å®ä¾‹ï¼Œç«‹å³ç”Ÿæˆ
         if (pearl == null && pearlPrefab != null)
         {
             SpawnPearl();

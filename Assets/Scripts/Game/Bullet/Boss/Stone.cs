@@ -1,15 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ReplaySystem;
 
 public class Stone : MonoBehaviour
 {
     private Rigidbody2D rb2D;
     private Vector2 targetPosition;
     private bool hasReachedTarget = false;
-    public bool IsReachedTarget { get { return hasReachedTarget; } }// 是否到达目标位置
+    public bool IsReachedTarget { get { return hasReachedTarget; } }// 鏄惁鍒拌揪鐩爣浣嶇疆
     
-    // 边界范围
+    // 杈圭晫鑼冨洿
     private readonly float minX = -12f;
     private readonly float maxX = 6f;
     private readonly float minY = -9f;
@@ -35,7 +36,7 @@ public class Stone : MonoBehaviour
         }
     }
     
-    void Update()
+    void FixedUpdate()
     {
         if (!hasReachedTarget && rb2D != null)
         {

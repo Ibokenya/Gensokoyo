@@ -1,58 +1,59 @@
 using UnityEngine;
 using TMPro;
+using ReplaySystem;
 using System;
 
 public class UIManager : MonoBehaviour
 {
-    private int HighestScore => Global_GameManager.Instance.HighestScore;// ×î¸ß·Ö
-    private int CurrentScore => Global_GameManager.Instance.Score;// µ±Ç°·Ö
-    [Header("µÃ·Ö")]
+    private int HighestScore => Global_GameManager.Instance.HighestScore;// æœ€é«˜åˆ†
+    private int CurrentScore => Global_GameManager.Instance.Score;// å½“å‰åˆ†
+    [Header("å¾—åˆ†")]
     [SerializeField]
     private TextMeshProUGUI HighestScoreText;
     [SerializeField]
     private TextMeshProUGUI ScoreText;
-    private int LeftLife => Global_GameManager.Instance.Hp;// Ê£ÓàÉúÃüÖµ
-    private int LifePiece => Global_GameManager.Instance.HpPiece;// ÉúÃüÖµËéÆ¬
-    private int SpeelCard => Global_GameManager.Instance.BombCount;// ·û¿¨ÊıÁ¿
-    private int CardPiece => Global_GameManager.Instance.BombPiece;// ·û¿¨ËéÆ¬ÊıÁ¿
-    private int Power => Global_GameManager.Instance.Power;// ÁéÁ¦Öµ
-    [Header("ÁéÁ¦Öµ-(µ±Ç°°ÙÎ»£¬µ±Ç°Ê®¸öÎ»)")]
+    private int LeftLife => Global_GameManager.Instance.Hp;// å‰©ä½™ç”Ÿå‘½å€¼
+    private int LifePiece => Global_GameManager.Instance.HpPiece;// ç”Ÿå‘½å€¼ç¢ç‰‡
+    private int SpeelCard => Global_GameManager.Instance.BombCount;// ç¬¦å¡æ•°é‡
+    private int CardPiece => Global_GameManager.Instance.BombPiece;// ç¬¦å¡ç¢ç‰‡æ•°é‡
+    private int Power => Global_GameManager.Instance.Power;// çµåŠ›å€¼
+    [Header("çµåŠ›å€¼-(å½“å‰ç™¾ä½ï¼Œå½“å‰åä¸ªä½)")]
     [SerializeField]
     private TextMeshProUGUI PowerText_Hundred;
     [SerializeField]
     private TextMeshProUGUI PowerText_Ten;
-    private int MaxGrade => Global_GameManager.Instance.Grade;// ×î´óµÃµã
-    [Header("×î´óµÃµã")]
+    private int MaxGrade => Global_GameManager.Instance.Grade;// æœ€å¤§å¾—ç‚¹
+    [Header("æœ€å¤§å¾—ç‚¹")]
     [SerializeField]
     private TextMeshProUGUI MaxGradeText;
-    private int Graze => Global_GameManager.Instance.Graze;// ²Áµ¯Êı
-    [Header("²Áµ¯Êı")]
+    private int Graze => Global_GameManager.Instance.Graze;// æ“¦å¼¹æ•°
+    [Header("æ“¦å¼¹æ•°")]
     [SerializeField]
     private TextMeshProUGUI GrazeText;
 
-    [Header("µÀ¾ßÏß")]
+    [Header("é“å…·çº¿")]
     public GameObject BorderLine;
-    [Header("UIÒıÓÃ")]
+    [Header("UIå¼•ç”¨")]
     public GameObject FinalUI;
     public GameObject GameOverUI;
 
     public LeftLife leftLife;
     public SpeelCard speelCard;
 
-    [Header("×îÖÕµÃ·ÖUIÏà¹ØÈ«²¿ÔªËØ")]
-    public bool isCard1Get; // ÊÇ·ñ»ñÈ¡ÁË·û¿¨1
-    public bool isCard2Get; // ÊÇ·ñ»ñÈ¡ÁË·û¿¨2
-    public bool isFinalCardGet; // ÊÇ·ñ»ñÈ¡ÁË×îÖÕ·û¿¨
-    public bool isContinueGame; // ÊÇ·ñĞø¹Ø¹ı
-    public int ExScore; // ¶îÍâµÃ·Ö
-    private int MissCount; // ÊÜ»÷´ÎÊı
+    [Header("æœ€ç»ˆå¾—åˆ†UIç›¸å…³å…¨éƒ¨å…ƒç´ ")]
+    public bool isCard1Get; // æ˜¯å¦è·å–äº†ç¬¦å¡1
+    public bool isCard2Get; // æ˜¯å¦è·å–äº†ç¬¦å¡2
+    public bool isFinalCardGet; // æ˜¯å¦è·å–äº†æœ€ç»ˆç¬¦å¡
+    public bool isContinueGame; // æ˜¯å¦ç»­å…³è¿‡
+    public int ExScore; // é¢å¤–å¾—åˆ†
+    private int MissCount; // å—å‡»æ¬¡æ•°
     
-    [Header("ÓÎÏ·¼ÆÊ±Æ÷")]
-    public float gameTime = 0f; // ÓÎÏ·Ê±³¤£¨Ãë£©
-    private bool isTimerRunning = true; // ¼ÆÊ±Æ÷ÊÇ·ñÔËĞĞ
+    [Header("æ¸¸æˆè®¡æ—¶å™¨")]
+    public float gameTime = 0f; // æ¸¸æˆæ—¶é•¿ï¼ˆç§’ï¼‰
+    private bool isTimerRunning = true; // è®¡æ—¶å™¨æ˜¯å¦è¿è¡Œ
     
     /// <summary>
-    /// »ñÈ¡ÓÎÏ·Ê±³¤×Ö·û´®£¨¸ñÊ½£ºXm'Ys'£©
+    /// è·å–æ¸¸æˆæ—¶é•¿å­—ç¬¦ä¸²ï¼ˆæ ¼å¼ï¼šXm'Ys'ï¼‰
     /// </summary>
     public string GetGameTimeString()
     {
@@ -62,25 +63,25 @@ public class UIManager : MonoBehaviour
     }
     
     /// <summary>
-    /// Í£Ö¹¼ÆÊ±Æ÷
+    /// åœæ­¢è®¡æ—¶å™¨
     /// </summary>
     public void StopTimer()
     {
         isTimerRunning = false;
     }
 
-    void Update()
+    void FixedUpdate()
     {
-        // ¸üĞÂÓÎÏ·¼ÆÊ±Æ÷
+        // æ›´æ–°æ¸¸æˆè®¡æ—¶å™¨
         if (isTimerRunning)
         {
-            gameTime += Time.deltaTime;
+            gameTime += SimClock.FixedTickDt;
         }
     }
     
     void OnEnable()
     {
-#region ¶©ÔÄ¹ã²¥ÊÂ¼ş
+#region è®¢é˜…å¹¿æ’­äº‹ä»¶
         Global_GameManager.Instance.OnScoreChanged += SetScoreText; 
         Global_GameManager.Instance.OnPowerChanged += SetPowerText;
         Global_GameManager.Instance.OnGradeChanged += SetGradeText;

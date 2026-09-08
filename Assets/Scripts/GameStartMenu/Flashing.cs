@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -9,16 +9,16 @@ public class Flashing : MonoBehaviour
     private TextMeshProUGUI text;
 
     private bool isAdd = false;         
-    public float minTransparent = 0.2f; // ×îĞ¡Í¸Ã÷¶È
-    public float maxTransparent = 1f;   // ×î´óÍ¸Ã÷¶È
-    public float delta = 0.005f;        // Ã¿Ö¡Í¸Ã÷¶È±ä»¯Öµ
+    public float minTransparent = 0.2f; // æœ€å°é€æ˜åº¦
+    public float maxTransparent = 1f;   // æœ€å¤§é€æ˜åº¦
+    public float delta = 0.005f;        // æ¯å¸§é€æ˜åº¦å˜åŒ–å€¼
 
     // Start is called before the first frame update
     void Start()
     {
         text = targetObject.GetComponent<TextMeshProUGUI>();
 
-        // ³õÊ¼»¯ÎÄ×ÖÑÕÉ«
+        // åˆå§‹åŒ–æ–‡å­—é¢œè‰²
         Color initColor = text.color;
         initColor.a = maxTransparent;
         text.color = initColor;
@@ -39,7 +39,7 @@ public class Flashing : MonoBehaviour
             currentColor.a += delta;
             if (currentColor.a >= maxTransparent)
             {
-                currentColor.a = maxTransparent; // ĞŞÕıµ½×î´óÖµ£¬±ÜÃâÒç³ö
+                currentColor.a = maxTransparent; // ä¿®æ­£åˆ°æœ€å¤§å€¼ï¼Œé¿å…æº¢å‡º
                 isAdd = false;
             }
         }
@@ -48,7 +48,7 @@ public class Flashing : MonoBehaviour
             currentColor.a -= delta;
             if (currentColor.a <= minTransparent)
             {
-                currentColor.a = minTransparent; // ĞŞÕıµ½×îĞ¡Öµ£¬±ÜÃâÒç³ö
+                currentColor.a = minTransparent; // ä¿®æ­£åˆ°æœ€å°å€¼ï¼Œé¿å…æº¢å‡º
                 isAdd = true;
             }
         }

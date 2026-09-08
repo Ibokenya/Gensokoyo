@@ -1,51 +1,51 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
 public class EnemySpawnConfig
 {
-    [Header("Éú³ÉÊ±¼ä")]
-    public float spawnTime;// »ùÓÚÒôÀÖÊ±¼ä
+    [Header("ç”Ÿæˆæ—¶é—´")]
+    public float spawnTime;// åŸºäºéŸ³ä¹æ—¶é—´
     
-    [Header("Éú³ÉÊıÁ¿")]
-    public int spawnCount = 1;// Éú³ÉµĞÈËµÄÊıÁ¿
-    public float spawnInterval = 0.5f;// Éú³É¼ä¸ô£¨Ãë£©
+    [Header("ç”Ÿæˆæ•°é‡")]
+    public int spawnCount = 1;// ç”Ÿæˆæ•Œäººçš„æ•°é‡
+    public float spawnInterval = 0.5f;// ç”Ÿæˆé—´éš”ï¼ˆç§’ï¼‰
     
-    // µĞÈËÀàĞÍ
+    // æ•Œäººç±»å‹
     public enum EnemyType
     {
-        Normal,    // ÆÕÍ¨µĞÈË
-        Ball,      // ÇòÌåµĞÈË
-        Elite      // ¾«Ó¢µĞÈË
+        Normal,    // æ™®é€šæ•Œäºº
+        Ball,      // çƒä½“æ•Œäºº
+        Elite      // ç²¾è‹±æ•Œäºº
     }
     public EnemyType enemyType;
     
-    // ÒÆ¶¯Ä£Ê½
+    // ç§»åŠ¨æ¨¡å¼
     public MoveMode moveMode;
     
-    // ¶ş¶ÎÒÆ¶¯Ä£Ê½
-    public SecondaryMode secondaryMoveMode = SecondaryMode.Stationary;// ¶ş¶ÎÒÆ¶¯Ä£Ê½
+    // äºŒæ®µç§»åŠ¨æ¨¡å¼
+    public SecondaryMode secondaryMoveMode = SecondaryMode.Stationary;// äºŒæ®µç§»åŠ¨æ¨¡å¼
     
-    [Header("Â·¾¶µãÁĞ±í")]
-    public List<GameObject> movePoints;// ÒÆ¶¯µãÁĞ±í
+    [Header("è·¯å¾„ç‚¹åˆ—è¡¨")]
+    public List<GameObject> movePoints;// ç§»åŠ¨ç‚¹åˆ—è¡¨
     
-    [Header("ÒÆ¶¯²ÎÊı")]
-    public float moveSpeed = 5f;// ÒÆ¶¯ËÙ¶È
+    [Header("ç§»åŠ¨å‚æ•°")]
+    public float moveSpeed = 5f;// ç§»åŠ¨é€Ÿåº¦
     
-    [Header("ÉÁË¸²ÎÊı")]
-    public float flickerLifeTime = 2f;// ÉÁË¸Ä£Ê½ÏÂµÄÉú´æÊ±¼ä
-    public float fadeTime = 1f;// µ­ÈëÊ±¼ä
+    [Header("é—ªçƒå‚æ•°")]
+    public float flickerLifeTime = 2f;// é—ªçƒæ¨¡å¼ä¸‹çš„ç”Ÿå­˜æ—¶é—´
+    public float fadeTime = 1f;// æ·¡å…¥æ—¶é—´
     
-    [Header("ÖØÁ¦²ÎÊı")]
-    public float gravityScale = 1f;// ÖØÁ¦Ëõ·Å
+    [Header("é‡åŠ›å‚æ•°")]
+    public float gravityScale = 1f;// é‡åŠ›ç¼©æ”¾
     
-    [Header("»ù´¡ÊôĞÔ")]
-    public int hp = 100;// µĞÈËÉúÃüÖµ
+    [Header("åŸºç¡€å±æ€§")]
+    public int hp = 100;// æ•Œäººç”Ÿå‘½å€¼
     
-    [Header("Éä»÷ÅäÖÃÁĞ±í")]
+    [Header("å°„å‡»é…ç½®åˆ—è¡¨")]
     public List<ShootMode> shootConfigs = new List<ShootMode>();
     
-    [Header("µôÂäÎïÅäÖÃ")]
+    [Header("æ‰è½ç‰©é…ç½®")]
     public List<ItemDropConfig> itemDrops = new List<ItemDropConfig>();
 }

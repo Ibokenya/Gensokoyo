@@ -1,14 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ReplaySystem;
 
 public class IceCloud : MonoBehaviour
 {
-    [Header("±ùÔÆ²ÎÊı")]
-    public float fadeInTime = 1f; // µ­ÈëÊ±¼ä
-    public float fadeOutTime = 1f; // µ­³öÊ±¼ä
-    public float floatSpeed = 0.5f; // Æ®¸¡ËÙ¶È
-    public float perlinSpeed = 0.1f; // ÔëÉù±ä»¯ËÙ¶È
+    [Header("å†°äº‘å‚æ•°")]
+    public float fadeInTime = 1f; // æ·¡å…¥æ—¶é—´
+    public float fadeOutTime = 1f; // æ·¡å‡ºæ—¶é—´
+    public float floatSpeed = 0.5f; // é£˜æµ®é€Ÿåº¦
+    public float perlinSpeed = 0.1f; // å™ªå£°å˜åŒ–é€Ÿåº¦
     
     private SpriteRenderer spriteRenderer;
     private Collider2D cloudCollider;
@@ -19,7 +20,7 @@ public class IceCloud : MonoBehaviour
     private float perlinOffsetY;
     public BossShootSystem bossShootSystem;
     
-    // ±ß½ç¼ì²â·¶Î§£¨ÓëstoneÏàÍ¬£©
+    // è¾¹ç•Œæ£€æµ‹èŒƒå›´ï¼ˆä¸stoneç›¸åŒï¼‰
     private readonly float minX = -12f;
     private readonly float maxX = 6f;
     private readonly float minY = -7f;
@@ -32,11 +33,11 @@ public class IceCloud : MonoBehaviour
         cloudCollider = GetComponent<Collider2D>();
         rb2D = GetComponent<Rigidbody2D>();
         
-        // ³õÊ¼»¯ÔëÉùÆ«ÒÆ
-        perlinOffsetX = Random.Range(0f, 1000f);
-        perlinOffsetY = Random.Range(0f, 1000f);
+        // åˆå§‹åŒ–å™ªå£°åç§»
+        perlinOffsetX = GameRNG.Range(0f, 1000f);
+        perlinOffsetY = GameRNG.Range(0f, 1000f);
         
-        // ³õÊ¼×´Ì¬£ºÍ¸Ã÷£¬Åö×²Æ÷½ûÓÃ
+        // åˆå§‹çŠ¶æ€ï¼šé€æ˜ï¼Œç¢°æ’å™¨ç¦ç”¨
         if (spriteRenderer != null)
         {
             Color color = spriteRenderer.color;
@@ -51,38 +52,38 @@ public class IceCloud : MonoBehaviour
     
     private void OnEnable()
     {
-        // ¿ªÊ¼µ­Èë
+        // å¼€å§‹æ·¡å…¥
         StartCoroutine(FadeIn());
     }
     
-    private void Update()
+    private void FixedUpdate()
     {
-        // Ëæ»úÆ®¸¡
+        // éšæœºé£˜æµ®
         if (!isFadingOut)
         {
             FloatRandomly();
         }
         
-        // ±ß½ç¼ì²â
+        // è¾¹ç•Œæ£€æµ‹
         CheckBounds();
     }
     
     /// <summary>
-    /// Ëæ»úÆ®¸¡
+    /// éšæœºé£˜æµ®
     /// </summary>
     private void FloatRandomly()
     {
-        perlinOffsetX += perlinSpeed * Time.deltaTime;
-        perlinOffsetY += perlinSpeed * Time.deltaTime;
+        perlinOffsetX += perlinSpeed * SimClock.FixedTickDt;
+        perlinOffsetY += perlinSpeed * SimClock.FixedTickDt;
         
-        // Ê¹ÓÃPerlinÔëÉùÉú³ÉËæ»ú·½Ïò
+        // ä½¿ç”¨Perlinå™ªå£°ç”Ÿæˆéšæœºæ–¹å‘
         float noiseX = Mathf.PerlinNoise(perlinOffsetX, 0f) * 2f - 1f;
         float noiseY = Mathf.PerlinNoise(0f, perlinOffsetY) * 2f - 1f;
         
-        // Éú³ÉËæ»úÒÆ¶¯ÏòÁ¿
+        // ç”Ÿæˆéšæœºç§»åŠ¨å‘é‡
         Vector2 randomDirection = new Vector2(noiseX, noiseY).normalized;
         
-        // Ê¹ÓÃ¸ÕÌåÒÆ¶¯
+        // ä½¿ç”¨åˆšä½“ç§»åŠ¨
         if (rb2D != null)
         {
             rb2D.velocity = randomDirection * floatSpeed;
@@ -90,7 +91,7 @@ public class IceCloud : MonoBehaviour
     }
     
     /// <summary>
-    /// ±ß½ç¼ì²â
+    /// è¾¹ç•Œæ£€æµ‹
     /// </summary>
     private void CheckBounds()
     {
@@ -98,13 +99,13 @@ public class IceCloud : MonoBehaviour
         if (position.x < minX || position.x > maxX || position.y < minY || position.y > maxY)
         {
             isBecauseBounds = true;
-            // ³¬³ö±ß½ç£¬»ØÊÕ
+            // è¶…å‡ºè¾¹ç•Œï¼Œå›æ”¶
             Recycle();
         }
     }
     
     /// <summary>
-    /// µ­ÈëĞ§¹û
+    /// æ·¡å…¥æ•ˆæœ
     /// </summary>
     private IEnumerator FadeIn()
     {
@@ -125,7 +126,7 @@ public class IceCloud : MonoBehaviour
             yield return null;
         }
         
-        // µ­ÈëÍê³É£¬¼¤»îÅö×²Æ÷
+        // æ·¡å…¥å®Œæˆï¼Œæ¿€æ´»ç¢°æ’å™¨
         if (cloudCollider != null)
         {
             cloudCollider.enabled = true;
@@ -133,12 +134,12 @@ public class IceCloud : MonoBehaviour
     }
     
     /// <summary>
-    /// »ØÊÕ±ùÔÆ
+    /// å›æ”¶å†°äº‘
     /// </summary>
     public void Recycle()
     {
         Global_ObjectPool.Instance.Recycle(this.gameObject);
-        // Í¨ÖªBossShootSystemÉú³ÉĞÂµÄ±ùÔÆ
+        // é€šçŸ¥BossShootSystemç”Ÿæˆæ–°çš„å†°äº‘
         if (bossShootSystem != null && !isBecauseBounds)
         {
             bossShootSystem.OnCloudRecycled();
@@ -148,7 +149,7 @@ public class IceCloud : MonoBehaviour
     private void OnDisable()
     {
         isBecauseBounds = false;
-        // ÇåÀíËÙ¶È
+        // æ¸…ç†é€Ÿåº¦
         if (rb2D != null)
         {
             rb2D.velocity = Vector2.zero;

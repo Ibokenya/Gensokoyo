@@ -1,15 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ReplaySystem;
 
-// Ğ¡ÇòÑØ×ÅÂ·¾¶ÒÆ¶¯£¬Æ½»¬ÒÆ¶¯£¬µãÖ®¼äÖ±½ÓÒÆ¶¯
+// å°çƒæ²¿ç€è·¯å¾„ç§»åŠ¨ï¼Œå¹³æ»‘ç§»åŠ¨ï¼Œç‚¹ä¹‹é—´ç›´æ¥ç§»åŠ¨
 public class BallsAnime : Enemy
 {
-    public List<Sprite> ballsSprites;// Ğ¡Çò¾«Áé
-    private Sprite currentBallSprite;// µ±Ç°Ğ¡Çò
+    public List<Sprite> ballsSprites;// å°çƒç²¾çµ
+    private Sprite currentBallSprite;// å½“å‰å°çƒ
 
     [SerializeField]
-    private float RotateSpeed = 360f;// Ğ¡ÇòĞı×ªËÙ¶È
+    private float RotateSpeed = 360f;// å°çƒæ—‹è½¬é€Ÿåº¦
 
     protected override void OnEnable()
     {
@@ -24,27 +25,27 @@ public class BallsAnime : Enemy
             spriteRenderer.color = new Color(1, 1, 1, 1);
         }
 
-        // ÉÁË¸Ä£Ê½ÏÂĞèÒªÉèÖÃÂ·¾¶µã
+        // é—ªçƒæ¨¡å¼ä¸‹éœ€è¦è®¾ç½®è·¯å¾„ç‚¹
         if (moveMode == MoveMode.Flicker && MovePoints != null)
         {
-            // Â·¾¶µãÒÑÔÚ»ùÀàSetMovePointsÖĞÉèÖÃ
+            // è·¯å¾„ç‚¹å·²åœ¨åŸºç±»SetMovePointsä¸­è®¾ç½®
         }
     }
 
-    protected override void Update()
+    protected override void FixedUpdate()
     {
-        // Ğı×ªĞ¡Çò
+        // æ—‹è½¬å°çƒ
         RotateBall();
 
-        // µ÷ÓÃ»ùÀàµÄUpdate´¦ÀíÒÆ¶¯Âß¼­
-        base.Update();
+        // è°ƒç”¨åŸºç±»çš„FixedUpdateå¤„ç†ç§»åŠ¨é€»è¾‘
+        base.FixedUpdate();
     }
 
     /// <summary>
-    /// Ğı×ªĞ¡Çò
+    /// æ—‹è½¬å°çƒ
     /// </summary>
     private void RotateBall()
     {
-        transform.Rotate(Vector3.forward, RotateSpeed * Time.deltaTime);
+        transform.Rotate(Vector3.forward, RotateSpeed * SimClock.FixedTickDt);
     }
 }

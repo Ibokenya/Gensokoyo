@@ -1,13 +1,13 @@
-using System.Collections.Generic;
+ï»¿using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
 public class LeftLife : MonoBehaviour
 {
-    public List<GameObject> LifeHearts; // ÉúÃüÖµÍ¼±ê
-    public TextMeshProUGUI LifeText; // ÉúÃüÖµÎÄ±¾¿ò
-    public List<Sprite> LifeHeartSprites; // ÉúÃüÖµÍ¼±ê¾«Áé£¨´æ´¢0 ,1/3 ,2/3 ,1×´Ì¬µÄÉúÃüÍ¼±ê£©
+    public List<GameObject> LifeHearts; // ç”Ÿå‘½å€¼å›¾æ ‡
+    public TextMeshProUGUI LifeText; // ç”Ÿå‘½å€¼æ–‡æœ¬æ¡†
+    public List<Sprite> LifeHeartSprites; // ç”Ÿå‘½å€¼å›¾æ ‡ç²¾çµï¼ˆå­˜å‚¨0 ,1/3 ,2/3 ,1çŠ¶æ€çš„ç”Ÿå‘½å›¾æ ‡ï¼‰
 
     public void SetLife(int life, int lifePiece)
     {
@@ -19,15 +19,15 @@ public class LeftLife : MonoBehaviour
         int i = 0;
         while(i < life)
         {
-            LifeHearts[i].GetComponent<Image>().sprite = LifeHeartSprites[3]; // 1×´Ì¬µÄËéÆ¬Í¼±ê
+            LifeHearts[i].GetComponent<Image>().sprite = LifeHeartSprites[3]; // 1çŠ¶æ€çš„ç¢ç‰‡å›¾æ ‡
             i++;
         }
-        if(i < LifeHearts.Count)// ÇĞ»»Ö®ºóÏÔÊ¾ËéÆ¬
+        if(i < LifeHearts.Count)// åˆ‡æ¢ä¹‹åæ˜¾ç¤ºç¢ç‰‡
         {
             LifeHearts[i].GetComponent<Image>().sprite = LifeHeartSprites[lifePiece];
         }
         i++;
-        while(i < LifeHearts.Count)// Ã»ÑªµÄÊ±ºò°ÑËùÓĞÊ£ÓàÎ»ÉèÎª0
+        while(i < LifeHearts.Count)// æ²¡è¡€çš„æ—¶å€™æŠŠæ‰€æœ‰å‰©ä½™ä½è®¾ä¸º0
         {
             LifeHearts[i].GetComponent<Image>().sprite = LifeHeartSprites[0];
             i++;

@@ -1,28 +1,28 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class ContinueBG : MonoBehaviour
 {
-    [Header("±³¾°Í¼Æ¬ÎïÌåÒıÓÃ")]
+    [Header("èƒŒæ™¯å›¾ç‰‡ç‰©ä½“å¼•ç”¨")]
     public GameObject Star;
     public GameObject DarkStar;
     public GameObject DreamRoad;
     public GameObject DarkCloud;
 
-    [Header("¹ı¶ÉËÙ¶ÈÅäÖÃ")]
+    [Header("è¿‡æ¸¡é€Ÿåº¦é…ç½®")]
     public float StartargetSpeedY = 0.01f;
     public float DarkStartargetSpeedY = 0.012f;
     public float DreamRoadargetSpeedY = -0.1f;
-    public float transitionDuration = 5f;// ¹ı¶ÉÊ±¼ä
-    public float recoveryDuration = 3f;// »Ö¸´Ê±¼ä
+    public float transitionDuration = 5f;// è¿‡æ¸¡æ—¶é—´
+    public float recoveryDuration = 3f;// æ¢å¤æ—¶é—´
 
     private Vector2 starOriginalSpeed = new (0,0.1f);
     private Vector2 darkstarOriginalSpeed = new (0,0.12f);
     private Vector2 dreamroadOriginalSpeed = new (0,-1f);
 
     
-    // ´æ´¢Ğ­³ÌÒıÓÃ£¬ÓÃÓÚ¿ØÖÆĞ­³ÌµÄÖ´ĞĞ
+    // å­˜å‚¨åç¨‹å¼•ç”¨ï¼Œç”¨äºæ§åˆ¶åç¨‹çš„æ‰§è¡Œ
     private Coroutine transitionCoroutine;
     private Coroutine recoveryCoroutine;
 
@@ -95,7 +95,7 @@ public class ContinueBG : MonoBehaviour
                 DarkStar.GetComponent<BGImageScroll>().scrollSpeed = currentSpeed;
             }
 
-            // ²»ÔÙ»Ö¸´dreamroadµÄËÙ¶È£¬¶øÊÇ½«ÆäÍ¸Ã÷¶Èµ­³ö
+            // ä¸å†æ¢å¤dreamroadçš„é€Ÿåº¦ï¼Œè€Œæ˜¯å°†å…¶é€æ˜åº¦æ·¡å‡º
             if (DreamRoad != null)
             {
                 float currentAlpha = Mathf.Lerp(dreamroadStartAlpha, 0f, t);
@@ -118,7 +118,7 @@ public class ContinueBG : MonoBehaviour
     }
 
     /// <summary>
-    /// È·±£×îÖÕËÙ¶ÈÎªÄ¿±êËÙ¶È
+    /// ç¡®ä¿æœ€ç»ˆé€Ÿåº¦ä¸ºç›®æ ‡é€Ÿåº¦
     /// </summary>
     private void EnsureFinalValues()
     {
@@ -151,7 +151,7 @@ public class ContinueBG : MonoBehaviour
     }
 
     /// <summary>
-    /// È·±£»Ö¸´µ½Ô­Ê¼ËÙ¶È
+    /// ç¡®ä¿æ¢å¤åˆ°åŸå§‹é€Ÿåº¦
     /// </summary>
     private void EnsureFinalRecoveryValues()
     {
@@ -165,7 +165,7 @@ public class ContinueBG : MonoBehaviour
             DarkStar.GetComponent<BGImageScroll>().scrollSpeed = darkstarOriginalSpeed;
         }
 
-        // ²»ÔÙ»Ö¸´dreamroadµÄËÙ¶È£¬¶øÊÇÈ·±£ÆäÍ¸Ã÷¶ÈÎª0
+        // ä¸å†æ¢å¤dreamroadçš„é€Ÿåº¦ï¼Œè€Œæ˜¯ç¡®ä¿å…¶é€æ˜åº¦ä¸º0
         if (DreamRoad != null)
         {
             DreamRoad.GetComponent<BGImageScroll>().Alpha = 0f;
@@ -181,11 +181,11 @@ public class ContinueBG : MonoBehaviour
 
 
     /// <summary>
-    /// ¿ªÊ¼¹ı¶Éµ½Ä¿±êËÙ¶È£¨5ÃëÄÚÆ½»¬½µËÙ£¬Í¬Ê±DarkCloudµ­³ö£©
+    /// å¼€å§‹è¿‡æ¸¡åˆ°ç›®æ ‡é€Ÿåº¦ï¼ˆ5ç§’å†…å¹³æ»‘é™é€Ÿï¼ŒåŒæ—¶DarkCloudæ·¡å‡ºï¼‰
     /// </summary>
     public void StartTransition()
     {
-        // Í£Ö¹Ö®Ç°¿ÉÄÜÕıÔÚÔËĞĞµÄĞ­³Ì
+        // åœæ­¢ä¹‹å‰å¯èƒ½æ­£åœ¨è¿è¡Œçš„åç¨‹
         if (transitionCoroutine != null)
         {
             StopCoroutine(transitionCoroutine);
@@ -195,16 +195,16 @@ public class ContinueBG : MonoBehaviour
             StopCoroutine(recoveryCoroutine);
         }
         
-        // Æô¶¯¹ı¶ÉĞ­³Ì
+        // å¯åŠ¨è¿‡æ¸¡åç¨‹
         transitionCoroutine = StartCoroutine(TransitionToTargetSpeed());
     }
 
     /// <summary>
-    /// »Ö¸´µ½Ô­Ê¼ËÙ¶È£¨3ÃëÄÚÆ½»¬»Ö¸´£©
+    /// æ¢å¤åˆ°åŸå§‹é€Ÿåº¦ï¼ˆ3ç§’å†…å¹³æ»‘æ¢å¤ï¼‰
     /// </summary>
     public void StartRecovery()
     {
-        // Í£Ö¹Ö®Ç°¿ÉÄÜÕıÔÚÔËĞĞµÄĞ­³Ì
+        // åœæ­¢ä¹‹å‰å¯èƒ½æ­£åœ¨è¿è¡Œçš„åç¨‹
         if (transitionCoroutine != null)
         {
             StopCoroutine(transitionCoroutine);
@@ -214,7 +214,7 @@ public class ContinueBG : MonoBehaviour
             StopCoroutine(recoveryCoroutine);
         }
         
-        // Æô¶¯»Ö¸´Ğ­³Ì
+        // å¯åŠ¨æ¢å¤åç¨‹
         recoveryCoroutine = StartCoroutine(RecoveryToOriginalSpeed());
     }
 }

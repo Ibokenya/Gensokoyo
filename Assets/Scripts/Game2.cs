@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using ReplaySystem;
 
 public class Game2 : MonoBehaviour
 {
@@ -18,41 +19,41 @@ public class Game2 : MonoBehaviour
     public GameObject UIImage;
     public GameObject RightUI;
 
-    [Header("×ßÀÈÎïÌå")]
+    [Header("èµ°å»Šç‰©ä½“")]
     public GameObject corridorLeft;
     public GameObject corridorRight;
     public GameObject corridorUp;
     public GameObject corridorDown;
 
-    [Header("ÉãÏñ»ú")]
+    [Header("æ‘„åƒæœº")]
     public Camera mainCamera;
 
-    // ´æ´¢ËùÓĞSpriteRenderer×é¼ş£¨¸¸ÎïÌå+×ÓÎïÌå£©
+    // å­˜å‚¨æ‰€æœ‰SpriteRendererç»„ä»¶ï¼ˆçˆ¶ç‰©ä½“+å­ç‰©ä½“ï¼‰
     public List<SpriteRenderer> allSpriteRenderers = new List<SpriteRenderer>();
-    // ´æ´¢ËùÓĞBGImageScroll×é¼ş
+    // å­˜å‚¨æ‰€æœ‰BGImageScrollç»„ä»¶
     public List<BGImageScroll> allBgScrolls = new List<BGImageScroll>();
 
-    // ³õÊ¼Í¸Ã÷¶È
+    // åˆå§‹é€æ˜åº¦
     private const float initialAlpha = 0f;
-    // Ä¿±êÍ¸Ã÷¶È
+    // ç›®æ ‡é€æ˜åº¦
     private const float targetAlpha = 1f;
-    // µ­ÈëÊ±¼ä£¨Ãë£©
+    // æ·¡å…¥æ—¶é—´ï¼ˆç§’ï¼‰
     private const float fadeInDuration = 3f;
-    // »æÖÆÊ±¼ä£¨Ãë£©
+    // ç»˜åˆ¶æ—¶é—´ï¼ˆç§’ï¼‰
     private const float drawDuration = 5f;
-    // Ä¿±ê¸ß¶È£¨×óÓÒ£©
+    // ç›®æ ‡é«˜åº¦ï¼ˆå·¦å³ï¼‰
     private const float targetHeight = 14f;
-    // Ä¿±ê¸ß¶È£¨ÉÏÏÂ£¬2±¶ËÙ¶È£©
+    // ç›®æ ‡é«˜åº¦ï¼ˆä¸Šä¸‹ï¼Œ2å€é€Ÿåº¦ï¼‰
     private const float targetHeightDouble = 28f;
 
     void OnEnable()
     {
-        // Æô¶¯10ÃëÑÓ³ÙĞ­³Ì
+        // å¯åŠ¨10ç§’å»¶è¿Ÿåç¨‹
         StartCoroutine(DelayAfterActivate());
     }
 
     /// <summary>
-    /// Æô¶¯×ßÀÈ»æÖÆºÍµ­ÈëĞ§¹û
+    /// å¯åŠ¨èµ°å»Šç»˜åˆ¶å’Œæ·¡å…¥æ•ˆæœ
     /// </summary>
     public void StartCorridorEffect()
     {
@@ -60,20 +61,20 @@ public class Game2 : MonoBehaviour
     }
 
     /// <summary>
-    /// ×ßÀÈ»æÖÆºÍµ­ÈëĞ­³Ì
+    /// èµ°å»Šç»˜åˆ¶å’Œæ·¡å…¥åç¨‹
     /// </summary>
     private IEnumerator CorridorDrawAndFade()
     {
         RotateCameraZ(30f);
         EnableBGScrolls();
-        // Í¬Ê±Æô¶¯»æÖÆºÍµ­ÈëĞ­³Ì
+        // åŒæ—¶å¯åŠ¨ç»˜åˆ¶å’Œæ·¡å…¥åç¨‹
         yield return StartCoroutine(DrawCorridors());
         yield return StartCoroutine(FadeInCorridors());
-        // »æÖÆºÍµ­ÈëÍê³Éºó£¬ÆôÓÃËùÓĞBGImageScroll½Å±¾
+        // ç»˜åˆ¶å’Œæ·¡å…¥å®Œæˆåï¼Œå¯ç”¨æ‰€æœ‰BGImageScrollè„šæœ¬
     }
 
     /// <summary>
-    /// »æÖÆ×ßÀÈĞ­³Ì£¨¸ß¶È´Ó0±äÎªÄ¿±êÖµ£©
+    /// ç»˜åˆ¶èµ°å»Šåç¨‹ï¼ˆé«˜åº¦ä»0å˜ä¸ºç›®æ ‡å€¼ï¼‰
     /// </summary>
     private IEnumerator DrawCorridors()
     {
@@ -84,18 +85,18 @@ public class Game2 : MonoBehaviour
             elapsedTime += Time.deltaTime;
             float t = Mathf.Clamp01(elapsedTime / drawDuration);
 
-            // ¸üĞÂ×óÓÒÎïÌåµÄ¸ß¶È£¨Ä¿±ê13£©
+            // æ›´æ–°å·¦å³ç‰©ä½“çš„é«˜åº¦ï¼ˆç›®æ ‡13ï¼‰
             UpdateSpriteHeight(corridorLeft, t, targetHeight);
             UpdateSpriteHeight(corridorRight, t, targetHeight);
 
-            // ¸üĞÂÉÏÏÂÎïÌåµÄ¸ß¶È£¨Ä¿±ê26£¬2±¶ËÙ¶È£©
+            // æ›´æ–°ä¸Šä¸‹ç‰©ä½“çš„é«˜åº¦ï¼ˆç›®æ ‡26ï¼Œ2å€é€Ÿåº¦ï¼‰
             UpdateSpriteHeight(corridorUp, t, targetHeightDouble);
             UpdateSpriteHeight(corridorDown, t, targetHeightDouble);
 
             yield return null;
         }
 
-        // È·±£×îÖÕ¸ß¶ÈÕıÈ·
+        // ç¡®ä¿æœ€ç»ˆé«˜åº¦æ­£ç¡®
         UpdateSpriteHeight(corridorLeft, 1f, targetHeight);
         UpdateSpriteHeight(corridorRight, 1f, targetHeight);
         UpdateSpriteHeight(corridorUp, 1f, targetHeightDouble);
@@ -103,13 +104,13 @@ public class Game2 : MonoBehaviour
     }
 
     /// <summary>
-    /// ¸üĞÂÎïÌå¼°Æä×ÓÎïÌåµÄSpriteRenderer¸ß¶È
+    /// æ›´æ–°ç‰©ä½“åŠå…¶å­ç‰©ä½“çš„SpriteRendereré«˜åº¦
     /// </summary>
     private void UpdateSpriteHeight(GameObject parent, float t, float target)
     {
         if (parent == null) return;
 
-        // ¸üĞÂ¸¸ÎïÌåµÄSpriteRenderer
+        // æ›´æ–°çˆ¶ç‰©ä½“çš„SpriteRenderer
         SpriteRenderer sr = parent.GetComponent<SpriteRenderer>();
         if (sr != null)
         {
@@ -118,7 +119,7 @@ public class Game2 : MonoBehaviour
             sr.size = size;
         }
 
-        // ¸üĞÂËùÓĞ×ÓÎïÌåµÄSpriteRenderer
+        // æ›´æ–°æ‰€æœ‰å­ç‰©ä½“çš„SpriteRenderer
         SpriteRenderer[] childSRs = parent.GetComponentsInChildren<SpriteRenderer>(true);
         foreach (SpriteRenderer childSR in childSRs)
         {
@@ -129,7 +130,7 @@ public class Game2 : MonoBehaviour
     }
 
     /// <summary>
-    /// µ­Èë×ßÀÈĞ­³Ì£¨Í¸Ã÷¶È´Ó0±äÎª1£©
+    /// æ·¡å…¥èµ°å»Šåç¨‹ï¼ˆé€æ˜åº¦ä»0å˜ä¸º1ï¼‰
     /// </summary>
     private IEnumerator FadeInCorridors()
     {
@@ -141,7 +142,7 @@ public class Game2 : MonoBehaviour
             float t = Mathf.Clamp01(elapsedTime / fadeInDuration);
             float currentAlpha = Mathf.Lerp(initialAlpha, targetAlpha, t);
 
-            // ¸üĞÂËùÓĞSpriteRendererµÄÍ¸Ã÷¶È
+            // æ›´æ–°æ‰€æœ‰SpriteRendererçš„é€æ˜åº¦
             foreach (SpriteRenderer sr in allSpriteRenderers)
             {
                 if (sr != null)
@@ -155,7 +156,7 @@ public class Game2 : MonoBehaviour
             yield return null;
         }
 
-        // È·±£×îÖÕÍ¸Ã÷¶ÈÎª1
+        // ç¡®ä¿æœ€ç»ˆé€æ˜åº¦ä¸º1
         foreach (SpriteRenderer sr in allSpriteRenderers)
         {
             if (sr != null)
@@ -168,7 +169,7 @@ public class Game2 : MonoBehaviour
     }
 
     /// <summary>
-    /// ÆôÓÃËùÓĞBGImageScroll½Å±¾
+    /// å¯ç”¨æ‰€æœ‰BGImageScrollè„šæœ¬
     /// </summary>
     private void EnableBGScrolls()
     {
@@ -182,16 +183,16 @@ public class Game2 : MonoBehaviour
     }
 
     /// <summary>
-    /// ÈÃÉãÏñ»úÑØZÖáĞı×ªµÄ·½·¨
+    /// è®©æ‘„åƒæœºæ²¿Zè½´æ—‹è½¬çš„æ–¹æ³•
     /// </summary>
-    /// <param name="Speed">Ğı×ªËÙ¶È</param>
+    /// <param name="Speed">æ—‹è½¬é€Ÿåº¦</param>
     public void RotateCameraZ(float Speed)
     {
         StartCoroutine(RotateCameraZCoroutine(Speed));
     }
 
     /// <summary>
-    /// ÉãÏñ»úZÖáĞı×ªĞ­³Ì
+    /// æ‘„åƒæœºZè½´æ—‹è½¬åç¨‹
     /// </summary>
     private IEnumerator RotateCameraZCoroutine(float Speed)
     {
@@ -211,7 +212,7 @@ public class Game2 : MonoBehaviour
     {
         yield return new WaitForSeconds(10f);
 
-        // ½ûÓÃMsg1ºÍMsg2
+        // ç¦ç”¨Msg1å’ŒMsg2
         if (Msg1 != null)
         {
             Msg1.SetActive(false);
@@ -221,7 +222,7 @@ public class Game2 : MonoBehaviour
             Msg2.SetActive(false);
         }
 
-        // ÉèÖÃAnimatorµÄIsAnimeÎªtrue
+        // è®¾ç½®Animatorçš„IsAnimeä¸ºtrue
         if (FinalAnime != null)
         {
             FinalAnime.SetBool("IsAnime", true);
@@ -231,7 +232,7 @@ public class Game2 : MonoBehaviour
 
     public void StartBgMove()
     {
-        // ¿ªÆôStarµÄÎÆÀíÆ«ÒÆ
+        // å¼€å¯Starçš„çº¹ç†åç§»
         if (starBgScroll != null)
         {
             starBgScroll.enabled = true;
@@ -245,7 +246,7 @@ public class Game2 : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // ¼ì²âR¼ü»òESC¼ü°´ÏÂ£¬·µ»Ø²Ëµ¥½çÃæ
+        // æ£€æµ‹Ré”®æˆ–ESCé”®æŒ‰ä¸‹ï¼Œè¿”å›èœå•ç•Œé¢
         if (Input.GetKeyDown(KeyCode.R))
         {
             ReturnToMenu();
@@ -253,17 +254,17 @@ public class Game2 : MonoBehaviour
     }
 
     /// <summary>
-    /// ·µ»Ø²Ëµ¥½çÃæ
+    /// è¿”å›èœå•ç•Œé¢
     /// </summary>
     private void ReturnToMenu()
     {
-        // »ØÊÕËùÓĞµĞÈË
+        // å›æ”¶æ‰€æœ‰æ•Œäºº
         if (Global_GameManager.Instance != null)
         {
             Global_GameManager.Instance.RecycleAllEnemies();
         }
         
-        // ÇĞ»»µ½²Ëµ¥³¡¾°
+        // åˆ‡æ¢åˆ°èœå•åœºæ™¯
         Global_SceneManager.Instance.IntoNextScene("GameStartMenu", false);
     }
 
@@ -299,6 +300,7 @@ public class Game2 : MonoBehaviour
         RightUI.SetActive(false);
         Global_AudioManager.Instance.PlayBGM("Ending");
         StartBgMove();
-        Invoke("StartCorridorEffect",4f);
+        // 4 ç§’ = 200 tickã€‚Invoke æ›¿æ¢ä¸º SimTimer ç¡®å®šæ€§ tick
+        SimTimer.Once(StartCorridorEffect, 200);
     }
 }

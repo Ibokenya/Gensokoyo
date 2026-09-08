@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -19,7 +19,7 @@ public enum State
 }
 
 /// <summary>
-/// ÓÎÏ·ÖØÖÃÅäÖÃÀà
+/// æ¸¸æˆé‡ç½®é…ç½®ç±»
 /// </summary>
 [System.Serializable]
 public class GameResetConfig
@@ -35,83 +35,83 @@ public class GameResetConfig
 }
 
 /// <summary>
-/// È«¾ÖÓÎÏ·¹ÜÀíµ¥Àı
-/// ´æ´¢»úÌå£¬ÄÑ¶È£¬²Ğ»ú£¬µÃµãµÈÊı¾İ
-/// ÒÔ¼°×´Ì¬»ú£¬»¹ÓĞÉú³ÉµĞÈËÏà¹ØµÄ²¨´Î¹ÜÀí
+/// å…¨å±€æ¸¸æˆç®¡ç†å•ä¾‹
+/// å­˜å‚¨æœºä½“ï¼Œéš¾åº¦ï¼Œæ®‹æœºï¼Œå¾—ç‚¹ç­‰æ•°æ®
+/// ä»¥åŠçŠ¶æ€æœºï¼Œè¿˜æœ‰ç”Ÿæˆæ•Œäººç›¸å…³çš„æ³¢æ¬¡ç®¡ç†
 /// </summary>
 public class Global_GameManager : Singleton<Global_GameManager>
 {
-    public GameMode gameMode;    // ÓÎÏ·ÄÑ¶È
-    public Character character;  // »úÌå
-    public int ResetBomb;        // Ã¿Ãü»Ø¸´BÊı£¨ËæÄÑ¶È£©
-    public int Hp;               // ²Ğ»úÊı
-    public int HpPiece;          // ²Ğ»úËéÆ¬Êı
-    public int BombCount;        // ²ĞBÊı
-    public int BombPiece;        // ²ĞBËéÆ¬Êı
-    public int Power = 100;        // ÁéÁ¦£¨»ğÁ¦µÈ¼¶£©
-    public int Grade;            // µÃµã
-    public int Graze;            // ²Áµ¯Êı
-    public int Score;            // µÃ·ÖÊı
-    public int HighestScore;     // ×î¸ßµÃ·ÖÊı
-    public int SceneLevel;       // ¹Ø¿¨µÈ¼¶
-    public float SpeedScale = 1f;//ËÙ¶ÈËõ·Å±ÈÀı£¨±ù¶³ÏµÍ³Ïà¹Ø£©
+    public GameMode gameMode;    // æ¸¸æˆéš¾åº¦
+    public Character character;  // æœºä½“
+    public int ResetBomb;        // æ¯å‘½å›å¤Bæ•°ï¼ˆéšéš¾åº¦ï¼‰
+    public int Hp;               // æ®‹æœºæ•°
+    public int HpPiece;          // æ®‹æœºç¢ç‰‡æ•°
+    public int BombCount;        // æ®‹Bæ•°
+    public int BombPiece;        // æ®‹Bç¢ç‰‡æ•°
+    public int Power = 100;        // çµåŠ›ï¼ˆç«åŠ›ç­‰çº§ï¼‰
+    public int Grade;            // å¾—ç‚¹
+    public int Graze;            // æ“¦å¼¹æ•°
+    public int Score;            // å¾—åˆ†æ•°
+    public int HighestScore;     // æœ€é«˜å¾—åˆ†æ•°
+    public int SceneLevel;       // å…³å¡ç­‰çº§
+    public float SpeedScale = 1f;//é€Ÿåº¦ç¼©æ”¾æ¯”ä¾‹ï¼ˆå†°å†»ç³»ç»Ÿç›¸å…³ï¼‰
 
-    public State state;      // ×´Ì¬»ú
-    private State previousState; // ÓÃÓÚ¼ÇÂ¼ÉèÖÃÎŞµĞÇ°µÄ×´Ì¬
+    public State state;      // çŠ¶æ€æœº
+    private State previousState; // ç”¨äºè®°å½•è®¾ç½®æ— æ•Œå‰çš„çŠ¶æ€
 
-    [Header("µĞÈË¹ÜÀí")]
-    public List<GameObject> EnemyList = new(); // ´æ´¢µ±Ç°³¡¾°ÖĞµÄµĞÈË
-    [Header("³É³¤ÒôĞ§")]
-    public AudioClip PowerUpClip;//ÁéÁ¦Ôö¼ÓÒôĞ§
-    public AudioClip HpUpClip;//²Ğ»úÊıÔö¼ÓÒôĞ§
-    public AudioClip BombUpClip;//²ĞBÊıÔö¼ÓÒôĞ§
+    [Header("æ•Œäººç®¡ç†")]
+    public List<GameObject> EnemyList = new(); // å­˜å‚¨å½“å‰åœºæ™¯ä¸­çš„æ•Œäºº
+    [Header("æˆé•¿éŸ³æ•ˆ")]
+    public AudioClip PowerUpClip;//çµåŠ›å¢åŠ éŸ³æ•ˆ
+    public AudioClip HpUpClip;//æ®‹æœºæ•°å¢åŠ éŸ³æ•ˆ
+    public AudioClip BombUpClip;//æ®‹Bæ•°å¢åŠ éŸ³æ•ˆ
 
-    int pastPower = 0;//ÉÏÒ»´ÎÁéÁ¦Öµ£¬ÓÃÓÚÅĞ¶ÏÊÇ·ñĞèÒª²¥·ÅÒôĞ§
-    public bool isCheheat = false;//ÊÇ·ñ¿ªÆô×÷±×Ä£Ê½
+    int pastPower = 0;//ä¸Šä¸€æ¬¡çµåŠ›å€¼ï¼Œç”¨äºåˆ¤æ–­æ˜¯å¦éœ€è¦æ’­æ”¾éŸ³æ•ˆ
+    public bool isCheheat = false;//æ˜¯å¦å¼€å¯ä½œå¼Šæ¨¡å¼
 
 /// <summary>
-/// ÊÂ¼şÏµÍ³
+/// äº‹ä»¶ç³»ç»Ÿ
 /// </summary>
-#region ÊÂ¼şÏµÍ³
-    public event Action<int> OnScoreChanged;        // µÃ·ÖÊı¸Ä±äÊÂ¼ş
-    public event Action<int> OnPowerChanged;        // ÁéÁ¦Öµ¸Ä±äÊÂ¼ş
-    public event Action<int> OnGradeChanged;        // µÃµã¸Ä±äÊÂ¼ş
-    public event Action<int,int> OnLeftLifeChanged; // ²Ğ»ú¸Ä±äÊÂ¼ş
-    public event Action<int,int> OnBombChanged;     // ·û¿¨ËéÆ¬¸Ä±äÊÂ¼ş
-    public event Action<int> OnGrazeChanged;        // ²Áµ¯Êı¸Ä±äÊÂ¼ş
-    public event Action<State> OnReincarnation;     // ÖØÉúÊÂ¼ş
-    public event Action<State> OnOver;              // ÓÎÏ·½áÊøÊÂ¼ş
+#region äº‹ä»¶ç³»ç»Ÿ
+    public event Action<int> OnScoreChanged;        // å¾—åˆ†æ•°æ”¹å˜äº‹ä»¶
+    public event Action<int> OnPowerChanged;        // çµåŠ›å€¼æ”¹å˜äº‹ä»¶
+    public event Action<int> OnGradeChanged;        // å¾—ç‚¹æ”¹å˜äº‹ä»¶
+    public event Action<int,int> OnLeftLifeChanged; // æ®‹æœºæ”¹å˜äº‹ä»¶
+    public event Action<int,int> OnBombChanged;     // ç¬¦å¡ç¢ç‰‡æ”¹å˜äº‹ä»¶
+    public event Action<int> OnGrazeChanged;        // æ“¦å¼¹æ•°æ”¹å˜äº‹ä»¶
+    public event Action<State> OnReincarnation;     // é‡ç”Ÿäº‹ä»¶
+    public event Action<State> OnOver;              // æ¸¸æˆç»“æŸäº‹ä»¶
 #endregion
 
     protected override void Awake()
     {
-        base.Awake(); // µ÷ÓÃ»ùÀàµÄAwake£¬±£Ö¤µ¥ÀıÉúĞ§
+        base.Awake(); // è°ƒç”¨åŸºç±»çš„Awakeï¼Œä¿è¯å•ä¾‹ç”Ÿæ•ˆ
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        gameMode = GameMode.Easy;     // ÓÎÏ·ÄÑ¶È£¨¸ù¾İÄÑ¶Èµ÷Õû²Ğ»úÓëÁéÁ¦£©
-        character = Character.Reimu;  // »úÌå
-        ResetBomb = 2;                // Ã¿Ãü»Ø¸´BÊı£¨ËæÄÑ¶È£©
-        Hp = 2;                       // ²Ğ»úÊı
-        HpPiece = 0;                  // ²Ğ»úËéÆ¬Êı
-        BombCount = 2;                // ²ĞBÊı
-        BombPiece = 0;                // ²ĞBËéÆ¬Êı
-        Power = Mathf.Clamp(100,100,400); // ÁéÁ¦Öµ
-        Grade = 0;                    // µÃµã
-        Graze = 0;                    // ²Áµ¯Êı
-        Score = 0;                    // µÃ·ÖÊı
-        HighestScore = PlayerPrefs.GetInt("HighestScore", 0); // ×î¸ßµÃ·ÖÊı
-        SceneLevel = 1;               // ¹Ø¿¨µÈ¼¶£¨µÚ¼¸Ãæ£©
-        SpeedScale = 1f;              //ËÙ¶ÈËõ·Å±ÈÀı£¨±ù¶³ÏµÍ³Ïà¹Ø£©
-        state = State.Gaming;         // ×´Ì¬»ú£¨³õÊ¼ÎªLoading£©
-        isCheheat = false;            //ÊÇ·ñ¿ªÆô×÷±×Ä£Ê½
+        gameMode = GameMode.Easy;     // æ¸¸æˆéš¾åº¦ï¼ˆæ ¹æ®éš¾åº¦è°ƒæ•´æ®‹æœºä¸çµåŠ›ï¼‰
+        character = Character.Reimu;  // æœºä½“
+        ResetBomb = 2;                // æ¯å‘½å›å¤Bæ•°ï¼ˆéšéš¾åº¦ï¼‰
+        Hp = 2;                       // æ®‹æœºæ•°
+        HpPiece = 0;                  // æ®‹æœºç¢ç‰‡æ•°
+        BombCount = 2;                // æ®‹Bæ•°
+        BombPiece = 0;                // æ®‹Bç¢ç‰‡æ•°
+        Power = Mathf.Clamp(100,100,400); // çµåŠ›å€¼
+        Grade = 0;                    // å¾—ç‚¹
+        Graze = 0;                    // æ“¦å¼¹æ•°
+        Score = 0;                    // å¾—åˆ†æ•°
+        HighestScore = PlayerPrefs.GetInt("HighestScore", 0); // æœ€é«˜å¾—åˆ†æ•°
+        SceneLevel = 1;               // å…³å¡ç­‰çº§ï¼ˆç¬¬å‡ é¢ï¼‰
+        SpeedScale = 1f;              //é€Ÿåº¦ç¼©æ”¾æ¯”ä¾‹ï¼ˆå†°å†»ç³»ç»Ÿç›¸å…³ï¼‰
+        state = State.Gaming;         // çŠ¶æ€æœºï¼ˆåˆå§‹ä¸ºLoadingï¼‰
+        isCheheat = false;            //æ˜¯å¦å¼€å¯ä½œå¼Šæ¨¡å¼
     }
 
     void OnDestroy()
     {
-        // ±£´æ×î¸ß·Öµ½ PlayerPrefs
+        // ä¿å­˜æœ€é«˜åˆ†åˆ° PlayerPrefs
         PlayerPrefs.SetInt("HighestScore", HighestScore);
         PlayerPrefs.Save();
     }
@@ -120,7 +120,7 @@ public class Global_GameManager : Singleton<Global_GameManager>
     {
         Score += score;
         
-        // Èç¹ûµ±Ç°·ÖÊı³¬¹ı×î¸ß·Ö£¬¸üĞÂ×î¸ß·Ö
+        // å¦‚æœå½“å‰åˆ†æ•°è¶…è¿‡æœ€é«˜åˆ†ï¼Œæ›´æ–°æœ€é«˜åˆ†
         if (Score > HighestScore)
         {
             HighestScore = Score;
@@ -192,13 +192,13 @@ public class Global_GameManager : Singleton<Global_GameManager>
         }
         else
         {
-            state = State.Over;   // ÓÎÏ·½áÊø£¬ÂúÄ¿´¯ğê£¨ÓÃ¹ã²¥ÊÂ¼ş£©
+            state = State.Over;   // æ¸¸æˆç»“æŸï¼Œæ»¡ç›®ç–®ç—ï¼ˆç”¨å¹¿æ’­äº‹ä»¶ï¼‰
             OnOver?.Invoke(state);
         }
     }
 
     /// <summary>
-    /// ÖØĞÂÉú³ÉÍæ¼Ò
+    /// é‡æ–°ç”Ÿæˆç©å®¶
     /// </summary>
     public void ReBack()
     {
@@ -266,12 +266,12 @@ public class Global_GameManager : Singleton<Global_GameManager>
     }
 
     /// <summary>
-    /// ÖØÖÃÓÎÏ·Êı¾İ
-    /// ´ÓJSONÅäÖÃÎÄ¼ş¶ÁÈ¡³õÊ¼Êı¾İ£¬±£Áôµ±Ç°»úÌåºÍÄÑ¶È
+    /// é‡ç½®æ¸¸æˆæ•°æ®
+    /// ä»JSONé…ç½®æ–‡ä»¶è¯»å–åˆå§‹æ•°æ®ï¼Œä¿ç•™å½“å‰æœºä½“å’Œéš¾åº¦
     /// </summary>
     public void ResetGameDate()
     {  
-        // ´ÓResources¼ÓÔØJSONÅäÖÃÎÄ¼ş£¨¼æÈİ±à¼­Æ÷ºÍ´ò°üºó»·¾³£©
+        // ä»ResourcesåŠ è½½JSONé…ç½®æ–‡ä»¶ï¼ˆå…¼å®¹ç¼–è¾‘å™¨å’Œæ‰“åŒ…åç¯å¢ƒï¼‰
         TextAsset jsonAsset = Resources.Load<TextAsset>("Touho/JSON/Game1_ResetConfig");
         if (jsonAsset != null)
         {
@@ -281,7 +281,7 @@ public class Global_GameManager : Singleton<Global_GameManager>
                 GameResetConfig config = JsonUtility.FromJson<GameResetConfig>(jsonContent);
                 if (config != null)
                 {
-                    // ÉèÖÃ³õÊ¼Êı¾İ
+                    // è®¾ç½®åˆå§‹æ•°æ®
                     ResetBomb = config.ResetBomb;
                     Hp = config.Hp;
                     HpPiece = config.HpPiece;
@@ -290,28 +290,28 @@ public class Global_GameManager : Singleton<Global_GameManager>
                     Power = Mathf.Clamp(config.Power, 0, 400);
                     Grade = config.Grade;
                     Graze = config.Graze;
-                    Score = 0; // Ã¿´ÎÖØ¿ªÓÎÏ·µÃ·ÖÖØÖÃÎª0
-                    SceneLevel = 1; // ¹Ø¿¨µÈ¼¶ÖØÖÃÎª1£¨µÚÒ»¹Ø£©
-                    state = State.Gaming; // ×´Ì¬ÖØÖÃÎªÓÎÏ·ÖĞ
+                    Score = 0; // æ¯æ¬¡é‡å¼€æ¸¸æˆå¾—åˆ†é‡ç½®ä¸º0
+                    SceneLevel = 1; // å…³å¡ç­‰çº§é‡ç½®ä¸º1ï¼ˆç¬¬ä¸€å…³ï¼‰
+                    state = State.Gaming; // çŠ¶æ€é‡ç½®ä¸ºæ¸¸æˆä¸­
                 }
             }
             catch (Exception e)
             {
-                Debug.LogError("¶ÁÈ¡ÓÎÏ·ÅäÖÃÎÄ¼şÊ§°Ü: " + e.Message);
-                // Èç¹û¶ÁÈ¡Ê§°Ü£¬Ê¹ÓÃÄ¬ÈÏÖµ
+                Debug.LogError("è¯»å–æ¸¸æˆé…ç½®æ–‡ä»¶å¤±è´¥: " + e.Message);
+                // å¦‚æœè¯»å–å¤±è´¥ï¼Œä½¿ç”¨é»˜è®¤å€¼
                 SetDefaultValues();
             }
         }
         else
         {
-            Debug.LogWarning("ÓÎÏ·ÅäÖÃÎÄ¼ş²»´æÔÚ£¬Ê¹ÓÃÄ¬ÈÏÖµ");
+            Debug.LogWarning("æ¸¸æˆé…ç½®æ–‡ä»¶ä¸å­˜åœ¨ï¼Œä½¿ç”¨é»˜è®¤å€¼");
             SetDefaultValues();
         }
         
-        // ¶ÁÈ¡×î¸ßµÃ·Ö
+        // è¯»å–æœ€é«˜å¾—åˆ†
         HighestScore = PlayerPrefs.GetInt("HighestScore", 0);
         
-        // ´¥·¢Ïà¹ØÊÂ¼ş
+        // è§¦å‘ç›¸å…³äº‹ä»¶
         OnScoreChanged?.Invoke(Score);
         OnPowerChanged?.Invoke(Power);
         OnGradeChanged?.Invoke(Grade);
@@ -321,7 +321,7 @@ public class Global_GameManager : Singleton<Global_GameManager>
     }
     
     /// <summary>
-    /// ÉèÖÃÄ¬ÈÏÓÎÏ·Êı¾İ
+    /// è®¾ç½®é»˜è®¤æ¸¸æˆæ•°æ®
     /// </summary>
     private void SetDefaultValues()
     {
@@ -340,30 +340,30 @@ public class Global_GameManager : Singleton<Global_GameManager>
     }
     
     /// <summary>
-    /// ÖØÖÃÎªGame2µÄ³õÊ¼Êı¾İ
-    /// ±£Áôµ±Ç°µÃ·Ö£¬ÖØÖÃGrade¡¢GrazeÎª0£¬SceneLevelÎª2
+    /// é‡ç½®ä¸ºGame2çš„åˆå§‹æ•°æ®
+    /// ä¿ç•™å½“å‰å¾—åˆ†ï¼Œé‡ç½®Gradeã€Grazeä¸º0ï¼ŒSceneLevelä¸º2
     /// </summary>
     public void ResetFor_Game2()
     {
-        // ±£Áôµ±Ç°µÃ·Ö£¨ÒÑ¾­ÔÚFinalUIÖĞÀÛ¼Ó¹ıÁË£©
-        // ÖØÖÃGradeÎª0
+        // ä¿ç•™å½“å‰å¾—åˆ†ï¼ˆå·²ç»åœ¨FinalUIä¸­ç´¯åŠ è¿‡äº†ï¼‰
+        // é‡ç½®Gradeä¸º0
         Grade = 0;
         OnGradeChanged?.Invoke(Grade);
         
-        // ÖØÖÃGrazeÎª0
+        // é‡ç½®Grazeä¸º0
         Graze = 0;
         OnGrazeChanged?.Invoke(Graze);
         
-        // ÉèÖÃSceneLevelÎª2£¨µÚ¶ş¹Ø£©
+        // è®¾ç½®SceneLevelä¸º2ï¼ˆç¬¬äºŒå…³ï¼‰
         SceneLevel = 2;
         
-        Debug.Log("ÒÑÖØÖÃÎªGame2³õÊ¼Êı¾İ - Grade: 0, Graze: 0, SceneLevel: 2, Score±£Áôµ±Ç°Öµ");
+        Debug.Log("å·²é‡ç½®ä¸ºGame2åˆå§‹æ•°æ® - Grade: 0, Graze: 0, SceneLevel: 2, Scoreä¿ç•™å½“å‰å€¼");
     }
 
     /// <summary>
-    /// Ìí¼ÓµĞÈËµ½µĞÈËÁĞ±í
+    /// æ·»åŠ æ•Œäººåˆ°æ•Œäººåˆ—è¡¨
     /// </summary>
-    /// <param name="enemy">µĞÈË¶ÔÏó</param>
+    /// <param name="enemy">æ•Œäººå¯¹è±¡</param>
     public void AddEnemy(GameObject enemy)
     {
         if (enemy != null && !EnemyList.Contains(enemy))
@@ -373,9 +373,9 @@ public class Global_GameManager : Singleton<Global_GameManager>
     }
 
     /// <summary>
-    /// ´ÓµĞÈËÁĞ±íÖĞÒÆ³ıµĞÈË
+    /// ä»æ•Œäººåˆ—è¡¨ä¸­ç§»é™¤æ•Œäºº
     /// </summary>
-    /// <param name="enemy">µĞÈË¶ÔÏó</param>
+    /// <param name="enemy">æ•Œäººå¯¹è±¡</param>
     public void RemoveEnemy(GameObject enemy)
     {
         if (enemy != null && EnemyList.Contains(enemy))
@@ -385,7 +385,7 @@ public class Global_GameManager : Singleton<Global_GameManager>
     }
 
     /// <summary>
-    /// »ØÊÕËùÓĞµĞÈË
+    /// å›æ”¶æ‰€æœ‰æ•Œäºº
     /// </summary>
     public void RecycleAllEnemies()
     {
@@ -400,27 +400,46 @@ public class Global_GameManager : Singleton<Global_GameManager>
     }
     
     /// <summary>
-    /// ÉèÖÃÎŞµĞ×´Ì¬
+    /// è®¾ç½®æ— æ•ŒçŠ¶æ€
     /// </summary>
-    /// <param name="time">ÎŞµĞ³ÖĞøÊ±¼ä£¨Ãë£©</param>
+    /// <param name="time">æ— æ•ŒæŒç»­æ—¶é—´ï¼ˆç§’ï¼‰</param>
     public void SetNoDead(float time,State thestate)
     {
-        // ¼ÇÂ¼µ±Ç°×´Ì¬
+        // è®°å½•å½“å‰çŠ¶æ€
         previousState = thestate;
-        // ÉèÖÃÎªÎŞµĞ×´Ì¬
+        // è®¾ç½®ä¸ºæ— æ•ŒçŠ¶æ€
         state = State.NoDead;
-        // Æô¶¯Ğ­³Ì£¬ÔÚÖ¸¶¨Ê±¼äºó»Ö¸´Ö®Ç°µÄ×´Ì¬
+        // å¯åŠ¨åç¨‹ï¼Œåœ¨æŒ‡å®šæ—¶é—´åæ¢å¤ä¹‹å‰çš„çŠ¶æ€
         StartCoroutine(RecoverStateAfterTime(time));
     }
     
     /// <summary>
-    /// ÔÚÖ¸¶¨Ê±¼äºó»Ö¸´Ö®Ç°µÄ×´Ì¬
+    /// åœ¨æŒ‡å®šæ—¶é—´åæ¢å¤ä¹‹å‰çš„çŠ¶æ€
     /// </summary>
-    /// <param name="time">µÈ´ıÊ±¼ä£¨Ãë£©</param>
+    /// <param name="time">ç­‰å¾…æ—¶é—´ï¼ˆç§’ï¼‰</param>
     private IEnumerator RecoverStateAfterTime(float time)
     {
         yield return new WaitForSeconds(time);
-        // »Ö¸´Ö®Ç°µÄ×´Ì¬
+        // æ¢å¤ä¹‹å‰çš„çŠ¶æ€
         state = previousState;
+    }
+
+    /// <summary>
+    /// æ˜¯å¦ä¸ºæ¸¸æˆä¸­
+    /// </summary>
+    public bool IsGameplayState()
+    {
+        if(state == State.Gaming || 
+        state == State.Pause ||
+        state == State.Replay ||
+        state == State.Reincarnation ||
+        state == State.NoDead ||
+        state == State.TimeStop ||
+        state == State.SpellCard || 
+        state == State.Dialog || 
+        state == State.Frozen)
+                   return true;
+        else
+            return false;
     }
 } 

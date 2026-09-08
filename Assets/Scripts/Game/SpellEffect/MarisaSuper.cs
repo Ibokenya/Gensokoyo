@@ -3,66 +3,66 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Ä§ÀíÉ³¾öËÀ¼¼ÄÜ½Å±¾
-/// ¹ÒÔØÔÚ"Ä§ÀíÉ³¾öËÀ"×ÓÎïÌåÉÏ
+/// é­”ç†æ²™å†³æ­»æŠ€èƒ½è„šæœ¬
+/// æŒ‚è½½åœ¨"é­”ç†æ²™å†³æ­»"å­ç‰©ä½“ä¸Š
 /// </summary>
 public class MarisaSuper : MonoBehaviour
 {
-    [Header("²¥·Å¿ØÖÆ")]
-    public bool IsAnime = false; // ÉèÖÃÎªtrue¿ªÊ¼²¥·Å¶¯»­
-    private Animator animator; // ×ÓÎïÌåÉÏµÄ¶¯»­×é¼ş
+    [Header("æ’­æ”¾æ§åˆ¶")]
+    public bool IsAnime = false; // è®¾ç½®ä¸ºtrueå¼€å§‹æ’­æ”¾åŠ¨ç”»
+    private Animator animator; // å­ç‰©ä½“ä¸Šçš„åŠ¨ç”»ç»„ä»¶
     
-    [Header("½Å±¾ÒıÓÃ")]
-    public SpellCardEffect spellCardEffect; // ÒıÓÃ¸¸ÎïÌåµÄSpellCardEffect½Å±¾
-    public ClearAllBullet clearAllBullet; // ÒıÓÃClearAllBullet½Å±¾
-    public ParticleConection particleConection; // ÒıÓÃÖÊµãÁ¬Ïß½Å±¾
+    [Header("è„šæœ¬å¼•ç”¨")]
+    public SpellCardEffect spellCardEffect; // å¼•ç”¨çˆ¶ç‰©ä½“çš„SpellCardEffectè„šæœ¬
+    public ClearAllBullet clearAllBullet; // å¼•ç”¨ClearAllBulletè„šæœ¬
+    public ParticleConection particleConection; // å¼•ç”¨è´¨ç‚¹è¿çº¿è„šæœ¬
     
-    [Header("ÒôĞ§ÉèÖÃ")]
-    public AudioClip TimeOverClip;//ÖÓÉùÒôĞ§clip
-    public AudioClip FireClip;// »ğÑæÒôĞ§clip
+    [Header("éŸ³æ•ˆè®¾ç½®")]
+    public AudioClip TimeOverClip;//é’Ÿå£°éŸ³æ•ˆclip
+    public AudioClip FireClip;// ç«ç„°éŸ³æ•ˆclip
     
-    [Header("boss¶ÔÏó")]
-    public GameObject boss; // Boss¶ÔÏó
+    [Header("bosså¯¹è±¡")]
+    public GameObject boss; // Bosså¯¹è±¡
     
-    [Header("ÉËº¦ÉèÖÃ")]
-    private int Timer = 20;// ¶¨Ê±Æ÷£¬ÓÃÓÚ¼¼ÄÜ³öÉË*14
-    private readonly int damageValue = 100;// ÉËº¦Öµ
+    [Header("ä¼¤å®³è®¾ç½®")]
+    private int Timer = 20;// å®šæ—¶å™¨ï¼Œç”¨äºæŠ€èƒ½å‡ºä¼¤*14
+    private readonly int damageValue = 100;// ä¼¤å®³å€¼
 
-    private bool isDamage = false;// ÊÇ·ñÕıÔÚ³öÉË
+    private bool isDamage = false;// æ˜¯å¦æ­£åœ¨å‡ºä¼¤
     
-    private List<GameObject> Enemys => Global_GameManager.Instance.EnemyList;// µĞÈËÁĞ±í
+    private List<GameObject> Enemys => Global_GameManager.Instance.EnemyList;// æ•Œäººåˆ—è¡¨
     
     void Awake()
     {
-        // »ñÈ¡×ÓÎïÌåÉÏµÄAnimator×é¼ş
+        // è·å–å­ç‰©ä½“ä¸Šçš„Animatorç»„ä»¶
         animator = GetComponent<Animator>();
         if (animator == null)
         {
-            Debug.LogWarning($"[{gameObject.name}] Î´ÕÒµ½Animator×é¼ş");
+            Debug.LogWarning($"[{gameObject.name}] æœªæ‰¾åˆ°Animatorç»„ä»¶");
         }
     }
 
     void OnEnable()
     {
-        // ÖØÖÃ×´Ì¬
+        // é‡ç½®çŠ¶æ€
         IsAnime = false;
         isDamage = false;
         Timer = 20;
         Global_GameManager.Instance.state = State.TimeStop;
-        // ¶ÔBossÔì³ÉÉËº¦
+        // å¯¹Bossé€ æˆä¼¤å®³
         MarisaHitDamageToBoss();
     }
     
-    void Update()
+    void FixedUpdate()
     {
-        // ¼ì²éÊÇ·ñĞèÒª¿ªÊ¼²¥·Å¶¯»­
+        // æ£€æŸ¥æ˜¯å¦éœ€è¦å¼€å§‹æ’­æ”¾åŠ¨ç”»
         if (animator != null)
         {
-            // ÉèÖÃAnimatorµÄIsAnime²ÎÊı
+            // è®¾ç½®Animatorçš„IsAnimeå‚æ•°
             animator.SetBool("IsAnime", IsAnime);
         }
         
-        // Èç¹ûÕıÔÚ²¥·Å£¬´¦Àí³öÉËÂß¼­
+        // å¦‚æœæ­£åœ¨æ’­æ”¾ï¼Œå¤„ç†å‡ºä¼¤é€»è¾‘
         if (IsAnime)
         {
             HandleDamage();
@@ -70,7 +70,7 @@ public class MarisaSuper : MonoBehaviour
     }
     
     /// <summary>
-    /// ´¦Àí³öÉËÂß¼­
+    /// å¤„ç†å‡ºä¼¤é€»è¾‘
     /// </summary>
     void HandleDamage()
     {
@@ -89,7 +89,7 @@ public class MarisaSuper : MonoBehaviour
     }
     
     /// <summary>
-    /// ¿ªÊ¼³öÉË
+    /// å¼€å§‹å‡ºä¼¤
     /// </summary>
     public void StartToDamage()
     {
@@ -97,13 +97,13 @@ public class MarisaSuper : MonoBehaviour
     }
     
     /// <summary>
-    /// Ä§ÀíÉ³¾öËÀÉËº¦
+    /// é­”ç†æ²™å†³æ­»ä¼¤å®³
     /// </summary>
     public void MarisaHitDamage()
     {
         if (Enemys.Count > 0)
         {
-            // ´´½¨ÁÙÊ±ÁĞ±íÒÔ±ÜÃâÔÚ±éÀú¹ı³ÌÖĞĞŞ¸ÄÔ­Ê¼ÁĞ±í
+            // åˆ›å»ºä¸´æ—¶åˆ—è¡¨ä»¥é¿å…åœ¨éå†è¿‡ç¨‹ä¸­ä¿®æ”¹åŸå§‹åˆ—è¡¨
             List<GameObject> tempEnemys = new(Enemys);
             foreach (var enemy in tempEnemys)
             {
@@ -111,8 +111,8 @@ public class MarisaSuper : MonoBehaviour
                 {
                     if (enemy.TryGetComponent<Enemy>(out var enemyComponent))
                     {
-                        // µ÷ÓÃDamage·½·¨£¬È·±£ÉèÖÃisKilled±êÖ¾
-                        // Ê±Í£ÆÚ¼ä£¬Die·½·¨»á¼ì²âÊ±Í£×´Ì¬²¢ÑÓ³Ù´¦Àí
+                        // è°ƒç”¨Damageæ–¹æ³•ï¼Œç¡®ä¿è®¾ç½®isKilledæ ‡å¿—
+                        // æ—¶åœæœŸé—´ï¼ŒDieæ–¹æ³•ä¼šæ£€æµ‹æ—¶åœçŠ¶æ€å¹¶å»¶è¿Ÿå¤„ç†
                         enemyComponent.Damage(damageValue);
                     }
                 }
@@ -121,7 +121,7 @@ public class MarisaSuper : MonoBehaviour
     }
     
     /// <summary>
-    /// Ä§ÀíÉ³¾öËÀ¶ÔBoss·¢ËÍ¼¼ÄÜ¹¥»÷Í¨Öª
+    /// é­”ç†æ²™å†³æ­»å¯¹Bosså‘é€æŠ€èƒ½æ”»å‡»é€šçŸ¥
     /// </summary>
     private void MarisaHitDamageToBoss()
     {
@@ -130,18 +130,18 @@ public class MarisaSuper : MonoBehaviour
             BossBase bossBase = boss.GetComponent<BossBase>();
             if (bossBase != null)
             {
-                // ·¢ËÍ¼¼ÄÜ¹¥»÷Í¨Öª£¬²»Ö±½ÓÔì³ÉÉËº¦£¬ÈÃBossÓĞ»ú»á¹æ±Ü
-                bossBase.OnPlayerSkillAttack(4); // 4±íÊ¾Ä§ÀíÉ³¾öËÀ
+                // å‘é€æŠ€èƒ½æ”»å‡»é€šçŸ¥ï¼Œä¸ç›´æ¥é€ æˆä¼¤å®³ï¼Œè®©Bossæœ‰æœºä¼šè§„é¿
+                bossBase.OnPlayerSkillAttack(4); // 4è¡¨ç¤ºé­”ç†æ²™å†³æ­»
             }
         }
     }
     
     /// <summary>
-    /// ´¦ÀíÊ±Í£ÆÚ¼äËÀÍöµÄµĞÈË
+    /// å¤„ç†æ—¶åœæœŸé—´æ­»äº¡çš„æ•Œäºº
     /// </summary>
     private void ProcessDeadEnemies()
     {
-        // ´´½¨µĞÈËÁĞ±íµÄ¸±±¾ÒÔ±ÜÃâ±éÀú¹ı³ÌÖĞĞŞ¸ÄÔ­Ê¼ÁĞ±í
+        // åˆ›å»ºæ•Œäººåˆ—è¡¨çš„å‰¯æœ¬ä»¥é¿å…éå†è¿‡ç¨‹ä¸­ä¿®æ”¹åŸå§‹åˆ—è¡¨
         List<GameObject> enemiesToProcess = new(Enemys);
         
         foreach (var enemy in enemiesToProcess)
@@ -151,7 +151,7 @@ public class MarisaSuper : MonoBehaviour
                 Enemy enemyComponent = enemy.GetComponent<Enemy>();
                 if (enemyComponent != null && enemyComponent.Hp <= 0)
                 {
-                    // ÊÖ¶¯µ÷ÓÃDelete·½·¨´¦ÀíËÀÍöµĞÈË
+                    // æ‰‹åŠ¨è°ƒç”¨Deleteæ–¹æ³•å¤„ç†æ­»äº¡æ•Œäºº
                     enemyComponent.Delete();
                 }
             }
@@ -159,7 +159,7 @@ public class MarisaSuper : MonoBehaviour
     }
     
     /// <summary>
-    /// ²¥·ÅÖÓÉùÒôĞ§
+    /// æ’­æ”¾é’Ÿå£°éŸ³æ•ˆ
     /// </summary>
     public void AudioTimeOver()
     {
@@ -169,12 +169,12 @@ public class MarisaSuper : MonoBehaviour
         }
         else
         {
-            Debug.Log("Ã»ÓĞÖÓÉùÒôĞ§");
+            Debug.Log("æ²¡æœ‰é’Ÿå£°éŸ³æ•ˆ");
         }
     }
     
     /// <summary>
-    /// ²¥·Å»ğÑæÒôĞ§
+    /// æ’­æ”¾ç«ç„°éŸ³æ•ˆ
     /// </summary>
     public void AudioFire()
     {
@@ -184,12 +184,12 @@ public class MarisaSuper : MonoBehaviour
         }
         else
         {
-            Debug.Log("Ã»ÓĞ»ğÑæÒôĞ§");
+            Debug.Log("æ²¡æœ‰ç«ç„°éŸ³æ•ˆ");
         }
     }
     
     /// <summary>
-    /// Çå³ıÆÁÄ»×Óµ¯
+    /// æ¸…é™¤å±å¹•å­å¼¹
     /// </summary>
     public void ClearAllBullet()
     {
@@ -204,17 +204,17 @@ public class MarisaSuper : MonoBehaviour
     }
     
     /// <summary>
-    /// Ê±Í£·½·¨
+    /// æ—¶åœæ–¹æ³•
     /// </summary>
     public void TimeStop()
     {
-        // ÉèÖÃÊ±¼äËõ·ÅÎª0
+        // è®¾ç½®æ—¶é—´ç¼©æ”¾ä¸º0
         Time.timeScale = 0f;
     }
 
     /// <summary>
-    /// ¿ªÊ¼´´½¨Á¬Ïß
-    /// ÓÉ¶¯»­ÊÂ¼şµ÷ÓÃ
+    /// å¼€å§‹åˆ›å»ºè¿çº¿
+    /// ç”±åŠ¨ç”»äº‹ä»¶è°ƒç”¨
     /// </summary>
     public void StartCreateLines()
     {
@@ -225,8 +225,8 @@ public class MarisaSuper : MonoBehaviour
     }
 
     /// <summary>
-    /// Çå³ıÖÊµãÁ¬Ïß
-    /// ÓÉ¶¯»­ÊÂ¼şµ÷ÓÃ
+    /// æ¸…é™¤è´¨ç‚¹è¿çº¿
+    /// ç”±åŠ¨ç”»äº‹ä»¶è°ƒç”¨
     /// </summary>
     public void ClearPointLines()
     {
@@ -237,37 +237,37 @@ public class MarisaSuper : MonoBehaviour
     }
     
     /// <summary>
-    /// ¶¯»­½áÊø»Øµ÷
+    /// åŠ¨ç”»ç»“æŸå›è°ƒ
     /// </summary>
     public void OnAnimationEnd()
     {
         IsAnime = false;
         isDamage = false;
 
-        // ½«Ê±¼äËõ·Å¸Ä»Ø1
+        // å°†æ—¶é—´ç¼©æ”¾æ”¹å›1
         Time.timeScale = 1f;
         
-        // ´¦ÀíÊ±Í£ÆÚ¼äËÀÍöµÄµĞÈË
+        // å¤„ç†æ—¶åœæœŸé—´æ­»äº¡çš„æ•Œäºº
         ProcessDeadEnemies();
         
-        // ·µ»Ø0.1sµÄÎŞµĞ
+        // è¿”å›0.1sçš„æ— æ•Œ
         Global_GameManager.Instance.SetNoDead(0.1f, State.Gaming);
         BossBase bossBase = boss.GetComponent<BossBase>();
         if (bossBase != null)
         {
-            bossBase.DefenseEnd(); // ¹Ø±Õ·ÀÓùÆÁÕÏ
+            bossBase.DefenseEnd(); // å…³é—­é˜²å¾¡å±éšœ
         }
         
-        // ÖØÖÃAnimator²ÎÊı
+        // é‡ç½®Animatorå‚æ•°
         if (animator != null)
         {
             animator.SetBool("IsAnime", false);
         }
         
-        // Í¨Öª¸¸½Å±¾¶¯»­½áÊø
+        // é€šçŸ¥çˆ¶è„šæœ¬åŠ¨ç”»ç»“æŸ
         if (spellCardEffect != null)
         {
-            spellCardEffect.OnChildAnimationEnd(4); // 4±íÊ¾Ä§ÀíÉ³¾öËÀ
+            spellCardEffect.OnChildAnimationEnd(4); // 4è¡¨ç¤ºé­”ç†æ²™å†³æ­»
         }
     }
 }

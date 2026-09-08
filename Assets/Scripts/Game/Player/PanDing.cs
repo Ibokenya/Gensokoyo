@@ -1,55 +1,55 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class PanDing : MonoBehaviour
 {
-    public FreezeSystem freezeSystem; // ¶³½áÏµÍ³ÒıÓÃ
-    public ClearAllBullet clearAllBullet;// Çå³ıËùÓĞ×Óµ¯×é¼ş
-    public SpellCardEffect spellCardEffect;// ·û¿¨Ğ§¹û×é¼ş
-    public Graze graze; // ²Áµ¯×é¼şÒıÓÃ
+    public FreezeSystem freezeSystem; // å†»ç»“ç³»ç»Ÿå¼•ç”¨
+    public ClearAllBullet clearAllBullet;// æ¸…é™¤æ‰€æœ‰å­å¼¹ç»„ä»¶
+    public SpellCardEffect spellCardEffect;// ç¬¦å¡æ•ˆæœç»„ä»¶
+    public Graze graze; // æ“¦å¼¹ç»„ä»¶å¼•ç”¨
 
-    private const float ICE_CLOUD_FROZEN_DEGREE_INCREASE = 0.01f; // Ã¿´ÎÅö×²±ùÔÆÔö¼ÓµÄ¶³½á¶È
+    private const float ICE_CLOUD_FROZEN_DEGREE_INCREASE = 0.01f; // æ¯æ¬¡ç¢°æ’å†°äº‘å¢åŠ çš„å†»ç»“åº¦
 
     /// <summary>
-    /// ´¥·¢Æ÷¼ì²â
+    /// è§¦å‘å™¨æ£€æµ‹
     /// </summary>
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if(Global_GameManager.Instance.state == State.Gaming || 
         Global_GameManager.Instance.state == State.Frozen)
         {
-            // È·±£Ö»¶ÔµĞÈËºÍµĞÈË×Óµ¯ÉúĞ§
+            // ç¡®ä¿åªå¯¹æ•Œäººå’Œæ•Œäººå­å¼¹ç”Ÿæ•ˆ
             if(collision.CompareTag("Enemy") || collision.CompareTag("EnemyBullet") ||
              collision.CompareTag("BossBullet") || collision.CompareTag("Terrain"))
             {
-                Debug.Log($"Íæ¼ÒÅö×²µ½{collision.name}");
-                // ¼ì²éÊÇ·ñ¿ªÆô×÷±×Ä£Ê½
+                Debug.Log($"ç©å®¶ç¢°æ’åˆ°{collision.name}");
+                // æ£€æŸ¥æ˜¯å¦å¼€å¯ä½œå¼Šæ¨¡å¼
                 if(Global_GameManager.Instance.isCheheat)
                 {
-                    // ×÷±×Ä£Ê½ÏÂ²»´¦ÀíÊÜ»÷
+                    // ä½œå¼Šæ¨¡å¼ä¸‹ä¸å¤„ç†å—å‡»
                     return;
                 }
                 
-                // Í£Ö¹²Áµ¯ÒôĞ§²¢Çå¿Õ²Áµ¯ÁĞ±í£¨·ÀÖ¹Íæ¼Ò¸´»îºó¼ÌĞø²¥·Å²Áµ¯ÒôĞ§£©
+                // åœæ­¢æ“¦å¼¹éŸ³æ•ˆå¹¶æ¸…ç©ºæ“¦å¼¹åˆ—è¡¨ï¼ˆé˜²æ­¢ç©å®¶å¤æ´»åç»§ç»­æ’­æ”¾æ“¦å¼¹éŸ³æ•ˆï¼‰
                 StopGrazeSound();
                 
                 if (spellCardEffect != null)
                 {
-                    // ¿ªÊ¼ÊÜ»÷ÑÓ³Ù
+                    // å¼€å§‹å—å‡»å»¶è¿Ÿ
                     spellCardEffect.StartHitDelay();
                 }
                 else
                 {
-                    // Ã»ÓĞ·û¿¨Ğ§¹û×é¼şÊ±£¬Ö´ĞĞÕı³£ËÀÍöÂß¼­
+                    // æ²¡æœ‰ç¬¦å¡æ•ˆæœç»„ä»¶æ—¶ï¼Œæ‰§è¡Œæ­£å¸¸æ­»äº¡é€»è¾‘
                     Global_GameManager.Instance.SubLeftLife();
                 }
                 clearAllBullet.ClearScreenBullet();
             }
-            // ´¦Àí±ùÔÆÅö×²£¨Íæ¼Ò²»»áÊÜÉË£¬µ«¶³½á¶È»áÔö¼Ó£©
+            // å¤„ç†å†°äº‘ç¢°æ’ï¼ˆç©å®¶ä¸ä¼šå—ä¼¤ï¼Œä½†å†»ç»“åº¦ä¼šå¢åŠ ï¼‰
             if(collision.CompareTag("IceCloud"))
             {
-                // Ôö¼Ó¶³½á¶È
+                // å¢åŠ å†»ç»“åº¦
                 if (freezeSystem != null)
                 {
                     freezeSystem.IncreaseFrozenDegree(ICE_CLOUD_FROZEN_DEGREE_INCREASE);
@@ -59,8 +59,8 @@ public class PanDing : MonoBehaviour
     }
     
     /// <summary>
-    /// Í£Ö¹²Áµ¯ÒôĞ§²¢Çå¿Õ²Áµ¯ÁĞ±í
-    /// ·ÀÖ¹Íæ¼Ò¸´»îºó¼ÌĞø²¥·Å²Áµ¯ÒôĞ§
+    /// åœæ­¢æ“¦å¼¹éŸ³æ•ˆå¹¶æ¸…ç©ºæ“¦å¼¹åˆ—è¡¨
+    /// é˜²æ­¢ç©å®¶å¤æ´»åç»§ç»­æ’­æ”¾æ“¦å¼¹éŸ³æ•ˆ
     /// </summary>
     private void StopGrazeSound()
     {

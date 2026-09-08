@@ -1,17 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ReplaySystem;
 
 public class BGImageScroll : MonoBehaviour
 {
-    [Header("¹ö¶¯ÅäÖÃ")]
-    [Tooltip("¹ö¶¯ËÙ¶È£¨X=Ë®Æ½£¬Y=´¹Ö±£©")]
-    public Vector2 scrollSpeed = new Vector2(0f, 0.5f); // ÊúÖ±¹ö¶¯Ê¾Àı
-    [Header("²ÄÖÊÅäÖÃ")]
-    public float Alpha = 1f; // Í¸Ã÷¶È
+    [Header("æ»šåŠ¨é…ç½®")]
+    [Tooltip("æ»šåŠ¨é€Ÿåº¦ï¼ˆX=æ°´å¹³ï¼ŒY=å‚ç›´ï¼‰")]
+    public Vector2 scrollSpeed = new Vector2(0f, 0.5f); // ç«–ç›´æ»šåŠ¨ç¤ºä¾‹
+    [Header("æè´¨é…ç½®")]
+    public float Alpha = 1f; // é€æ˜åº¦
 
     private SpriteRenderer spriteRenderer;
-    private Material materialInstance;// ÊµÀı»¯²ÄÖÊ£¬±ÜÃâÖ±½ÓĞŞ¸ÄÔ­Ê¼²ÄÖÊ
+    private Material materialInstance;// å®ä¾‹åŒ–æè´¨ï¼Œé¿å…ç›´æ¥ä¿®æ”¹åŸå§‹æè´¨
     private Vector2 Offset;
 
     void Awake()
@@ -19,30 +20,29 @@ public class BGImageScroll : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         materialInstance = new Material(spriteRenderer.material);
 
-        // ÉèÖÃÍ¸Ã÷¶È
+        // è®¾ç½®é€æ˜åº¦
         materialInstance.SetFloat("_Alpha", Alpha);
-        // Ó¦ÓÃ²ÄÖÊ
+        // åº”ç”¨æè´¨
         spriteRenderer.material = materialInstance;
     }
 
-    // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-        // ¼ÆËãÃ¿Ö¡Æ«ÒÆÁ¿£¨·½Ïò*ËÙ¶È*Ê±¼ä£¬±£Ö¤Ö¡ÂÊÎŞ¹Ø£©
-        Vector2 deltaOffset = scrollSpeed * Time.deltaTime;
-        // ÀÛ¼ÓÆ«ÒÆÁ¿
+        // è®¡ç®—æ¯å¸§åç§»é‡ï¼ˆæ–¹å‘*é€Ÿåº¦*æ—¶é—´ï¼Œä¿è¯å¸§ç‡æ— å…³ï¼‰
+        Vector2 deltaOffset = scrollSpeed * SimClock.FixedTickDt;
+        // ç´¯åŠ åç§»é‡
         Offset += deltaOffset;
-        // ¹Ø¼ü£ºÑ­»·Æ«ÒÆ£¨³¬¹ı1¸öÆ½ÆÌµ¥Î»ÔòÖØÖÃ£¬ÊµÏÖÎŞ·ì£©
+        // å…³é”®ï¼šå¾ªç¯åç§»ï¼ˆè¶…è¿‡1ä¸ªå¹³é“ºå•ä½åˆ™é‡ç½®ï¼Œå®ç°æ— ç¼ï¼‰
         Offset = new Vector2(
-            Mathf.Repeat(Offset.x, 1f), // XÖáÑ­»·
-            Mathf.Repeat(Offset.y, 1f)  // YÖáÑ­»·
+            Mathf.Repeat(Offset.x, 1f), // Xè½´å¾ªç¯
+            Mathf.Repeat(Offset.y, 1f)  // Yè½´å¾ªç¯
         );
 
-        // Ó¦ÓÃÆ«ÒÆµ½±³¾°ÎÆÀí
+        // åº”ç”¨åç§»åˆ°èƒŒæ™¯çº¹ç†
         materialInstance.mainTextureOffset = Offset;
     }
 
-    // »ñÈ¡²ÄÖÊÊµÀıµÄ¹«¹²·½·¨
+    // è·å–æè´¨å®ä¾‹çš„å…¬å…±æ–¹æ³•
     public Material GetMaterialInstance()
     {
         return materialInstance;

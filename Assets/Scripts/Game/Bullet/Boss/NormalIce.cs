@@ -1,16 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ReplaySystem;
 
 public class NormalIce : MonoBehaviour
 {
     public float BaseSpeed = 5f;
-    public bool useSpeedOffset = true; // ÊÇ·ñÊ¹ÓÃËÙ¶ÈÆ«ÒÆ
+    public bool useSpeedOffset = true; // æ˜¯å¦ä½¿ç”¨é€Ÿåº¦åç§»
     private float actualSpeed;
     private Rigidbody2D rb2D;
-    public BossShootSystem bossShootSystem; // BossÉä»÷ÏµÍ³ÒıÓÃ
+    public BossShootSystem bossShootSystem; // Bosså°„å‡»ç³»ç»Ÿå¼•ç”¨
     
-    // ±ß½ç·¶Î§
+    // è¾¹ç•ŒèŒƒå›´
     public float minX = -11f;
     public float maxX = 5f;
     public float minY = -7.5f;
@@ -18,30 +19,30 @@ public class NormalIce : MonoBehaviour
     
     void Start()
     {
-        // »ñÈ¡Rigidbody2D×é¼ş
+        // è·å–Rigidbody2Dç»„ä»¶
         rb2D = GetComponent<Rigidbody2D>();
     }
     
     public void SetSpeed(float speed)
     {
         BaseSpeed = speed;
-        // ¼ÆËãÊµ¼ÊËÙ¶È
+        // è®¡ç®—å®é™…é€Ÿåº¦
         if (useSpeedOffset)
         {
-            // ¼ÆËãËÙ¶ÈÆ«ÒÆ
-            float speedOffset = Mathf.Round(Random.Range(-5f, 6f)) * 0.1f;
+            // è®¡ç®—é€Ÿåº¦åç§»
+            float speedOffset = Mathf.Round(GameRNG.Range(-5f, 6f)) * 0.1f;
             actualSpeed = BaseSpeed + speedOffset;
         }
         else
         {
-            // Ê¹ÓÃ»ù´¡ËÙ¶È
+            // ä½¿ç”¨åŸºç¡€é€Ÿåº¦
             actualSpeed = BaseSpeed;
         }
         
-        // ÉèÖÃËÙ¶È
+        // è®¾ç½®é€Ÿåº¦
         if (rb2D != null)
         {
-            // ÉèÖÃËÙ¶È
+            // è®¾ç½®é€Ÿåº¦
             Vector2 direction = transform.TransformDirection(Vector2.right);
             rb2D.velocity = direction * actualSpeed;
         }
@@ -49,43 +50,43 @@ public class NormalIce : MonoBehaviour
     
     void OnEnable()
     {
-        // »ñÈ¡Rigidbody2D×é¼ş
+        // è·å–Rigidbody2Dç»„ä»¶
         if (rb2D == null)
         {
             rb2D = GetComponent<Rigidbody2D>();
         }
         
-        // ¼ÆËãÊµ¼ÊËÙ¶È
+        // è®¡ç®—å®é™…é€Ÿåº¦
         if (useSpeedOffset)
         {
-            // ¼ÆËãËÙ¶ÈÆ«ÒÆ
-            float speedOffset = Mathf.Round(Random.Range(-5f, 6f)) * 0.1f;
+            // è®¡ç®—é€Ÿåº¦åç§»
+            float speedOffset = Mathf.Round(GameRNG.Range(-5f, 6f)) * 0.1f;
             actualSpeed = BaseSpeed + speedOffset;
         }
         else
         {
-            // Ê¹ÓÃ»ù´¡ËÙ¶È
+            // ä½¿ç”¨åŸºç¡€é€Ÿåº¦
             actualSpeed = BaseSpeed;
         }
         
-        // ÉèÖÃËÙ¶È
+        // è®¾ç½®é€Ÿåº¦
         if (rb2D != null)
         {
-            // ÉèÖÃËÙ¶È
+            // è®¾ç½®é€Ÿåº¦
             Vector2 direction = transform.TransformDirection(Vector2.right);
             rb2D.velocity = direction * actualSpeed;
             rb2D.isKinematic = false;
         }
     }
     
-    void Update()
+    void FixedUpdate()
     {
-        // ¼ì²é±ß½ç
+        // æ£€æŸ¥è¾¹ç•Œ
         CheckBounds();
     }
     
     /// <summary>
-    /// ¼ì²é±ß½ç£¬³¬³ö·¶Î§Ôò»ØÊÕ
+    /// æ£€æŸ¥è¾¹ç•Œï¼Œè¶…å‡ºèŒƒå›´åˆ™å›æ”¶
     /// </summary>
     private void CheckBounds()
     {
@@ -105,13 +106,13 @@ public class NormalIce : MonoBehaviour
     
     void OnDisable()
     {
-        // ´ÓBossShootSystemµÄactiveIcePearlsÁĞ±íÖĞÒÆ³ı×Ô¼º
+        // ä»BossShootSystemçš„activeIcePearlsåˆ—è¡¨ä¸­ç§»é™¤è‡ªå·±
         if (bossShootSystem != null)
         {
             bossShootSystem.RemoveIcePearl(this.gameObject);
         }
         
-        // ÖØÖÃ²ÎÊı
+        // é‡ç½®å‚æ•°
         bossShootSystem = null;
     }
 }

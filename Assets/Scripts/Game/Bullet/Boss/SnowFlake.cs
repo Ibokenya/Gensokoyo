@@ -1,21 +1,22 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ReplaySystem;
 
 /// <summary>
-/// Ñ©»¨ĞÍ×Óµ¯
+/// é›ªèŠ±å‹å­å¼¹
 /// </summary>
 public class SnowFlake : MonoBehaviour
 {
-    public float rotationSpeed = 30f; // Ğı×ªËÙ¶È£¨¶È/Ãë£©
-    public float moveSpeed = 2f; // »ù´¡ÒÆ¶¯ËÙ¶È
-    public Vector2 baseDirection = Vector2.down; // »ù´¡ÒÆ¶¯·½Ïò£¨¹éÒ»»¯ÏòÁ¿£©
-    public float noiseIntensity = 0.5f; // ÔëÉùÇ¿¶È£¬¿ØÖÆÆ®ÒÆ³Ì¶È
-    public float noiseFrequency = 0.5f; // ÔëÉùÆµÂÊ£¬¿ØÖÆÆ®ÒÆ±ä»¯ËÙ¶È
-    public float noiseTimeScale = 0.1f; // ÔëÉùÊ±¼äËõ·Å£¬¿ØÖÆÆ®ÒÆÊ±¼ä±ä»¯
-    public List<Sprite> snowFlakeSprites = new List<Sprite>(); // Ñ©»¨¾«ÁéÁĞ±í
+    public float rotationSpeed = 30f; // æ—‹è½¬é€Ÿåº¦ï¼ˆåº¦/ç§’ï¼‰
+    public float moveSpeed = 2f; // åŸºç¡€ç§»åŠ¨é€Ÿåº¦
+    public Vector2 baseDirection = Vector2.down; // åŸºç¡€ç§»åŠ¨æ–¹å‘ï¼ˆå½’ä¸€åŒ–å‘é‡ï¼‰
+    public float noiseIntensity = 0.5f; // å™ªå£°å¼ºåº¦ï¼Œæ§åˆ¶é£˜ç§»ç¨‹åº¦
+    public float noiseFrequency = 0.5f; // å™ªå£°é¢‘ç‡ï¼Œæ§åˆ¶é£˜ç§»å˜åŒ–é€Ÿåº¦
+    public float noiseTimeScale = 0.1f; // å™ªå£°æ—¶é—´ç¼©æ”¾ï¼Œæ§åˆ¶é£˜ç§»æ—¶é—´å˜åŒ–
+    public List<Sprite> snowFlakeSprites = new List<Sprite>(); // é›ªèŠ±ç²¾çµåˆ—è¡¨
     
-    // ±ß½ç·¶Î§
+    // è¾¹ç•ŒèŒƒå›´
     private readonly float minX = -12.1f;
     private readonly float maxX = 6.1f;
     private readonly float minY = -6.1f;
@@ -29,23 +30,23 @@ public class SnowFlake : MonoBehaviour
 
     void OnEnable()
     {
-        // »ñÈ¡»òÌí¼ÓSpriteRenderer×é¼ş
+        // è·å–æˆ–æ·»åŠ SpriteRendererç»„ä»¶
         spriteRenderer = GetComponent<SpriteRenderer>();
         if (spriteRenderer == null)
         {
             spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
         }
         
-        // Ëæ»úÑ¡ÔñÒ»ÖÖ¾«Áé
+        // éšæœºé€‰æ‹©ä¸€ç§ç²¾çµ
         if (snowFlakeSprites != null && snowFlakeSprites.Count > 0)
         {
             int randomIndex = Random.Range(0, snowFlakeSprites.Count);
             spriteRenderer.sprite = snowFlakeSprites[randomIndex];
         }
         
-        // ³õÊ¼»¯ÔëÉùÆ«ÒÆÖµ£¬Ê¹Ã¿¸öÑ©»¨µÄÆ®ÒÆ¹ì¼£²»Í¬
-        noiseOffsetX = Random.Range(0f, 1000f);
-        noiseOffsetY = Random.Range(0f, 1000f);
+        // åˆå§‹åŒ–å™ªå£°åç§»å€¼ï¼Œä½¿æ¯ä¸ªé›ªèŠ±çš„é£˜ç§»è½¨è¿¹ä¸åŒ
+        noiseOffsetX = GameRNG.Range(0f, 1000f);
+        noiseOffsetY = GameRNG.Range(0f, 1000f);
         timeCounter = 0f;
     }
 
@@ -54,34 +55,34 @@ public class SnowFlake : MonoBehaviour
         rb2D = GetComponent<Rigidbody2D>();
     }
 
-    void Update()
+    void FixedUpdate()
     {
-        // Ğı×ªÑ©»¨
-        transform.Rotate(0, 0, rotationSpeed * Time.deltaTime);
+        // æ—‹è½¬é›ªèŠ±
+        transform.Rotate(0, 0, rotationSpeed * SimClock.FixedTickDt);
         
-        // ¼ÆËãPerlinÔëÉù£¬Éú³ÉÎŞĞòÆ®ÒÆ
-        timeCounter += Time.deltaTime * noiseTimeScale;
+        // è®¡ç®—Perlinå™ªå£°ï¼Œç”Ÿæˆæ— åºé£˜ç§»
+        timeCounter += SimClock.FixedTickDt * noiseTimeScale;
         float noiseX = Mathf.PerlinNoise(noiseOffsetX + timeCounter, 0f) * 2f - 1f;
         float noiseY = Mathf.PerlinNoise(0f, noiseOffsetY + timeCounter) * 2f - 1f;
         
-        // Éú³ÉÆ®ÒÆÏòÁ¿
+        // ç”Ÿæˆé£˜ç§»å‘é‡
         Vector2 drift = new Vector2(noiseX, noiseY) * noiseIntensity;
         
-        // ¼ÆËã×îÖÕÒÆ¶¯·½Ïò£¨»ù´¡·½Ïò + Æ®ÒÆ£©
+        // è®¡ç®—æœ€ç»ˆç§»åŠ¨æ–¹å‘ï¼ˆåŸºç¡€æ–¹å‘ + é£˜ç§»ï¼‰
         Vector2 finalDirection = (baseDirection + drift).normalized;
         
-        // ÉèÖÃËÙ¶È
+        // è®¾ç½®é€Ÿåº¦
         if (rb2D != null)
         {
             rb2D.velocity = finalDirection * moveSpeed;
         }
         
-        // ¼ì²é±ß½ç£¬³¬³ö·¶Î§Ôò»ØÊÕ
+        // æ£€æŸ¥è¾¹ç•Œï¼Œè¶…å‡ºèŒƒå›´åˆ™å›æ”¶
         CheckBounds();
     }
     
     /// <summary>
-    /// ¼ì²é±ß½ç£¬³¬³ö·¶Î§Ôò»ØÊÕ
+    /// æ£€æŸ¥è¾¹ç•Œï¼Œè¶…å‡ºèŒƒå›´åˆ™å›æ”¶
     /// </summary>
     private void CheckBounds()
     {
@@ -93,11 +94,11 @@ public class SnowFlake : MonoBehaviour
     }
     
     /// <summary>
-    /// »ØÊÕ×Óµ¯
+    /// å›æ”¶å­å¼¹
     /// </summary>
     private void Recycle()
     {
-        // ½â³ı¸¸×Ó¹ØÏµ
+        // è§£é™¤çˆ¶å­å…³ç³»
         transform.parent = null;
         
         if (Global_ObjectPool.Instance != null)
@@ -111,18 +112,18 @@ public class SnowFlake : MonoBehaviour
     }
     
     /// <summary>
-    /// ÉèÖÃ»ù´¡ÒÆ¶¯·½Ïò
+    /// è®¾ç½®åŸºç¡€ç§»åŠ¨æ–¹å‘
     /// </summary>
-    /// <param name="direction">¹éÒ»»¯µÄ·½ÏòÏòÁ¿</param>
+    /// <param name="direction">å½’ä¸€åŒ–çš„æ–¹å‘å‘é‡</param>
     public void SetDirection(Vector2 direction)
     {
         baseDirection = direction.normalized;
     }
     
     /// <summary>
-    /// ÉèÖÃÒÆ¶¯ËÙ¶È
+    /// è®¾ç½®ç§»åŠ¨é€Ÿåº¦
     /// </summary>
-    /// <param name="speed">ÒÆ¶¯ËÙ¶È</param>
+    /// <param name="speed">ç§»åŠ¨é€Ÿåº¦</param>
     public void SetSpeed(float speed)
     {
         moveSpeed = speed;
@@ -130,7 +131,7 @@ public class SnowFlake : MonoBehaviour
     
     void OnDisable()
     {
-        // ÇåÀíËÙ¶È
+        // æ¸…ç†é€Ÿåº¦
         if (rb2D != null)
         {
             rb2D.velocity = Vector2.zero;

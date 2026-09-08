@@ -1,37 +1,38 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ReplaySystem;
 
 /// <summary>
-/// ¼¤¹âÀà
-/// Ä§ÀíÉ³Ê¹ÓÃ¼¤¹â×÷Îª¸ßËÙ¸±ÊÖ¹¥»÷
-/// Ê¹ÓÃLineRenderer+¼¤¹â²ÄÖÊÊµÏÖ
-/// ¼¤¹âÁ¬Ïß¹Ì¶¨Îª(0,0,0)-(0,12,0)£¬Í¨¹ı¸¸ÎïÌåĞı×ª¿ØÖÆ·½Ïò
+/// æ¿€å…‰ç±»
+/// é­”ç†æ²™ä½¿ç”¨æ¿€å…‰ä½œä¸ºé«˜é€Ÿå‰¯æ‰‹æ”»å‡»
+/// ä½¿ç”¨LineRenderer+æ¿€å…‰æè´¨å®ç°
+/// æ¿€å…‰è¿çº¿å›ºå®šä¸º(0,0,0)-(0,12,0)ï¼Œé€šè¿‡çˆ¶ç‰©ä½“æ—‹è½¬æ§åˆ¶æ–¹å‘
 /// </summary>
 public class Laser : MonoBehaviour
 {
-    [Header("¼¤¹âÅäÖÃ")]
-    public float MaxLength = 12f; // ¼¤¹â³¤¶È£¨¹Ì¶¨12£©
-    public float LaserWidth = 0.02f; // ¼¤¹â¿í¶È£¨public£¬ÓÉInspector¸³Öµ£©
-    public int damage = 1; // ¼¤¹âÉËº¦(Ã¿Ö¡)
-    public LayerMask HitLayer;// ¼¤¹â¿É¹¥»÷Ä¿±ê²ã
+    [Header("æ¿€å…‰é…ç½®")]
+    public float MaxLength = 12f; // æ¿€å…‰é•¿åº¦ï¼ˆå›ºå®š12ï¼‰
+    public float LaserWidth = 0.02f; // æ¿€å…‰å®½åº¦ï¼ˆpublicï¼Œç”±Inspectorèµ‹å€¼ï¼‰
+    public int damage = 1; // æ¿€å…‰ä¼¤å®³(æ¯å¸§)
+    public LayerMask HitLayer;// æ¿€å…‰å¯æ”»å‡»ç›®æ ‡å±‚
 
-    [Header("¼¤¹â¶¯»­ÎÆÀí")]
-    public List<Texture2D> LaserTextures = new();// ¼¤¹âÎÆÀíÁĞ±í
+    [Header("æ¿€å…‰åŠ¨ç”»çº¹ç†")]
+    public List<Texture2D> LaserTextures = new();// æ¿€å…‰çº¹ç†åˆ—è¡¨
     public int AnimeSpeed = 4;
-    private int CurrentIndex = 0;// µ±Ç°ÎÆÀíË÷Òı
+    private int CurrentIndex = 0;// å½“å‰çº¹ç†ç´¢å¼•
 
-    private LineRenderer lineRenderer;// ¼¤¹âÁ¬ÏßäÖÈ¾Æ÷
-    private Material laserMaterial;// ¼¤¹â²ÄÖÊÊµÀı
-    private bool isActive = false;// ¼¤¹âÊÇ·ñ¼¤»î
+    private LineRenderer lineRenderer;// æ¿€å…‰è¿çº¿æ¸²æŸ“å™¨
+    private Material laserMaterial;// æ¿€å…‰æè´¨å®ä¾‹
+    private bool isActive = false;// æ¿€å…‰æ˜¯å¦æ¿€æ´»
 
-    private float TimeClock = 0f;// ¶¯»­Ê±ÖÓ
+    private float TimeClock = 0f;// åŠ¨ç”»æ—¶é’Ÿ
 
-    private int LaserInterval = 5;// ¼¤¹âÉËº¦¼ä¸ôÖ¡£¨Ã¿Ãë12Ö¡³öÉË£©
+    private int LaserInterval = 5;// æ¿€å…‰ä¼¤å®³é—´éš”å¸§ï¼ˆæ¯ç§’12å¸§å‡ºä¼¤ï¼‰
 
     void Awake()
     {
-        // È·±£»ñÈ¡µ½ LineRenderer ×é¼ş
+        // ç¡®ä¿è·å–åˆ° LineRenderer ç»„ä»¶
         lineRenderer = GetComponent<LineRenderer>();
         if (lineRenderer == null)
         {
@@ -40,24 +41,24 @@ public class Laser : MonoBehaviour
         else
         {
             lineRenderer.enabled = false;
-            // ÉèÖÃÆğÊ¼ºÍ½áÊø¿í¶ÈÎª LaserWidth£¬±ÜÃâÊÜ»ù´¡¿í¶ÈÓ°Ïì
+            // è®¾ç½®èµ·å§‹å’Œç»“æŸå®½åº¦ä¸º LaserWidthï¼Œé¿å…å—åŸºç¡€å®½åº¦å½±å“
             lineRenderer.startWidth = LaserWidth;
             lineRenderer.endWidth = LaserWidth;
             lineRenderer.widthMultiplier = 1f;
-            // ´´½¨²ÄÖÊÊµÀı
+            // åˆ›å»ºæè´¨å®ä¾‹
             if (lineRenderer.material != null)
             {
                 laserMaterial = new Material(lineRenderer.material);
                 lineRenderer.material = laserMaterial;
             }
-            // ÉèÖÃ¹Ì¶¨µÄ¼¤¹âÁ¬Ïßµã£¨±¾µØ×ø±ê£©
+            // è®¾ç½®å›ºå®šçš„æ¿€å…‰è¿çº¿ç‚¹ï¼ˆæœ¬åœ°åæ ‡ï¼‰
             lineRenderer.SetPosition(0, Vector3.zero);
             lineRenderer.SetPosition(1, new Vector3(0, MaxLength, 0));
         }
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         if(!isActive || lineRenderer == null)
         {
@@ -74,15 +75,15 @@ public class Laser : MonoBehaviour
     }
 
     /// <summary>
-    /// ¼¤¹â³ÖĞøÉËº¦ÅĞ¶¨
+    /// æ¿€å…‰æŒç»­ä¼¤å®³åˆ¤å®š
     /// </summary>
     private void UpdateLaserDamage()
     {
-        // Ê¹ÓÃRaycastAll¼ì²âÂ·¾¶ÉÏµÄËùÓĞÎïÌå
-        // ¼¤¹âÊÇ·¢ÉäÆ÷µÄ×ÓÎïÌå£¬´Ótransform.position£¨ÊÀ½ç×ø±ê£©¿ªÊ¼¼ì²â
+        // ä½¿ç”¨RaycastAllæ£€æµ‹è·¯å¾„ä¸Šçš„æ‰€æœ‰ç‰©ä½“
+        // æ¿€å…‰æ˜¯å‘å°„å™¨çš„å­ç‰©ä½“ï¼Œä»transform.positionï¼ˆä¸–ç•Œåæ ‡ï¼‰å¼€å§‹æ£€æµ‹
         RaycastHit2D[] hits = Physics2D.RaycastAll(transform.position, transform.up, MaxLength, HitLayer);
         
-        // ¶ÔËùÓĞÃüÖĞµÄÎïÌåÔì³ÉÉËº¦
+        // å¯¹æ‰€æœ‰å‘½ä¸­çš„ç‰©ä½“é€ æˆä¼¤å®³
         foreach (RaycastHit2D hit in hits)
         {
             switch (hit.collider.tag)
@@ -98,8 +99,8 @@ public class Laser : MonoBehaviour
                     var boss = hit.collider.GetComponent<BossBase>();
                     if (boss != null)
                     {
-                        int tempDamage = (int)(damage * 3);// ¶ÔBossÔì³ÉÉËº¦Öµ·­3±¶
-                        // ¶ÔBossÔì³ÉÉËº¦
+                        int tempDamage = (int)(damage * 3);// å¯¹Bossé€ æˆä¼¤å®³å€¼ç¿»3å€
+                        // å¯¹Bossé€ æˆä¼¤å®³
                         boss.TakeDamage(tempDamage);
                     }
                     break;
@@ -132,7 +133,7 @@ public class Laser : MonoBehaviour
     }
 
     /// <summary>
-    /// ¼¤»î¼¤¹â
+    /// æ¿€æ´»æ¿€å…‰
     /// </summary>
     public void ActivateLaser()
     {
@@ -144,7 +145,7 @@ public class Laser : MonoBehaviour
     }
 
     /// <summary>
-    /// Í£ÓÃ¼¤¹â
+    /// åœç”¨æ¿€å…‰
     /// </summary>
     public void StopLaser()
     {
@@ -156,14 +157,14 @@ public class Laser : MonoBehaviour
     }
 
     /// <summary>
-    /// ¸üĞÂ¼¤¹â¶¯»­£¨Í¨¹ıÇĞ»»²ÄÖÊÎÆÀíÊµÏÖ£©
+    /// æ›´æ–°æ¿€å…‰åŠ¨ç”»ï¼ˆé€šè¿‡åˆ‡æ¢æè´¨çº¹ç†å®ç°ï¼‰
     /// </summary>
     private void UpdateLaserAnime()
     {
         if (LaserTextures.Count == 0 || laserMaterial == null)
             return;
             
-        TimeClock += Time.deltaTime;
+        TimeClock += SimClock.FixedTickDt;
         if (TimeClock >= 1f / AnimeSpeed)
         {
             TimeClock -= 1f / AnimeSpeed;
@@ -171,14 +172,14 @@ public class Laser : MonoBehaviour
             if (CurrentIndex >= LaserTextures.Count)
                 CurrentIndex = 0;
                 
-            // ¸üĞÂ²ÄÖÊµÄParticle TextureÊôĞÔ
+            // æ›´æ–°æè´¨çš„Particle Textureå±æ€§
             laserMaterial.SetTexture("_MainTex", LaserTextures[CurrentIndex]);
         }
     }
 
     private void OnDestroy()
     {
-        // Ïú»Ù²ÄÖÊÊµÀı£¬±ÜÃâÄÚ´æĞ¹Â©
+        // é”€æ¯æè´¨å®ä¾‹ï¼Œé¿å…å†…å­˜æ³„æ¼
         if (laserMaterial != null)
         {
             Destroy(laserMaterial);

@@ -1,15 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ReplaySystem;
 
 /// <summary>
-/// Ò»°ã·ÉĞĞÎï£¨Normal Flying Object£©
-/// °¡£¬Õâ¾ÍÊÇNFO!
+/// ä¸€èˆ¬é£è¡Œç‰©ï¼ˆNormal Flying Objectï¼‰
+/// å•Šï¼Œè¿™å°±æ˜¯NFO!
 /// </summary>
 public class NormalFO : MonoBehaviour
 {
     public float speed;
-    public int damage = 10;// ÉËº¦Öµ
+    public int damage = 10;// ä¼¤å®³å€¼
 private readonly float minX = -9.5f;
     private readonly float maxX = 3.5f;
     private readonly float minY = -5.5f;
@@ -19,25 +20,25 @@ private readonly float minX = -9.5f;
 
     void OnEnable()
     {
-        // »ñÈ¡¸ÕÌå×é¼ş
+        // è·å–åˆšä½“ç»„ä»¶
         rb2D = GetComponent<Rigidbody2D>();
         if (rb2D == null)
         {
-            Debug.LogError("Ò»¸öÒ»°ã·ÉĞĞÎïÎ´ÕÒµ½¸ÕÌå");
+            Debug.LogError("ä¸€ä¸ªä¸€èˆ¬é£è¡Œç‰©æœªæ‰¾åˆ°åˆšä½“");
         }
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         Move(speed);
         MoveCheck();
     }
 
     /// <summary>
-    /// ÆÕÍ¨·ÉĞĞÎïµÄÒÆ¶¯
+    /// æ™®é€šé£è¡Œç‰©çš„ç§»åŠ¨
     /// </summary>
-    /// <param name="speed">ÒÆ¶¯ËÙ¶È</param>
+    /// <param name="speed">ç§»åŠ¨é€Ÿåº¦</param>
     public void Move(float speed)
     {
         if (rb2D != null)

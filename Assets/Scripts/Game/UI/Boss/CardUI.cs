@@ -1,4 +1,4 @@
-using System.Collections;
+锘縰sing System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -6,11 +6,11 @@ using UnityEngine.UI;
 
 public class CardUI : MonoBehaviour
 {
-    [Header("符卡UI组件")]
-    public Image cardImage; // 符卡图片
-    public List<Sprite> cardSprites; // 符卡图片列表
-    public TextMeshProUGUI cardNameText_1; // 符卡名称文本
-    public TextMeshProUGUI cardNameText_2; // 符卡名称文本
+    [Header("绗﹀崱UI缁勪欢")]
+    public Image cardImage; // 绗﹀崱鍥剧墖
+    public List<Sprite> cardSprites; // 绗﹀崱鍥剧墖鍒楄〃
+    public TextMeshProUGUI cardNameText_1; // 绗﹀崱鍚嶇О鏂囨湰
+    public TextMeshProUGUI cardNameText_2; // 绗﹀崱鍚嶇О鏂囨湰
 
     public void SetCard(int cardIndex)
     {

@@ -1,14 +1,15 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using ReplaySystem;
 
 public class AboutItem : MonoBehaviour
 {
-    [Header("µÀ¾ßÖÖÀà:0:HP+,1:HP,2:Power+,3:Power,4:Bomb+,5:Bomb,6:Grade,7:Grade-,8:Grade--")]
+    [Header("é“å…·ç§ç±»:0:HP+,1:HP,2:Power+,3:Power,4:Bomb+,5:Bomb,6:Grade,7:Grade-,8:Grade--")]
     [SerializeField]
     private int itemType;
 
-    [Header("ÊÕ¼¯ËÙ¶È")]
+    [Header("æ”¶é›†é€Ÿåº¦")]
     public float collectSpeed = 10f;
 
     private Rigidbody2D rb2D;
@@ -24,15 +25,15 @@ public class AboutItem : MonoBehaviour
     private float autoFlyCheckInterval = 0.3f;
     private float autoFlyCheckTimer = 0f;
     private const float autoFlyThreshold = 0.3f;
-    private Vector3 autoFlyTargetPosition; // »º´æµÄÄ¿±êÎ»ÖÃ
+    private Vector3 autoFlyTargetPosition; // ç¼“å­˜çš„ç›®æ ‡ä½ç½®
     
-    // ¹«¿ªÊôĞÔ¹©Íâ²¿·ÃÎÊ
+    // å…¬å¼€å±æ€§ä¾›å¤–éƒ¨è®¿é—®
     public bool IsCollecting { get { return isCollecting; } }
     public bool IsAutoFlying { get { return isAutoFlying; } }
 
     void OnEnable()
     {
-        // »ñÈ¡¸ÕÌå×é¼ş
+        // è·å–åˆšä½“ç»„ä»¶
         rb2D = GetComponent<Rigidbody2D>();
         if (rb2D == null)
         {
@@ -40,12 +41,12 @@ public class AboutItem : MonoBehaviour
         }
         else
         {
-            // ÖØÖÃÖØÁ¦ÎªÄ¬ÈÏÖµ£¬È·±£µÀ¾ßÄÜÕı³£ÏÂÂä
+            // é‡ç½®é‡åŠ›ä¸ºé»˜è®¤å€¼ï¼Œç¡®ä¿é“å…·èƒ½æ­£å¸¸ä¸‹è½
             rb2D.gravityScale = 0.12f;
             rb2D.velocity = Vector2.zero;
         }
 
-        // ÖØÖÃÊÕ¼¯×´Ì¬
+        // é‡ç½®æ”¶é›†çŠ¶æ€
         isCollecting = false;
         collectCoroutine = null;
         isAutoFlying = false;
@@ -54,7 +55,7 @@ public class AboutItem : MonoBehaviour
 
     void OnDisable()
     {
-        // Í£Ö¹ÊÕ¼¯Ğ­³Ì
+        // åœæ­¢æ”¶é›†åç¨‹
         if (collectCoroutine != null)
         {
             StopCoroutine(collectCoroutine);
@@ -65,19 +66,19 @@ public class AboutItem : MonoBehaviour
         autoFlyCheckTimer = 0f;
     }
 
-    void Update()
+    void FixedUpdate()
     {
-        // ¼ì²âSpellCard×´Ì¬£¬×Ô¶¯·ÉÏòÍæ¼Ò
+        // æ£€æµ‹SpellCardçŠ¶æ€ï¼Œè‡ªåŠ¨é£å‘ç©å®¶
         CheckSpellCardState();
 
-        // ×Ô¶¯·ÉÏòÍæ¼ÒÂß¼­
+        // è‡ªåŠ¨é£å‘ç©å®¶é€»è¾‘
         if (isAutoFlying && player != null)
         {
-            autoFlyCheckTimer += Time.deltaTime;
+            autoFlyCheckTimer += SimClock.FixedTickDt;
             if (autoFlyCheckTimer >= autoFlyCheckInterval)
             {
                 autoFlyCheckTimer = 0f;
-                // ¸üĞÂÄ¿±êÎ»ÖÃ
+                // æ›´æ–°ç›®æ ‡ä½ç½®
                 autoFlyTargetPosition = player.transform.position;
             }
             FlyToPlayerContinuous();
@@ -93,30 +94,30 @@ public class AboutItem : MonoBehaviour
     }
 
     /// <summary>
-    /// ¼ì²âSpellCard×´Ì¬£¬½«µÀ¾ß±ê¼ÇÎª×Ô¶¯·ÉÏòÍæ¼Ò×´Ì¬
+    /// æ£€æµ‹SpellCardçŠ¶æ€ï¼Œå°†é“å…·æ ‡è®°ä¸ºè‡ªåŠ¨é£å‘ç©å®¶çŠ¶æ€
     /// </summary>
     private void CheckSpellCardState()
     {
-        // Èç¹ûÒÑ¾­ÔÚ×Ô¶¯·ÉÏò×´Ì¬»òÕıÔÚÊÕ¼¯£¬ÎŞĞè´¦Àí
+        // å¦‚æœå·²ç»åœ¨è‡ªåŠ¨é£å‘çŠ¶æ€æˆ–æ­£åœ¨æ”¶é›†ï¼Œæ— éœ€å¤„ç†
         if (isAutoFlying || isCollecting)
         {
             return;
         }
 
-        // ¼ì²âÓÎÏ·×´Ì¬ÊÇ·ñÎªSpellCard
+        // æ£€æµ‹æ¸¸æˆçŠ¶æ€æ˜¯å¦ä¸ºSpellCard
         if (Global_GameManager.Instance != null && 
             Global_GameManager.Instance.state == State.SpellCard)
         {
-            // ¼ì²éplayerÊÇ·ñÓĞĞ§
+            // æ£€æŸ¥playeræ˜¯å¦æœ‰æ•ˆ
             if (player == null)
             {
-                // ³¢ÊÔ²éÕÒÍæ¼Ò¶ÔÏó
+                // å°è¯•æŸ¥æ‰¾ç©å®¶å¯¹è±¡
                 player = GameObject.FindGameObjectWithTag("Player");
             }
 
             if (player != null)
             {
-                // ½«µÀ¾ß±ê¼ÇÎª×Ô¶¯·ÉÏòÍæ¼Ò×´Ì¬
+                // å°†é“å…·æ ‡è®°ä¸ºè‡ªåŠ¨é£å‘ç©å®¶çŠ¶æ€
                 SetAutoFlyToPlayer(true, autoFlySpeed);
             }
         }
@@ -124,37 +125,37 @@ public class AboutItem : MonoBehaviour
 
     private void CheckPos()
     {
-        // ¼ì²éµÀ¾ßÊÇ·ñÔÚ±ß½çÄÚ
+        // æ£€æŸ¥é“å…·æ˜¯å¦åœ¨è¾¹ç•Œå†…
         if (transform.position.y < -8f)
         {
-            // µÀ¾ß³¬³ö±ß½ç£¬Ïú»ÙµÀ¾ß
+            // é“å…·è¶…å‡ºè¾¹ç•Œï¼Œé”€æ¯é“å…·
             Destroy(gameObject);
         }
     }
 
     /// <summary>
-    /// ÉèÖÃ×Ô¶¯·ÉÏòÍæ¼ÒÄ£Ê½
+    /// è®¾ç½®è‡ªåŠ¨é£å‘ç©å®¶æ¨¡å¼
     /// </summary>
-    /// <param name="autoFly">ÊÇ·ñ×Ô¶¯·ÉÏòÍæ¼Ò</param>
-    /// <param name="flySpeed">·ÉĞĞËÙ¶È</param>
+    /// <param name="autoFly">æ˜¯å¦è‡ªåŠ¨é£å‘ç©å®¶</param>
+    /// <param name="flySpeed">é£è¡Œé€Ÿåº¦</param>
     public void SetAutoFlyToPlayer(bool autoFly, float flySpeed = 15f)
     {
         isAutoFlying = autoFly;
         autoFlySpeed = flySpeed;
         if (autoFly)
         {
-            // Á¢¼´³õÊ¼»¯Ä¿±êÎ»ÖÃÎªÍæ¼Òµ±Ç°Î»ÖÃ
+            // ç«‹å³åˆå§‹åŒ–ç›®æ ‡ä½ç½®ä¸ºç©å®¶å½“å‰ä½ç½®
             if (player != null)
             {
                 autoFlyTargetPosition = player.transform.position;
             }
-            // ½ûÓÃÖØÁ¦
+            // ç¦ç”¨é‡åŠ›
             if (rb2D != null)
             {
                 rb2D.gravityScale = 0f;
                 rb2D.velocity = Vector2.zero;
             }
-            // Í£Ö¹Ö®Ç°µÄÊÕ¼¯Ğ­³Ì
+            // åœæ­¢ä¹‹å‰çš„æ”¶é›†åç¨‹
             if (collectCoroutine != null)
             {
                 StopCoroutine(collectCoroutine);
@@ -165,7 +166,7 @@ public class AboutItem : MonoBehaviour
     }
 
     /// <summary>
-    /// ³ÖĞø·ÉÏòÍæ¼Ò£¨Ã¿¸ôautoFlyCheckInterval¸üĞÂÄ¿±êÎ»ÖÃ£¬Ã¿Ö¡Æ½»¬ÒÆ¶¯£©
+    /// æŒç»­é£å‘ç©å®¶ï¼ˆæ¯éš”autoFlyCheckIntervalæ›´æ–°ç›®æ ‡ä½ç½®ï¼Œæ¯å¸§å¹³æ»‘ç§»åŠ¨ï¼‰
     /// </summary>
     private void FlyToPlayerContinuous()
     {
@@ -174,11 +175,11 @@ public class AboutItem : MonoBehaviour
             return;
         }
 
-        // ¼ì²éÊÇ·ñÒÑ¾­µ½´ïÄ¿±êÎ»ÖÃ
+        // æ£€æŸ¥æ˜¯å¦å·²ç»åˆ°è¾¾ç›®æ ‡ä½ç½®
         float distance = Vector3.Distance(transform.position, autoFlyTargetPosition);
         if (distance <= autoFlyThreshold)
         {
-            // µ½´ïÄ¿±êÎ»ÖÃ£¬´¥·¢ÊÕ¼¯
+            // åˆ°è¾¾ç›®æ ‡ä½ç½®ï¼Œè§¦å‘æ”¶é›†
             if (!isCollecting)
             {
                 isCollecting = true;
@@ -191,21 +192,21 @@ public class AboutItem : MonoBehaviour
             return;
         }
 
-        // ¼ÆËã³¯Ïò»º´æÄ¿±êÎ»ÖÃµÄ·½Ïò
+        // è®¡ç®—æœå‘ç¼“å­˜ç›®æ ‡ä½ç½®çš„æ–¹å‘
         Vector3 direction = (autoFlyTargetPosition - transform.position).normalized;
 
-        // ÒÆ¶¯µÀ¾ß£¨Ã¿Ö¡Æ½»¬ÒÆ¶¯£©
+        // ç§»åŠ¨é“å…·ï¼ˆæ¯å¸§å¹³æ»‘ç§»åŠ¨ï¼‰
         transform.position += direction * autoFlySpeed * Time.deltaTime;
     }
 
     /// <summary>
-    /// Á¢¼´ÊÕ¼¯£¨ÓÃÓÚ×Ô¶¯·ÉÏòÄ£Ê½µ½´ïÍæ¼ÒÊ±£©
+    /// ç«‹å³æ”¶é›†ï¼ˆç”¨äºè‡ªåŠ¨é£å‘æ¨¡å¼åˆ°è¾¾ç©å®¶æ—¶ï¼‰
     /// </summary>
     private IEnumerator CollectItemImmediate()
     {
-        // ´¥·¢Ğ§¹û
+        // è§¦å‘æ•ˆæœ
         Effect();
-        // ²¥·ÅÊÕ¼¯ÒôĞ§
+        // æ’­æ”¾æ”¶é›†éŸ³æ•ˆ
         if (Global_AudioManager.Instance != null && collectClip != null)
         {
             Global_AudioManager.Instance.PlayCollectSFX(collectClip);
@@ -213,7 +214,7 @@ public class AboutItem : MonoBehaviour
 
         yield return null;
 
-        // Ïú»ÙµÀ¾ß
+        // é”€æ¯é“å…·
         if (Global_ObjectPool.Instance != null)
         {
             Global_ObjectPool.Instance.Recycle(this.gameObject);
@@ -225,7 +226,7 @@ public class AboutItem : MonoBehaviour
     }
 
     /// <summary>
-    /// Åö×²Æ÷ÊÂ¼ş´ú±í½øÈëÍæ¼ÒÊÕ¼¯·¶Î§
+    /// ç¢°æ’å™¨äº‹ä»¶ä»£è¡¨è¿›å…¥ç©å®¶æ”¶é›†èŒƒå›´
     /// </summary>
     void OnTriggerEnter2D(Collider2D collision)
     {
@@ -236,10 +237,10 @@ public class AboutItem : MonoBehaviour
     }
 
     /// <summary>
-    /// µÀ¾ß×Ô¶¯±»Íæ¼ÒÊÕÈ¡
+    /// é“å…·è‡ªåŠ¨è¢«ç©å®¶æ”¶å–
     /// </summary>
-    /// <param name="playerTransform">Íæ¼Òtransform</param>
-    /// <param name="isRecycleLineTriggered">ÊÇ·ñÓÉ»ØÊÕÏß´¥·¢</param>
+    /// <param name="playerTransform">ç©å®¶transform</param>
+    /// <param name="isRecycleLineTriggered">æ˜¯å¦ç”±å›æ”¶çº¿è§¦å‘</param>
     public void FlyToPlayer(Transform playerTransform, bool isRecycleLineTriggered = false)
     {
         isCollecting = true;
@@ -247,11 +248,11 @@ public class AboutItem : MonoBehaviour
     }
 
     /// <summary>
-    /// ÊÕ¼¯µÀ¾ßµÄĞ­³Ì
+    /// æ”¶é›†é“å…·çš„åç¨‹
     /// </summary>
     private IEnumerator CollectItem(Transform playerTransform, bool isRecycleLineTriggered)
     {
-        // ½ûÓÃÖØÁ¦£¬Ê¹µÀ¾ß²»ÊÜÖØÁ¦Ó°Ïì
+        // ç¦ç”¨é‡åŠ›ï¼Œä½¿é“å…·ä¸å—é‡åŠ›å½±å“
         if (rb2D != null)
         {
             rb2D.gravityScale = 0f;
@@ -261,27 +262,27 @@ public class AboutItem : MonoBehaviour
         int updateCounter = 0;
         const int updateInterval = 10;
 
-        // ´¥·¢Æ÷´¥·¢Ê±£¬Ö»»ñÈ¡Ò»´ÎÍæ¼Ò×ø±ê
+        // è§¦å‘å™¨è§¦å‘æ—¶ï¼Œåªè·å–ä¸€æ¬¡ç©å®¶åæ ‡
         Vector3 initialTargetPosition = playerTransform != null ? playerTransform.position : transform.position;
 
-        // »ØÊÕÏß´¥·¢Ê±µÄÄ¿±êÎ»ÖÃ
+        // å›æ”¶çº¿è§¦å‘æ—¶çš„ç›®æ ‡ä½ç½®
         Vector3 recycleLineTargetPosition = playerTransform != null ? playerTransform.position : transform.position;
 
-        // ³ÖĞøÒÆ¶¯
+        // æŒç»­ç§»åŠ¨
         while (true)
         {
-            // ¼ì²éÍæ¼Ò¶ÔÏóÊÇ·ñ´æÔÚ
+            // æ£€æŸ¥ç©å®¶å¯¹è±¡æ˜¯å¦å­˜åœ¨
             if (playerTransform == null)
             {
-                // Íæ¼Ò¶ÔÏóÒÑÏú»Ù£¬Í£Ö¹ÊÕ¼¯
+                // ç©å®¶å¯¹è±¡å·²é”€æ¯ï¼Œåœæ­¢æ”¶é›†
                 break;
             }
 
-            // ¼ÆËãÄ¿±êÎ»ÖÃ
+            // è®¡ç®—ç›®æ ‡ä½ç½®
             Vector3 targetPosition;
             if (isRecycleLineTriggered)
             {
-                // »ØÊÕÏß´¥·¢Ê±£¬Ã¿10Ö¡¸üĞÂÒ»´ÎÄ¿±êÎ»ÖÃ
+                // å›æ”¶çº¿è§¦å‘æ—¶ï¼Œæ¯10å¸§æ›´æ–°ä¸€æ¬¡ç›®æ ‡ä½ç½®
                 if (updateCounter % updateInterval == 0)
                 {
                     recycleLineTargetPosition = playerTransform.position;
@@ -289,7 +290,7 @@ public class AboutItem : MonoBehaviour
                 targetPosition = recycleLineTargetPosition;
                 updateCounter++;
 
-                // ¼ì²éÊÇ·ñµ½´ïµ±Ç°Ä¿±êÎ»ÖÃ
+                // æ£€æŸ¥æ˜¯å¦åˆ°è¾¾å½“å‰ç›®æ ‡ä½ç½®
                 if (Vector3.Distance(transform.position, targetPosition) <= 0.1f)
                 {
                     break;
@@ -297,34 +298,34 @@ public class AboutItem : MonoBehaviour
             }
             else
             {
-                // ´¥·¢Æ÷´¥·¢Ê±£¬Ê¹ÓÃ³õÊ¼Ä¿±êÎ»ÖÃ
+                // è§¦å‘å™¨è§¦å‘æ—¶ï¼Œä½¿ç”¨åˆå§‹ç›®æ ‡ä½ç½®
                 targetPosition = initialTargetPosition;
 
-                // ¼ì²éÊÇ·ñµ½´ï³õÊ¼Ä¿±êÎ»ÖÃ
+                // æ£€æŸ¥æ˜¯å¦åˆ°è¾¾åˆå§‹ç›®æ ‡ä½ç½®
                 if (Vector3.Distance(transform.position, initialTargetPosition) <= 0.1f)
                 {
                     break;
                 }
             }
 
-            // ¼ÆËãÒÆ¶¯·½Ïò
+            // è®¡ç®—ç§»åŠ¨æ–¹å‘
             Vector3 direction = (targetPosition - transform.position).normalized;
 
-            // ÒÆ¶¯µÀ¾ß
+            // ç§»åŠ¨é“å…·
             transform.position += collectSpeed * Time.deltaTime * direction;
 
             yield return null;
         }
 
-        // µÀ¾ßµ½´ïÍæ¼ÒÎ»ÖÃ£¬´¥·¢Ğ§¹û
+        // é“å…·åˆ°è¾¾ç©å®¶ä½ç½®ï¼Œè§¦å‘æ•ˆæœ
         Effect();
-        // ²¥·ÅÊÕ¼¯ÒôĞ§£¨ÏŞÖÆÍ¬Ê±²¥·ÅÊıÁ¿£©
+        // æ’­æ”¾æ”¶é›†éŸ³æ•ˆï¼ˆé™åˆ¶åŒæ—¶æ’­æ”¾æ•°é‡ï¼‰
         if (Global_AudioManager.Instance != null && collectClip != null)
         {
             Global_AudioManager.Instance.PlayCollectSFX(collectClip);
         }
 
-        // Ïú»ÙµÀ¾ß
+        // é”€æ¯é“å…·
         if (Global_ObjectPool.Instance != null)
         {
             Global_ObjectPool.Instance.Recycle(this.gameObject);
@@ -339,51 +340,51 @@ public class AboutItem : MonoBehaviour
     {
         switch (itemType)
         {
-            case 0:// µÀ¾ßÀàĞÍÎªHP+
+            case 0:// é“å…·ç±»å‹ä¸ºHP+
                 Global_GameManager.Instance.AddLeftLife(1, 0);
                 break;
-            case 1:// µÀ¾ßÀàĞÍÎªHP
+            case 1:// é“å…·ç±»å‹ä¸ºHP
                 Global_GameManager.Instance.AddLeftLife(0, 1);
                 break;
-            case 2:// µÀ¾ßÀàĞÍÎªPower+
+            case 2:// é“å…·ç±»å‹ä¸ºPower+
                 Global_GameManager.Instance.AddPower(100);
                 break;
-            case 3:// µÀ¾ßÀàĞÍÎªPower
+            case 3:// é“å…·ç±»å‹ä¸ºPower
                 Global_GameManager.Instance.AddPower(1);
                 break;
-            case 4:// µÀ¾ßÀàĞÍÎªBomb+
+            case 4:// é“å…·ç±»å‹ä¸ºBomb+
                 Global_GameManager.Instance.AddBomb(1, 0);
                 break;
-            case 5:// µÀ¾ßÀàĞÍÎªBomb
+            case 5:// é“å…·ç±»å‹ä¸ºBomb
                 Global_GameManager.Instance.AddBomb(0, 1);
                 break;
-            case 6:// µÀ¾ßÀàĞÍÎªGrade
+            case 6:// é“å…·ç±»å‹ä¸ºGrade
                 Global_GameManager.Instance.AddGrade(1);
                 break;
-            case 7:// µÀ¾ßÀàĞÍÎªGrade-
+            case 7:// é“å…·ç±»å‹ä¸ºGrade-
                 Global_GameManager.Instance.AddScore(100);
                 break;
-            case 8:// µÀ¾ßÀàĞÍÎªGrade--
+            case 8:// é“å…·ç±»å‹ä¸ºGrade--
                 Global_GameManager.Instance.AddScore(10);
                 break;
         }
     }
 
     /// <summary>
-    /// ¼ì²é»ØÊÕÏßÂß¼­
+    /// æ£€æŸ¥å›æ”¶çº¿é€»è¾‘
     /// </summary>
     private void CheckRecycleLine()
     {
-        // »ØÊÕÏß¸ß¶È£¨ÓëPlayerCollisionÖĞµÄBorderGetLine±£³ÖÒ»ÖÂ£©
+        // å›æ”¶çº¿é«˜åº¦ï¼ˆä¸PlayerCollisionä¸­çš„BorderGetLineä¿æŒä¸€è‡´ï¼‰
         const float borderGetLine = 1.27f;
 
-        // ¼ì²éÍæ¼ÒÊÇ·ñÔÚ»ØÊÕÏßÖ®ÉÏ
+        // æ£€æŸ¥ç©å®¶æ˜¯å¦åœ¨å›æ”¶çº¿ä¹‹ä¸Š
         if (player != null && player.transform != null && !isAutoFlying)
         {
             Transform playerTransform = player.transform;
             if (playerTransform.position.y >= borderGetLine && !isCollecting)
             {
-                // Íæ¼ÒÔÚ»ØÊÕÏßÖ®ÉÏ£¬×Ô¶¯ÊÕ¼¯µÀ¾ß
+                // ç©å®¶åœ¨å›æ”¶çº¿ä¹‹ä¸Šï¼Œè‡ªåŠ¨æ”¶é›†é“å…·
                 FlyToPlayer(playerTransform, true);
             }
         }

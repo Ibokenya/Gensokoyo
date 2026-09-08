@@ -1,53 +1,54 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ReplaySystem;
 
 public class ClearAllBullet : MonoBehaviour
 {
     [SerializeField] 
     private List<float> clearTimes = new ();
-    public AudioClip clearClip;//ÇåÆÁÒôĞ§clip
+    public AudioClip clearClip;//æ¸…å±éŸ³æ•ˆclip
     private float currentMusicTime = 0f;
 
-    void Update()
+    void FixedUpdate()
     {
-        // ¸üĞÂµ±Ç°ÒôÀÖÊ±¼ä
+        // æ›´æ–°å½“å‰éŸ³ä¹æ—¶é—´
         currentMusicTime = Global_AudioManager.Instance.CurrentBGMTime;
 
-        // ¼ì²éÊÇ·ñµ½´ïÇåÆÁÊ±¼äµã
+        // æ£€æŸ¥æ˜¯å¦åˆ°è¾¾æ¸…å±æ—¶é—´ç‚¹
         CheckClearTimes();
     }
 
     /// <summary>
-    /// ¼ì²éÊÇ·ñµ½´ïÇåÆÁÊ±¼äµã
+    /// æ£€æŸ¥æ˜¯å¦åˆ°è¾¾æ¸…å±æ—¶é—´ç‚¹
     /// </summary>
     private void CheckClearTimes()
     {
-        // ±éÀúÊ±¼äµãÁĞ±í
+        // éå†æ—¶é—´ç‚¹åˆ—è¡¨
         for (int i = clearTimes.Count - 1; i >= 0; i--)
         {
             float targetTime = clearTimes[i];
-            // µ±ÒôÀÖÊ±¼ä´ïµ½»ò³¬¹ıÄ¿±êÊ±¼äÊ±£¬Ö´ĞĞÇåÆÁ²Ù×÷
+            // å½“éŸ³ä¹æ—¶é—´è¾¾åˆ°æˆ–è¶…è¿‡ç›®æ ‡æ—¶é—´æ—¶ï¼Œæ‰§è¡Œæ¸…å±æ“ä½œ
             if (currentMusicTime >= targetTime - 0.01f && currentMusicTime <= targetTime + 1f)
             {
-                // Ö´ĞĞÇåÆÁ²Ù×÷
+                // æ‰§è¡Œæ¸…å±æ“ä½œ
                 ClearEnemyBullet(true);
-                // ÒÆ³ıÒÑÖ´ĞĞµÄÊ±¼äµã£¬±ÜÃâÖØ¸´Ö´ĞĞ
+                // ç§»é™¤å·²æ‰§è¡Œçš„æ—¶é—´ç‚¹ï¼Œé¿å…é‡å¤æ‰§è¡Œ
                 clearTimes.RemoveAt(i);
             }
         }
     }
 
     /// <summary>
-    /// Çå¿ÕÆÁÄ»ÖĞµÄËùÓĞ×Óµ¯
+    /// æ¸…ç©ºå±å¹•ä¸­çš„æ‰€æœ‰å­å¼¹
     /// </summary>
     public void ClearScreenBullet(bool isPlaySound = true)
     {
-        // ÕÒµ½ËùÓĞµĞÈË×Óµ¯
+        // æ‰¾åˆ°æ‰€æœ‰æ•Œäººå­å¼¹
         GameObject[] enemyBullets = GameObject.FindGameObjectsWithTag("EnemyBullet");
         GameObject[] playerBullets = GameObject.FindGameObjectsWithTag("PlayerBullet");
 
-        // »ØÊÕËùÓĞµĞÈË×Óµ¯
+        // å›æ”¶æ‰€æœ‰æ•Œäººå­å¼¹
         foreach (GameObject bullet in enemyBullets)
         {
             if (bullet != null)
@@ -55,7 +56,7 @@ public class ClearAllBullet : MonoBehaviour
                 Global_ObjectPool.Instance.Recycle(bullet);
             }
         }
-        // »ØÊÕËùÓĞÍæ¼Ò×Óµ¯
+        // å›æ”¶æ‰€æœ‰ç©å®¶å­å¼¹
         foreach (GameObject bullet in playerBullets)
         {
             if (bullet != null)
@@ -69,12 +70,12 @@ public class ClearAllBullet : MonoBehaviour
     {
         if(isPlaySound)
         {
-         // ²¥·ÅÇåÆÁÒôĞ§
+         // æ’­æ”¾æ¸…å±éŸ³æ•ˆ
             Global_AudioManager.Instance.PlaySFX(clearClip);
         }
-        // ÕÒµ½ËùÓĞµĞÈË×Óµ¯
+        // æ‰¾åˆ°æ‰€æœ‰æ•Œäººå­å¼¹
         GameObject[] enemyBullets = GameObject.FindGameObjectsWithTag("EnemyBullet");
-        // »ØÊÕËùÓĞµĞÈË×Óµ¯
+        // å›æ”¶æ‰€æœ‰æ•Œäººå­å¼¹
         foreach (GameObject bullet in enemyBullets)
         {
             if (bullet != null)

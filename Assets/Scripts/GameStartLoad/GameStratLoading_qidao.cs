@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -7,13 +7,13 @@ public class GameStratLoading_qidao : MonoBehaviour
 {
     public TextMeshProUGUI T;
 
-    // ¸÷Í¨µÀ³õÊ¼·½ÏòÅäÖÃ£¨0=¼õ£¬1=Ôö£©
+    // å„é€šé“åˆå§‹æ–¹å‘é…ç½®ï¼ˆ0=å‡ï¼Œ1=å¢ï¼‰
     // private int _rFlag = 0;
     // private int _gFlag = 0;
     // private int _bFlag = 0;
     private int _aFlag = 0;
 
-    // ²½³¤ÅäÖÃ£¨¿É¶ÀÁ¢µ÷ÕûÃ¿¸öÍ¨µÀµÄËÙ¶È£©
+    // æ­¥é•¿é…ç½®ï¼ˆå¯ç‹¬ç«‹è°ƒæ•´æ¯ä¸ªé€šé“çš„é€Ÿåº¦ï¼‰
     // private readonly float _rStep = 1f / 255f;
     // private readonly float _gStep = 1f / 255f;
     // private readonly float _bStep = 1f / 255f;
@@ -24,12 +24,12 @@ public class GameStratLoading_qidao : MonoBehaviour
         UpdateTextColor();
     }
 
-    // ºËĞÄ·½·¨£ºÍ³Ò»´¦ÀíÑÕÉ«Ñ­»·
+    // æ ¸å¿ƒæ–¹æ³•ï¼šç»Ÿä¸€å¤„ç†é¢œè‰²å¾ªç¯
     void UpdateTextColor()
     {
         Color color = T.color;
-        // µ÷ÓÃÍ¨ÓÃ·½·¨´¦ÀíÃ¿¸öÍ¨µÀ£¬×Ô¶¯¸üĞÂÖµºÍ·½Ïòflag
-        // Õâ±ßÔİÊ±²»±ä¸ürgbÁË£¬²Ê²»À­¼¸µÄ²»ºÃ¿´
+        // è°ƒç”¨é€šç”¨æ–¹æ³•å¤„ç†æ¯ä¸ªé€šé“ï¼Œè‡ªåŠ¨æ›´æ–°å€¼å’Œæ–¹å‘flag
+        // è¿™è¾¹æš‚æ—¶ä¸å˜æ›´rgbäº†ï¼Œå½©ä¸æ‹‰å‡ çš„ä¸å¥½çœ‹
         //color.r = CycleColorChannel(color.r, ref _rFlag, _rStep);
         //color.g = CycleColorChannel(color.g, ref _gFlag, _gStep);
         //color.b = CycleColorChannel(color.b, ref _bFlag, _bStep);
@@ -37,27 +37,27 @@ public class GameStratLoading_qidao : MonoBehaviour
         T.color = color;
     }
 
-    // ²ÎÊı£ºcurrentValue=µ±Ç°Öµ£¬flag=·½Ïò±ê¼Ç£¨ÒıÓÃ´«µİ£©£¬step=±ä»¯²½³¤
+    // å‚æ•°ï¼šcurrentValue=å½“å‰å€¼ï¼Œflag=æ–¹å‘æ ‡è®°ï¼ˆå¼•ç”¨ä¼ é€’ï¼‰ï¼Œstep=å˜åŒ–æ­¥é•¿
     private float CycleColorChannel(float currentValue, ref int flag, float step)
     {
-        if (flag == 0) // ¼õÉÙ
+        if (flag == 0) // å‡å°‘
         {
             currentValue -= step;
             if (currentValue <= 0)
             {
                 currentValue = 0f;
-                flag = 1; // ÇĞ»»ÎªÔö¼Ó
+                flag = 1; // åˆ‡æ¢ä¸ºå¢åŠ 
             }
         }
-        else // Ôö¼Ó
+        else // å¢åŠ 
         {
             currentValue += step;
             if (currentValue >= 1)
             {
                 currentValue = 1f;
-                flag = 0; // ÇĞ»»Îª¼õÉÙ
+                flag = 0; // åˆ‡æ¢ä¸ºå‡å°‘
             }
         }
-        return Mathf.Clamp01(currentValue); // ×îÖÕ±ß½ç±£»¤
+        return Mathf.Clamp01(currentValue); // æœ€ç»ˆè¾¹ç•Œä¿æŠ¤
     }
 }

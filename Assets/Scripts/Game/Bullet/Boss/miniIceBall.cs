@@ -1,22 +1,23 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ReplaySystem;
 
 public class miniIceBall : MonoBehaviour
 {
-    public float moveSpeed = 5f; // ÒÆ¶¯ËÙ¶È
-    public float TurnInterval = 2f; // ×ªÏò¼ä¸ô
-    public Vector3 TargetPosition; // Ä¿±ê×ø±ê
-    public int maxHP = 50; // ÉúÃüÖµ
+    public float moveSpeed = 5f; // ç§»åŠ¨é€Ÿåº¦
+    public float TurnInterval = 2f; // è½¬å‘é—´éš”
+    public Vector3 TargetPosition; // ç›®æ ‡åæ ‡
+    public int maxHP = 50; // ç”Ÿå‘½å€¼
     public int hp;
-    public bool isMini = true; // ÊÇ·ñÎªminiÌ¬£¨ÊÇ·ñÓĞÕÛ·µ£©
+    public bool isMini = true; // æ˜¯å¦ä¸ºminiæ€ï¼ˆæ˜¯å¦æœ‰æŠ˜è¿”ï¼‰
     
     private Rigidbody2D rb2D;
-    private float timer = 0f; // ¼ÆÊ±Æ÷
-    private bool hasTurned = false; // ÊÇ·ñÒÑ×ªÏò
-    private bool isFused = false; // ÊÇ·ñÒÑÈÚºÏ
+    private float timer = 0f; // è®¡æ—¶å™¨
+    private bool hasTurned = false; // æ˜¯å¦å·²è½¬å‘
+    private bool isFused = false; // æ˜¯å¦å·²èåˆ
     
-    // ±ß½ç·¶Î§
+    // è¾¹ç•ŒèŒƒå›´
     private readonly float minX = -11f;
     private readonly float maxX = 5f;
     private readonly float minY = -7.5f;
@@ -27,7 +28,7 @@ public class miniIceBall : MonoBehaviour
         rb2D = GetComponent<Rigidbody2D>();
         if (rb2D != null && isMini)
         {
-            // Ö»ÓĞminiÌ¬µÄ×Óµ¯²ÅÉèÖÃ³õÊ¼ÏòÉÏµÄËÙ¶È
+            // åªæœ‰miniæ€çš„å­å¼¹æ‰è®¾ç½®åˆå§‹å‘ä¸Šçš„é€Ÿåº¦
             Vector2 direction = transform.up;
             rb2D.velocity = direction * moveSpeed;
         }
@@ -35,13 +36,13 @@ public class miniIceBall : MonoBehaviour
     
     void OnEnable()
     {
-        // µ±×Óµ¯´Ó¶ÔÏó³ØÈ¡³öÊ±£¬È·±£rb2DÒıÓÃ´æÔÚ
+        // å½“å­å¼¹ä»å¯¹è±¡æ± å–å‡ºæ—¶ï¼Œç¡®ä¿rb2Då¼•ç”¨å­˜åœ¨
         if (rb2D == null)
         {
             rb2D = GetComponent<Rigidbody2D>();
         }
         
-        // Ö»ÓĞminiÌ¬µÄ×Óµ¯²ÅÉèÖÃ³õÊ¼ÏòÉÏµÄËÙ¶È
+        // åªæœ‰miniæ€çš„å­å¼¹æ‰è®¾ç½®åˆå§‹å‘ä¸Šçš„é€Ÿåº¦
         if (rb2D != null && isMini)
         {
             Vector2 direction = transform.up;
@@ -49,17 +50,17 @@ public class miniIceBall : MonoBehaviour
         }
     }
 
-    void Update()
+    void FixedUpdate()
     {
         if (!isFused)
         {
-            // ¼ì²é±ß½ç
+            // æ£€æŸ¥è¾¹ç•Œ
             CheckBounds();
             
-            // Ö»ÓĞminiÌ¬µÄ×Óµ¯²ÅÓĞÕÛ·µĞĞÎª
+            // åªæœ‰miniæ€çš„å­å¼¹æ‰æœ‰æŠ˜è¿”è¡Œä¸º
             if (isMini && !hasTurned)
             {
-                timer += Time.deltaTime;
+                timer += SimClock.FixedTickDt;
                 if (timer >= TurnInterval)
                 {
                     TurnToTarget();
@@ -70,23 +71,23 @@ public class miniIceBall : MonoBehaviour
     }
     
     /// <summary>
-    /// ×ªÏòÄ¿±êÎ»ÖÃ
+    /// è½¬å‘ç›®æ ‡ä½ç½®
     /// </summary>
     private void TurnToTarget()
     {
         if (rb2D != null)
         {
             Vector2 direction = (TargetPosition - transform.position).normalized;
-            // Ğı×ª×Óµ¯³¯ÏòÄ¿±ê
+            // æ—‹è½¬å­å¼¹æœå‘ç›®æ ‡
             float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f;
             transform.rotation = Quaternion.Euler(0, 0, angle);
-            // ÉèÖÃËÙ¶È£¬±£³ÖÔ­ËÙ·É»Ø
+            // è®¾ç½®é€Ÿåº¦ï¼Œä¿æŒåŸé€Ÿé£å›
             rb2D.velocity = direction * moveSpeed;
         }
     }
     
     /// <summary>
-    /// ¼ì²é±ß½ç£¬³¬³ö·¶Î§Ôò»ØÊÕ
+    /// æ£€æŸ¥è¾¹ç•Œï¼Œè¶…å‡ºèŒƒå›´åˆ™å›æ”¶
     /// </summary>
     private void CheckBounds()
     {
@@ -98,9 +99,9 @@ public class miniIceBall : MonoBehaviour
     }
     
     /// <summary>
-    /// ÊÜÉË·½·¨
+    /// å—ä¼¤æ–¹æ³•
     /// </summary>
-    /// <param name="damage">ÉËº¦Öµ</param>
+    /// <param name="damage">ä¼¤å®³å€¼</param>
     public void TakeDamage(int damage)
     {
         hp -= damage;
@@ -111,7 +112,7 @@ public class miniIceBall : MonoBehaviour
     }
     
     /// <summary>
-    /// »ØÊÕ×Óµ¯
+    /// å›æ”¶å­å¼¹
     /// </summary>
     public void Recycle()
     {
@@ -126,16 +127,16 @@ public class miniIceBall : MonoBehaviour
     }
     
     /// <summary>
-    /// ÏòÖ¸¶¨·½Ïò·¢Éä
+    /// å‘æŒ‡å®šæ–¹å‘å‘å°„
     /// </summary>
-    /// <param name="direction">·½ÏòÏòÁ¿</param>
+    /// <param name="direction">æ–¹å‘å‘é‡</param>
     public void FireInDirection(Vector2 direction)
     {
         if (rb2D != null)
         {
-            // ¹éÒ»»¯·½ÏòÏòÁ¿
+            // å½’ä¸€åŒ–æ–¹å‘å‘é‡
             direction = direction.normalized;
-            // ×Ô»ú¾Ñ
+            // è‡ªæœºç‹™
             rb2D.velocity = direction * moveSpeed;
             isFused = false;
         }
@@ -143,12 +144,12 @@ public class miniIceBall : MonoBehaviour
 
     void OnDisable()
     {
-        // ÖØÖÃ²ÎÊı
+        // é‡ç½®å‚æ•°
         hasTurned = false;
         isFused = false;
-        isMini = true; // ÖØÖÃÎªminiÌ¬
+        isMini = true; // é‡ç½®ä¸ºminiæ€
         timer = 0f;
-        hp = maxHP; // ÖØÖÃHPÎªÄ¬ÈÏÖµ
+        hp = maxHP; // é‡ç½®HPä¸ºé»˜è®¤å€¼
         if (rb2D != null)
         {
             rb2D.velocity = Vector2.zero;
