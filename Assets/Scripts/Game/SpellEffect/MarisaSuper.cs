@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ReplaySystem;
 
 /// <summary>
 /// 魔理沙决死技能脚本
@@ -32,6 +33,9 @@ public class MarisaSuper : MonoBehaviour
     
     private List<GameObject> Enemys => Global_GameManager.Instance.EnemyList;// 敌人列表
     
+    // 🔴 用 SimTick 差分控制出伤节奏 —— 决死期间 timeScale=0 但 SimClock 继续 tick
+    private float lastSimTick;
+    
     void Awake()
     {
         // 获取子物体上的Animator组件
@@ -55,17 +59,30 @@ public class MarisaSuper : MonoBehaviour
     
     void FixedUpdate()
     {
-        // 检查是否需要开始播放动画
+        // 🔴 原来这里的逻辑搬到 Update 了 —— 决死期间 timeScale=0 停 FixedUpdate
+    }
+
+    /// <summary>
+    /// 🔴 从 FixedUpdate 搬过来 —— Update 不受 timeScale 影响
+    /// 用 SimClock.SimTick 差分控制 Timer 节奏（每 tick 减一次，50Hz）
+    /// </summary>
+    void Update()
+    {
+        // 设置 Animator 参数 —— 必须在 Update 里（决死期间 FixedUpdate 停）
         if (animator != null)
         {
-            // 设置Animator的IsAnime参数
             animator.SetBool("IsAnime", IsAnime);
         }
         
-        // 如果正在播放，处理出伤逻辑
+        // 出伤逻辑 —— 用 SimTick 差分控制，确保 50Hz 节奏，决死期间继续跑
         if (IsAnime)
         {
-            HandleDamage();
+            float curTick = SimClock.SimTick;
+            if (curTick != lastSimTick)
+            {
+                lastSimTick = curTick;
+                HandleDamage();
+            }
         }
     }
     

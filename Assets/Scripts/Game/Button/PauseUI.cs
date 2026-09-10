@@ -55,6 +55,10 @@ public class PauseUI : MonoBehaviour
         pastState = Global_GameManager.Instance.state;
         Global_GameManager.Instance.state = State.Pause;
         
+        // 🔴 暂停期间停止录制 —— AddSkipTickReason() 让 LateUpdate return early
+        // 不推进 tick、不写入 recordBuffer、不推进回放文件位置
+        ReplayManager.AddSkipTickReason();
+        
         // 记录当前BGM状态
         if(Global_AudioManager.Instance != null)
         {
@@ -75,6 +79,9 @@ public class PauseUI : MonoBehaviour
 
         isPaused = false;
         Time.timeScale = 1;
+        
+        // 🔴 恢复录制 —— RemoveSkipTickReason()
+        ReplayManager.RemoveSkipTickReason();
         
         // 恢复播放之前的BGM
         if(Global_AudioManager.Instance != null && !string.IsNullOrEmpty(currentBGMName))

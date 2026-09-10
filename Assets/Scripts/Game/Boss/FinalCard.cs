@@ -74,7 +74,7 @@ public class FinalCard : MonoBehaviour
         // 停止所有协程
         StopAllCoroutines();
         // 取消所有 Invoke 调用
-        CancelInvoke();
+        SimTimer.CancelAll();
         
         // 停止 BossShootSystem 中的所有射击协程
         if (bossShootSystem != null)
@@ -214,7 +214,7 @@ public class FinalCard : MonoBehaviour
             }
             
             // 等待攻击间隔
-            yield return new WaitForSeconds(attackInterval);
+            yield return new WaitForSecondsSim(attackInterval);
         }
     }
 }

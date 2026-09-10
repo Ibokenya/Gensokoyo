@@ -13,7 +13,9 @@ public class MagicAttack : MonoBehaviour
     public GameObject markerPrefab; // 瞄准标记预制体
     
     [Header("神秘珠预制体")]
-    public GameObject pearlPrefab; // 神秘珠预制体
+    public GameObject pearlPrefab;  // 神秘珠预制体
+
+    private long enterMagicHandle; // SimTimer 句柄：进入魔法态
     
     [Header("场景对象")]
     public GameObject evilEye; // 场景中的恶魔之眼对象
@@ -72,15 +74,15 @@ public class MagicAttack : MonoBehaviour
             }
         }
         
-        // 2秒后进入魔法态
-        Invoke(nameof(EnterMagicState), 2f);
+        // 2秒后进入魔法态（SimTimer 确定性 tick 调度）
+        enterMagicHandle = SimTimer.Once(() => EnterMagicState(), 100);
     }
 
     void OnDisable()
     {
         Time.timeScale = 1f;
-        // 取消Invoke调用
-        CancelInvoke(nameof(EnterMagicState));
+        // 取消 SimTimer 定时器
+        if (enterMagicHandle != 0) SimTimer.Cancel(enterMagicHandle);
         
         // 清理所有活跃的标记
         ClearAllMarkers();
@@ -321,7 +323,7 @@ public class MagicAttack : MonoBehaviour
     /// <param name="pearlPrefab">神秘珠预制件</param>
     private IEnumerator DelayedFadeIn(GameObject marker, float delay, GameObject swordPrefab)
     {
-        yield return new WaitForSeconds(delay);
+        yield return new WaitForSecondsSim(delay);
         yield return StartCoroutine(FadeInMarker(marker));
         
         // 淡入完成后设置神秘珠预制件并生成神秘珠

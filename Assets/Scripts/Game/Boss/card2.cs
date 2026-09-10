@@ -1,6 +1,7 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ReplaySystem;
 
 public class card2 : MonoBehaviour
 {
@@ -77,7 +78,7 @@ public class card2 : MonoBehaviour
         StopAllCoroutines();
 
         // 取消所有 Invoke 调用
-        CancelInvoke();
+        SimTimer.CancelAll();
         bossShootSystem.HideColdAir();
 
         // 停止 BossShootSystem 中的所有射击协程
@@ -125,7 +126,7 @@ public class card2 : MonoBehaviour
     private IEnumerator StartCometAttackWithDelay()
     {
         // 等待启动延迟时间
-        yield return new WaitForSeconds(cometStartDelay);
+        yield return new WaitForSecondsSim(cometStartDelay);
 
         // 启动彗星攻击
         bossShootSystem.StartCometAttack(cometPrefab, linePrefab, cometAttackInterval, cometSpawnY);
@@ -145,7 +146,7 @@ public class card2 : MonoBehaviour
     private IEnumerator SnowFlakeAttackLoop()
     {
         // 等待移动到目标位置
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSecondsSim(1f);
 
         while (true)
         {
@@ -156,7 +157,7 @@ public class card2 : MonoBehaviour
             }
 
             // 等待攻击间隔
-            yield return new WaitForSeconds(attackInterval);
+            yield return new WaitForSecondsSim(attackInterval);
         }
     }
 

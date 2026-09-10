@@ -41,6 +41,7 @@ public class AboutDialog : MonoBehaviour
     private List<DialogData> currentDialogList;
     private int currentDialogIndex = 0;
     private bool isDialogActive = false;
+    private bool lastZHeld = false; // 🔴 自算边沿，不依赖 GetKeyDown
 
     public ContinueBG continueBG;// 继续背景脚本
     public Game1 game1;// 游戏1脚本
@@ -55,6 +56,14 @@ public class AboutDialog : MonoBehaviour
 
     private void OnEnable()
     {
+        // 🔴 dialog 期间让 ReplayManager 跳过 tick —— 录制时不录 dialog，回放时不推进回放文件
+        ReplayManager.AddSkipTickReason();
+        // 🔴 回放期间：强制 Ctrl held 让对话自动快进
+        if (ReplayManager.Instance != null &&
+            ReplayManager.Instance.CurrentMode == ReplayManager.Mode.Playback &&
+            ReplayManager.Instance.replay != null)
+            ReplayManager.Instance.replay.ForceCtrlHeld = true;
+
         // 开始淡出背景音乐
         StartCoroutine(FadeOutBGM());
         Global_GameManager.Instance.state = State.Dialog;
@@ -88,14 +97,20 @@ public class AboutDialog : MonoBehaviour
             return;
         }
 
+        // 🔴 GetKeyDown(Z) 自算边沿 —— 不依赖 edgesDown
+        bool zHeld = ReplayManager.Input.GetKey(LogicalKey.Z);
+        bool justPressedZ = zHeld && !lastZHeld;
+        lastZHeld = zHeld;
+
         // 按Z键切换到下一条对话
-        if (ReplayManager.Input.GetKeyDown(LogicalKey.Z))
+        if (justPressedZ)
         {
             NextDialog();
         }
         
-        // 按住左Ctrl键快速跳过对话（每30帧跳过一次）
-        if (Input.GetKey(KeyCode.LeftControl))
+        // 🔴 按住 Ctrl 键快速跳过对话（每 30 tick 跳过一次）
+        // 录制时玩家按左 Ctrl；回放时 ReplayInputProvider.ForceCtrlHeld 强制 held
+        if (ReplayManager.Input.GetKey(LogicalKey.Ctrl))
         {
             frameCount++;
             if (frameCount >= 30)
@@ -381,6 +396,12 @@ public class AboutDialog : MonoBehaviour
     private void OnDisable()
     {
         isDialogActive = false;
+
+        // 🔴 恢复录制/回放 tick 推进
+        ReplayManager.RemoveSkipTickReason();
+        // 🔴 恢复回放 Ctrl 覆盖
+        if (ReplayManager.Instance != null && ReplayManager.Instance.replay != null)
+            ReplayManager.Instance.replay.ForceCtrlHeld = false;
     }
 }
 

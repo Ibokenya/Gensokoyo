@@ -45,6 +45,7 @@ public class GunAnime : MonoBehaviour
     private bool isShifted = false;// 是否按下Shift
     public bool IsShiftedNow => isShifted;// 是否按下Shift
     public bool isExitingMagic = false; // 是否正在退出魔法状态
+    private bool lastShiftHeld = false;  // 🔴 上一帧 Shift held —— 自算边沿，不依赖 edgesDown/Up
 
     void OnEnable()
     {
@@ -118,24 +119,32 @@ public class GunAnime : MonoBehaviour
 
     private void CheckUpdate()
     {
-        if(ReplayManager.Input.GetKeyDown(LogicalKey.Shift))
+        // 🔴 用 GetKey(held) 读 Shift，自算边沿 —— 不依赖 edgesDown/Up
+        // held 状态跨帧稳定，FixedUpdate 50Hz 不会漏读
+        bool shiftHeld = ReplayManager.Input.GetKey(LogicalKey.Shift);
+        bool justPressed = shiftHeld && !lastShiftHeld;   // 上升沿：本帧 held 上一帧没 held
+        bool justReleased = !shiftHeld && lastShiftHeld;  // 下降沿：本帧没 held 上一帧 held
+        lastShiftHeld = shiftHeld;
+
+        // isShifted 直接 = held（持续型状态，射击模式靠它判断）
+        isShifted = shiftHeld;
+
+        if (justPressed)
         {
-            isShifted = true;
-            if(Index==0)// 如果是灵梦常态
+            if (Index == 0)// 如果是灵梦常态
             {
                 UpdateGunPos();
             }
-            if(Index==1 && !isExitingMagic)// 如果是魔理沙常态按下Shift进入七曜态
+            if (Index == 1 && !isExitingMagic)// 如果是魔理沙常态按下Shift进入七曜态
             {
                 Index = 2;
                 SwitchGun();
                 UpdateGunPos();
             }
         }
-        else if(ReplayManager.Input.GetKeyUp(LogicalKey.Shift))
+        if (justReleased)
         {
-            isShifted = false;
-            if(Index==2 && !isExitingMagic)// 如果是七曜态松开Shift进入魔理沙常态
+            if (Index == 2 && !isExitingMagic)// 如果是七曜态松开Shift进入魔理沙常态
             {
                 // 不立即切换，由MagicAnime完成退出动画后调用SwitchToMarisaNormal
                 isExitingMagic = true;
@@ -305,11 +314,22 @@ public class GunAnime : MonoBehaviour
 
     private void CancelGun(State state)
     {
-        NormalGuns[0].SetActive(false);
-        NormalGuns[1].SetActive(false);
-        ReimuGun.SetActive(false);
-        MarisaGun.SetActive(false);
-        ShootNormal.SetLimited(true);
-        Invoke(nameof(SwitchGun), 1f);
+        // 🔴 死亡时玩家 GameObject 可能被 Destroy，SetActive 要先判 activeInHierarchy
+        if (NormalGuns != null && NormalGuns.Count >= 2)
+        {
+            if (NormalGuns[0] != null && NormalGuns[0].activeInHierarchy) NormalGuns[0].SetActive(false);
+            if (NormalGuns[1] != null && NormalGuns[1].activeInHierarchy) NormalGuns[1].SetActive(false);
+        }
+        if (ReimuGun != null && ReimuGun.activeInHierarchy) ReimuGun.SetActive(false);
+        if (MarisaGun != null && MarisaGun.activeInHierarchy) MarisaGun.SetActive(false);
+        if (ShootNormal != null) ShootNormal.SetLimited(true);
+
+        // 🔴 延迟 SwitchGun —— 用 this 捕获，回调里先判 destroyed
+        var gunAnime = this;
+        SimTimer.Once(() =>
+        {
+            if (gunAnime == null) return;  // 玩家对象已销毁
+            gunAnime.SwitchGun();
+        }, 50);
     }
 }

@@ -291,7 +291,7 @@ public class CreateEnemy : MonoBehaviour
             // 如果不是最后一个敌人，等待生成间隔
             if (i < config.spawnCount - 1 && config.spawnInterval > 0f)
             {
-                yield return new WaitForSeconds(config.spawnInterval);
+                yield return new WaitForSecondsSim(config.spawnInterval);
             }
         }
     }
@@ -345,6 +345,14 @@ public class CreateEnemy : MonoBehaviour
                 {
                     enemyShoot.SetPlayer(player);
                 }
+                // 🔴 spawner 层消费 GameRNG，通过 SetRngOffsets 注入
+                // 原因：spawner 是 for 循环顺序调用，GameRNG 消费顺序 100% 确定
+                // 而 EnemyShoot.FixedUpdate 在多敌人同帧时执行顺序不确定
+                enemyShoot.SetRngOffsets(
+                    GameRNG.Range(0, 6),
+                    GameRNG.Range(-20f, 20f),
+                    GameRNG.Range(-0.1f, 0.1f)
+                );
             }
         }
     }

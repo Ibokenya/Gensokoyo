@@ -1,6 +1,7 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ReplaySystem;
 
 public class card1 : MonoBehaviour
 {
@@ -59,7 +60,7 @@ public class card1 : MonoBehaviour
         // 停止所有协程
         StopAllCoroutines();
         // 取消所有 Invoke 调用
-        CancelInvoke();
+        SimTimer.CancelAll();
         // 恢复所有陨石的重力
         if (bossShootSystem != null)
         {

@@ -53,13 +53,19 @@ public class ReimuSuper : MonoBehaviour
     
     void FixedUpdate()
     {     
-        // 检查是否需要开始播放动画
+        // 🔴 逻辑搬到 Update 了 —— 决死期间 timeScale=0 停 FixedUpdate
+    }
+
+    /// <summary>
+    /// 🔴 从 FixedUpdate 搬过来 —— Update 不受 timeScale 影响
+    /// 决死期间亚空穴要继续绑定玩家位置
+    /// </summary>
+    void Update()
+    {     
         if (animator != null)
         {
-            // 设置Animator的IsAnime参数
             animator.SetBool("IsAnime", IsAnime);
         }
-        // 如果正在播放，处理亚空穴绑定
         if (IsAnime)
         {
             if (player != null && spaceEye != null)
@@ -147,7 +153,7 @@ public class ReimuSuper : MonoBehaviour
     private IEnumerator HuntEnemiesCoroutine()
     {
         // 记录协程开始时间（用于控制退治效果显示时机）
-        float startTime = Time.realtimeSinceStartup;
+        float startTime = SimClock.SimTime;
         
         // 保存当前时间缩放
         originalTimeScale = Time.timeScale;
@@ -198,7 +204,7 @@ public class ReimuSuper : MonoBehaviour
                     if (enemy != null)
                     {
                         // 等待攻击效果间隔
-                        yield return new WaitForSecondsRealtime(attackEffectInterval);
+                        yield return new WaitForSecondsSim(attackEffectInterval);
                         
                         // 查找可用的攻击效果对象
                         List<GameObject> availableEffects = new List<GameObject>();
@@ -258,12 +264,12 @@ public class ReimuSuper : MonoBehaviour
             else
             {
                 // 计算从协程开始到现在的时间
-                float elapsedTime = Time.realtimeSinceStartup - startTime;
+                float elapsedTime = SimClock.SimTime - startTime;
                 
                 // 如果还没到2秒，等待剩余时间
                 if (elapsedTime < 2f)
                 {
-                    yield return new WaitForSecondsRealtime(2f - elapsedTime);
+                    yield return new WaitForSecondsSim(2f - elapsedTime);
                 }
                 
                 // 没有敌人时，激活退治效果（至少在动画开始后2秒）
@@ -273,12 +279,12 @@ public class ReimuSuper : MonoBehaviour
                 }
                 
                 // 等待一小段时间后停止猎杀
-                yield return new WaitForSecondsRealtime(0.5f);
+                yield return new WaitForSecondsSim(0.5f);
                 break; // 退出猎杀循环
             }
             
             // 等待一段时间后再开始下一轮攻击
-            yield return new WaitForSecondsRealtime(attackEffectInterval * 2);
+            yield return new WaitForSecondsSim(attackEffectInterval * 2);
         }
     }
     
@@ -287,7 +293,7 @@ public class ReimuSuper : MonoBehaviour
     /// </summary>
     private IEnumerator DisableAttackEffectAndDamage(GameObject attackEffect, List<GameObject> activeAttackEffects, GameObject enemy)
     {
-        yield return new WaitForSecondsRealtime(attackEffectDuration);
+        yield return new WaitForSecondsSim(attackEffectDuration);
         
         // 对敌人造成伤害
         if (enemy != null)

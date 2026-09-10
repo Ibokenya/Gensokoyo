@@ -32,7 +32,7 @@ public class AimPointAttack : MonoBehaviour
 
     void OnDisable()
     {
-        CancelInvoke();
+        SimTimer.CancelAll();
 
         // 回收当前魔法珠实例
         if (pearl != null && Global_ObjectPool.Instance != null)
@@ -226,7 +226,7 @@ public class AimPointAttack : MonoBehaviour
         }
 
         float randomDelay = GameRNG.Range(reuseDelayMin, reuseDelayMax);
-        yield return new WaitForSeconds(randomDelay);
+        yield return new WaitForSecondsSim(randomDelay);
 
         if (gameObject.activeInHierarchy)
         {
@@ -239,7 +239,7 @@ public class AimPointAttack : MonoBehaviour
     /// </summary>
     public void SetPearlPrefab(GameObject prefab)
     {
-        CancelInvoke(nameof(SpawnPearl));
+        SimTimer.CancelAll();
         spriteRenderer = GetComponent<SpriteRenderer>();
 
         // 存储预制体引用（而不是实例）

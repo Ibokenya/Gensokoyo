@@ -10,6 +10,7 @@ public class MarisaShoot : MonoBehaviour
 
     private Laser laser; // 激光组件引用
     private bool isLaserActive = false; // 激光是否激活
+    private bool lastZHeld = false; // 🔴 自算边沿，不依赖 GetKeyDown/Up
 
     void OnEnable()
     {
@@ -26,16 +27,15 @@ public class MarisaShoot : MonoBehaviour
         if(Global_GameManager.Instance != null && 
         Global_GameManager.Instance.state != State.Gaming && 
         Global_GameManager.Instance.state != State.NoDead) return;
-        // 检测 Z 键按下
-        if (ReplayManager.Input.GetKeyDown(LogicalKey.Z))
-        {
-            CreatLaser();
-        }
-        // 检测 Z 键抬起
-        else if (ReplayManager.Input.GetKeyUp(LogicalKey.Z))
-        {
-            CleanLaser();
-        }
+
+        // 🔴 GetKeyDown/Up 自算边沿 —— 不依赖 edgesDown/Up
+        bool zHeld = ReplayManager.Input.GetKey(LogicalKey.Z);
+        bool justPressedZ = zHeld && !lastZHeld;
+        bool justReleasedZ = !zHeld && lastZHeld;
+        lastZHeld = zHeld;
+
+        if (justPressedZ) CreatLaser();
+        else if (justReleasedZ) CleanLaser();
     }
 
     private void CreatLaser()

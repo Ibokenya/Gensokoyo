@@ -160,7 +160,7 @@ public class LightCircle : MonoBehaviour
             currentSpriteIndex = (currentSpriteIndex + 1) % circleSprites.Count;
             
             // 根据速度等待
-            yield return new WaitForSeconds(1f / config.animationSpeed);
+            yield return new WaitForSecondsSim(1f / config.animationSpeed);
         }
     }
     

@@ -203,7 +203,7 @@ public class BossShootSystem : MonoBehaviour
             }
             
             // 等待射击间隔
-            yield return new WaitForSeconds(shoot_interval);
+            yield return new WaitForSecondsSim(shoot_interval);
         }
     }
 #endregion
@@ -245,7 +245,7 @@ public class BossShootSystem : MonoBehaviour
                 currentSpriteIndex = (currentSpriteIndex + 1) % icePointSprites.Count;
             }
             
-            yield return new WaitForSeconds(animationSpeed);
+            yield return new WaitForSecondsSim(animationSpeed);
         }
     }
     
@@ -322,7 +322,7 @@ public class BossShootSystem : MonoBehaviour
     private IEnumerator IcePointShootCoroutine(GameObject bullet2, float interval1, float interval2, float bullet2Speed = -1f, float rotationSpeed = 60f)
     {
         // 等待 interval1 后开始发射预制件2
-        yield return new WaitForSeconds(interval1);
+        yield return new WaitForSecondsSim(interval1);
         
         while (true)
         {
@@ -339,7 +339,7 @@ public class BossShootSystem : MonoBehaviour
                 }
             }      
             // 等待 interval2 后再次发射
-            yield return new WaitForSeconds(interval2);
+            yield return new WaitForSecondsSim(interval2);
         }
     }
     
@@ -430,7 +430,7 @@ public class BossShootSystem : MonoBehaviour
             }
             
             // 稍微延迟生成下一个陨石
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSecondsSim(0.1f);
         }
         
         // 等待所有陨石到达目标位置
@@ -541,7 +541,7 @@ public class BossShootSystem : MonoBehaviour
             }
             
             // 等待射击间隔
-            yield return new WaitForSeconds(shootInterval);
+            yield return new WaitForSecondsSim(shootInterval);
         }
     } 
 #endregion
@@ -657,7 +657,7 @@ public class BossShootSystem : MonoBehaviour
                     StartBulletWave(waveBullets, currentBossPosition);
                 }
             }
-            yield return new WaitForSeconds(shootInterval);
+            yield return new WaitForSecondsSim(shootInterval);
         }
     }
 #endregion
@@ -733,7 +733,7 @@ public class BossShootSystem : MonoBehaviour
         }
         
         // 等待3秒，让子弹完成飞行和折返
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSecondsSim(3f);
         
         // 回收所有剩余的子弹
         foreach (var bullet in wave.bullets)
@@ -846,7 +846,7 @@ public class BossShootSystem : MonoBehaviour
                 Debug.Log("boss在锁血状态或符卡阶段，不生成雪花");
             }
             // 短暂延迟，避免所有雪花同时生成
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSecondsSim(0.1f);
         }
     }
     
@@ -1023,7 +1023,7 @@ public class BossShootSystem : MonoBehaviour
             }
             
             // 等待攻击间隔
-            yield return new WaitForSeconds(cometAttackInterval);
+            yield return new WaitForSecondsSim(cometAttackInterval);
         }
     }
     
@@ -1171,7 +1171,7 @@ public class BossShootSystem : MonoBehaviour
                 while (true)
                 {
                     // 等待射击间隔
-                    yield return new WaitForSeconds(shootInterval);
+                    yield return new WaitForSecondsSim(shootInterval);
                     
                     // 重新计算玩家当前角度和区间
                     direction = player.transform.position - boss.transform.position;
@@ -1911,8 +1911,8 @@ public class BossShootSystem : MonoBehaviour
         // 停止所有协程
         StopAllCoroutines();
         
-        // 取消所有 Invoke 调用
-        CancelInvoke();
+        // 取消所有 SimTimer 定时器
+        SimTimer.CancelAll();
         
         // 停止所有子弹波次
         StopAllBulletWaves();

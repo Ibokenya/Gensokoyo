@@ -1,6 +1,7 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ReplaySystem;
 
 public class none1 : MonoBehaviour
 {
@@ -45,8 +46,8 @@ public class none1 : MonoBehaviour
     {
         // 停止所有协程
         StopAllCoroutines();
-        // 取消所有 Invoke 调用
-        CancelInvoke();
+        // 取消所有 SimTimer 定时器
+        SimTimer.CancelAll();
         
         // 停止 BossShootSystem 中的所有射击协程
         if (bossShootSystem != null)
@@ -68,7 +69,7 @@ public class none1 : MonoBehaviour
             // 启动冰点射击（传递参数）
             bossShootSystem.IcePointAttack();
 
-            Invoke(nameof(IcePointAttack), 2f);
+            SimTimer.Once(() => IcePointAttack(), 100);
             
         }
     }

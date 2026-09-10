@@ -69,13 +69,27 @@ public class SpellCardEffect : MonoBehaviour
 
     void FixedUpdate()
     {
+        // 🔴 决死期间 Time.timeScale=0 会停 FixedUpdate —— 所以"读按键释放符卡"逻辑必须在 Update 里
+        // FixedUpdate 里只保留非时间敏感的逻辑（比如检查 Pause 状态提前返回）
+        if (Global_GameManager.Instance.state == State.Pause)
+        {
+            return;
+        }
+    }
+
+    /// <summary>
+    /// 🔴 从 FixedUpdate 搬过来的技能释放逻辑 —— Update 里执行。
+    /// 原因：决死期间 Time.timeScale=0 会停 FixedUpdate，Update 仍然跑。
+    /// 这是极少数必须在 Update 里读按键的玩法逻辑。
+    /// </summary>
+    void Update()
+    {
         if (Global_GameManager.Instance.state == State.Pause)
         {
             return;
         }
 
-        // 🔴 诊断日志：每帧都打一次 Spell 键状态（调试完删）
-        // LiveInputProvider 里 edgesDown 是在 Update.SampleFromUnity 里算的，到 SpellCardEffect.FixedUpdate 时应该还在
+        // 🔴 诊断日志：每帧都打一次 Spell 键状态
         var inp = ReplayManager.Input;
         if (inp.GetKey(LogicalKey.X))
             Debug.Log($"[SpellCardEffect] X held ✓ mode={ReplayManager.Instance?.CurrentMode} tick={SimClock.SimTick}");
@@ -304,6 +318,9 @@ public class SpellCardEffect : MonoBehaviour
     /// </summary>
     private IEnumerator HitDelayCoroutine()
     {
+        // 🔴 必须用 WaitForSecondsRealtime —— 决死期间 Time.timeScale=0，SimClock 不推进，
+        // WaitForSecondsSim 会永远卡住。原始代码就是用 WaitForSecondsRealtime 做的"真实时间倒计时"。
+        // 这是极少数保留 WaitForSecondsRealtime 的玩法协程——决死倒计时属于"不管游戏停不停都要跑"的逻辑。
         yield return new WaitForSecondsRealtime(hitDelayTime);
 
         if (isHitDelayActive && Global_GameManager.Instance.state != State.NoDead)

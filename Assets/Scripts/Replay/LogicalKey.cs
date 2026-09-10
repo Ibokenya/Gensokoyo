@@ -3,41 +3,46 @@ using UnityEngine;
 namespace ReplaySystem
 {
     /// <summary>
-    /// 逻辑键位枚举。固定 8 位掩码位序，与玩家物理按键配置解耦。
-    /// LiveInputProvider 通过硬编码映射（或后期 JSON 配置）把 Unity KeyCode 映射到这些逻辑位。
+    /// 逻辑键位枚举。原 8 位（Up/Down/Left/Right/Shift/Z/X/Escape），新增 Ctrl=8 位。
+    /// 回放文件格式仍保持每 tick 1 字节（低 8 位），Ctrl 不存文件（回放时 dialog 期间强制 held）。
     /// </summary>
     public enum LogicalKey : byte
     {
-        Up    = 0, // 上
-        Down  = 1, // 下
-        Left  = 2, // 左
-        Right = 3, // 右
+        Up     = 0, // 上
+        Down   = 1, // 下
+        Left   = 2, // 左
+        Right  = 3, // 右
         Shift  = 4, // 慢速（Shift）
-        Z  = 5, // 射击（Z）
-        X = 6, // 符卡（X）
-        Escape= 7  // 取消/暂停（Esc）
+        Z      = 5, // 射击（Z）
+        X      = 6, // 符卡（X）
+        Escape = 7, // 取消/暂停（Esc）
+        Ctrl   = 8  // 对话快进（左 Ctrl）—— 不存回放文件，回放 dialog 期间强制 held
     }
 
-    /// <summary>掩码位辅助，按 LogicalKey 顺序编码的 8-bit 状态</summary>
+    /// <summary>掩码位辅助。ushort 足够存 Ctrl=第 9 位，回放文件只存低 8 位。</summary>
     public static class LogicalKeyMask
     {
-        public const byte Up     = 1 << 0;
-        public const byte Down   = 1 << 1;
-        public const byte Left   = 1 << 2;
-        public const byte Right  = 1 << 3;
-        public const byte Shift   = 1 << 4;
-        public const byte Z   = 1 << 5;
-        public const byte X  = 1 << 6;
-        public const byte Escape = 1 << 7;
+        public const ushort Up     = 1 << 0;
+        public const ushort Down   = 1 << 1;
+        public const ushort Left   = 1 << 2;
+        public const ushort Right  = 1 << 3;
+        public const ushort Shift  = 1 << 4;
+        public const ushort Z      = 1 << 5;
+        public const ushort X      = 1 << 6;
+        public const ushort Escape = 1 << 7;
+        public const ushort Ctrl   = 1 << 8;
 
-        public static bool Has(byte mask, LogicalKey key)
-            => (mask & (byte)(1 << (int)key)) != 0;
+        /// <summary>只取低 8 位（回放文件存储用）</summary>
+        public static byte LowByte(ushort mask) => (byte)(mask & 0xFF);
 
-        public static byte Set(byte mask, LogicalKey key)
-            => (byte)(mask | (byte)(1 << (int)key));
+        public static bool Has(ushort mask, LogicalKey key)
+            => (mask & (ushort)(1 << (int)key)) != 0;
 
-        public static byte Clear(byte mask, LogicalKey key)
-            => (byte)(mask & ~(byte)(1 << (int)key));
+        public static ushort Set(ushort mask, LogicalKey key)
+            => (ushort)(mask | (ushort)(1 << (int)key));
+
+        public static ushort Clear(ushort mask, LogicalKey key)
+            => (ushort)(mask & ~(ushort)(1 << (int)key));
     }
 
     /// <summary>
@@ -46,8 +51,8 @@ namespace ReplaySystem
     /// </summary>
     public interface IInputProvider
     {
-        /// <summary>当前 tick 持有的按键掩码（8-bit）</summary>
-        byte HeldMask { get; }
+        /// <summary>当前 tick 持有的按键掩码（ushort，Ctrl=第 8 位）</summary>
+        ushort HeldMask { get; }
 
         bool GetKey     (LogicalKey key);
         bool GetKeyDown (LogicalKey key);

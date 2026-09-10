@@ -22,7 +22,9 @@ public class EnemyShoot : MonoBehaviour
     private int enemyIndex = 0; // 敌人在波次中的索引
     private float angleOffset = 0f; // 角度偏移
     private float timeOffset = 0f; // 时间偏移
-    
+    // 🔴 不再在 FixedUpdate 消费 GameRNG —— spawner (CreateEnemy) 负责消费并通过 SetRngOffsets 注入
+    // 原因：多个 EnemyShoot 同帧激活时 Unity 不保证 FixedUpdate 执行顺序
+
     void OnEnable()
     {
         // 重置射击计时器
@@ -33,12 +35,6 @@ public class EnemyShoot : MonoBehaviour
         currentSprialAngle = 0f;
         // 重置配置索引
         currentShootConfigIndex = 0;
-        // 随机初始化子弹颜色索引
-        bulletColorIndex = Random.Range(0, 6); // 生成一个用于决定子弹变体的随机数
-        // 基于enemyIndex计算随机偏移值
-        Random.InitState(enemyIndex * 37); // 使用固定的种子确保相同索引的敌人有相同的偏移
-        angleOffset = Random.Range(-20f, 20f); // 角度偏移范围：-20度到20度
-        timeOffset = Random.Range(-0.1f, 0.1f); // 时间偏移范围：-0.1秒到0.1秒
         
         if(player == null)
         {
@@ -48,6 +44,8 @@ public class EnemyShoot : MonoBehaviour
     
     void FixedUpdate()
     {
+        // 🔴 已移除 GameRNG 消费 —— spawner 在实例化时通过 SetRngOffsets 注入确定值
+
         if(Global_GameManager.Instance.state == State.SpellCard)
         {
             return;
@@ -157,7 +155,8 @@ public class EnemyShoot : MonoBehaviour
         for (int i = 0; i < bulletCount; i++)
         {
             // 随机角度
-            float randomAngle = currentConfig.shootAngle + angleOffset + Random.Range(0f, currentConfig.angleRange);
+            // 🔴 改用 GameRNG —— 确定性随机角度
+            float randomAngle = currentConfig.shootAngle + angleOffset + GameRNG.Range(0f, currentConfig.angleRange);
             Quaternion rotation = Quaternion.Euler(0, 0, randomAngle);
             
             // 生成子弹
@@ -376,5 +375,17 @@ public class EnemyShoot : MonoBehaviour
     public void SetEnemyIndex(int index)
     {
         enemyIndex = index;
+    }
+
+    /// <summary>
+    /// 🔴 由 spawner (CreateEnemy) 调用，确定性注入 GameRNG 随机值
+    /// spawner 是 for 循环顺序调用，所以 GameRNG 消费顺序确定性
+    /// EnemyShoot 自身不再消费 GameRNG（避免多个组件同帧顺序不确定）
+    /// </summary>
+    public void SetRngOffsets(int colorIdx, float angleOff, float timeOff)
+    {
+        bulletColorIndex = colorIdx;
+        angleOffset = angleOff;
+        timeOffset = timeOff;
     }
 }

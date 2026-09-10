@@ -46,6 +46,8 @@ public class EvilEyeAttack : MonoBehaviour
     private Queue<GameObject> laserPool = new Queue<GameObject>(); // 连线对象池
     public bool isFadeInComplete = false; // 淡入是否完成
     private bool isInEvilEyeMode = false; // 是否处于恶魔之眼攻击模式
+    private bool lastShiftHeld = false;     // 🔴 自算边沿 Shift
+    private bool lastZHeld = false;         // 🔴 自算边沿 Z
     private float spawnTimer = 0f; // 暗影弹生成计时器
     private int LaserInterval = 10;// 激光伤害间隔帧（每6帧出伤）
     private Coroutine fadeCoroutine;
@@ -101,13 +103,22 @@ public class EvilEyeAttack : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
+        // 🔴 自算 Shift + Z 边沿 —— 都不依赖 edgesDown/Up
+        bool shiftHeld = ReplayManager.Input.GetKey(LogicalKey.Shift);
+        bool zHeld = ReplayManager.Input.GetKey(LogicalKey.Z);
+        bool justReleasedShift = !shiftHeld && lastShiftHeld;
+        bool justPressedZ = zHeld && !lastZHeld;  // 留着备用
+        bool justReleasedZ = !zHeld && lastZHeld;
+        lastShiftHeld = shiftHeld;
+        lastZHeld = zHeld;
+
         // 攻击逻辑
-        if (isFadeInComplete && ReplayManager.Input.GetKey(LogicalKey.Shift))
+        if (isFadeInComplete && shiftHeld)
         {
             UpdateBlackHole();
             
-            // 检测Z键按下和抬起
-            if (ReplayManager.Input.GetKey(LogicalKey.Z))
+            // 🔴 Z 是 held 型射击键 —— 持续 held 就持续射，抬起停
+            if (zHeld)
             {
                 // Z键按下时，执行攻击逻辑（只有在恶魔之眼模式下才创建连线）
                 if (isInEvilEyeMode)
@@ -122,15 +133,15 @@ public class EvilEyeAttack : MonoBehaviour
                 }
                 UpdateShadowBullets();
             }
-            else if (ReplayManager.Input.GetKeyUp(LogicalKey.Z))
+            else if (justReleasedZ)
             {
                 // Z键抬起时，清空所有连线
                 ClearAllLasers();
             }
         }
         
-        // 检测左Shift抬起，立即清除所有连线并退出恶魔之眼模式
-        if (isFadeInComplete && ReplayManager.Input.GetKeyUp(LogicalKey.Shift))
+        // 🔴 Shift 抬起边沿：立即清除所有连线并退出恶魔之眼模式
+        if (isFadeInComplete && justReleasedShift)
         {
             isInEvilEyeMode = false;
             ClearAllLasers();
@@ -800,7 +811,7 @@ public class EvilEyeAttack : MonoBehaviour
         }
         
         // 等待一小段时间
-        yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSecondsSim(0.1f);
         
         // 淡出
         elapsedTime = 0f;

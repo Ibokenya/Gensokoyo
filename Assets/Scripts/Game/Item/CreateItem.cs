@@ -211,7 +211,7 @@ public class CreateItem : MonoBehaviour
             }
         }
 
-        float currentTime = Time.time;
+        float currentTime = SimClock.SimTime;
         bool canSpawnPower = (lastPowerSpawnTime < 0f) || (currentTime - lastPowerSpawnTime >= powerSpawnInterval);
 
         ItemType spawnType = canSpawnPower ? ItemType.Power : ItemType.GradeMinusMinus;

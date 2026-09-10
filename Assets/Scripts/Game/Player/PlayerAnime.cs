@@ -245,19 +245,17 @@ public class PlayerAnime : MonoBehaviour
             downKeyPressed = false;
         }
 
-        // 检测 slow（Shift）边沿
-        if (inp.GetKeyDown(LogicalKey.Shift))
+        // 🔴 检测 slow（Shift）held —— 不用 GetKeyDown/Up 边沿（FixedUpdate 50Hz 可能漏）
+        // Shift 是持续型修饰键：按住就慢速，松开就恢复
+        bool shiftHeld = inp.GetKey(LogicalKey.Shift);
+        if (!MarisaNormal.IsSkillSlowDown)
         {
-            // 检查是否处于技能的slowdown状态
-            if (!MarisaNormal.IsSkillSlowDown)
+            if (shiftHeld)
             {
-                movespeed *= 0.4f;
-                StartPandingAnime();
+                movespeed = MoveSpeed * 0.4f;
+                StartPandingAnime();  // Animator.SetBool 幂等，重复调没问题
             }
-        }
-        else if (inp.GetKeyUp(LogicalKey.Shift))
-        {
-            if (!MarisaNormal.IsSkillSlowDown)
+            else
             {
                 movespeed = MoveSpeed;
                 StopPandingAnime();
@@ -589,7 +587,7 @@ public class PlayerAnime : MonoBehaviour
         {
             movespeed = MoveSpeed;
         }
-        Invoke(nameof(NoDeadEnd), 1f); // Invoke 暂未迁 tick 调度器，后续步骤处理
+        SimTimer.Once(() => NoDeadEnd(), 50);
     }
 
     private void NoDeadEnd()

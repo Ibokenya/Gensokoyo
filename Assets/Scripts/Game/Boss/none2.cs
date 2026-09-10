@@ -40,8 +40,8 @@ public class none2 : MonoBehaviour
     {
         // 停止所有协程
         StopAllCoroutines();
-        // 取消所有 Invoke 调用
-        CancelInvoke();
+        // 取消所有 SimTimer 定时器
+        SimTimer.CancelAll();
         
         // 停止 BossShootSystem 中的所有射击协程
         if (bossShootSystem != null)
@@ -98,7 +98,7 @@ public class none2 : MonoBehaviour
         while (true)
         {
             // 等待移动间隔
-            yield return new WaitForSeconds(moveInterval);
+            yield return new WaitForSecondsSim(moveInterval);
             
             if (boss != null && movePositions.Count > 1)
             {

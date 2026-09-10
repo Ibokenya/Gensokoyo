@@ -49,8 +49,12 @@ public class ReplayPauseUI : MonoBehaviour
         // timeScale=0 让游戏停住（如果还没停）
         if (Time.timeScale > 0f) Time.timeScale = 0f;
 
-        // 🔴 同步暂停 BGM（AudioSource 不受 timeScale 影响，需要手动 Pause）
+        // 🔴 暂停 BGM（AudioSource 不受 timeScale 影响，需要手动 Pause）
         if (Global_AudioManager.Instance != null) Global_AudioManager.Instance.PauseBGM();
+        
+        // 🔴 暂停回放推进 —— AddSkipTickReason() 让 LateUpdate return early
+        // 回放文件位置不前进、SimClock 不推进
+        ReplayManager.AddSkipTickReason();
         
         // 🔴 播放进入暂停音效
         PlaySfx(pauseEnterSfx);
@@ -64,8 +68,8 @@ public class ReplayPauseUI : MonoBehaviour
 
     void OnDisable()
     {
-        // 🔴 Resume / ReStart 后 AudioSource 需要 UnPause
-        // ReturnToMenu 时也让 AudioManager 自己处理（切换场景会自动 PlayBGM）
+        // 🔴 Resume / ReStart 后恢复回放推进
+        ReplayManager.RemoveSkipTickReason();
     }
 
     void Update()

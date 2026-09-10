@@ -299,7 +299,7 @@ public class Enemy : MonoBehaviour
     private IEnumerator DelayedDelete()
     {
         // 等待1秒，让处决动画完成
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSecondsSim(1f);
         Delete();
     }
 

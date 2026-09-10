@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ReplaySystem;
 
 /// <summary>
 /// 玩家碰撞触发器
@@ -23,6 +24,16 @@ public class PlayerCollision : MonoBehaviour
         if (rb2D == null)
         {
             Debug.LogError("没有找到玩家的刚体组件");
+        }
+        else
+        {
+            // 🔴 把 Rigidbody2D 设为 Kinematic —— 从 Box2D 物理模拟里彻底摘掉
+            // 原因：即使我们不用 velocity，Dynamic 刚体的 gravity/碰撞仍会让 Box2D 修改位置
+            // 我们用纯 transform 移动，不需要 Box2D 积分
+            rb2D.bodyType = RigidbodyType2D.Kinematic;
+            rb2D.gravityScale = 0f;
+            rb2D.velocity = Vector2.zero;
+            rb2D.angularVelocity = 0f;
         }
     }
 
@@ -57,70 +68,40 @@ public class PlayerCollision : MonoBehaviour
     }
 
     /// <summary>
-    /// 更新移动状态
+    /// 更新移动状态 —— 🔴 纯 transform 移动，完全绕开 Box2D velocity 积分
+    /// 原因：Unity 的 Rigidbody2D velocity 积分在不同 FixedUpdate 顺序下有微小差异（浮点舍入），
+    ///      会导致录 vs 回放位置逐步偏移（0.3px → 累积到致命）
+    ///      transform.position += direction * speed * dt 是纯确定性的浮点运算
     /// </summary>
-    /// <param name="leftPressed">左键是否按下</param>
-    /// <param name="rightPressed">右键是否按下</param>
-    /// <param name="upPressed">上键是否按下</param>
-    /// <param name="downPressed">下键是否按下</param>
-    /// <param name="moveSpeed">移动速度</param>
     public void UpdateMovement(bool leftPressed, bool rightPressed, bool upPressed, bool downPressed, float moveSpeed)
     {
         // 只有在游戏状态、无敌状态和符卡状态时才处理移动
-        // 冻结状态下禁止移动
         if(Global_GameManager.Instance.state != State.Gaming && 
            Global_GameManager.Instance.state != State.NoDead &&
            Global_GameManager.Instance.state != State.SpellCard) return;
-        
-        // 确保rb2D已获取
-        if (rb2D == null)
-        {
-            rb2D = GetComponent<Rigidbody2D>();
-            if (rb2D == null)
-            {
-                Debug.LogError("PlayerCollision: 找不到刚体组件，无法应用移动！");
-                return;
-            }
-        }
-        
-        // 计算水平移动方向
+
+        // 计算方向
         float horizontal = 0f;
-        if (leftPressed)
-        {
-            horizontal = -1f;
-        }
-        else if (rightPressed)
-        {
-            horizontal = 1f;
-        }
+        if (leftPressed) horizontal = -1f;
+        else if (rightPressed) horizontal = 1f;
 
-        // 计算垂直移动方向
         float vertical = 0f;
-        if (upPressed)
-        {
-            vertical = 1f;
-        }
-        else if (downPressed)
-        {
-            vertical = -1f;
-        }
+        if (upPressed) vertical = 1f;
+        else if (downPressed) vertical = -1f;
 
-        // 计算移动方向向量
         moveDirection = new Vector2(horizontal, vertical);
-
-        // 检查是否为斜向移动
         isDiagonalMove = (horizontal != 0f && vertical != 0f);
 
-        // 计算移动速度
         float speed = moveSpeed;
-        if (isDiagonalMove)
-        {
-            // 斜向移动时速度补正（乘以根号2的倒数）
-            speed = moveSpeed * 0.7f;
-        }
+        if (isDiagonalMove) speed = moveSpeed * 0.7f;
 
-        // 应用移动
-        rb2D.velocity = moveDirection * speed * Global_GameManager.Instance.GetSpeedScale();
+        // 🔴 纯 transform 移动 —— 确定性浮点乘法，不走 Box2D
+        Vector3 pos = transform.position;
+        float dt = SimClock.FixedTickDt;  // 0.02f，固定值
+        float scale = Global_GameManager.Instance.GetSpeedScale();
+        pos.x += moveDirection.x * speed * scale * dt;
+        pos.y += moveDirection.y * speed * scale * dt;
+        transform.position = pos;
     }
 
     /// <summary>
