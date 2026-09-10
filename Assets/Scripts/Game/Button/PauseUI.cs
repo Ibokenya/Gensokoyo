@@ -18,18 +18,28 @@ public class PauseUI : MonoBehaviour
 
     private void CheckInput()
     {
-        if(ReplayManager.Input.GetKeyDown(LogicalKey.Cancel) && 
-        Global_GameManager.Instance.state != State.Over)
+        // 🔴 Esc 路由中心：整个游戏只有这里读 Esc
+        // 加 IsReplayPaused 让已暂停时 PauseUI 什么都不做，把 Esc 留给 ReplayPauseUI 消费
+        if (!Input.GetKeyDown(KeyCode.Escape)) return;
+        if (Global_GameManager.Instance.state == State.Over) return;
+
+        // 回放模式：路由到回放暂停 UI
+        var rm = ReplayManager.Instance;
+        if (rm != null && rm.CurrentMode == ReplayManager.Mode.Playback)
         {
-            if(!isPaused)
+            if (!ReplayManager.IsReplayPaused)
             {
-                Pause();
+                // 未暂停 → 打开回放暂停面板
+                ReplayManager.UIManagerInstance?.ShowReplayPause();
+                ReplayManager.NotifyReplayPaused();
             }
-            else
-            {
-                Resume();
-            }
+            // 已暂停时 PauseUI 不响应 Esc，让 ReplayPauseUI 在自己的 Update 里消费 Esc 做 Resume
+            return;
         }
+
+        // 普通游戏：路由到自己的 Pause/Resume
+        if (!isPaused) Pause();
+        else Resume();
     }
 
     private void Pause()

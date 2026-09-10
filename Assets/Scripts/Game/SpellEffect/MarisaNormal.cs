@@ -27,72 +27,55 @@ public class MarisaNormal : MonoBehaviour
     public GameObject boss; // Boss对象
     
     [Header("伤害设置")]
-    private readonly int MarisaNormalDamageValue = 16;// 魔理沙常规伤害*45
-    private int Timer = 20;// 定时器，用于技能出伤
-    private bool isDamage = false;// 是否正在出伤
-    public static bool IsSkillSlowDown = false;// 技能是否正在减速
+    private readonly int MarisaNormalDamageValue = 25;  // 原始 16 → 按用户要求改为 25
+    private float nextDamageTime = 0f;                  // 下一次出伤的 SimTime
+    private bool isDamage = false;
+    public static bool IsSkillSlowDown = false;
     
-    public Transform playerTransform; // 玩家变换组件
-    private List<GameObject> Enemys => Global_GameManager.Instance.EnemyList;// 敌人列表
+    // 原始设计：动画 150 Update帧(2.5s @60fps) → 30段 × 5帧间隔 × 25伤害
+    // 5帧 @60fps = 0.0833s
+    private const float DamageInterval = 0.0833f;
+    
+    public Transform playerTransform;
+    private List<GameObject> Enemys => Global_GameManager.Instance.EnemyList;
     
     void Awake()
     {
-        // 获取子物体上的Animator组件
         animator = GetComponent<Animator>();
-        if (animator == null)
-        {
-            Debug.LogWarning($"[{gameObject.name}] 未找到Animator组件");
-        }
+        if (animator == null) Debug.LogWarning($"[{gameObject.name}] 未找到Animator组件");
     }
 
     void OnEnable()
     {
-        // 重置状态
         IsAnime = false;
         isDamage = false;
-        Timer = 20;
+        nextDamageTime = 0f;
         Global_GameManager.Instance.state = State.SpellCard;
         
-        // 重置光圈
-        if (lightCircle != null)
-        {
-            lightCircle.ResetCircles();
-        }
-        // 对Boss造成伤害
+        if (lightCircle != null) lightCircle.ResetCircles();
         MarisaNormalDamageToBoss();
     }
     
     void FixedUpdate()
     {
-        // 检查是否需要开始播放动画
-        if (animator != null)
-        {
-            // 设置Animator的IsAnime参数
-            animator.SetBool("IsAnime", IsAnime);
-        }
-        
-        // 如果正在播放，处理出伤逻辑
-        if (IsAnime)
-        {
-            HandleDamage();
-        }
+        if (animator != null) animator.SetBool("IsAnime", IsAnime);
     }
     
     /// <summary>
-    /// 处理出伤逻辑
+    /// HandleDamage 必须在 Update 里跑（和 Animator.StartToDamage/OnAnimationEnd 同步）。
+    /// 用 SimClock.SimTime 差值保证确定性。
     /// </summary>
-    void HandleDamage()
+    void Update()
     {
-        if (Timer > 0)
+        if (IsAnime && isDamage)
         {
-            Timer--;
-        }
-        if (Timer <= 0)
-        {
-            Timer = 20;
-            if (isDamage)
+            if (nextDamageTime <= 0f)
+                nextDamageTime = SimClock.SimTime + DamageInterval;
+            
+            if (SimClock.SimTime >= nextDamageTime)
             {
                 MarisaNormalDamage();
+                nextDamageTime = SimClock.SimTime + DamageInterval;
             }
         }
     }
@@ -200,7 +183,7 @@ public class MarisaNormal : MonoBehaviour
     {
         IsSkillSlowDown = false;
         // 根据shift按键状态设置移速和动画
-        if (ReplayManager.Input.GetKey(LogicalKey.Slow))
+        if (ReplayManager.Input.GetKey(LogicalKey.Shift))
         {
             // 低速态
             playerAnime.SetMoveSpeed(playerAnime.MoveSpeed * 0.4f);

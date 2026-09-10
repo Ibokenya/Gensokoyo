@@ -125,7 +125,7 @@ public class PauseEvent : MonoBehaviour
             manualIndex = (manualIndex + 1) % manualTexts.Count;
             UpdateManual();
         }
-        else if (ReplayManager.Input.GetKeyDown(LogicalKey.Fire) && isManualIndex)
+        else if (Input.GetKeyDown(KeyCode.Z) && isManualIndex)
         {
             Global_AudioManager.Instance.PlaySFX(Click);
             isManualIndex = false;
@@ -151,7 +151,7 @@ public class PauseEvent : MonoBehaviour
                 CloseManual();
             }
         }
-        else if (ReplayManager.Input.GetKeyDown(LogicalKey.Cancel))
+        else if (Input.GetKeyDown(KeyCode.Escape))
         {
             CloseManual();
         }
@@ -194,7 +194,7 @@ public class PauseEvent : MonoBehaviour
             UpdateConfirmColor();
             Global_AudioManager.Instance.PlaySFX(Choose);
         }
-        else if (ReplayManager.Input.GetKeyDown(LogicalKey.Fire))
+        else if (Input.GetKeyDown(KeyCode.Z))
         {
             if (YesOrNo)
             {
@@ -213,7 +213,7 @@ public class PauseEvent : MonoBehaviour
                 BackToPause();
             }
         }
-        else if (Input.GetKeyDown(KeyCode.X) || ReplayManager.Input.GetKeyDown(LogicalKey.Cancel))
+        else if (Input.GetKeyDown(KeyCode.X) || Input.GetKeyDown(KeyCode.Escape))
         {
             BackToPause();
         }
@@ -253,7 +253,7 @@ public class PauseEvent : MonoBehaviour
             UpdateConfirmColor();
             Global_AudioManager.Instance.PlaySFX(Choose);
         }
-        else if (ReplayManager.Input.GetKeyDown(LogicalKey.Fire))
+        else if (Input.GetKeyDown(KeyCode.Z))
         {
             // 先处理回放文件，再真正执行按钮操作
             if (YesOrNo)
@@ -271,7 +271,7 @@ public class PauseEvent : MonoBehaviour
             isRecording = false;
             CommitAndExecute(index);
         }
-        else if (Input.GetKeyDown(KeyCode.X) || ReplayManager.Input.GetKeyDown(LogicalKey.Cancel))
+        else if (Input.GetKeyDown(KeyCode.X) || Input.GetKeyDown(KeyCode.Escape))
         {
             // 回退到上一层（确认执行环节）—— DescriptionText 恢复为按钮确认文本
             ExitRecordingConfirm();
@@ -333,11 +333,11 @@ public class PauseEvent : MonoBehaviour
             else index++;
             BeChoose(index);
         }
-        else if (ReplayManager.Input.GetKeyDown(LogicalKey.Fire))
+        else if (Input.GetKeyDown(KeyCode.Z))
         {
             BeClick(index);
         }
-        else if (Input.GetKeyDown(KeyCode.X) || ReplayManager.Input.GetKeyDown(LogicalKey.Cancel))
+        else if (Input.GetKeyDown(KeyCode.X) || Input.GetKeyDown(KeyCode.Escape))
         {
             pauseUI.Resume();
         }

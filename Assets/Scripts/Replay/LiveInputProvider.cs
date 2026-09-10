@@ -12,10 +12,10 @@ namespace ReplaySystem
         public static KeyCode Down   = KeyCode.DownArrow;
         public static KeyCode Left   = KeyCode.LeftArrow;
         public static KeyCode Right  = KeyCode.RightArrow;
-        public static KeyCode Slow   = KeyCode.LeftShift;
-        public static KeyCode Fire   = KeyCode.Z;
-        public static KeyCode Spell  = KeyCode.X;
-        public static KeyCode Cancel = KeyCode.Escape;
+        public static KeyCode Shift   = KeyCode.LeftShift;
+        public static KeyCode Z   = KeyCode.Z;
+        public static KeyCode X  = KeyCode.X;
+        public static KeyCode Escape = KeyCode.Escape;
     }
 
     /// <summary>
@@ -48,15 +48,21 @@ namespace ReplaySystem
             if (Input.GetKey(PhysicalKeyMapping.Down))   currentHeld |= LogicalKeyMask.Down;
             if (Input.GetKey(PhysicalKeyMapping.Left))   currentHeld |= LogicalKeyMask.Left;
             if (Input.GetKey(PhysicalKeyMapping.Right))  currentHeld |= LogicalKeyMask.Right;
-            if (Input.GetKey(PhysicalKeyMapping.Slow))   currentHeld |= LogicalKeyMask.Slow;
-            if (Input.GetKey(PhysicalKeyMapping.Fire))   currentHeld |= LogicalKeyMask.Fire;
-            if (Input.GetKey(PhysicalKeyMapping.Spell))  currentHeld |= LogicalKeyMask.Spell;
-            if (Input.GetKey(PhysicalKeyMapping.Cancel)) currentHeld |= LogicalKeyMask.Cancel;
+            if (Input.GetKey(PhysicalKeyMapping.Shift))   currentHeld |= LogicalKeyMask.Shift;
+            if (Input.GetKey(PhysicalKeyMapping.Z))   currentHeld |= LogicalKeyMask.Z;
+            if (Input.GetKey(PhysicalKeyMapping.X))  currentHeld |= LogicalKeyMask.X;
+            if (Input.GetKey(PhysicalKeyMapping.Escape)) currentHeld |= LogicalKeyMask.Escape;
 
             // 边沿 = 当前异或上一帧，然后从异或里过滤出上升/下降
             byte xor = (byte)(currentHeld ^ previousHeld);
             edgesDown |= (byte)(xor & currentHeld);  // 上升沿
             edgesUp   |= (byte)(xor & ~currentHeld);  // 下降沿
+
+            // 🔴 诊断：边沿有新 X 时打一条（调试完删）
+            if ((xor & LogicalKeyMask.X) != 0)
+            {
+                Debug.Log($"[LiveInputProvider] Spell 边沿 current=0x{currentHeld:X2} prev=0x{previousHeld:X2} edgesDown=0x{edgesDown:X2} edgesUp=0x{edgesUp:X2}");
+            }
         }
 
         /// <summary>每 tick FixedUpdate 运行完所有玩法逻辑后调用，消费锁存的边沿</summary>

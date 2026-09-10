@@ -1,5 +1,6 @@
 using System.IO;
 using UnityEngine;
+using System;
 
 namespace ReplaySystem
 {
@@ -46,14 +47,14 @@ namespace ReplaySystem
         public long     saveTimeMs; // Unix epoch 毫秒（用于按时间排序）
 
         /// <summary>saveTimeMs → DateTime（本地时区）。
-        /// saveTimeMs 是 Unix epoch **毫秒**，需要 ×10000 转成 .NET 的 100ns tick 单位。</summary>
+        /// 用 .NET 内置 DateTimeOffset.FromUnixTimeMilliseconds，正确处理 epoch 偏移。
+        /// 之前手动 ×10000 但漏加 epoch 偏移，导致年份变成 0001 后加 560 年 → 显示 0561。</summary>
         public System.DateTime SaveDateTime
         {
             get
             {
                 if (saveTimeMs <= 0) return default;
-                long ticks = saveTimeMs * 10000L; // ms → 100ns ticks
-                return new System.DateTimeOffset(ticks, System.TimeSpan.Zero).LocalDateTime;
+                return DateTimeOffset.FromUnixTimeMilliseconds(saveTimeMs).LocalDateTime;
             }
         }
     }

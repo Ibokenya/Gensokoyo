@@ -36,6 +36,7 @@ public class UIManager : MonoBehaviour
     [Header("UI引用")]
     public GameObject FinalUI;
     public GameObject GameOverUI;
+    public GameObject ReplayPauseUI;  // 🔴 回放暂停 UI（Inspector 绑定）
 
     public LeftLife leftLife;
     public SpeelCard speelCard;
@@ -81,6 +82,9 @@ public class UIManager : MonoBehaviour
     
     void OnEnable()
     {
+        // 🔴 注册自己给 ReplayManager（让它能触发回放暂停 UI）
+        ReplayManager.UIManagerInstance = this;
+
 #region 订阅广播事件
         Global_GameManager.Instance.OnScoreChanged += SetScoreText; 
         Global_GameManager.Instance.OnPowerChanged += SetPowerText;
@@ -113,6 +117,9 @@ public class UIManager : MonoBehaviour
 
     void OnDisable()
     {
+        // 🔴 注销
+        if (ReplayManager.UIManagerInstance == this) ReplayManager.UIManagerInstance = null;
+
         Global_GameManager.Instance.OnScoreChanged -= SetScoreText; 
         Global_GameManager.Instance.OnPowerChanged -= SetPowerText;
         Global_GameManager.Instance.OnGradeChanged -= SetGradeText;
@@ -191,6 +198,20 @@ public class UIManager : MonoBehaviour
     public void ShowGameOverUI(State state)
     {
         GameOverUI.SetActive(true);
+    }
+
+    // ---- 🔴 回放暂停 UI ----
+
+    /// <summary>回放暂停 UI 打开（Esc 触发 / 回放自然结束触发）</summary>
+    public void ShowReplayPause()
+    {
+        if (ReplayPauseUI != null) ReplayPauseUI.SetActive(true);
+    }
+
+    /// <summary>回放暂停 UI 关闭（Resume / ReturnToMenu / ReStart）</summary>
+    public void HideReplayPause()
+    {
+        if (ReplayPauseUI != null) ReplayPauseUI.SetActive(false);
     }
 
     public void AddExScore(int score)

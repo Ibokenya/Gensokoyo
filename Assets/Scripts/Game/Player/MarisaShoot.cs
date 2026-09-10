@@ -13,7 +13,7 @@ public class MarisaShoot : MonoBehaviour
 
     void OnEnable()
     {
-        if(ReplayManager.Input.GetKey(LogicalKey.Fire))
+        if(ReplayManager.Input.GetKey(LogicalKey.Z))
             CreatLaser();
     }
     void OnDisable()
@@ -27,12 +27,12 @@ public class MarisaShoot : MonoBehaviour
         Global_GameManager.Instance.state != State.Gaming && 
         Global_GameManager.Instance.state != State.NoDead) return;
         // 检测 Z 键按下
-        if (ReplayManager.Input.GetKeyDown(LogicalKey.Fire))
+        if (ReplayManager.Input.GetKeyDown(LogicalKey.Z))
         {
             CreatLaser();
         }
         // 检测 Z 键抬起
-        else if (ReplayManager.Input.GetKeyUp(LogicalKey.Fire))
+        else if (ReplayManager.Input.GetKeyUp(LogicalKey.Z))
         {
             CleanLaser();
         }

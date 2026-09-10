@@ -113,16 +113,16 @@ public class ReplayMenu : MonoBehaviour
 
     private void HandleInput()
     {
-        if (slots.Count == 0)
+        // 🔴 meta 层 UI 全部读 Unity Input，不走 ReplayManager.Input
+        // 避免 ReplayInputProvider 的回放边沿或 LiveInputProvider 未清的边沿干扰
+
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
-            // 空列表时只允许退出
-            if (ReplayManager.Input.GetKeyDown(LogicalKey.Cancel) ||
-                Input.GetKeyDown(KeyCode.X) || Input.GetKeyDown(KeyCode.Escape))
-            {
-                CloseMenu();
-            }
+            CloseMenu();
             return;
         }
+
+        if (slots.Count == 0) return; // 空列表时除了退出什么都不做
 
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
@@ -138,18 +138,13 @@ public class ReplayMenu : MonoBehaviour
             PlaySfx(chooseSfx);
             RefreshSelection();
         }
-        else if (ReplayManager.Input.GetKeyDown(LogicalKey.Fire))
+        else if (Input.GetKeyDown(KeyCode.Z))
         {
             EnterSelectedReplay();
         }
         else if (Input.GetKeyDown(KeyCode.Delete))
         {
             DeleteSelected();
-        }
-        else if (ReplayManager.Input.GetKeyDown(LogicalKey.Cancel) ||
-                 Input.GetKeyDown(KeyCode.X) || Input.GetKeyDown(KeyCode.Escape))
-        {
-            CloseMenu();
         }
     }
 

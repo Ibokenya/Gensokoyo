@@ -246,7 +246,7 @@ public class PlayerAnime : MonoBehaviour
         }
 
         // 检测 slow（Shift）边沿
-        if (inp.GetKeyDown(LogicalKey.Slow))
+        if (inp.GetKeyDown(LogicalKey.Shift))
         {
             // 检查是否处于技能的slowdown状态
             if (!MarisaNormal.IsSkillSlowDown)
@@ -255,7 +255,7 @@ public class PlayerAnime : MonoBehaviour
                 StartPandingAnime();
             }
         }
-        else if (inp.GetKeyUp(LogicalKey.Slow))
+        else if (inp.GetKeyUp(LogicalKey.Shift))
         {
             if (!MarisaNormal.IsSkillSlowDown)
             {
@@ -581,7 +581,7 @@ public class PlayerAnime : MonoBehaviour
     private void ReincarnationEnd()
     {
         Global_GameManager.Instance.state = State.NoDead;
-        if (ReplayManager.Input.GetKey(LogicalKey.Slow))
+        if (ReplayManager.Input.GetKey(LogicalKey.Shift))
         {
             movespeed = MoveSpeed * 0.5f;
         }

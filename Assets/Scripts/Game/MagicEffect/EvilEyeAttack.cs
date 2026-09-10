@@ -102,12 +102,12 @@ public class EvilEyeAttack : MonoBehaviour
     void FixedUpdate()
     {
         // 攻击逻辑
-        if (isFadeInComplete && ReplayManager.Input.GetKey(LogicalKey.Slow))
+        if (isFadeInComplete && ReplayManager.Input.GetKey(LogicalKey.Shift))
         {
             UpdateBlackHole();
             
             // 检测Z键按下和抬起
-            if (ReplayManager.Input.GetKey(LogicalKey.Fire))
+            if (ReplayManager.Input.GetKey(LogicalKey.Z))
             {
                 // Z键按下时，执行攻击逻辑（只有在恶魔之眼模式下才创建连线）
                 if (isInEvilEyeMode)
@@ -122,7 +122,7 @@ public class EvilEyeAttack : MonoBehaviour
                 }
                 UpdateShadowBullets();
             }
-            else if (ReplayManager.Input.GetKeyUp(LogicalKey.Fire))
+            else if (ReplayManager.Input.GetKeyUp(LogicalKey.Z))
             {
                 // Z键抬起时，清空所有连线
                 ClearAllLasers();
@@ -130,7 +130,7 @@ public class EvilEyeAttack : MonoBehaviour
         }
         
         // 检测左Shift抬起，立即清除所有连线并退出恶魔之眼模式
-        if (isFadeInComplete && ReplayManager.Input.GetKeyUp(LogicalKey.Slow))
+        if (isFadeInComplete && ReplayManager.Input.GetKeyUp(LogicalKey.Shift))
         {
             isInEvilEyeMode = false;
             ClearAllLasers();

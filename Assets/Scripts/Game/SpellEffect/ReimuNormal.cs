@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using ReplaySystem;
 using UnityEngine;
 
 /// <summary>
@@ -27,51 +28,42 @@ public class ReimuNormal : MonoBehaviour
     [Header("伤害设置")]
     private readonly int ReimuFireDamage = 50;// 灵梦常规伤害(实际出伤*15)
     
-    private List<GameObject> Enemys => Global_GameManager.Instance.EnemyList;// 敌人列表
-    private int Timer = 20;// 定时器，用于技能出伤
-    private bool isDamage = false;// 是否正在出伤
+    private List<GameObject> Enemys => Global_GameManager.Instance.EnemyList;
+    private float nextDamageTime = 0f;    // 下一次出伤的 SimTime
+    private bool isDamage = false;         // 是否正在出伤
+    // 原始设计：动画 90 Update帧(1.5s @60fps) → 15段 × 6帧间隔 × 50伤害
+    // 6帧 @60fps = 0.1s → Tick 换算：6帧 = 3 tick (50Hz) 或直接 SimTime 差值
+    private const float DamageInterval = 0.1f;  // 每 0.1s 出一次伤（6 Update帧 @60fps）
     
     void OnEnable()
     {
-        // 重置状态
         IsAnime = false;
         isDamage = false;
-        Timer = 20;
+        nextDamageTime = 0f;
         Global_GameManager.Instance.state = State.SpellCard;
-        // 对Boss造成伤害
         ReimuNormalDamageToBoss();
     }
     
     void FixedUpdate()
     {
-        // 检查是否需要开始播放动画
-        if (animator != null)
-        {
-            // 设置Animator的IsAnime参数
-            animator.SetBool("IsAnime", IsAnime);
-        }
-        // 如果正在播放，处理出伤逻辑
-        if (IsAnime)
-        {
-            HandleDamage();
-        }
+        if (animator != null) animator.SetBool("IsAnime", IsAnime);
     }
     
     /// <summary>
-    /// 处理出伤逻辑
+    /// HandleDamage 必须在 Update（渲染帧）里跑，和 Animator 事件同步。
+    /// 用 SimClock.SimTime 时间间隔保证确定性（不依赖 Update 帧计数）。
     /// </summary>
-    void HandleDamage()
+    void Update()
     {
-        if (Timer > 0)
+        if (IsAnime && isDamage)
         {
-            Timer--;
-        }
-        if (Timer <= 0)
-        {
-            Timer = 20;
-            if (isDamage)
+            if (nextDamageTime <= 0f)
+                nextDamageTime = SimClock.SimTime + DamageInterval;
+            
+            if (SimClock.SimTime >= nextDamageTime)
             {
                 ReimuNormalDamage();
+                nextDamageTime = SimClock.SimTime + DamageInterval;
             }
         }
     }

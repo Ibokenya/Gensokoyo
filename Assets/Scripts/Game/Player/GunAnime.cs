@@ -118,7 +118,7 @@ public class GunAnime : MonoBehaviour
 
     private void CheckUpdate()
     {
-        if(ReplayManager.Input.GetKeyDown(LogicalKey.Slow))
+        if(ReplayManager.Input.GetKeyDown(LogicalKey.Shift))
         {
             isShifted = true;
             if(Index==0)// 如果是灵梦常态
@@ -132,7 +132,7 @@ public class GunAnime : MonoBehaviour
                 UpdateGunPos();
             }
         }
-        else if(ReplayManager.Input.GetKeyUp(LogicalKey.Slow))
+        else if(ReplayManager.Input.GetKeyUp(LogicalKey.Shift))
         {
             isShifted = false;
             if(Index==2 && !isExitingMagic)// 如果是七曜态松开Shift进入魔理沙常态

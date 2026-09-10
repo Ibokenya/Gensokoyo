@@ -188,8 +188,6 @@ public class CreateItem : MonoBehaviour
         {
             SpawnScoreItemType(position, ItemType.GradeMinusMinus, gradeMinusMinusCount, player);
         }
-
-        Debug.Log($"生成得分点: 总值={randomValue}, GradeMinus={gradeMinusCount}, GradeMinusMinus={gradeMinusMinusCount}");
     }
 
     public void SpawnPowerItems(Vector3 position)

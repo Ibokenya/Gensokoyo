@@ -82,7 +82,7 @@ public class ShootNormal : MonoBehaviour
     private void Shoot()
     {
         // 只有按下Z键 + 计时器达到间隔时间 + Normal预制体不为null，才允许射击
-        if (ReplayManager.Input.GetKey(LogicalKey.Fire) && shootTimer >= 
+        if (ReplayManager.Input.GetKey(LogicalKey.Z) && shootTimer >= 
         (shootInterval/Global_GameManager.Instance.GetSpeedScale()) && Normal != null)
         {
             try

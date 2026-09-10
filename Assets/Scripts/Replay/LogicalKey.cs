@@ -12,10 +12,10 @@ namespace ReplaySystem
         Down  = 1, // 下
         Left  = 2, // 左
         Right = 3, // 右
-        Slow  = 4, // 慢速（Shift）
-        Fire  = 5, // 射击（Z）
-        Spell = 6, // 符卡（X）
-        Cancel= 7  // 取消/暂停（Esc）
+        Shift  = 4, // 慢速（Shift）
+        Z  = 5, // 射击（Z）
+        X = 6, // 符卡（X）
+        Escape= 7  // 取消/暂停（Esc）
     }
 
     /// <summary>掩码位辅助，按 LogicalKey 顺序编码的 8-bit 状态</summary>
@@ -25,10 +25,10 @@ namespace ReplaySystem
         public const byte Down   = 1 << 1;
         public const byte Left   = 1 << 2;
         public const byte Right  = 1 << 3;
-        public const byte Slow   = 1 << 4;
-        public const byte Fire   = 1 << 5;
-        public const byte Spell  = 1 << 6;
-        public const byte Cancel = 1 << 7;
+        public const byte Shift   = 1 << 4;
+        public const byte Z   = 1 << 5;
+        public const byte X  = 1 << 6;
+        public const byte Escape = 1 << 7;
 
         public static bool Has(byte mask, LogicalKey key)
             => (mask & (byte)(1 << (int)key)) != 0;

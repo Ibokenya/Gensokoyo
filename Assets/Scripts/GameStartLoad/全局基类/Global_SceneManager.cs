@@ -270,12 +270,25 @@ public class Global_SceneManager : Singleton<Global_SceneManager>
         // 更新当前场景名称
         CurrentSceneName = NextSceneName;
 
-        // 🔴 关键：在 Game1 激活 PlayBGM 之前启动 ReplayManager 的 BeginRecord。
-        // 这样 Game1 场景内任何 MonoBehaviour 的 Awake/Start（如 CreateEnemy 读 CurrentBGMTime）
-        // 都能读到 CurrentMode=Record → 返回 SimClock.SimTime=0，而不是 bgmSource.time。
+        // 🔴 关键：在 Game1 激活 PlayBGM 之前启动 ReplayManager。
+        // Record 模式：BeginRecord（Seed 初始化 + SimClock 重置）
+        // Playback 模式：跳过（BeginPlayback 已由 ReplayMenu 先调用了，不能再 BeginRecord 覆盖 Input=replay）
         if (CurrentSceneName == "Game1")
         {
-            ReplaySystem.ReplayManager.BeginRecord();
+            var rm = ReplaySystem.ReplayManager.Instance;
+            var mode = rm != null ? rm.CurrentMode : ReplaySystem.ReplayManager.Mode.Idle;
+            if (mode == ReplaySystem.ReplayManager.Mode.Idle)
+            {
+                // 新开局：开始录制
+                ReplaySystem.ReplayManager.BeginRecord();
+            }
+            else if (mode == ReplaySystem.ReplayManager.Mode.Record)
+            {
+                // RestartGame 重开：丢弃旧录制，重新开始
+                ReplaySystem.ReplayManager.DiscardRecording();
+                ReplaySystem.ReplayManager.BeginRecord();
+            }
+            // Playback 模式：什么都不做，BeginPlayback 已正确设置 Input=replay + SimClock=0
         }
         else if (CurrentSceneName == "GameStartMenu")
         {

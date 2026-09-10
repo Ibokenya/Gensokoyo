@@ -70,10 +70,11 @@ public class GameOver : MonoBehaviour
     /// <summary>非确认环节：Continue/ReStart/Exit 三选一</summary>
     private void HandleMenuStep()
     {
+        // 🔴 meta 层 UI（菜单导航）直接读 Unity Input，不走 ReplayManager.Input
+        // 因为 timeScale=0 时 FixedUpdate 不跑 → ConsumeEdges 不执行 → 边沿永远不被清 → 菜单疯狂滚动
         if (CurrentIndex == 3)
         {
-            if (ReplayManager.Input.GetKeyDown(LogicalKey.Up) ||
-                ReplayManager.Input.GetKeyDown(LogicalKey.Down))
+            if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow))
             {
                 CurrentIndex = 0;
                 SelectOption(CurrentIndex);
@@ -81,21 +82,21 @@ public class GameOver : MonoBehaviour
             return;
         }
 
-        if (ReplayManager.Input.GetKeyDown(LogicalKey.Up))
+        if (Input.GetKeyDown(KeyCode.UpArrow))
         {
             RemoveOptions(CurrentIndex);
             CurrentIndex--;
             if (CurrentIndex < 0) CurrentIndex = Options.Count - 1;
             SelectOption(CurrentIndex);
         }
-        else if (ReplayManager.Input.GetKeyDown(LogicalKey.Down))
+        else if (Input.GetKeyDown(KeyCode.DownArrow))
         {
             RemoveOptions(CurrentIndex);
             CurrentIndex++;
             if (CurrentIndex > Options.Count - 1) CurrentIndex = 0;
             SelectOption(CurrentIndex);
         }
-        else if (ReplayManager.Input.GetKeyDown(LogicalKey.Fire))
+        else if (Input.GetKeyDown(KeyCode.Z))
         {
             Global_AudioManager.Instance.PlaySFX(SelectSound);
 
@@ -115,20 +116,18 @@ public class GameOver : MonoBehaviour
     /// <summary>确认环节：YesOrNo 切换保存/丢弃 → Z 确认 → 执行 → X/Esc 回退</summary>
     private void HandleConfirmStep()
     {
-        if (ReplayManager.Input.GetKeyDown(LogicalKey.Left) ||
-            ReplayManager.Input.GetKeyDown(LogicalKey.Right))
+        if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow))
         {
             YesOrNo = !YesOrNo;
             UpdateConfirmColor();
             Global_AudioManager.Instance.PlaySFX(SelectSound);
         }
-        else if (ReplayManager.Input.GetKeyDown(LogicalKey.Fire))
+        else if (Input.GetKeyDown(KeyCode.Z))
         {
             CommitSaveOrDiscard();
             ExecuteChosenAction();
         }
-        else if (ReplayManager.Input.GetKeyDown(LogicalKey.Cancel) ||
-                 ReplayManager.Input.GetKeyDown(LogicalKey.Spell))
+        else if (Input.GetKeyDown(KeyCode.X) || Input.GetKeyDown(KeyCode.Escape))
         {
             // 回退到上一步（保存确认 → 主菜单三选一）
             ExitSaveConfirm();

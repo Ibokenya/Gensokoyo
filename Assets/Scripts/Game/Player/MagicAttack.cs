@@ -128,7 +128,7 @@ public class MagicAttack : MonoBehaviour
                 shouldSwitchToEvilEye = true;
             }
             // 如果Boss激活且按下shift键，跳过标记攻击直接进入恶魔之眼攻击
-            else if (boss != null && boss.activeInHierarchy && ReplayManager.Input.GetKey(LogicalKey.Slow))
+            else if (boss != null && boss.activeInHierarchy && ReplayManager.Input.GetKey(LogicalKey.Shift))
             {
                 shouldSwitchToEvilEye = true;
             }
@@ -140,7 +140,7 @@ public class MagicAttack : MonoBehaviour
             }
             
             // 每10帧扫描一次敌人（仅在非Boss战或Boss未激活时执行）
-            if (ReplayManager.Input.GetKey(LogicalKey.Fire) && (boss == null || !boss.activeInHierarchy))
+            if (ReplayManager.Input.GetKey(LogicalKey.Z) && (boss == null || !boss.activeInHierarchy))
             {
                 frameCounter++;
                 if (frameCounter >= 10)
@@ -255,6 +255,7 @@ public class MagicAttack : MonoBehaviour
         int markedCount = 0;
         foreach (GameObject enemyObj in enemies)
         {
+            if(enemyObj == null) continue;
             Enemy enemy = enemyObj.GetComponent<Enemy>();
             if (enemy != null)
             {

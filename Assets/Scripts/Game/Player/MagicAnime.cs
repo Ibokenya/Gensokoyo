@@ -53,7 +53,7 @@ public class MagicAnime : MonoBehaviour
         Global_GameManager.Instance.state != State.Gaming && 
         Global_GameManager.Instance.state != State.NoDead &&
         Global_GameManager.Instance.state != State.SpellCard) return;
-        if (!isExiting && ReplayManager.Input.GetKeyUp(LogicalKey.Slow))
+        if (!isExiting && ReplayManager.Input.GetKeyUp(LogicalKey.Shift))
         {
             CancelMagic(Global_GameManager.Instance.state);
         }

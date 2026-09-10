@@ -89,7 +89,7 @@ public class AboutDialog : MonoBehaviour
         }
 
         // 按Z键切换到下一条对话
-        if (ReplayManager.Input.GetKeyDown(LogicalKey.Fire))
+        if (ReplayManager.Input.GetKeyDown(LogicalKey.Z))
         {
             NextDialog();
         }

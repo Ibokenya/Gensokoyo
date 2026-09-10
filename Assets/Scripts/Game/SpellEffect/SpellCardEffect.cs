@@ -74,8 +74,14 @@ public class SpellCardEffect : MonoBehaviour
             return;
         }
 
+        // 🔴 诊断日志：每帧都打一次 Spell 键状态（调试完删）
+        // LiveInputProvider 里 edgesDown 是在 Update.SampleFromUnity 里算的，到 SpellCardEffect.FixedUpdate 时应该还在
+        var inp = ReplayManager.Input;
+        if (inp.GetKey(LogicalKey.X))
+            Debug.Log($"[SpellCardEffect] X held ✓ mode={ReplayManager.Instance?.CurrentMode} tick={SimClock.SimTick}");
+
         // 处理技能释放
-        if (ReplayManager.Input.GetKeyDown(LogicalKey.Spell))
+        if (inp.GetKeyDown(LogicalKey.X))
         {
             if (isFrozen)
             {
@@ -89,9 +95,11 @@ public class SpellCardEffect : MonoBehaviour
             }
             if (isAnimating)
             {
-                Debug.Log("正在播放动画");
+                Debug.Log($"正在播放动画 isAnimating={isAnimating} state={Global_GameManager.Instance.state}");
                 return;
             }
+
+            Debug.Log($"[SpellCardEffect] 释放符卡 spellDown ✓ BombCount={Global_GameManager.Instance.BombCount} character={Global_GameManager.Instance.character} isAnimating={isAnimating} isFrozen={isFrozen}");
 
             Global_GameManager.Instance.SubBomb(1);// 减少符卡数量
             
@@ -263,7 +271,7 @@ public class SpellCardEffect : MonoBehaviour
     public void StartHitDelay()
     {
         // 只有在低速移动（按下shift）且有符卡时才触发延迟
-        if (ReplayManager.Input.GetKey(LogicalKey.Slow) && Global_GameManager.Instance.BombCount > 0)
+        if (ReplayManager.Input.GetKey(LogicalKey.Shift) && Global_GameManager.Instance.BombCount > 0)
         {
             isHitDelayActive = true;
             Time.timeScale = 0f;
@@ -391,7 +399,7 @@ public class SpellCardEffect : MonoBehaviour
             if (playerAnime != null)
             {
                 // 检测左shift按键状态
-                bool isShiftPressed = ReplayManager.Input.GetKey(LogicalKey.Slow);
+                bool isShiftPressed = ReplayManager.Input.GetKey(LogicalKey.Shift);
                 // 根据shift按键状态设置移速和动画
                 if (isShiftPressed)
                 {
@@ -420,7 +428,7 @@ public class SpellCardEffect : MonoBehaviour
             if (gunAnime != null && Global_GameManager.Instance.character == Character.Marisa)
             {
                 // 检测左shift按键状态
-                bool isShiftPressed = ReplayManager.Input.GetKey(LogicalKey.Slow);
+                bool isShiftPressed = ReplayManager.Input.GetKey(LogicalKey.Shift);
                 
                 // 重置魔法状态
                 gunAnime.isExitingMagic = false;

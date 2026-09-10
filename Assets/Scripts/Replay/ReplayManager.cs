@@ -62,12 +62,21 @@ namespace ReplaySystem
             Instance.CurrentMode = Mode.Record;
             Instance.replay = null; // 清掉上一次回放残留
             Input = Instance.live;
+            // 🔴 清掉菜单场景残留的物理键边沿（用户可能在菜单按过 X/Esc/Z 后还没进 Game1）
+            Instance.live.ConsumeEdges();
             Debug.Log($"[ReplayManager] BeginRecord seed=0x{Instance.recordSeed:X16}");
         }
 
+        /// <summary>UIManager 由 UIManager.OnEnable 时注册（它负责 Show/Hide 回放暂停 UI）</summary>
+        public static UIManager UIManagerInstance;
+        
+        /// <summary>上一次 BeginPlayback 的路径（供 ReStart 用）</summary>
+        public static string playbackPath;
+        
         public static void BeginPlayback(string path)
         {
             EnsureInstance();
+            playbackPath = path;
             var serializer = new BinaryReplaySerializer();
             ReplayFile file = serializer.Load(path);
             GameRNG.Init(file.Header.seed);
@@ -77,7 +86,45 @@ namespace ReplaySystem
             Instance.playbackHeader = file.Header;
             Instance.CurrentMode = Mode.Playback;
             Input = Instance.replay;
+
+            // 🔴 关键：把回放文件里的角色/难度元信息写回 Global_GameManager，
+            // 这样 GunAnime/PlayerAnime/SpellCardEffect 的 character 判断能正确走 Marisa 分支
+            if (Global_GameManager.Instance != null)
+            {
+                Global_GameManager.Instance.character = (Character)file.Header.character;
+                Global_GameManager.Instance.gameMode  = (GameMode)file.Header.gameMode;
+                Debug.Log($"[ReplayManager] BeginPlayback → character={Global_GameManager.Instance.character} mode={Global_GameManager.Instance.gameMode}");
+            }
+            // 🔴 清掉菜单场景残留的物理键边沿
+            Instance.live.ConsumeEdges();
             Debug.Log($"[ReplayManager] BeginPlayback seed=0x{file.Header.seed:X16} ticks={file.Header.tickCount}");
+        }
+
+        /// <summary>回放自然结束 / 用户 ReStart 时调用：完整清理 + 重新加载 Game1 场景从头播放</summary>
+        public static void RestartPlayback()
+        {
+            if (Instance == null || string.IsNullOrEmpty(playbackPath)) return;
+
+            // 先切回 Idle，确保 RestartGame 的清理不被 Playback 模式干扰
+            EnsureInstance();
+            Instance.replay = null;
+            Instance.recordBuffer.Clear();
+            Instance.CurrentMode = Mode.Idle;
+            Input = Instance.live;
+            Time.timeScale = 1f;
+
+            // 🔴 用 Global_SceneManager.RestartGame 做完整清理：
+            // RecycleAllEnemies → 回收道具 → ClearAllPools → ResetGameDate → ResetSceneFromJson → IntoNextScene("Game1") 或 LoadScene
+            // 这保证了无论回放结束在 Game1/Game2/Boss 哪个场景，都能干净地回到 Game1 初始状态
+            if (Global_SceneManager.Instance != null)
+            {
+                Global_SceneManager.Instance.RestartGame();
+            }
+
+            // 清理完后重新 Initialize 回放状态
+            // （必须在 RestartGame 之后，否则 RestartGame 里的 IntoNextScene 会覆盖我们的 Playback 设置）
+            BeginPlayback(playbackPath);
+            Debug.Log($"[ReplayManager] RestartPlayback → clean restart from Game1, seed=0x{Instance.recordSeed:X16}");
         }
 
         /// <summary>
@@ -187,33 +234,75 @@ namespace ReplaySystem
         }
 
         /// <summary>
-        /// Update（每帧必跑，不受 timeScale 影响）：
-        ///   a. 清上一帧锁存的边沿 —— 避免同一边沿被重复读到
-        ///   b. 采样物理按键 → 算新边沿并锁存
-        /// 这样 FixedUpdate 里的玩法逻辑读到的边沿是本帧刚算的、且每帧只读到一次。
+        /// Update（每帧）：只负责采样物理按键 → 算边沿。
         /// </summary>
+        /// <summary>回放是否暂停（ReplayPauseUI 打开时 true）</summary>
+        public static bool IsReplayPaused { get; private set; }
+        
+        /// <summary>回放暂停 UI 打开（Esc 触发 / 回放自然结束触发）</summary>
+        public static void NotifyReplayPaused()
+        {
+            IsReplayPaused = true;
+        }
+        
+        /// <summary>回放暂停 UI 关闭（Resume / ReturnToMenu / ReStart）</summary>
+        public static void NotifyReplayResumed()
+        {
+            IsReplayPaused = false;
+        }
+
         private void Update()
         {
-            // 回放模式不采样物理输入（屏蔽玩家），但仍要清旧边沿
-            live.ConsumeEdges();
+            // 🔴 Esc 已移到 PauseUI.CheckInput 做唯一路由中心，这里不再处理
+            // 回放自然结束时主动触发回放暂停面板（这是唯一主动触发的地方）
+            if (CurrentMode == Mode.Playback && replay != null && replay.IsFinished && !GameEndTriggered)
+            {
+                GameEndTriggered = true;
+                Debug.Log($"[ReplayManager] 回放结束 → 触发 ReplayPauseUI");
+                NotifyReplayPaused();
+                UIManagerInstance?.ShowReplayPause();
+            }
 
             if (CurrentMode != Mode.Playback)
                 live.SampleFromUnity();
         }
 
+        /// <summary>回放结束后用户 ReStart 时需要重置此标志</summary>
+        public static void ResetGameEndFlag()
+        {
+            EnsureInstance();
+            Instance.GameEndTriggered = false;
+        }
+
+        /// <summary>回放是否已自然结束（供 ReplayPauseUI.OnEnable 检测用）</summary>
+        public static bool IsPlaybackFinished()
+        {
+            var inst = Instance;
+            return inst != null && inst.CurrentMode == Mode.Playback &&
+                   inst.replay != null && inst.replay.IsFinished;
+        }
+
+        private bool GameEndTriggered;
+
         /// <summary>
         /// FixedUpdate（仅 Record/Playback 模式才推进；Idle 时完全不动，菜单场景不消耗 SimClock）。
+        ///
+        /// 执行顺序依赖 Script Execution Order = +100（最晚）：
+        ///   先运行 SimClock.Tick → SimTimer → AdvanceTick → record
+        ///   然后 Unity  dispatch 所有玩法脚本 FixedUpdate —— 它们读 edgesDown ✓
+        ///   最后 ReplayManager 尾部 ConsumeEdges —— 清边沿
+        ///
         /// timeScale=0（暂停/结算）时 Unity 自动停掉这里，录制天然暂停。
         /// </summary>
         private void FixedUpdate()
         {
             if (CurrentMode == Mode.Idle) return;
 
-            // 1. 推进模拟时间（可能因 SimScale=0 而不推进）
+            // 1. 推进模拟时间
             bool didTick = SimClock.Tick();
-            if (!didTick) return; // 冻结时不推进输入/录制/定时器
+            if (!didTick) goto ConsumeEnd; // 冻结时仍要清边沿（下帧重新采样）
 
-            // 2. 驱动 tick 定时器（确定性，替代 Unity Invoke）
+            // 2. 驱动 tick 定时器
             SimTimer.Tick();
 
             // 3. 回放模式：前进到下一帧掩码
@@ -223,6 +312,13 @@ namespace ReplaySystem
             // 4. 录制模式：写入当前 held
             if (CurrentMode == Mode.Record)
                 recordBuffer.Add(live.HeldMask);
+
+            // 5. ⚠️ Unity 现在 dispatch 所有玩法脚本 FixedUpdate（SpellCardEffect 等在这里读 edgesDown）
+            //    因为 ReplayManager Execution Order = +100（最晚），我们最后执行，等它们都读完
+
+        ConsumeEnd:
+            // 6. 清上一帧遗留的边沿 —— 所有玩法脚本读完后再清
+            live.ConsumeEdges();
         }
 
         private static void EnsureInstance()

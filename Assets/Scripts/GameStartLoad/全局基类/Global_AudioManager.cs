@@ -407,6 +407,24 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
         }
     }
     
+    /// <summary>
+    /// 暂停当前背景音乐（AudioSource 不受 timeScale 影响，需要手动 Pause）
+    /// </summary>
+    public void PauseBGM()
+    {
+        if (bgmSource != null && bgmSource.isPlaying)
+            bgmSource.Pause();
+    }
+    
+    /// <summary>
+    /// 恢复暂停的背景音乐
+    /// </summary>
+    public void UnPauseBGM()
+    {
+        if (bgmSource != null && !bgmSource.isPlaying && bgmSource.time > 0f)
+            bgmSource.UnPause();
+    }
+    
     #endregion
     
     #region 音量控制方法
