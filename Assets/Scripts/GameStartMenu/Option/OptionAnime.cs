@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using ReplaySystem;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -33,15 +34,24 @@ public class OptionAnime : MonoBehaviour
     private bool IsOption = false;// 是否处于设置界面内部标志位
     public ButtonEvent Event;
 
+    public GameObject AllButtons;
+
     [Header("音效设置")]
     [SerializeField] private AudioClip moveoffSound;   // 取消选中音效
     [SerializeField] private AudioClip ZSound;    // Z音效
     [SerializeField] private AudioClip XSound;    // X音效
     [SerializeField] private AudioClip ErrorSound;    // 取消音效
 
+    [Header("按键设置面板")]
+    public GameObject keySetPanel;  // 绑定 KeySet.cs 的面板根物体（Inspector 里拖）
+    private KeySet keySet;
+
     // Start is called before the first frame update
     void Start()
     {
+        // 🔴 启动时加载按键映射（PlayerPrefs）
+        PhysicalKeyMapping.Load();
+
         if(DarkImages.Count == 0|| LightImages.Count == 0|| DarkImages.Count != LightImages.Count)
         {
             Debug.LogWarning("设置界面的图片不能为空或不相等");
@@ -51,6 +61,11 @@ public class OptionAnime : MonoBehaviour
         {
             Debug.LogWarning("设置界面的数字不能为空或不相等");
             enabled = false;
+        }
+        if(keySetPanel != null)
+        {
+            keySet = keySetPanel.GetComponent<KeySet>();
+            keySetPanel.SetActive(false); // 初始隐藏
         }
         BeChoose(Index);
     }
@@ -72,7 +87,17 @@ public class OptionAnime : MonoBehaviour
 
     private void CheckUpdate()
     {
-        if(Input.GetKeyDown(KeyCode.UpArrow))
+        // 🔴 KeySet 面板激活期间：OptionAnime 不处理输入，全交 KeySet
+        //（KeySet 内部有自己的状态机处理上下Z/X）
+        if (keySetPanel != null && keySetPanel.activeSelf)
+        {
+            // 但 KeySet 在 Listening 态按 X 只是取消绑定，不会退出面板；
+            // 这里让 KeySet 在 Navigation 态按 X 也能退出面板 —— 由 KeySet 自己读 X
+            // 如果 KeySet 已关闭面板（比如从 Listening 回到 Navigation 后），OptionAnime 继续接管
+            return;
+        }
+
+        if(Input.GetKeyDown(PhysicalKeyMapping.Up))
         {
             if(IsOption)
             {
@@ -85,7 +110,7 @@ public class OptionAnime : MonoBehaviour
                     SetNumber();
             }
         }
-        if(Input.GetKeyDown(KeyCode.DownArrow))
+        if(Input.GetKeyDown(PhysicalKeyMapping.Down))
         {
             if(IsOption)
             {
@@ -98,7 +123,7 @@ public class OptionAnime : MonoBehaviour
                     SetNumber();
             }
         }
-        if(Input.GetKeyDown(KeyCode.Z))
+        if(Input.GetKeyDown(PhysicalKeyMapping.Z))
         {
             if(IsOption)// 处于设置界面内部（执行对应Index的逻辑）
             {
@@ -109,7 +134,7 @@ public class OptionAnime : MonoBehaviour
                 BeClick(Index);
             }
         }
-        if(Input.GetKeyDown(KeyCode.X))
+        if(Input.GetKeyDown(PhysicalKeyMapping.X))
         {
             if(XSound != null)
             {
@@ -162,42 +187,35 @@ public class OptionAnime : MonoBehaviour
 
     private void BeClick(int index)
     {
-        IsOption = true;
-        if(index==2)
+        if(ZSound != null)
         {
-            if(ErrorSound != null)
-            {
-                Global_AudioManager.Instance.PlaySFX(ErrorSound, false);
-            }
-            Debug.Log("暂未实装");
-            IsOption = false;
+            Global_AudioManager.Instance.PlaySFX(ZSound, false);
         }
-        else
+        switch(index)
         {
-            if(ZSound != null)
-            {
-                Global_AudioManager.Instance.PlaySFX(ZSound, false);
-            }
-            switch(index)
-            {
-                case 0:// 调整音乐音量大小
-                    SetNumber();
-                    break;
-                case 1:// 调整音效音量大小
-                    SetNumber();
-                    break;
-                case 3:// 恢复默认
-                    IsOption = false;
-                    ResetDefault();
-                    break;
-                case 4:// 退出设置界面
-                    IsOption = false;
-                    Quit();
-                    break;
-                default:
-                    Debug.LogWarning("选项索引错误");
-                    break;
-            }
+            case 0:// 调整音乐音量大小
+                IsOption = true;
+                SetNumber();
+                break;
+            case 1:// 调整音效音量大小
+                IsOption = true;
+                SetNumber();
+                break;
+            case 2:// 按键设置
+                IsOption = true;
+                OpenKeySetPanel();
+                break;
+            case 3:// 恢复默认（音量 + 所有 9 种按键）
+                IsOption = false;
+                ResetDefault();
+                break;
+            case 4:// 退出设置界面
+                IsOption = false;
+                Quit();
+                break;
+            default:
+                Debug.LogWarning("选项索引错误");
+                break;
         }
     }
 
@@ -337,6 +355,33 @@ public class OptionAnime : MonoBehaviour
         sfxVolume = 0.80f;
         Global_AudioManager.Instance.SetBGMVolume(bgmVolume);
         Global_AudioManager.Instance.SetSFXVolume(sfxVolume);
+        // 🔴 同时恢复默认按键
+        PhysicalKeyMapping.ResetToDefaults();
         SetNumber();
+    }
+
+    /// <summary>打开按键设置面板</summary>
+    private void OpenKeySetPanel()
+    {
+        IsOption = true;
+        keySetPanel.SetActive(true);
+        AllButtons.SetActive(false);
+    }
+
+    /// <summary>关闭按键设置面板（由 KeySet 内部在 Navigation 态按 X 时调用）</summary>
+    public void CloseKeySetPanel()
+    {
+        IsOption = false;
+        if (keySetPanel != null) 
+        {
+            keySetPanel.SetActive(false);
+            AllButtons.SetActive(true);
+        }
+        if (XSound != null) Global_AudioManager.Instance.PlaySFX(XSound, false);
+        // 恢复 Option 主菜单的选中高亮（按键设置面板打开时 OptionAnime 没跑 BeRemove）
+        BeRemove(Index);
+        Index = 2;
+        LastIndex = 2;
+        BeChoose(Index);
     }
 }

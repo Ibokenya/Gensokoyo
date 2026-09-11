@@ -80,7 +80,8 @@ public class MagicAttack : MonoBehaviour
 
     void OnDisable()
     {
-        Time.timeScale = 1f;
+        // 🔴 释放硬暂停 —— 如果之前注册过的话
+        TimeScaleController.UnregisterHardPause();
         // 取消 SimTimer 定时器
         if (enterMagicHandle != 0) SimTimer.Cancel(enterMagicHandle);
         

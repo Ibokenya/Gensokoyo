@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using ReplaySystem;
 
 public class Manual : MonoBehaviour
 {
@@ -58,7 +59,7 @@ public class Manual : MonoBehaviour
 
     private void CheckUpDate()
     {
-        if(Input.GetKeyDown(KeyCode.UpArrow))
+        if(Input.GetKeyDown(PhysicalKeyMapping.Up))
         {
             // 播放翻页音效
             if (XSound != null)
@@ -70,7 +71,7 @@ public class Manual : MonoBehaviour
             UpdateMenu();
         }
 
-        if (Input.GetKeyDown(KeyCode.DownArrow))
+        if (Input.GetKeyDown(PhysicalKeyMapping.Down))
         {
             // 播放翻页音效
             if (XSound != null)
@@ -82,7 +83,7 @@ public class Manual : MonoBehaviour
             UpdateMenu();
         }
 
-        if (Input.GetKeyDown(KeyCode.Z) && IsIndex)// 是索引态，进入页态
+        if (Input.GetKeyDown(PhysicalKeyMapping.Z) && IsIndex)// 是索引态，进入页态
         {
             // 播放Z音效
             if (XSound != null)
@@ -98,7 +99,7 @@ public class Manual : MonoBehaviour
             }
             BeClicked(Index);
         }
-        if (Input.GetKeyDown(KeyCode.X))
+        if (Input.GetKeyDown(PhysicalKeyMapping.X))
         {
             // 播放X音效
             if (XSound != null)

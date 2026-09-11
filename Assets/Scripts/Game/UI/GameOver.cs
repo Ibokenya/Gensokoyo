@@ -34,7 +34,8 @@ public class GameOver : MonoBehaviour
 
     void OnEnable()
     {
-        Time.timeScale = 0f;
+        // 🔴 注册硬暂停 —— GameOver 也要覆盖其他软缩放
+        TimeScaleController.RegisterHardPause();
         currentBGMName = Global_AudioManager.Instance.GetCurrentBGMName();
         currentBgmPosition = Global_AudioManager.Instance.GetCurrentBGMPosition();
         Global_AudioManager.Instance.StopBGM();
@@ -74,7 +75,7 @@ public class GameOver : MonoBehaviour
         // 因为 timeScale=0 时 FixedUpdate 不跑 → ConsumeEdges 不执行 → 边沿永远不被清 → 菜单疯狂滚动
         if (CurrentIndex == 3)
         {
-            if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow))
+            if (Input.GetKeyDown(PhysicalKeyMapping.Up) || Input.GetKeyDown(PhysicalKeyMapping.Down))
             {
                 CurrentIndex = 0;
                 SelectOption(CurrentIndex);
@@ -82,21 +83,21 @@ public class GameOver : MonoBehaviour
             return;
         }
 
-        if (Input.GetKeyDown(KeyCode.UpArrow))
+        if (Input.GetKeyDown(PhysicalKeyMapping.Up))
         {
             RemoveOptions(CurrentIndex);
             CurrentIndex--;
             if (CurrentIndex < 0) CurrentIndex = Options.Count - 1;
             SelectOption(CurrentIndex);
         }
-        else if (Input.GetKeyDown(KeyCode.DownArrow))
+        else if (Input.GetKeyDown(PhysicalKeyMapping.Down))
         {
             RemoveOptions(CurrentIndex);
             CurrentIndex++;
             if (CurrentIndex > Options.Count - 1) CurrentIndex = 0;
             SelectOption(CurrentIndex);
         }
-        else if (Input.GetKeyDown(KeyCode.Z))
+        else if (Input.GetKeyDown(PhysicalKeyMapping.Z))
         {
             Global_AudioManager.Instance.PlaySFX(SelectSound);
 
@@ -116,18 +117,18 @@ public class GameOver : MonoBehaviour
     /// <summary>确认环节：YesOrNo 切换保存/丢弃 → Z 确认 → 执行 → X/Esc 回退</summary>
     private void HandleConfirmStep()
     {
-        if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow))
+        if (Input.GetKeyDown(PhysicalKeyMapping.Left) || Input.GetKeyDown(PhysicalKeyMapping.Right))
         {
             YesOrNo = !YesOrNo;
             UpdateConfirmColor();
             Global_AudioManager.Instance.PlaySFX(SelectSound);
         }
-        else if (Input.GetKeyDown(KeyCode.Z))
+        else if (Input.GetKeyDown(PhysicalKeyMapping.Z))
         {
             CommitSaveOrDiscard();
             ExecuteChosenAction();
         }
-        else if (Input.GetKeyDown(KeyCode.X) || Input.GetKeyDown(KeyCode.Escape))
+        else if (Input.GetKeyDown(PhysicalKeyMapping.X) || Input.GetKeyDown(PhysicalKeyMapping.Escape))
         {
             // 回退到上一步（保存确认 → 主菜单三选一）
             ExitSaveConfirm();
@@ -220,7 +221,8 @@ public class GameOver : MonoBehaviour
 
             case 1:
                 Global_SceneManager.Instance.RestartGame();
-                Time.timeScale = 1f;
+                // 🔴 重置所有暂停/缩放状态 —— 重开游戏从头开始
+                TimeScaleController.ResetAll();
                 Global_GameManager.Instance.state = State.Gaming;
                 gameObject.SetActive(false);
                 break;
@@ -230,7 +232,8 @@ public class GameOver : MonoBehaviour
                 if (Global_GameManager.Instance != null)
                     Global_GameManager.Instance.RecycleAllEnemies();
 
-                Time.timeScale = 1f;
+                // 🔴 重置所有暂停/缩放状态 —— 进入菜单场景
+                TimeScaleController.ResetAll();
                 Global_SceneManager.Instance.IntoNextScene("GameStartMenu", false);
                 gameObject.SetActive(false);
                 break;
@@ -269,7 +272,8 @@ public class GameOver : MonoBehaviour
     /// <summary>续关功能：恢复玩家状态并继续游戏</summary>
     private void ContinueGame()
     {
-        Time.timeScale = 1f;
+        // 🔴 重置所有暂停/缩放状态 —— 续关等于重新开始游戏
+        TimeScaleController.ResetAll();
         Global_GameManager.Instance.state = State.Gaming;
 
         // 恢复玩家 HP 为 2,0

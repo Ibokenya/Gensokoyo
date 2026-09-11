@@ -89,20 +89,17 @@ public class SpellCardEffect : MonoBehaviour
             return;
         }
 
-        // 🔴 诊断日志：每帧都打一次 Spell 键状态
-        var inp = ReplayManager.Input;
-        if (inp.GetKey(LogicalKey.X))
-            Debug.Log($"[SpellCardEffect] X held ✓ mode={ReplayManager.Instance?.CurrentMode} tick={SimClock.SimTick}");
-
-        // 处理技能释放
-        if (inp.GetKeyDown(LogicalKey.X))
+        // 🔴 X 键正常回放 → SpellCardEffect.Update 正常跑
+        // 中弹已由 HitFlag 位驱动（回放时 PanDing.OnTriggerEnter2D return，ForceHit 设 isHitDelayActive）
+        // 所以 isHitDelayActive 状态和录制完全一致 → 自动走决死/普通分支
+        if (ReplayManager.Input.GetKeyDown(LogicalKey.X))
         {
             if (isFrozen)
             {
                 Debug.Log("符卡已冻结");
                 return;
             }
-            if (Global_GameManager.Instance.BombCount <= 0)// 检查是否有符卡可用
+            if (Global_GameManager.Instance.BombCount <= 0)
             {
                 Debug.Log("没有符卡可用");
                 return;
@@ -115,39 +112,42 @@ public class SpellCardEffect : MonoBehaviour
 
             Debug.Log($"[SpellCardEffect] 释放符卡 spellDown ✓ BombCount={Global_GameManager.Instance.BombCount} character={Global_GameManager.Instance.character} isAnimating={isAnimating} isFrozen={isFrozen}");
 
-            Global_GameManager.Instance.SubBomb(1);// 减少符卡数量
+            Global_GameManager.Instance.SubBomb(1);
             
-            // 检查是否处于冻结状态（包括冻结动画期间）
             bool isInFrozenState = Global_GameManager.Instance.state == State.Frozen;
             bool isFreezing = freezeSystem != null && freezeSystem.IsFrozen;
             
             if (isInFrozenState || isFreezing)
             {
-                // 重置冻结系统（解除冰冻状态）
-                if (freezeSystem != null)
-                {
-                    freezeSystem.ResetFreeze();
-                }
-                // 完成QTE（禁用Ice物体）
-                if (playerAnime != null)
-                {
-                    playerAnime.CompleteQTE();
-                }
+                if (freezeSystem != null) freezeSystem.ResetFreeze();
+                if (playerAnime != null) playerAnime.CompleteQTE();
             }
-            
+
+            isAnimating = true;
             if (isHitDelayActive)
-            {
-                isAnimating = true;
-                // 受击时释放特殊技能
                 ReleaseSpecialSpellCard();
-            }
             else
-            {
-                isAnimating = true;
-                // 正常释放技能
                 ReleaseNormalSpellCard();
-            }
         }
+    }
+
+    /// <summary>🔴 回放时由 ReplayManager 强制调用 —— 模拟一次符卡释放
+    /// isSuper=true 表示决死符卡，false 表示普通符卡</summary>
+    public void ForceReleaseSpell(bool isSuper)
+    {
+        if (isFrozen || Global_GameManager.Instance.BombCount <= 0 || isAnimating) return;
+
+        Global_GameManager.Instance.SubBomb(1);
+        bool isInFrozenState = Global_GameManager.Instance.state == State.Frozen;
+        bool isFreezing = freezeSystem != null && freezeSystem.IsFrozen;
+        if (isInFrozenState || isFreezing)
+        {
+            if (freezeSystem != null) freezeSystem.ResetFreeze();
+            if (playerAnime != null) playerAnime.CompleteQTE();
+        }
+        isAnimating = true;
+        if (isSuper) ReleaseSpecialSpellCard();
+        else         ReleaseNormalSpellCard();
     }
 
     #region 释放技能相关
@@ -216,7 +216,8 @@ public class SpellCardEffect : MonoBehaviour
             StopCoroutine(hitDelayCoroutine);
         }
         isHitDelayActive = false;
-        Time.timeScale = 1f;
+        // 🔴 释放硬暂停 —— 如果之前注册过决死延迟
+        TimeScaleController.UnregisterHardPause();
         
         // 停止音乐并记录状态
         if(Global_AudioManager.Instance != null)
@@ -288,7 +289,8 @@ public class SpellCardEffect : MonoBehaviour
         if (ReplayManager.Input.GetKey(LogicalKey.Shift) && Global_GameManager.Instance.BombCount > 0)
         {
             isHitDelayActive = true;
-            Time.timeScale = 0f;
+            // 🔴 注册硬暂停 —— 让 TimeScaleController 统一管理
+            TimeScaleController.RegisterHardPause();
             Debug.Log("进入决死预备状态");
             if (DelayClip != null)
             {
@@ -325,7 +327,8 @@ public class SpellCardEffect : MonoBehaviour
 
         if (isHitDelayActive && Global_GameManager.Instance.state != State.NoDead)
         {
-            Time.timeScale = 1f;
+            // 🔴 释放硬暂停 —— controller 自动恢复到正确的值
+            TimeScaleController.UnregisterHardPause();
             if (BeHitClip != null)
             {
                 // 播放中弹音效
@@ -347,8 +350,14 @@ public class SpellCardEffect : MonoBehaviour
     {
         isAnimating = false;
 
-        // 解除无敌状态
-        Global_GameManager.Instance.state = State.Gaming;
+        // 🔴 只有当前不在暂停/结算/菜单状态才恢复到 Gaming
+        // 防止玩家在技能动画期间触发 Pause/GameOver/FinalUI 时被覆盖
+        if (Global_GameManager.Instance.state != State.Pause &&
+            Global_GameManager.Instance.state != State.FinalUI &&
+            Global_GameManager.Instance.state != State.Over)
+        {
+            Global_GameManager.Instance.state = State.Gaming;
+        }
 
         // 检测玩家按键状态并重置动画状态
         ResetPlayerAnimationState();

@@ -561,7 +561,8 @@ public class Global_SceneManager : Singleton<Global_SceneManager>
                 IntoNextScene("Game1", false);
             }
         }
-        Time.timeScale = 1f;
+        // 🔴 重置所有暂停/缩放状态 —— 进入新场景
+        TimeScaleController.ResetAll();
         Global_AudioManager.Instance.PlayBGM("Game1");
         Global_GameManager.Instance.state = State.Gaming;
     }

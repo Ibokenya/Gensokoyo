@@ -81,7 +81,6 @@ public class GunAnime : MonoBehaviour
         if(Global_GameManager.Instance.state == State.Pause || 
         Global_GameManager.Instance.state == State.FinalUI) return;
         CheckUpdate();
-        Cheat();
     }
 
     public void SwitchGun()
@@ -289,26 +288,6 @@ public class GunAnime : MonoBehaviour
                     MarisaGuns[3].transform.eulerAngles = new Vector3(0,0,-4);
                     break;
             }
-        }
-    }
-
-    private void Cheat()
-    {
-        if(Input.GetKeyDown(KeyCode.E))
-        {
-            Global_GameManager.Instance.AddPower(50);
-        }
-        if(Input.GetKeyDown(KeyCode.Q))
-        {
-            Global_GameManager.Instance.SubPower(50);
-        }
-        if (Input.GetKeyDown(KeyCode.B))
-        {
-            Global_GameManager.Instance.AddBomb(1);
-        }
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            Global_GameManager.Instance.isCheheat = !Global_GameManager.Instance.isCheheat;
         }
     }
 

@@ -28,9 +28,13 @@ namespace ReplaySystem
     public struct ReplayHeader
     {
         public const int  Magic           = 0x594C5052; // "RPLY"（小端）
-        public const int  CurrentVersion  = 2;
+        public const int  CurrentVersion  = 3; // v3 = 带校验帧位置表 + HitFlag 位（原 Esc 位换成中弹标志）
         public const int  HeaderSize      = 112;
         public const int  MaxRecordSlots = 10; // 历史战绩最多保留 10 条
+
+        // 校验帧参数（v3 新增）：每 validateInterval tick 存一次玩家位置
+        public const int ValidateInterval = 60;
+        public const int ValidateEntrySize = 8; // 2 个 float (posX, posY)
 
         public int      magic;
         public int      version;
@@ -46,6 +50,9 @@ namespace ReplaySystem
         public int      stage;
         public long     saveTimeMs; // Unix epoch 毫秒（用于按时间排序）
 
+        // v3 新增：校验帧数量 = ceil(tickCount / ValidateInterval)
+        public int ValidateFrameCount => tickCount > 0 ? (tickCount + ValidateInterval - 1) / ValidateInterval : 0;
+
         /// <summary>saveTimeMs → DateTime（本地时区）。
         /// 用 .NET 内置 DateTimeOffset.FromUnixTimeMilliseconds，正确处理 epoch 偏移。
         /// 之前手动 ×10000 但漏加 epoch 偏移，导致年份变成 0001 后加 560 年 → 显示 0561。</summary>
@@ -59,11 +66,16 @@ namespace ReplaySystem
         }
     }
 
-    /// <summary>回放文件的内存表示：头 + tick 数组</summary>
+    /// <summary>回放文件的内存表示：头 + tick 数组 + 校验帧位置表
+    /// v3 新增：校验帧位置表（每 ValidateInterval tick 的玩家位置 + 游戏状态）
+    /// v3 更改：回放文件每 tick 1 字节 bit7 从 Esc 换成 HitFlag
+    /// v3.1：校验帧扩展为 [x, y, state] = 10 bytes（4+4+2）</summary>
     public struct ReplayFile
     {
         public ReplayHeader Header;
         public byte[] TickMasks;
+        public float[] ValidatePositions;   // [x0,y0,x1,y1,...]
+        public ushort[] ValidateStates;    // [state0, state1, ...] 和 ValidatePositions 并行
     }
 
     public interface IReplaySerializer
@@ -85,6 +97,7 @@ namespace ReplaySystem
             using var bw = new BinaryWriter(fs);
 
             var h = file.Header;
+            h.version = 3; // v3 = 校验帧位置表 + HitFlag 位（bit7 原 Esc 位）
             bw.Write(h.magic);
             bw.Write(h.version);
             bw.Write(h.seed);
@@ -99,8 +112,27 @@ namespace ReplaySystem
             // 剩余 63 字节预留
             for (int i = 0; i < 63; i++) bw.Write((byte)0);
 
+            // tick body
             for (int i = 0; i < h.tickCount; i++)
                 bw.Write(file.TickMasks[i]);
+
+            // v3 新增：校验帧位置表
+            int vCount = file.ValidatePositions != null ? file.ValidatePositions.Length / 2 : 0;
+            bw.Write(vCount);
+            if (file.ValidatePositions != null)
+            {
+                for (int i = 0; i < file.ValidatePositions.Length; i++)
+                    bw.Write(file.ValidatePositions[i]);
+            }
+
+            // v3.1 新增：校验帧游戏状态表（紧跟位置表之后，按帧顺序）
+            int sCount = file.ValidateStates != null ? file.ValidateStates.Length : 0;
+            bw.Write(sCount);
+            if (file.ValidateStates != null)
+            {
+                for (int i = 0; i < file.ValidateStates.Length; i++)
+                    bw.Write(file.ValidateStates[i]);
+            }
         }
 
         public ReplayFile Load(string path)
@@ -142,7 +174,27 @@ namespace ReplaySystem
             for (int i = 0; i < h.tickCount; i++)
                 masks[i] = br.ReadByte();
 
-            return new ReplayFile { Header = h, TickMasks = masks };
+            // v3 新增：读取校验帧位置表
+            float[] validatePos = null;
+            ushort[] validateStates = null;
+            if (h.version >= 3)
+            {
+                int vCount = br.ReadInt32();
+                validatePos = new float[vCount * 2];
+                for (int i = 0; i < validatePos.Length; i++)
+                    validatePos[i] = br.ReadSingle();
+
+                // v3.1 新增：读取校验帧游戏状态表（紧跟位置表之后）
+                if (h.version >= 3)
+                {
+                    int sCount = br.ReadInt32();
+                    validateStates = new ushort[sCount];
+                    for (int i = 0; i < sCount; i++)
+                        validateStates[i] = br.ReadUInt16();
+                }
+            }
+
+            return new ReplayFile { Header = h, TickMasks = masks, ValidatePositions = validatePos, ValidateStates = validateStates };
         }
     }
 

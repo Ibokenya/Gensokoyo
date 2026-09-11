@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -67,7 +67,6 @@ public class Global_GameManager : Singleton<Global_GameManager>
     public AudioClip BombUpClip;//残B数增加音效
 
     int pastPower = 0;//上一次灵力值，用于判断是否需要播放音效
-    public bool isCheheat = false;//是否开启作弊模式
 
 /// <summary>
 /// 事件系统
@@ -106,7 +105,6 @@ public class Global_GameManager : Singleton<Global_GameManager>
         SceneLevel = 1;               // 关卡等级（第几面）
         SpeedScale = 1f;              //速度缩放比例（冰冻系统相关）
         state = State.Gaming;         // 状态机（初始为Loading）
-        isCheheat = false;            //是否开启作弊模式
     }
 
     void OnDestroy()
@@ -234,6 +232,17 @@ public class Global_GameManager : Singleton<Global_GameManager>
             BombCount -= bomb;
             OnBombChanged?.Invoke(BombCount,BombPiece);
         }
+    }
+
+    /// <summary>🔴 回放时强制设游戏状态 —— 直接赋值 + 触发事件，跳过音效</summary>
+    public void ForceSetReplayState(int power, int hp, int bombCount)
+    {
+        Power = Mathf.Clamp(power, 0, 400);
+        Hp = Mathf.Clamp(hp, 0, 7);
+        BombCount = Mathf.Clamp(bombCount, 0, 7);
+        OnPowerChanged?.Invoke(Power);
+        OnLeftLifeChanged?.Invoke(Hp, HpPiece);
+        OnBombChanged?.Invoke(BombCount, BombPiece);
     }
 
     public void SetBomb(int bomb, int cardPiece)

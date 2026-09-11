@@ -1,7 +1,8 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using ReplaySystem;
 
 public class CharacterAnime : MonoBehaviour
 {
@@ -60,7 +61,7 @@ public class CharacterAnime : MonoBehaviour
     void Update()
     {
         // 右键：切镜像态
-        if (Input.GetKeyDown(KeyCode.RightArrow)&&!ismirror)
+        if (Input.GetKeyDown(PhysicalKeyMapping.Right)&&!ismirror)
         {
             if (isfirst) 
             { 
@@ -84,7 +85,7 @@ public class CharacterAnime : MonoBehaviour
             }
         }
         // 左键：切初始态
-        else if (Input.GetKeyDown(KeyCode.LeftArrow)&&ismirror)
+        else if (Input.GetKeyDown(PhysicalKeyMapping.Left)&&ismirror)
         {
             SetMirrorState(false);
             ismirror = false;

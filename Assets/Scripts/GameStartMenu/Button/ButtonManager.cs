@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using ReplaySystem;
 
 public class ButtonManager : MonoBehaviour
 {
@@ -46,7 +47,7 @@ public class ButtonManager : MonoBehaviour
     /// </summary>
     private void CheckButtonSwitch()
     {
-        if(Input.GetKeyDown(KeyCode.UpArrow))// 按下↑键
+        if(Input.GetKeyDown(PhysicalKeyMapping.Up))// 按下↑键（逻辑上）
         {
             ButtonAnime.ButtonBeMoveoff(buttons[currentButtonIndex]);
             currentButtonIndex--;
@@ -56,7 +57,7 @@ public class ButtonManager : MonoBehaviour
             }
             ButtonAnime.ButtonBeChoose(buttons[currentButtonIndex]);
         }
-        if (Input.GetKeyDown(KeyCode.DownArrow))// 按下↓键
+        if (Input.GetKeyDown(PhysicalKeyMapping.Down))// 按下↓键（逻辑上）
         {
             ButtonAnime.ButtonBeMoveoff(buttons[currentButtonIndex]);
             currentButtonIndex++;
@@ -74,7 +75,7 @@ public class ButtonManager : MonoBehaviour
     /// </summary>
     private void CheckButtonClick()
     {
-        if(Input.GetKeyDown(KeyCode.Z))
+        if(Input.GetKeyDown(PhysicalKeyMapping.Z))
         {
             ButtonAnime.ButtonBeClick(buttons[currentButtonIndex]);
             
@@ -106,7 +107,7 @@ public class ButtonManager : MonoBehaviour
                     break;
             }
         }
-        if (Input.GetKeyDown(KeyCode.X))
+        if (Input.GetKeyDown(PhysicalKeyMapping.X))
         {
             ButtonAnime.ButtonBeMoveoff(buttons[currentButtonIndex]);
             currentButtonIndex = buttons.Count - 1;

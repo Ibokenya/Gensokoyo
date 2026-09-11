@@ -39,7 +39,8 @@ public class ButtonEvent : MonoBehaviour
 
     void OnEnable()
     {
-        Time.timeScale = 1f;
+        // 🔴 重置所有暂停/缩放状态 —— 进入菜单场景
+        TimeScaleController.ResetAll();
     }
 
     // Update is called once per frame
@@ -151,7 +152,7 @@ public class ButtonEvent : MonoBehaviour
             return;
         }
         
-        if (Input.GetKeyDown(KeyCode.X))
+        if (Input.GetKeyDown(PhysicalKeyMapping.X))
         {
             // 播放X音效
             if (XSound != null)
@@ -171,7 +172,7 @@ public class ButtonEvent : MonoBehaviour
                 Global_GameManager.Instance.state = State.Menu;
             }         
         }
-        if(Input.GetKeyDown(KeyCode.Z))
+        if(Input.GetKeyDown(PhysicalKeyMapping.Z))
         {
             if(Global_GameManager.Instance.gameMode==GameMode.Extra)
             {
@@ -197,7 +198,7 @@ public class ButtonEvent : MonoBehaviour
 
     private void ModeChoose()
     {
-        if (Input.GetKeyDown(KeyCode.X))
+        if (Input.GetKeyDown(PhysicalKeyMapping.X))
         {
             // 播放X音效
             if (XSound != null)
@@ -221,7 +222,7 @@ public class ButtonEvent : MonoBehaviour
     {
         // ReplayMenu 组件（绑定在 SceneObjects[3] 上）负责全部 UI 和输入。
         // 如果 ReplayMenu 没挂，退回到旧逻辑（Debug 日志 + X 退出）
-        if (Input.GetKeyDown(KeyCode.X) || Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(PhysicalKeyMapping.X) || Input.GetKeyDown(PhysicalKeyMapping.Escape))
         {
             SceneObjects[3].SetActive(false);
             SceneObjects[0].SetActive(true);
@@ -238,7 +239,7 @@ public class ButtonEvent : MonoBehaviour
 
     private void MusicRoom()
     {
-        if (Input.GetKeyDown(KeyCode.X))
+        if (Input.GetKeyDown(PhysicalKeyMapping.X))
         {
             // 播放X音效
             if (XSound != null)

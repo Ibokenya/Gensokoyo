@@ -20,7 +20,8 @@ public class PauseUI : MonoBehaviour
     {
         // 🔴 Esc 路由中心：整个游戏只有这里读 Esc
         // 加 IsReplayPaused 让已暂停时 PauseUI 什么都不做，把 Esc 留给 ReplayPauseUI 消费
-        if (!Input.GetKeyDown(KeyCode.Escape)) return;
+        // 🔴 读 PhysicalKeyMapping.Escape 而非 KeyCode.Escape —— 玩家可重绑暂停键
+        if (!Input.GetKeyDown(PhysicalKeyMapping.Escape)) return;
         if (Global_GameManager.Instance.state == State.Over) return;
 
         // 回放模式：路由到回放暂停 UI
@@ -51,7 +52,7 @@ public class PauseUI : MonoBehaviour
         }
         
         isPaused = true;
-        Time.timeScale = 0;
+        TimeScaleController.RegisterHardPause();
         pastState = Global_GameManager.Instance.state;
         Global_GameManager.Instance.state = State.Pause;
         
@@ -78,7 +79,7 @@ public class PauseUI : MonoBehaviour
         Global_GameManager.Instance.state = pastState;
 
         isPaused = false;
-        Time.timeScale = 1;
+        TimeScaleController.UnregisterHardPause();
         
         // 🔴 恢复录制 —— RemoveSkipTickReason()
         ReplayManager.RemoveSkipTickReason();

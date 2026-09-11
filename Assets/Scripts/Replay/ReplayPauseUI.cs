@@ -46,8 +46,8 @@ public class ReplayPauseUI : MonoBehaviour
 
         selectedIndex = 0;
         
-        // timeScale=0 让游戏停住（如果还没停）
-        if (Time.timeScale > 0f) Time.timeScale = 0f;
+        // 🔴 注册硬暂停 —— 让 TimeScaleController 统一管理
+        TimeScaleController.RegisterHardPause();
 
         // 🔴 暂停 BGM（AudioSource 不受 timeScale 影响，需要手动 Pause）
         if (Global_AudioManager.Instance != null) Global_AudioManager.Instance.PauseBGM();
@@ -81,21 +81,21 @@ public class ReplayPauseUI : MonoBehaviour
 
     private void HandleInput()
     {
-        if (Input.GetKeyDown(KeyCode.UpArrow))
+        if (Input.GetKeyDown(PhysicalKeyMapping.Up))
         {
             BeChooseCancel(selectedIndex);
             selectedIndex = 0;
             BeChoose(selectedIndex);
             PlaySfx(chooseSfx);
         }
-        else if (Input.GetKeyDown(KeyCode.DownArrow))
+        else if (Input.GetKeyDown(PhysicalKeyMapping.Down))
         {
             BeChooseCancel(selectedIndex);
             selectedIndex = 1;
             BeChoose(selectedIndex);
             PlaySfx(chooseSfx);
         }
-        else if (Input.GetKeyDown(KeyCode.Z))
+        else if (Input.GetKeyDown(PhysicalKeyMapping.Z))
         {
             PlaySfx(confirmSfx);
             switch (selectedIndex)
@@ -115,12 +115,12 @@ public class ReplayPauseUI : MonoBehaviour
                     break;
             }
         }
-        else if (Input.GetKeyDown(KeyCode.X))
+        else if (Input.GetKeyDown(PhysicalKeyMapping.X))
         {
             // X 键：进行中恢复，结束时无效
             if (!isAtEnd) Resume();
         }
-        else if (Input.GetKeyDown(KeyCode.Escape))
+        else if (Input.GetKeyDown(PhysicalKeyMapping.Escape))
         {
             // Esc：进行中恢复；结束时返回菜单（不给 ReStart 也有出路）
             if (!isAtEnd) Resume();
@@ -132,7 +132,8 @@ public class ReplayPauseUI : MonoBehaviour
 
     private void Resume()
     {
-        Time.timeScale = 1f;
+        // 🔴 释放硬暂停 —— controller 自动恢复到正确的值
+        TimeScaleController.UnregisterHardPause();
         // 🔴 UnPause BGM
         if (Global_AudioManager.Instance != null) Global_AudioManager.Instance.UnPauseBGM();
         ReplayManager.NotifyReplayResumed();
@@ -141,7 +142,8 @@ public class ReplayPauseUI : MonoBehaviour
 
     private void ReturnToMenu()
     {
-        Time.timeScale = 1f;
+        // 🔴 重置所有暂停/缩放状态 —— 返回菜单
+        TimeScaleController.ResetAll();
         ReplayManager.DiscardRecording();
         ReplayManager.NotifyReplayResumed();
         if (Global_SceneManager.Instance != null)

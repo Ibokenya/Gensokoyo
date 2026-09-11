@@ -116,7 +116,7 @@ public class ReplayMenu : MonoBehaviour
         // 🔴 meta 层 UI 全部读 Unity Input，不走 ReplayManager.Input
         // 避免 ReplayInputProvider 的回放边沿或 LiveInputProvider 未清的边沿干扰
 
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(PhysicalKeyMapping.Escape))
         {
             CloseMenu();
             return;
@@ -124,21 +124,21 @@ public class ReplayMenu : MonoBehaviour
 
         if (slots.Count == 0) return; // 空列表时除了退出什么都不做
 
-        if (Input.GetKeyDown(KeyCode.UpArrow))
+        if (Input.GetKeyDown(PhysicalKeyMapping.Up))
         {
             if (selectedIndex > 0) selectedIndex--;
             else selectedIndex = slots.Count - 1;
             PlaySfx(chooseSfx);
             RefreshSelection();
         }
-        else if (Input.GetKeyDown(KeyCode.DownArrow))
+        else if (Input.GetKeyDown(PhysicalKeyMapping.Down))
         {
             if (selectedIndex < slots.Count - 1) selectedIndex++;
             else selectedIndex = 0;
             PlaySfx(chooseSfx);
             RefreshSelection();
         }
-        else if (Input.GetKeyDown(KeyCode.Z))
+        else if (Input.GetKeyDown(PhysicalKeyMapping.Z))
         {
             EnterSelectedReplay();
         }

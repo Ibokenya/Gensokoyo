@@ -384,7 +384,9 @@ public class BossBeheve : MonoBehaviour
     /// </summary>
     private void AllOver()
     {
-        Time.timeScale = 0.3f;// 时间流速变缓
+        // 🔴 注册软缩放（慢放）—— 让 TimeScaleController 统一管理
+        // 如果此时有 Esc 暂停，硬暂停会覆盖慢放为 0；Esc 解除后自动回到 0.3
+        TimeScaleController.RegisterSoftScale(0.3f);
         changeBG.BeginDeadStarEffect(); // 新星爆炸动画
         changeBG.HideBg();// 隐藏最终符卡背景
         bossShootSystem.HideTerrain();// 隐藏地形
@@ -406,8 +408,9 @@ public class BossBeheve : MonoBehaviour
     {
         // 恢复正常节奏
         SimClock.SetScale(1f);
-        // timeScale 也显式重置到 1，确保 Pause/结算恢复时不会被 0.3 残留影响
-        Time.timeScale = 1f;
+        // 🔴 释放软缩放 —— controller 自动恢复到正确的值
+        // 如果此时还有 Esc 暂停，最终 timeScale 仍是 0
+        TimeScaleController.UnregisterSoftScale();
         bossAnime.ChrinoAnimator.enabled = true;
         bossAnime.ChrinoAnimator.SetBool("IsDie", true);
     }
@@ -419,7 +422,8 @@ public class BossBeheve : MonoBehaviour
 
     public void ShowFinalUI()
     {
-        Time.timeScale = 0f;
+        // 🔴 注册硬暂停 —— FinalUI 应该覆盖其他软缩放
+        TimeScaleController.RegisterHardPause();
         Debug.Log("显示最终UI");
         Global_GameManager.Instance.state=State.FinalUI;
         uiManager.ShowFinalUI();

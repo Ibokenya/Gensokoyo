@@ -113,19 +113,19 @@ public class PauseEvent : MonoBehaviour
 
     private void HandleManual()
     {
-        if (Input.GetKeyDown(KeyCode.UpArrow))
+        if (Input.GetKeyDown(PhysicalKeyMapping.Up))
         {
             lastManualIndex = manualIndex;
             manualIndex = (manualIndex - 1 + manualTexts.Count) % manualTexts.Count;
             UpdateManual();
         }
-        else if (Input.GetKeyDown(KeyCode.DownArrow))
+        else if (Input.GetKeyDown(PhysicalKeyMapping.Down))
         {
             lastManualIndex = manualIndex;
             manualIndex = (manualIndex + 1) % manualTexts.Count;
             UpdateManual();
         }
-        else if (Input.GetKeyDown(KeyCode.Z) && isManualIndex)
+        else if (Input.GetKeyDown(PhysicalKeyMapping.Z) && isManualIndex)
         {
             Global_AudioManager.Instance.PlaySFX(Click);
             isManualIndex = false;
@@ -134,7 +134,7 @@ public class PauseEvent : MonoBehaviour
             foreach (TextMeshProUGUI text in manualTexts) text.alpha = 0;
             manualPanels[manualIndex].alpha = PanelAlpha;
         }
-        else if (Input.GetKeyDown(KeyCode.X))
+        else if (Input.GetKeyDown(PhysicalKeyMapping.X))
         {
             if (!isManualIndex)
             {
@@ -151,7 +151,7 @@ public class PauseEvent : MonoBehaviour
                 CloseManual();
             }
         }
-        else if (Input.GetKeyDown(KeyCode.Escape))
+        else if (Input.GetKeyDown(PhysicalKeyMapping.Escape))
         {
             CloseManual();
         }
@@ -188,13 +188,13 @@ public class PauseEvent : MonoBehaviour
 
     private void HandleActionConfirm()
     {
-        if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow))
+        if (Input.GetKeyDown(PhysicalKeyMapping.Left) || Input.GetKeyDown(PhysicalKeyMapping.Right))
         {
             YesOrNo = !YesOrNo;
             UpdateConfirmColor();
             Global_AudioManager.Instance.PlaySFX(Choose);
         }
-        else if (Input.GetKeyDown(KeyCode.Z))
+        else if (Input.GetKeyDown(PhysicalKeyMapping.Z))
         {
             if (YesOrNo)
             {
@@ -213,7 +213,7 @@ public class PauseEvent : MonoBehaviour
                 BackToPause();
             }
         }
-        else if (Input.GetKeyDown(KeyCode.X) || Input.GetKeyDown(KeyCode.Escape))
+        else if (Input.GetKeyDown(PhysicalKeyMapping.X) || Input.GetKeyDown(PhysicalKeyMapping.Escape))
         {
             BackToPause();
         }
@@ -247,13 +247,13 @@ public class PauseEvent : MonoBehaviour
     /// <summary>处理保存回放确认环节的按键</summary>
     private void HandleRecordingConfirm()
     {
-        if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow))
+        if (Input.GetKeyDown(PhysicalKeyMapping.Left) || Input.GetKeyDown(PhysicalKeyMapping.Right))
         {
             YesOrNo = !YesOrNo;
             UpdateConfirmColor();
             Global_AudioManager.Instance.PlaySFX(Choose);
         }
-        else if (Input.GetKeyDown(KeyCode.Z))
+        else if (Input.GetKeyDown(PhysicalKeyMapping.Z))
         {
             // 先处理回放文件，再真正执行按钮操作
             if (YesOrNo)
@@ -271,7 +271,7 @@ public class PauseEvent : MonoBehaviour
             isRecording = false;
             CommitAndExecute(index);
         }
-        else if (Input.GetKeyDown(KeyCode.X) || Input.GetKeyDown(KeyCode.Escape))
+        else if (Input.GetKeyDown(PhysicalKeyMapping.X) || Input.GetKeyDown(PhysicalKeyMapping.Escape))
         {
             // 回退到上一层（确认执行环节）—— DescriptionText 恢复为按钮确认文本
             ExitRecordingConfirm();
@@ -319,25 +319,25 @@ public class PauseEvent : MonoBehaviour
 
     private void HandleMenuNavigation()
     {
-        if (Input.GetKeyDown(KeyCode.UpArrow))
+        if (Input.GetKeyDown(PhysicalKeyMapping.Up))
         {
             BeChooseCancel(index);
             if (index == 0) index = pauseButtons.Count - 1;
             else index--;
             BeChoose(index);
         }
-        else if (Input.GetKeyDown(KeyCode.DownArrow))
+        else if (Input.GetKeyDown(PhysicalKeyMapping.Down))
         {
             BeChooseCancel(index);
             if (index == pauseButtons.Count - 1) index = 0;
             else index++;
             BeChoose(index);
         }
-        else if (Input.GetKeyDown(KeyCode.Z))
+        else if (Input.GetKeyDown(PhysicalKeyMapping.Z))
         {
             BeClick(index);
         }
-        else if (Input.GetKeyDown(KeyCode.X) || Input.GetKeyDown(KeyCode.Escape))
+        else if (Input.GetKeyDown(PhysicalKeyMapping.X) || Input.GetKeyDown(PhysicalKeyMapping.Escape))
         {
             pauseUI.Resume();
         }

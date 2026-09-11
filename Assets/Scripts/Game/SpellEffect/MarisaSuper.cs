@@ -225,8 +225,8 @@ public class MarisaSuper : MonoBehaviour
     /// </summary>
     public void TimeStop()
     {
-        // 设置时间缩放为0
-        Time.timeScale = 0f;
+        // 🔴 注册硬暂停 —— 让 TimeScaleController 统一管理
+        TimeScaleController.RegisterHardPause();
     }
 
     /// <summary>
@@ -261,8 +261,8 @@ public class MarisaSuper : MonoBehaviour
         IsAnime = false;
         isDamage = false;
 
-        // 将时间缩放改回1
-        Time.timeScale = 1f;
+        // 🔴 释放硬暂停 —— controller 自动计算正确的最终值
+        TimeScaleController.UnregisterHardPause();
         
         // 处理时停期间死亡的敌人
         ProcessDeadEnemies();

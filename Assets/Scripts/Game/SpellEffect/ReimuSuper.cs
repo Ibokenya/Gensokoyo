@@ -38,7 +38,6 @@ public class ReimuSuper : MonoBehaviour
     private List<GameObject> Enemys => Global_GameManager.Instance.EnemyList;// 敌人列表
     private bool isOpenOrCloseEye = false;// 是否正在开关亚空穴
     private Coroutine huntCoroutine;// 猎杀敌人的协程
-    private float originalTimeScale = 1f;// 原始时间缩放值
 
     void OnEnable()
     {
@@ -155,9 +154,8 @@ public class ReimuSuper : MonoBehaviour
         // 记录协程开始时间（用于控制退治效果显示时机）
         float startTime = SimClock.SimTime;
         
-        // 保存当前时间缩放
-        originalTimeScale = Time.timeScale;
-        Time.timeScale = 0f;
+        // 🔴 注册硬暂停 —— 让 TimeScaleController 统一管理
+        TimeScaleController.RegisterHardPause();
         
         // 创建敌人列表的副本
         List<GameObject> tempEnemys = new List<GameObject>();
@@ -172,7 +170,7 @@ public class ReimuSuper : MonoBehaviour
         // 确保攻击效果列表不为空
         if (attackEffects == null || attackEffects.Count == 0)
         {
-            Time.timeScale = originalTimeScale;
+            TimeScaleController.UnregisterHardPause();
             yield break;
         }
         
@@ -357,8 +355,8 @@ public class ReimuSuper : MonoBehaviour
         }
         
         WinEffect.SetActive(false);
-        // 恢复时间缩放
-        Time.timeScale = 1f;
+        // 🔴 释放硬暂停 —— controller 自动计算正确的最终值
+        TimeScaleController.UnregisterHardPause();
         
         // 通知父脚本动画结束
         if (spellCardEffect != null)
@@ -372,11 +370,17 @@ public class ReimuSuper : MonoBehaviour
     public void Back()
     {
         player.transform.position = new(-3,-4,0);
-        // 恢复时间缩放
-        Time.timeScale = originalTimeScale;
+        // 🔴 释放硬暂停 —— controller 自动恢复到之前的缩放（可能是 Esc 暂停的 0）
+        TimeScaleController.UnregisterHardPause();
         
-        // 恢复游戏状态为游戏中
-        Global_GameManager.Instance.state = State.Gaming;
+        // 🔴 只有当前不在 Esc 暂停状态才恢复游戏状态
+        // 如果玩家在决死期间按了 Esc，这里不能覆盖 State.Pause
+        if (Global_GameManager.Instance.state != State.Pause &&
+            Global_GameManager.Instance.state != State.FinalUI &&
+            Global_GameManager.Instance.state != State.Over)
+        {
+            Global_GameManager.Instance.state = State.Gaming;
+        }
         
         // 处理时停期间死亡的敌人
         ProcessDeadEnemies();

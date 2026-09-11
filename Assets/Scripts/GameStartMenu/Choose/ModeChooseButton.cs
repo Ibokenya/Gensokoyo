@@ -1,8 +1,9 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using ReplaySystem;
 
 
 /// <summary>
@@ -45,7 +46,7 @@ public class ModeChooseButton : MonoBehaviour
 
     private void CheckButtonSwitch()
     {
-        if (Input.GetKeyDown(KeyCode.UpArrow))// 按下↑键
+        if (Input.GetKeyDown(PhysicalKeyMapping.Up))// 按下↑键
         {
             ButtonAnime.ButtonBeMoveoff(buttons[currentButtonIndex]);
             currentButtonIndex--;
@@ -56,7 +57,7 @@ public class ModeChooseButton : MonoBehaviour
             ButtonAnime.ButtonBeChoose(buttons[currentButtonIndex]);
             ChangeText(currentButtonIndex);
         }
-        if (Input.GetKeyDown(KeyCode.DownArrow))// 按下↓键
+        if (Input.GetKeyDown(PhysicalKeyMapping.Down))// 按下↓键
         {
             ButtonAnime.ButtonBeMoveoff(buttons[currentButtonIndex]);
             currentButtonIndex++;
@@ -71,7 +72,7 @@ public class ModeChooseButton : MonoBehaviour
 
     private void CheckButtonClick()
     {
-        if(Input.GetKeyDown(KeyCode.Z))
+        if(Input.GetKeyDown(PhysicalKeyMapping.Z))
         {
             if(currentButtonIndex>=0&&currentButtonIndex<=3)
             {

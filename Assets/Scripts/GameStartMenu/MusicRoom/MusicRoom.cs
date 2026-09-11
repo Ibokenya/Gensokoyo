@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using ReplaySystem;
 
 public class MusicRoom : MonoBehaviour
 {
@@ -62,7 +63,7 @@ public class MusicRoom : MonoBehaviour
 
     private void CheckInput()
     {
-        if (Input.GetKeyDown(KeyCode.UpArrow))
+        if (Input.GetKeyDown(PhysicalKeyMapping.Up))
         {
             RemoveCurrentButton(currentindex);
             currentindex--;
@@ -72,7 +73,7 @@ public class MusicRoom : MonoBehaviour
             }
             SelectCurrentButton(currentindex);
         }
-        else if (Input.GetKeyDown(KeyCode.DownArrow))
+        else if (Input.GetKeyDown(PhysicalKeyMapping.Down))
         {
             RemoveCurrentButton(currentindex);
             currentindex++;
@@ -82,7 +83,7 @@ public class MusicRoom : MonoBehaviour
             }
             SelectCurrentButton(currentindex);
         }
-        else if (Input.GetKeyDown(KeyCode.Z))
+        else if (Input.GetKeyDown(PhysicalKeyMapping.Z))
         {
             if(Global_AudioManager.Instance != null)
             {

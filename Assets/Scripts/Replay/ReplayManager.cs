@@ -46,7 +46,36 @@ namespace ReplaySystem
         /// <summary>所有玩法脚本应读这里拿逻辑按键</summary>
         public static IInputProvider Input { get; private set; }
 
-        // ---- 内部 ----
+        // ---- 帧校验：每 VALIDATE_INTERVAL tick 记录/强制 (位置 + 游戏状态) ----
+        // 校验帧结构：[float x(4)][float y(4)][ushort state(2)] = 10 bytes
+        // ushort state 布局：[S(1) | Bomb(3) | Hp(3) | Power(9)]
+        //   Power 0~400 → 9 bits, Hp 0~7 → 3 bits, Bomb 0~7 → 3 bits, S 留空=1 bit
+        private const int VALIDATE_INTERVAL = 60;
+        private const int BYTES_PER_VALIDATE_FRAME = 10; // 4+4+2
+
+        private readonly List<float> recordValidatePositions = new();
+        private List<ushort> recordValidateStates = new(); // 🔴 新增：每帧校验的游戏状态
+        private float[] playbackValidatePositions;
+        private ushort[] playbackValidateStates; // 🔴 新增
+        private int nextValidateIndex = 0;
+
+        /// <summary>把 Power(9bits) + Hp(3bits) + BombCount(3bits) 打包成 ushort</summary>
+        private static ushort PackReplayState(int power, int hp, int bombCount)
+        {
+            power = Mathf.Clamp(power, 0, 400);   // 9 bits
+            hp    = Mathf.Clamp(hp, 0, 7);          // 3 bits
+            bombCount = Mathf.Clamp(bombCount, 0, 7); // 3 bits
+            return (ushort)((power & 0x1FF) | ((hp & 0x7) << 9) | ((bombCount & 0x7) << 12));
+        }
+
+        /// <summary>把 ushort 解包出 Power + Hp + BombCount</summary>
+        private static void UnpackReplayState(ushort packed, out int power, out int hp, out int bombCount)
+        {
+            power     = packed & 0x1FF;
+            hp        = (packed >> 9) & 0x7;
+            bombCount = (packed >> 12) & 0x7;
+        }
+
         private readonly LiveInputProvider  live = new();
         public ReplayInputProvider replay;
 
@@ -79,6 +108,33 @@ namespace ReplaySystem
                 Debug.Log($"[ReplayManager] SkipTick ON (ref=1)");
         }
 
+        // ======================================================================
+        // 🔴 HitFlag 位驱动系统 —— 回放文件 bit7（原 Esc 位）换成中弹标志
+        // 回放模式：每 tick 读 replay.GetKey(HitFlag) → true 就 ForceHit
+        // 录制模式：PanDing.OnTriggerEnter2D 调 MarkHitThisTick() → live.currentHeld |= HitFlag
+        // X 键正常回放 → SpellCardEffect.Update 正常跑 → 决死由 HitFlag 自动决定
+        // ======================================================================
+
+        /// <summary>🔴 录制模式：PanDing 中弹时调这个 —— live.currentHeld |= HitFlag，写入回放文件 bit7</summary>
+        public static void MarkHitThisTick()
+        {
+            if (Instance == null || Instance.CurrentMode != Mode.Record) return;
+            Instance.live.MarkHitThisTick();
+        }
+
+        /// <summary>🔴 回放模式：当前 tick replay.HitFlag 为 true → 强制中弹</summary>
+        private static void ProcessHitFlagForPlayback()
+        {
+            if (Instance == null || Instance.replay == null) return;
+            if (!Instance.replay.GetKey(LogicalKey.HitFlag)) return;
+
+            Debug.Log($"[ReplayManager] Playback HitFlag=1 tick={SimClock.SimTick}");
+            var player = GameObject.FindGameObjectWithTag("Player");
+            if (player == null) return;
+            var panDing = player.GetComponentInChildren<PanDing>();
+            if (panDing != null) panDing.ForceHit();
+        }
+
         /// <summary>移除一个暂停 tick 的来源 —— 最后一个移除后恢复 tick 推进</summary>
         public static void RemoveSkipTickReason()
         {
@@ -99,6 +155,8 @@ namespace ReplaySystem
             SimClock.Reset();
             SimTimer.CancelAll();                // 🔴 清掉残留定时器（菜单/上一局注册的）
             Instance.recordBuffer.Clear();
+            Instance.recordValidatePositions.Clear();
+            Instance.recordValidateStates.Clear();
             Instance.unscaledAccumulator = 0f;
             Instance.CurrentMode = Mode.Record;
             Instance.replay = null; // 清掉上一次回放残留
@@ -130,6 +188,9 @@ namespace ReplaySystem
             Instance.GameEndTriggered = false;   // 🔴 重置回放结束标志 —— 退回菜单再进回放不会卡住
             skipTickRefCount = 0;                // 🔴 重置 SkipTick 引用计数
             Instance.playbackHeader = file.Header;
+            Instance.playbackValidatePositions = file.ValidatePositions;
+            Instance.playbackValidateStates = file.ValidateStates;
+            Instance.nextValidateIndex = 0;
             Instance.CurrentMode = Mode.Playback;
             Input = Instance.replay;
 
@@ -158,7 +219,8 @@ namespace ReplaySystem
             Instance.unscaledAccumulator = 0f;
             Instance.CurrentMode = Mode.Idle;
             Input = Instance.live;
-            Time.timeScale = 1f;
+            // 🔴 重置所有暂停/缩放状态 —— 回放重开等于游戏重置
+            TimeScaleController.ResetAll();
 
             // 🔴 用 Global_SceneManager.RestartGame 做完整清理：
             // RecycleAllEnemies → 回收道具 → ClearAllPools → ResetGameDate → ResetSceneFromJson → IntoNextScene("Game1") 或 LoadScene
@@ -210,7 +272,9 @@ namespace ReplaySystem
                     stage       = gm != null ? gm.SceneLevel : 1,
                     saveTimeMs  = nowMs
                 },
-                TickMasks = Instance.recordBuffer.ToArray()
+                TickMasks = Instance.recordBuffer.ToArray(),
+                ValidatePositions = Instance.recordValidatePositions.ToArray(),
+                ValidateStates = Instance.recordValidateStates.ToArray()
             };
             serializer.Save(file, path);
             Instance.recordBuffer.Clear();
@@ -391,11 +455,59 @@ namespace ReplaySystem
                     // 2. 驱动 tick 定时器
                     SimTimer.Tick();
 
+                    // 🔴 回放模式：HitFlag=1 → 强制触发中弹（绕过物理碰撞）
+                    if (CurrentMode == Mode.Playback)
+                        ProcessHitFlagForPlayback();
+
                     // 3. 录制模式：写 recordBuffer（和 SimClock.Tick 50Hz 严格对齐）
                     if (CurrentMode == Mode.Record)
+                    {
                         recordBuffer.Add(LogicalKeyMask.LowByte(live.HeldMask));
+                        live.ClearHitFlag(); // 🔴 写完立刻清 HitFlag，否则会泄漏到下一帧
+                    }
 
-                    // 4. 🔴 State Hash（每 10 tick 一次）
+                    // 4. 🔴 帧校验：每 VALIDATE_INTERVAL tick 记录/强制 (位置 + 游戏状态)
+                    if (SimClock.SimTick % VALIDATE_INTERVAL == 0)
+                    {
+                        var playerObj = GameObject.FindGameObjectWithTag("Player");
+                        var gm = Global_GameManager.Instance;
+                        if (CurrentMode == Mode.Record)
+                        {
+                            if (playerObj != null)
+                            {
+                                Vector3 pos = playerObj.transform.position;
+                                recordValidatePositions.Add(pos.x);
+                                recordValidatePositions.Add(pos.y);
+                            }
+                            // 🔴 同时存游戏状态
+                            if (gm != null)
+                                recordValidateStates.Add(PackReplayState(gm.Power, gm.Hp, gm.BombCount));
+                            else
+                                recordValidateStates.Add(0);
+                        }
+                        else if (CurrentMode == Mode.Playback && playbackValidatePositions != null)
+                        {
+                            if (nextValidateIndex < playbackValidatePositions.Length / 2)
+                            {
+                                float tx = playbackValidatePositions[nextValidateIndex * 2];
+                                float ty = playbackValidatePositions[nextValidateIndex * 2 + 1];
+                                if (playerObj != null)
+                                {
+                                    Vector3 p = playerObj.transform.position;
+                                    playerObj.transform.position = new Vector3(tx, ty, p.z);
+                                }
+                                // 🔴 同时强制游戏状态
+                                if (playbackValidateStates != null && nextValidateIndex < playbackValidateStates.Length)
+                                {
+                                    UnpackReplayState(playbackValidateStates[nextValidateIndex], out int pow, out int hp, out int bc);
+                                    if (gm != null) gm.ForceSetReplayState(pow, hp, bc);
+                                }
+                                nextValidateIndex++;
+                            }
+                        }
+                    }
+
+                    // 5. 🔴 State Hash（每 10 tick 一次）
                     if (didTick && SimClock.SimTick % 10 == 0)
                         LogStateHash();
                 }
