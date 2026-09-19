@@ -563,7 +563,7 @@ namespace ReplaySystem
 
             string tag = Instance != null && Instance.CurrentMode == Mode.Record ? "HASH-REC" : "HASH-PLAY";
             string pos = playerTf != null ? $"pos=({playerTf.position.x:F2},{playerTf.position.y:F2})" : "pos=N/A";
-            Debug.Log($"[{tag}] tick={tick} hash=0x{h:X16} rng=({rngState.s0:X8},{rngState.s1:X8}) {pos}");
+            //Debug.Log($"[{tag}] tick={tick} hash=0x{h:X16} rng=({rngState.s0:X8},{rngState.s1:X8}) {pos}");
         }
     }
 }

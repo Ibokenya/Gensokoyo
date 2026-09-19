@@ -174,7 +174,6 @@ MonoBehaviour:
   PowerUpClip: {fileID: 8300000, guid: 22dba936c8fb6b3469845b60956d5865, type: 3}
   HpUpClip: {fileID: 8300000, guid: 53cd5919d7ff1064dbd0948e972de57a, type: 3}
   BombUpClip: {fileID: 8300000, guid: 236a9e0913ae73047b9e402b12e6272c, type: 3}
-  isCheheat: 0
 --- !u!114 &20293397
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5285,6 +5284,50 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &770792413
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 770792415}
+  - component: {fileID: 770792414}
+  m_Layer: 0
+  m_Name: HotFix_System
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &770792414
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 770792413}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad6936a91b2822c44ae9a2839755e0ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &770792415
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 770792413}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 934.05756, y: 600.5632, z: 1.8099918}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1374815883
 GameObject:
   m_ObjectHideFlags: 0
@@ -6048,3 +6091,4 @@ SceneRoots:
   - {fileID: 158519814}
   - {fileID: 20293400}
   - {fileID: 699318379}
+  - {fileID: 770792415}

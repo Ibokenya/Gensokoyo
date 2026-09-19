@@ -1,0 +1,102 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Remote Group
+  m_EditorClassIdentifier: 
+  m_GroupName: Remote Group
+  m_Data:
+    m_SerializedData: []
+  m_GUID: fda4784e714a3a040bd5b6afb1768641
+  m_SerializeEntries:
+  - m_GUID: 075ee7fe7d6271c4f9cf99a2f261c28f
+    m_Address: Assets/AA_assets/7.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - koishi_frames
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1b39f5d328483114783d5d5d1f82b16d
+    m_Address: Assets/AA_assets/11.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - koishi_frames
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1eb565ba9a07cee40b275d7db070eaf8
+    m_Address: Assets/AA_assets/12.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - koishi_frames
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 536649d4a39207148832dcf2e9182b0b
+    m_Address: Assets/AA_assets/3.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - koishi_frames
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5ddc4d0118fb9914db9a6865bcaf5618
+    m_Address: Assets/AA_assets/10.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - koishi_frames
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5f069c4e60f555743a6ef3fe40ac835d
+    m_Address: Assets/AA_assets/6.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - koishi_frames
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 629c5174e53c65a41bc431361bf16f95
+    m_Address: Assets/AA_assets/2.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - koishi_frames
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7b103a3ce65f2a546b0464a79a3fffa0
+    m_Address: Assets/HotfixScripts/koishi_hotfix.lua.txt
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7e20384aed7bed849a7218f834a63d54
+    m_Address: Assets/AA_assets/9.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - koishi_frames
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 84c0a6d50e474594cb3ab6c41aae4a29
+    m_Address: Assets/AA_assets/1.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - koishi_frames
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8f6ebba7526d0ca4d99ec7d13f0e23ae
+    m_Address: Assets/AA_assets/8.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - koishi_frames
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 94ebab50d01d6c044a1cbd4dd747be9f
+    m_Address: Assets/AA_assets/5.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - koishi_frames
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ebff268b657962b45b6881b934d0eca2
+    m_Address: Assets/AA_assets/4.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - koishi_frames
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 889bcb6abab5ca54ebec39b94966c030, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 6370efbebc5c1eb49b07775271796c0d, type: 2}
+    - {fileID: 11400000, guid: 3d4851ad5317eaf4b947dc014e84be81, type: 2}

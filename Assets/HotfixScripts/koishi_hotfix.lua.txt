@@ -1,0 +1,38 @@
+-- koishi_hotfix.lua  (V2 - 动画版)
+local koishi = CS.koishi
+local UnityEngine = CS.UnityEngine
+
+local frame_timer = 0
+local frame_index = 0
+local FRAME_INTERVAL = 12
+local started = false
+
+local function Start_Hotfix(self)
+    local img = self.gameObject:GetComponent(typeof(UnityEngine.UI.Image))
+    img.color = UnityEngine.Color(1, 1, 1, 1)
+    img.sprite = frames[0]
+    print("[XLua Hotfix] koishi.Start: V2 动画版，共 " .. frame_count .. " 帧")
+end
+
+local function Update_Hotfix(self)
+    -- 时序竞争兜底
+    if not started then
+        started = true
+        Start_Hotfix(self)
+    end
+
+    frame_timer = frame_timer + 1
+    if frame_timer >= FRAME_INTERVAL then
+        frame_timer = 0
+        frame_index = frame_index + 1
+        if frame_index >= frame_count then
+            frame_index = 0
+        end
+        local img = self.gameObject:GetComponent(typeof(UnityEngine.UI.Image))
+        img.sprite = frames[frame_index]
+    end
+end
+
+xlua.hotfix(koishi, "Start", Start_Hotfix)
+xlua.hotfix(koishi, "Update", Update_Hotfix)
+print("[XLua Hotfix] koishi 热更注册成功！(V2)")

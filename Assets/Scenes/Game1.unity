@@ -10252,7 +10252,7 @@ MonoBehaviour:
   cardsRotate: {fileID: 886276803}
   clearAllBullet: {fileID: 1283300306}
   ReimuNormalClip: {fileID: 8300000, guid: f1685f55510686c499393a1cbad53ca2, type: 3}
-  FireClip: {fileID: 8300000, guid: c2c0ab1845e865944add5ccaca7ef0ad, type: 3}
+  FireClip: {fileID: 8300000, guid: 419b8419e74454846a50dab7a8bf3ae8, type: 3}
   boss: {fileID: 1800135221}
 --- !u!95 &266555474
 Animator:

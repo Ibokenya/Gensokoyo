@@ -1326,7 +1326,7 @@ GameObject:
   - component: {fileID: 223299450}
   - component: {fileID: 223299449}
   m_Layer: 5
-  m_Name: "\u6708\u73AF1"
+  m_Name: "\u6708\u73AF"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1416,7 +1416,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38784eb221d4f9941aa13a0edd870149, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  myself: {fileID: 223299444}
   RotationSpeed: -100
 --- !u!1 &229350644
 GameObject:
@@ -3065,7 +3064,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 436305143}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
@@ -3078,7 +3077,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: -1060.1567, y: -89.91562}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &436305148
@@ -8461,7 +8460,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38784eb221d4f9941aa13a0edd870149, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  myself: {fileID: 1270386893}
   RotationSpeed: 100
 --- !u!114 &1270386898
 MonoBehaviour:
@@ -15048,7 +15046,7 @@ GameObject:
   - component: {fileID: 2104108809}
   - component: {fileID: 2104108811}
   m_Layer: 5
-  m_Name: "\u6708\u73AF2"
+  m_Name: "\u66FF\u6362\u7269\u4F53"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -15061,13 +15059,13 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2104108807}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1772366738}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 597.88275, y: -177.88428}
@@ -15120,10 +15118,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 2104108807}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 38784eb221d4f9941aa13a0edd870149, type: 3}
+  m_Script: {fileID: 11500000, guid: a136e1c8e293cfb4cbe6d0940518b300, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  myself: {fileID: 2104108807}
   RotationSpeed: -60
 --- !u!1 &2106441579
 GameObject:

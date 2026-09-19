@@ -176,7 +176,7 @@ public class ButtonEvent : MonoBehaviour
         {
             if(Global_GameManager.Instance.gameMode==GameMode.Extra)
             {
-                // 播放Z音效
+                // 播放错误音效
                 if (ErrorSound != null)
                 {
                     Global_AudioManager.Instance.PlaySFX(ErrorSound, false);
@@ -186,7 +186,7 @@ public class ButtonEvent : MonoBehaviour
             else
             {
                 // 播放Z音效
-                if (XSound != null)
+                if (ZSound != null)
                 {
                     Global_AudioManager.Instance.PlaySFX(ZSound, false);
                 }
@@ -224,6 +224,11 @@ public class ButtonEvent : MonoBehaviour
         // 如果 ReplayMenu 没挂，退回到旧逻辑（Debug 日志 + X 退出）
         if (Input.GetKeyDown(PhysicalKeyMapping.X) || Input.GetKeyDown(PhysicalKeyMapping.Escape))
         {
+            // 播放X音效
+            if (XSound != null)
+            {
+                Global_AudioManager.Instance.PlaySFX(XSound, false);
+            }
             SceneObjects[3].SetActive(false);
             SceneObjects[0].SetActive(true);
             Global_GameManager.Instance.state = State.Menu;
