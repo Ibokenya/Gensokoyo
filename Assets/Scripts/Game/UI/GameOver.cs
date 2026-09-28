@@ -34,7 +34,7 @@ public class GameOver : MonoBehaviour
 
     void OnEnable()
     {
-        // 🔴 注册硬暂停 —— GameOver 也要覆盖其他软缩放
+        //  注册硬暂停 —— GameOver 也要覆盖其他软缩放
         TimeScaleController.RegisterHardPause();
         currentBGMName = Global_AudioManager.Instance.GetCurrentBGMName();
         currentBgmPosition = Global_AudioManager.Instance.GetCurrentBGMPosition();
@@ -71,7 +71,7 @@ public class GameOver : MonoBehaviour
     /// <summary>非确认环节：Continue/ReStart/Exit 三选一</summary>
     private void HandleMenuStep()
     {
-        // 🔴 meta 层 UI（菜单导航）直接读 Unity Input，不走 ReplayManager.Input
+        //  meta 层 UI（菜单导航）直接读 Unity Input，不走 ReplayManager.Input
         // 因为 timeScale=0 时 FixedUpdate 不跑 → ConsumeEdges 不执行 → 边沿永远不被清 → 菜单疯狂滚动
         if (CurrentIndex == 3)
         {
@@ -221,7 +221,7 @@ public class GameOver : MonoBehaviour
 
             case 1:
                 Global_SceneManager.Instance.RestartGame();
-                // 🔴 重置所有暂停/缩放状态 —— 重开游戏从头开始
+                //  重置所有暂停/缩放状态 —— 重开游戏从头开始
                 TimeScaleController.ResetAll();
                 Global_GameManager.Instance.state = State.Gaming;
                 gameObject.SetActive(false);
@@ -232,7 +232,7 @@ public class GameOver : MonoBehaviour
                 if (Global_GameManager.Instance != null)
                     Global_GameManager.Instance.RecycleAllEnemies();
 
-                // 🔴 重置所有暂停/缩放状态 —— 进入菜单场景
+                //  重置所有暂停/缩放状态 —— 进入菜单场景
                 TimeScaleController.ResetAll();
                 Global_SceneManager.Instance.IntoNextScene("GameStartMenu", false);
                 gameObject.SetActive(false);
@@ -272,7 +272,7 @@ public class GameOver : MonoBehaviour
     /// <summary>续关功能：恢复玩家状态并继续游戏</summary>
     private void ContinueGame()
     {
-        // 🔴 重置所有暂停/缩放状态 —— 续关等于重新开始游戏
+        //  重置所有暂停/缩放状态 —— 续关等于重新开始游戏
         TimeScaleController.ResetAll();
         Global_GameManager.Instance.state = State.Gaming;
 

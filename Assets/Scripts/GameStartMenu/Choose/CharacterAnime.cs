@@ -16,10 +16,24 @@ public class CharacterAnime : MonoBehaviour
     private bool isfirst = true;
 
     public GameObject Logo;
+    private RectTransform logoRectTransform;
 
     [Header("音效设置")]
     [SerializeField] private AudioClip moveoffSound;   // 取消选中音效
 
+    // Logo 在 CanvasScaler 参考坐标系 (1920x1080) 下的 anchoredPosition
+    // 锚点 stretch(0,0)-(1,1)，锚框中心 (960, 540)
+    // 右上角 worldPos(1720, 980) = 锚框中心 + anchoredPos(760, 440)
+    // 左上角 worldPos(200, 980)  = 锚框中心 + anchoredPos(-760, 440)
+    private static readonly Vector2 LogoPosRight = new Vector2(760, 440);
+    private static readonly Vector2 LogoPosLeft  = new Vector2(-760, 440);
+
+
+    void Awake()
+    {
+        if (Logo != null)
+            logoRectTransform = Logo.GetComponent<RectTransform>();
+    }
 
     void OnEnable()
     {
@@ -55,7 +69,7 @@ public class CharacterAnime : MonoBehaviour
             Marisa.transform.Find("模糊").gameObject.SetActive(true);
             Marisa.transform.Find("魔理沙简介").gameObject.SetActive(false);
         }
-        Logo.transform.position = new Vector3(1720, 980, 0);
+        SetLogoPositionRight();
     }
 
     void Update()
@@ -75,7 +89,7 @@ public class CharacterAnime : MonoBehaviour
             Reimu.transform.Find("灵梦简介").gameObject.SetActive(false);
             Marisa.transform.Find("模糊").gameObject.SetActive(false);
             Marisa.transform.Find("魔理沙简介").gameObject.SetActive(true);
-            Logo.transform.position = new Vector3(200, 980, 0);
+            SetLogoPositionLeft();
             Global_GameManager.Instance.character = Character.Marisa;
 
             // 播放取消选中音效
@@ -93,7 +107,7 @@ public class CharacterAnime : MonoBehaviour
             Reimu.transform.Find("灵梦简介").gameObject.SetActive(true);
             Marisa.transform.Find("模糊").gameObject.SetActive(true);
             Marisa.transform.Find("魔理沙简介").gameObject.SetActive(false);
-            Logo.transform.position = new Vector3(1720, 980, 0);
+            SetLogoPositionRight();
             Global_GameManager.Instance.character = Character.Reimu;
 
             // 播放取消选中音效
@@ -110,5 +124,17 @@ public class CharacterAnime : MonoBehaviour
         // 触发动画
         reimuAnimator.SetBool("IsMirror", isMirror);
         marisaAnimator.SetBool("IsMirror", isMirror);
+    }
+
+    void SetLogoPositionRight()
+    {
+        if (logoRectTransform != null)
+            logoRectTransform.anchoredPosition = LogoPosRight;
+    }
+
+    void SetLogoPositionLeft()
+    {
+        if (logoRectTransform != null)
+            logoRectTransform.anchoredPosition = LogoPosLeft;
     }
 }

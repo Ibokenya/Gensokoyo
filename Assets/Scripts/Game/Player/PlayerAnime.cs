@@ -90,6 +90,9 @@ public class PlayerAnime : MonoBehaviour
     private int qteCurrentCount = 0; // 当前QTE计数
     private float qteLastPressTime = -1f; // 上一次按键时间
     private bool isQteActive = false; // QTE是否激活
+    //  QTE 内部按键边沿检测——避免依赖 ReplayManager.Input.GetKeyDown（可能因帧间隙丢失）
+    private bool qteLastLeftHeld = false;
+    private bool qteLastRightHeld = false;
 
     void OnEnable()
     {
@@ -163,7 +166,9 @@ public class PlayerAnime : MonoBehaviour
         
         HandleAnimation();
         
-        // 只有在游戏状态、无敌状态、时间停止状态、符卡状态时才处理输入
+        //  注意：State.Reincarnation 不加——重生动画期间 CheckInput 会改精灵，
+        // 与 ReincarnationAnimation 协程控制的透明度/位置渐变冲突。
+        // 重生后输入丢失的真正根因已通过 StopMove() 重置按键标志 + SimClock 驱动协程修复。
         if(Global_GameManager.Instance.state == State.Gaming || 
            Global_GameManager.Instance.state == State.NoDead ||
            Global_GameManager.Instance.state == State.TimeStop ||
@@ -245,7 +250,7 @@ public class PlayerAnime : MonoBehaviour
             downKeyPressed = false;
         }
 
-        // 🔴 检测 slow（Shift）held —— 不用 GetKeyDown/Up 边沿（FixedUpdate 50Hz 可能漏）
+        //  检测 slow（Shift）held —— 不用 GetKeyDown/Up 边沿（FixedUpdate 50Hz 可能漏）
         // Shift 是持续型修饰键：按住就慢速，松开就恢复
         bool shiftHeld = inp.GetKey(LogicalKey.Shift);
         if (!MarisaNormal.IsSkillSlowDown)
@@ -518,6 +523,8 @@ public class PlayerAnime : MonoBehaviour
 
     private void ReincarnationAnime(State state)
     {
+        //  重置按键状态标志——防止重生后残留的 keyPressed 导致边沿检测失配
+        StopMove();
         StopPandingAnime();
         SetIdleAnime();
         
@@ -535,31 +542,31 @@ public class PlayerAnime : MonoBehaviour
     }
     
     /// <summary>
-    /// 重生动画协程
+    /// 重生动画协程（ SimClock 驱动，消除帧速率绑定）
     /// </summary>
     private IEnumerator ReincarnationAnimation()
     {
-        float elapsedTime = 0f;
+        // 1 秒 = 50 tick（50Hz），SimClock 驱动，回放时确定性一致
         float duration = 1f;
+        float startSimTime = SimClock.SimTime;
         Vector3 startPosition = new Vector3(-3f, -6f, 0f);
         Vector3 endPosition = new Vector3(-3f, -4f, 0f);
-        float startAlpha = 0f;
-        float endAlpha = 1f;
         
-        while (elapsedTime < duration)
+        while (true)
         {
-            float t = elapsedTime / duration;
+            float t = Mathf.Clamp01((SimClock.SimTime - startSimTime) / duration);
+            
             // 移动位置
             transform.position = Vector3.Lerp(startPosition, endPosition, t);
             // 渐变透明度
             if (spriteRenderer != null)
             {
                 Color color = spriteRenderer.color;
-                color.a = Mathf.Lerp(startAlpha, endAlpha, t);
+                color.a = Mathf.Lerp(0f, 1f, t);
                 spriteRenderer.color = color;
             }
-            
-            elapsedTime += Time.deltaTime;
+
+            if (t >= 1f) break;
             yield return null;
         }
         
@@ -568,11 +575,12 @@ public class PlayerAnime : MonoBehaviour
         if (spriteRenderer != null)
         {
             Color color = spriteRenderer.color;
-            color.a = endAlpha;
+            color.a = 1f;
             spriteRenderer.color = color;
         }
         
-        // 1秒后切换到无敌状态
+        // 状态切换已经通过 Global_GameManager.ReBack() 设置为 Reincarnation
+        // 这里直接调用结束流程
         ReincarnationEnd();
     }
 
@@ -602,16 +610,25 @@ public class PlayerAnime : MonoBehaviour
 
     /// <summary>
     /// 处理冻结状态的QTE
+    ///  改用 GetKey + 内部边沿检测——首次进入 QTE 时 held 键也算一次新按下，
+    ///    避免玩家在冻结过渡期间按着方向键导致 GetKeyDown 边沿丢失
     /// </summary>
     private void HandleFrozenQTE()
     {
         if (!isQteActive) return;
 
         float currentTime = SimClock.SimTime;
-
-        // 检测左右键边沿
         var inp = ReplayManager.Input;
-        if (inp.GetKeyDown(LogicalKey.Left) || inp.GetKeyDown(LogicalKey.Right))
+        bool leftHeld = inp.GetKey(LogicalKey.Left);
+        bool rightHeld = inp.GetKey(LogicalKey.Right);
+
+        //  内部边沿：held=false → true 算一次按下（首次 QTE 激活时 held 也会触发）
+        bool leftEdge = leftHeld && !qteLastLeftHeld;
+        bool rightEdge = rightHeld && !qteLastRightHeld;
+        qteLastLeftHeld = leftHeld;
+        qteLastRightHeld = rightHeld;
+
+        if (leftEdge || rightEdge)
         {
             if (qteLastPressTime < 0 || (currentTime - qteLastPressTime) <= QTE_TIME_LIMIT)
             {
@@ -633,12 +650,16 @@ public class PlayerAnime : MonoBehaviour
 
     /// <summary>
     /// 激活冻结QTE
+    ///  重置内部边沿状态——让玩家在冻结前一直按着的键也能被当作第一次按下
     /// </summary>
     public void ActivateFrozenQTE()
     {
         isQteActive = true;
         qteCurrentCount = 0;
         qteLastPressTime = -1f;
+        //  重置内部按键边沿——让 held 键在首次 HandleFrozenQTE 时产生边沿（因为 last=false → current=true）
+        qteLastLeftHeld = false;
+        qteLastRightHeld = false;
         
         // 激活Ice物体
         if (Ice != null)
@@ -664,6 +685,12 @@ public class PlayerAnime : MonoBehaviour
         if (freezeSystem != null)
         {
             freezeSystem.ResetFreeze();
+            //  如果 BossBeheve 等外部系统请求"QTE完成后停止冻结"，这里应用
+            if (freezeSystem.pendingStopAfterQTE)
+            {
+                freezeSystem.IsStop = true;
+                freezeSystem.pendingStopAfterQTE = false;
+            }
         }
         
         // 恢复游戏状态

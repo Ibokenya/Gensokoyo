@@ -355,7 +355,7 @@ public class FinalUI : MonoBehaviour
             Global_GameManager.Instance.ResetFor_Game2();
         }
         
-        // 🔴 重置所有暂停/缩放状态 —— 切换到新场景
+        //  重置所有暂停/缩放状态 —— 切换到新场景
         TimeScaleController.ResetAll();
         
         // 跳转到Game2场景（不保留当前场景）

@@ -8,14 +8,11 @@ namespace ReplaySystem
     /// <summary>
     /// 回放子系统总控。
     ///
-    /// 必须挂到一个 DDOL GameObject 上才能工作。在场景里放一个空 GameObject 叫 "ReplaySystem"
-    /// 并挂载此脚本即可——Awake 里自动 DontDestroyOnLoad。
-    ///
-    /// 🔴 关键架构（timeScale=0 也要跑的设计 + 覆盖式边沿模型）：
+    ///  关键架构（timeScale=0 也要跑的设计 + 覆盖式边沿模型）：
     ///
     ///   Update（每帧，不受 timeScale 影响）：
     ///     a. SampleFromUnity() —— 覆盖式采样物理按键，算 edgesDown/Up（live 模式）
-    ///        🔴 覆盖式 = 不需要 ConsumeEdges！按键没变时 edgesDown/Up 自动归零。
+    ///         覆盖式 = 不需要 ConsumeEdges！按键没变时 edgesDown/Up 自动归零。
     ///     b. 回放自然结束检测
     ///
     ///   LateUpdate（每帧，不受 timeScale 影响，在所有 Update 之后执行）：
@@ -30,7 +27,7 @@ namespace ReplaySystem
     ///
     /// Script Execution Order 不再重要（LateUpdate 天然在所有 Update 之后执行）。
     ///
-    /// 🔴 帧顺序详解（60fps 下）：
+    ///  帧顺序详解（60fps 下）：
     ///   FixedUpdate (~50Hz)：玩法脚本读 GetKeyDown/GetKeyUp —— edgesDown/Up 从上次 SampleFromUnity 存活到此刻 ✓
     ///   Update：ReplayManager.SampleFromUnity → 覆盖式重算 edgesDown/Up → 下一帧 FixedUpdate 读 ✓
     ///   LateUpdate：tick 推进（unscaledDeltaTime）
@@ -54,9 +51,9 @@ namespace ReplaySystem
         private const int BYTES_PER_VALIDATE_FRAME = 10; // 4+4+2
 
         private readonly List<float> recordValidatePositions = new();
-        private List<ushort> recordValidateStates = new(); // 🔴 新增：每帧校验的游戏状态
+        private List<ushort> recordValidateStates = new(); //  新增：每帧校验的游戏状态
         private float[] playbackValidatePositions;
-        private ushort[] playbackValidateStates; // 🔴 新增
+        private ushort[] playbackValidateStates; //  新增
         private int nextValidateIndex = 0;
 
         /// <summary>把 Power(9bits) + Hp(3bits) + BombCount(3bits) 打包成 ushort</summary>
@@ -86,19 +83,36 @@ namespace ReplaySystem
         // 回放文件元信息
         private ReplayHeader playbackHeader;
 
-        // 🔴 LateUpdate 累计器 —— 用 unscaledDeltaTime 累计，不受 timeScale 影响
+        //  LateUpdate 累计器 —— 用 unscaledDeltaTime 累计，不受 timeScale 影响
         private float unscaledAccumulator;
 
-        /// <summary>回放目录（桌面 Saves 文件夹，用户要求显式路径）</summary>
+        /// <summary>回放目录（桌面 Saves 文件夹，显式路径）</summary>
         public static string SavesDir => @"C:\Users\34274\Desktop\Saves";
 
         /// <summary>
-        /// 🔴 引用计数的 SkipTick —— 任何来源（dialog / 暂停 UI / 回放暂停）
+        ///  引用计数的 SkipTick —— 任何来源（dialog / 暂停 UI / 回放暂停）
         /// 只要 count > 0 就跳过 tick 推进（不 tick、不 record、不 AdvanceTick）。
         /// AddSkipTick / RemoveSkipTick 必须成对调用（推荐在 OnEnable/OnDisable 里）。
         /// </summary>
         private static int skipTickRefCount;
         public static bool SkipTick => skipTickRefCount > 0;
+
+        /// <summary>
+        ///  暂停关闭后由 PauseUI.Resume() 调用：
+        /// 在 LiveInputProvider 里屏蔽 Z/X 若干个 tick（50Hz 固定步长），
+        /// 防止"用 Z/X 关闭暂停"的按键泄漏给射击/符卡脚本。
+        ///
+        /// 为什么不是清 edges/held？因为 PauseEvent.Update 和 ReplayManager.Update
+        /// 执行顺序不确定——清完 SampleFromUnity 会覆盖式重算采样回来，白清。
+        /// 所以在**消费端**（GetKey/GetKeyDown）屏蔽，而不是在**采样端**清除。
+        ///
+        /// 只影响 Mode.Record 的 live；Mode.Playback 有自己的 ReplayPauseUI，不走这里。
+        /// </summary>
+        public static void ClearInputAfterPause()
+        {
+            if (Instance != null && Instance.CurrentMode == Mode.Record)
+                Instance.live.SuppressZXAfterResume();
+        }
 
         /// <summary>新增一个暂停 tick 的来源（dialog 打开、暂停菜单打开等）</summary>
         public static void AddSkipTickReason()
@@ -109,20 +123,20 @@ namespace ReplaySystem
         }
 
         // ======================================================================
-        // 🔴 HitFlag 位驱动系统 —— 回放文件 bit7（原 Esc 位）换成中弹标志
+        //  HitFlag 位驱动系统 —— 回放文件 bit7（原 Esc 位）换成中弹标志
         // 回放模式：每 tick 读 replay.GetKey(HitFlag) → true 就 ForceHit
         // 录制模式：PanDing.OnTriggerEnter2D 调 MarkHitThisTick() → live.currentHeld |= HitFlag
         // X 键正常回放 → SpellCardEffect.Update 正常跑 → 决死由 HitFlag 自动决定
         // ======================================================================
 
-        /// <summary>🔴 录制模式：PanDing 中弹时调这个 —— live.currentHeld |= HitFlag，写入回放文件 bit7</summary>
+        /// <summary> 录制模式：PanDing 中弹时调这个 —— live.currentHeld |= HitFlag，写入回放文件 bit7</summary>
         public static void MarkHitThisTick()
         {
             if (Instance == null || Instance.CurrentMode != Mode.Record) return;
             Instance.live.MarkHitThisTick();
         }
 
-        /// <summary>🔴 回放模式：当前 tick replay.HitFlag 为 true → 强制中弹</summary>
+        /// <summary> 回放模式：当前 tick replay.HitFlag 为 true → 强制中弹</summary>
         private static void ProcessHitFlagForPlayback()
         {
             if (Instance == null || Instance.replay == null) return;
@@ -153,7 +167,7 @@ namespace ReplaySystem
             Instance.recordSeed = (ulong)UnityEngine.Random.Range(0, int.MaxValue);
             GameRNG.Init(Instance.recordSeed);
             SimClock.Reset();
-            SimTimer.CancelAll();                // 🔴 清掉残留定时器（菜单/上一局注册的）
+            SimTimer.CancelAll();                //  清掉残留定时器（菜单/上一局注册的）
             Instance.recordBuffer.Clear();
             Instance.recordValidatePositions.Clear();
             Instance.recordValidateStates.Clear();
@@ -161,8 +175,8 @@ namespace ReplaySystem
             Instance.CurrentMode = Mode.Record;
             Instance.replay = null; // 清掉上一次回放残留
             Input = Instance.live;
-            skipTickRefCount = 0;                // 🔴 重置 SkipTick 引用计数
-            // 🔴 清掉菜单场景残留的物理键边沿（用户可能在菜单按过 X/Esc/Z 后还没进 Game1）
+            skipTickRefCount = 0;                //  重置 SkipTick 引用计数
+            //  清掉菜单场景残留的物理键边沿（用户可能在菜单按过 X/Esc/Z 后还没进 Game1）
             Instance.live.ConsumeEdges();
             Debug.Log($"[ReplayManager] BeginRecord seed=0x{Instance.recordSeed:X16}");
         }
@@ -181,12 +195,12 @@ namespace ReplaySystem
             ReplayFile file = serializer.Load(path);
             GameRNG.Init(file.Header.seed);
             SimClock.Reset();
-            SimTimer.CancelAll();                // 🔴 清掉残留定时器（菜单/上一局注册的）
+            SimTimer.CancelAll();                //  清掉残留定时器（菜单/上一局注册的）
             Instance.replay = new ReplayInputProvider(file.TickMasks);
             Instance.recordBuffer.Clear();
             Instance.unscaledAccumulator = 0f;
-            Instance.GameEndTriggered = false;   // 🔴 重置回放结束标志 —— 退回菜单再进回放不会卡住
-            skipTickRefCount = 0;                // 🔴 重置 SkipTick 引用计数
+            Instance.GameEndTriggered = false;   //  重置回放结束标志 —— 退回菜单再进回放不会卡住
+            skipTickRefCount = 0;                //  重置 SkipTick 引用计数
             Instance.playbackHeader = file.Header;
             Instance.playbackValidatePositions = file.ValidatePositions;
             Instance.playbackValidateStates = file.ValidateStates;
@@ -194,16 +208,16 @@ namespace ReplaySystem
             Instance.CurrentMode = Mode.Playback;
             Input = Instance.replay;
 
-            // 🔴 关键：把回放文件里的角色/难度元信息写回 Global_GameManager，
+            //  关键：把回放文件里的角色/难度元信息写回 Global_GameManager，
             // 这样 GunAnime/PlayerAnime/SpellCardEffect 的 character 判断能正确走 Marisa 分支
             if (Global_GameManager.Instance != null)
             {
                 Global_GameManager.Instance.character = (Character)file.Header.character;
                 Global_GameManager.Instance.gameMode  = (GameMode)file.Header.gameMode;
             }
-            // 🔴 清掉菜单场景残留的物理键边沿
+            //  清掉菜单场景残留的物理键边沿
             Instance.live.ConsumeEdges();
-            // 🔴 种子 + tick 数 debug 打印
+            //  种子 + tick 数 debug 打印
             Debug.Log($"[ReplayManager] BeginPlayback seed=0x{file.Header.seed:X16} ticks={file.Header.tickCount} character={(Character)file.Header.character} mode={(GameMode)file.Header.gameMode}");
         }
 
@@ -219,10 +233,10 @@ namespace ReplaySystem
             Instance.unscaledAccumulator = 0f;
             Instance.CurrentMode = Mode.Idle;
             Input = Instance.live;
-            // 🔴 重置所有暂停/缩放状态 —— 回放重开等于游戏重置
+            //  重置所有暂停/缩放状态 —— 回放重开等于游戏重置
             TimeScaleController.ResetAll();
 
-            // 🔴 用 Global_SceneManager.RestartGame 做完整清理：
+            //  用 Global_SceneManager.RestartGame 做完整清理：
             // RecycleAllEnemies → 回收道具 → ClearAllPools → ResetGameDate → ResetSceneFromJson → IntoNextScene("Game1") 或 LoadScene
             // 这保证了无论回放结束在 Game1/Game2/Boss 哪个场景，都能干净地回到 Game1 初始状态
             if (Global_SceneManager.Instance != null)
@@ -376,7 +390,7 @@ namespace ReplaySystem
         // --------------------------- 帧驱动 ---------------------------
 
         /// <summary>
-        /// 🔴 Update（每帧，不受 timeScale 影响）：
+        ///  Update（每帧，不受 timeScale 影响）：
         ///   1. live 模式：SampleFromUnity 采样物理键 → 覆盖式算 edgesDown/Up（不需要 ConsumeEdges！）
         ///   2. 回放自然结束检测
         ///
@@ -387,15 +401,15 @@ namespace ReplaySystem
         ///   3. LateUpdate：tick 推进（unscaledDeltaTime，不受 timeScale 影响）
         ///
         /// 决死期间（timeScale=0）：
-        ///   ✅ Update 继续跑 → SampleFromUnity 正常算 edges → SpellCardEffect.Update 能读决死按键 ✓
-        ///   ✅ LateUpdate 继续跑 → SimClock 继续 tick → WaitForSecondsSim 正常等 ✓
-        ///   ✅ 回放文件继续推 → 回放能读到决死按键 ✓
-        ///   ✅ 录制继续写 → 录制包含决死按键 ✓
+        ///   Update 继续跑 → SampleFromUnity 正常算 edges → SpellCardEffect.Update 能读决死按键 ✓
+        ///   LateUpdate 继续跑 → SimClock 继续 tick → WaitForSecondsSim 正常等 ✓
+        ///   回放文件继续推 → 回放能读到决死按键 ✓
+        ///   录制继续写 → 录制包含决死按键 ✓
         ///   ❌ FixedUpdate 停 → 物理停（时停视觉 ✓）
         /// </summary>
         private void Update()
         {
-            // 🔴 回放自然结束检测
+            //  回放自然结束检测
             if (CurrentMode == Mode.Playback && replay != null && replay.IsFinished && !GameEndTriggered)
             {
                 GameEndTriggered = true;
@@ -404,86 +418,86 @@ namespace ReplaySystem
                 UIManagerInstance?.ShowReplayPause();
             }
 
-            // 🔴 live 模式：覆盖式采样 —— 用 = 覆盖 edgesDown/Up，**不需要 ConsumeEdges**
+            //  live 模式：覆盖式采样 —— 用 = 覆盖 edgesDown/Up，**不需要 ConsumeEdges**
             if (CurrentMode == Mode.Record)
                 live.SampleFromUnity();
 
-            // 🔴 回放模式：不采样也不 AdvanceTick
+            //  回放模式：不采样也不 AdvanceTick
             // AdvanceTick 必须和 SimClock.Tick 同频（50Hz），放在 LateUpdate 的 tick 循环里
         }
 
         /// <summary>
-        /// 🔴 LateUpdate（每帧，不受 timeScale 影响，在所有 Update 之后执行）：
+        ///  LateUpdate（每帧，不受 timeScale 影响，在所有 Update 之后执行）：
         ///   用 Time.unscaledDeltaTime 累计，按 50Hz 节奏推进：
         ///     SimClock.Tick → SimTimer.Tick → 回放文件推进 → 录制写文件
         ///
-        ///   🔴 注意：ConsumeEdges 已完全移除！LiveInputProvider 用覆盖式 SampleFromUnity，
+        ///    注意：ConsumeEdges 已完全移除！LiveInputProvider 用覆盖式 SampleFromUnity，
         ///   edgesDown/Up 只在按键变化那一帧非零，不需要手动清。
         ///
         /// 决死期间 timeScale=0 时：
-        ///   ✅ LateUpdate 继续跑（不受 timeScale 影响）→ SimClock 继续 tick
-        ///   ✅ WaitForSecondsSim 能正常等待 → 决死协程能推进
-        ///   ✅ 回放文件位置继续推进 → SpellCardEffect.Update 能读到正确边沿
-        ///   ✅ recordBuffer 继续写 → 录制包含决死期间的按键
+        ///   LateUpdate 继续跑（不受 timeScale 影响）→ SimClock 继续 tick
+        ///   WaitForSecondsSim 能正常等待 → 决死协程能推进
+        ///   回放文件位置继续推进 → SpellCardEffect.Update 能读到正确边沿
+        ///   recordBuffer 继续写 → 录制包含决死期间的按键
         ///   ❌ FixedUpdate 停 → 物理引擎停 → 子弹敌人不动（时停视觉效果保留 ✓）
         /// </summary>
         private void LateUpdate()
         {
             if (CurrentMode == Mode.Idle) return;
 
-            // 🔴 dialog 期间跳过所有 tick（录制/回放/dialog 同步跳过）
+            //  dialog 期间跳过所有 tick（录制/回放/dialog 同步跳过）
             if (SkipTick) return;
 
-            // 🔴 用 unscaledDeltaTime 累计 —— timeScale=0 也继续累
-            // 🔴 clamp 到 0.1s（5 帧最大）防止 Editor Pause / 长时间卡帧后一次性大跳
+            //  用 unscaledDeltaTime 累计 —— timeScale=0 也继续累
+            //  clamp 到 0.1s（5 帧最大）防止 Editor Pause / 长时间卡帧后一次性大跳
             //    不 clamp 的话：Pause 20s → unscaledDeltaTime=20s → 瞬间推进 1000 ticks → 回放跳到末尾
             unscaledAccumulator += Mathf.Min(Time.unscaledDeltaTime, 0.1f);
             while (unscaledAccumulator >= 0.02f) // 50Hz = 0.02s/tick
             {
                 unscaledAccumulator -= 0.02f;
 
-                // 🔴 帧时序对齐核心：先推进回放 held，再推进 SimClock
-                // 这样帧 N LateUpdate AdvanceTick → masks[N]，帧 N+1 FixedUpdate 读到 masks[N]
-                // 录制帧 N+1 FixedUpdate 也读到 masks[N]（因为录制帧 N LateUpdate 写 masks[N]）
-                if (CurrentMode == Mode.Playback && replay != null)
-                    replay.AdvanceTick();
-
                 // 1. 推进模拟时间
+                //    AdvanceTick 必须在 didTick 为 true 时才推进 ——
+                //    SimScale < 1 时（Boss 冰冻 ramp 用 SetScale(0.2~1.0)），
+                //    unscaledAccumulator 每 0.02s 循环一次，但 SimClock.Tick() 可能多次循环才返回 true
+                //    如果 AdvanceTick 放在外面，回放文件会比 SimClock 快 N 倍读完
                 bool didTick = SimClock.Tick();
                 if (didTick)
                 {
-                    // 2. 驱动 tick 定时器
+                    // 2. 回放：推进一帧掩码（和 SimClock.Tick 严格 1:1）
+                    //    帧时序对齐：SimTick 刚变成 N+1 → AdvanceTick 读 masks[N] →
+                    //    帧 N+1 FixedUpdate 读到 replay.currentHeld = masks[N]（差分 vs masks[N-1]）
+                    if (CurrentMode == Mode.Playback && replay != null)
+                        replay.AdvanceTick();
+
+                    // 3. 驱动 tick 定时器
                     SimTimer.Tick();
 
-                    // 🔴 回放模式：HitFlag=1 → 强制触发中弹（绕过物理碰撞）
+                    //  回放模式：HitFlag=1 → 强制触发中弹（绕过物理碰撞）
                     if (CurrentMode == Mode.Playback)
                         ProcessHitFlagForPlayback();
 
-                    // 3. 录制模式：写 recordBuffer（和 SimClock.Tick 50Hz 严格对齐）
+                    // 4. 录制模式：写 recordBuffer（和 SimClock.Tick 50Hz 严格对齐）
                     if (CurrentMode == Mode.Record)
                     {
                         recordBuffer.Add(LogicalKeyMask.LowByte(live.HeldMask));
-                        live.ClearHitFlag(); // 🔴 写完立刻清 HitFlag，否则会泄漏到下一帧
+                        live.ClearHitFlag(); //  写完立刻清 HitFlag，否则会泄漏到下一帧
+                        live.TickSuppress();  //  递减 Resume 后的 Z/X 屏蔽计数
                     }
 
-                    // 4. 🔴 帧校验：每 VALIDATE_INTERVAL tick 记录/强制 (位置 + 游戏状态)
+                    // 5.  帧校验：每 VALIDATE_INTERVAL tick 记录/强制 (位置 + 游戏状态)
                     if (SimClock.SimTick % VALIDATE_INTERVAL == 0)
                     {
                         var playerObj = GameObject.FindGameObjectWithTag("Player");
                         var gm = Global_GameManager.Instance;
                         if (CurrentMode == Mode.Record)
                         {
-                            if (playerObj != null)
-                            {
-                                Vector3 pos = playerObj.transform.position;
-                                recordValidatePositions.Add(pos.x);
-                                recordValidatePositions.Add(pos.y);
-                            }
-                            // 🔴 同时存游戏状态
-                            if (gm != null)
-                                recordValidateStates.Add(PackReplayState(gm.Power, gm.Hp, gm.BombCount));
-                            else
-                                recordValidateStates.Add(0);
+                            // positions 和 states 必须同步生长 —— 回放侧用同一个 nextValidateIndex 索引两个数组
+                            Vector3 pos = playerObj != null ? playerObj.transform.position : Vector3.zero;
+                            recordValidatePositions.Add(pos.x);
+                            recordValidatePositions.Add(pos.y);
+                            ushort packedState = gm != null ? PackReplayState(gm.Power, gm.Hp, gm.BombCount) : (ushort)0;
+                            recordValidateStates.Add(packedState);
                         }
                         else if (CurrentMode == Mode.Playback && playbackValidatePositions != null)
                         {
@@ -496,7 +510,7 @@ namespace ReplaySystem
                                     Vector3 p = playerObj.transform.position;
                                     playerObj.transform.position = new Vector3(tx, ty, p.z);
                                 }
-                                // 🔴 同时强制游戏状态
+                                //  同时强制游戏状态
                                 if (playbackValidateStates != null && nextValidateIndex < playbackValidateStates.Length)
                                 {
                                     UnpackReplayState(playbackValidateStates[nextValidateIndex], out int pow, out int hp, out int bc);
@@ -507,12 +521,12 @@ namespace ReplaySystem
                         }
                     }
 
-                    // 5. 🔴 State Hash（每 10 tick 一次）
-                    if (didTick && SimClock.SimTick % 10 == 0)
+                    // 6.  State Hash（每 10 tick 一次）
+                    if (SimClock.SimTick % 10 == 0)
                         LogStateHash();
                 }
             }
-            // 🔴 无 ConsumeEdges —— LiveInputProvider 覆盖式自动清
+            //  无 ConsumeEdges —— LiveInputProvider 覆盖式自动清
         }
 
         private static void EnsureInstance()
@@ -525,7 +539,7 @@ namespace ReplaySystem
         }
 
         /// <summary>
-        /// 🔴 每 50 tick 对游戏状态做指纹，用于定位录 vs 回放的第一个分叉点。
+        ///  每 50 tick 对游戏状态做指纹，用于定位录 vs 回放的第一个分叉点。
         /// 指纹内容：SimTick + GameRNG 状态 + 玩家位置 + 玩家移动方向。
         /// 录制时 Console 打 [HASH-REC]，回放时打 [HASH-PLAY]，搜 hash 字符串就能对齐比对。
         ///

@@ -39,7 +39,7 @@ public class ButtonEvent : MonoBehaviour
 
     void OnEnable()
     {
-        // 🔴 重置所有暂停/缩放状态 —— 进入菜单场景
+        //  重置所有暂停/缩放状态 —— 进入菜单场景
         TimeScaleController.ResetAll();
     }
 

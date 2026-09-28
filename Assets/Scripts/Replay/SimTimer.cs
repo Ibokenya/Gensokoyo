@@ -14,25 +14,23 @@ namespace ReplaySystem
     ///   SimTimer.Once(callback, 0);          // 下一 tick 触发
     ///   SimTimer.Repeat(callback, 25);       // 每 25 tick 触发一次
     ///   SimTimer.CancelAll();                // 全清
-    ///   SimTimer.Cancel(handle);             // 清单个（调用方保存返回的句柄）
-    ///
-    /// 注意：回调里不要抛异常（会中断 SimTimer.Tick 后续调度），也不要递归调用 CancelAll。
+    ///   SimTimer.Cancel(handle);             // 清单个
     /// </summary>
     public static class SimTimer
     {
-        private static readonly List<TimerEntry> pending = new();
+        private static readonly List<TimerEntry> pending = new();// 待执行定时器列表
         private static readonly List<TimerEntry> ready = new(); // 当 tick 到达时缓存，防止回调里修改集合
         private static long nextHandle = 1;
 
         public class TimerEntry
         {
-            public long Handle;
+            public long Handle;         // 句柄
             public ulong FireTick;      // 第一次触发的 SimTick
-            public Action Callback;
+            public Action Callback;     // 回调
             public int PeriodTicks;     // Repeat 时 > 0；Once 时 = 0
         }
 
-        /// <summary>注册一次性定时回调；返回句柄（用于取消）</summary>
+        /// <summary>注册一次性定时回调；返回句柄</summary>
         public static long Once(Action callback, int delayTicks)
         {
             if (delayTicks < 0) delayTicks = 0;

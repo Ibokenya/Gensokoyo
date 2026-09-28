@@ -52,11 +52,11 @@ public class ReimuSuper : MonoBehaviour
     
     void FixedUpdate()
     {     
-        // 🔴 逻辑搬到 Update 了 —— 决死期间 timeScale=0 停 FixedUpdate
+        //  逻辑搬到 Update 了 —— 决死期间 timeScale=0 停 FixedUpdate
     }
 
     /// <summary>
-    /// 🔴 从 FixedUpdate 搬过来 —— Update 不受 timeScale 影响
+    ///  从 FixedUpdate 搬过来 —— Update 不受 timeScale 影响
     /// 决死期间亚空穴要继续绑定玩家位置
     /// </summary>
     void Update()
@@ -154,7 +154,7 @@ public class ReimuSuper : MonoBehaviour
         // 记录协程开始时间（用于控制退治效果显示时机）
         float startTime = SimClock.SimTime;
         
-        // 🔴 注册硬暂停 —— 让 TimeScaleController 统一管理
+        //  注册硬暂停 —— 让 TimeScaleController 统一管理
         TimeScaleController.RegisterHardPause();
         
         // 创建敌人列表的副本
@@ -355,7 +355,7 @@ public class ReimuSuper : MonoBehaviour
         }
         
         WinEffect.SetActive(false);
-        // 🔴 释放硬暂停 —— controller 自动计算正确的最终值
+        //  释放硬暂停 —— controller 自动计算正确的最终值
         TimeScaleController.UnregisterHardPause();
         
         // 通知父脚本动画结束
@@ -370,10 +370,10 @@ public class ReimuSuper : MonoBehaviour
     public void Back()
     {
         player.transform.position = new(-3,-4,0);
-        // 🔴 释放硬暂停 —— controller 自动恢复到之前的缩放（可能是 Esc 暂停的 0）
+        //  释放硬暂停 —— controller 自动恢复到之前的缩放（可能是 Esc 暂停的 0）
         TimeScaleController.UnregisterHardPause();
         
-        // 🔴 只有当前不在 Esc 暂停状态才恢复游戏状态
+        //  只有当前不在 Esc 暂停状态才恢复游戏状态
         // 如果玩家在决死期间按了 Esc，这里不能覆盖 State.Pause
         if (Global_GameManager.Instance.state != State.Pause &&
             Global_GameManager.Instance.state != State.FinalUI &&

@@ -21,7 +21,7 @@ namespace ReplaySystem
     {
         public const float FixedTickDt    = 0.02f; // 50Hz
         public const float FixedTickRate  = 50f;
-        public const int   FixedTickMs    = 20;
+        public const int   FixedTickMs    = 20;// 50Hz tick 每帧 20ms
 
         /// <summary>累计 tick 数（整数，从 0 开始）</summary>
         public static ulong SimTick { get; private set; }

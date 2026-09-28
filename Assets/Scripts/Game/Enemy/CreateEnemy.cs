@@ -345,7 +345,7 @@ public class CreateEnemy : MonoBehaviour
                 {
                     enemyShoot.SetPlayer(player);
                 }
-                // 🔴 spawner 层消费 GameRNG，通过 SetRngOffsets 注入
+                //  spawner 层消费 GameRNG，通过 SetRngOffsets 注入
                 // 原因：spawner 是 for 循环顺序调用，GameRNG 消费顺序 100% 确定
                 // 而 EnemyShoot.FixedUpdate 在多敌人同帧时执行顺序不确定
                 enemyShoot.SetRngOffsets(

@@ -10,9 +10,9 @@ namespace ReplaySystem
     /// - WaitForSecondsRealtime 完全不受任何时间控制——回放/SimScale 下就是个 bug
     ///
     /// WaitForSecondsSim 看的是 SimClock.SimTime，所以：
-    /// - 回放时用回放文件里的固定 tick 序列，时间确定性 ✅
-    /// - SimScale=0.3 时，wait 2秒 实际等约 6.67 秒（SimClock 按比例慢）✅
-    /// - timeScale=0 时 FixedUpdate 停，SimClock 也停——协程不会前进 ✅
+    /// - 回放时用回放文件里的固定 tick 序列，时间确定性
+    /// - SimScale=0.3 时，wait 2秒 实际等约 6.67 秒（SimClock 按比例慢）
+    /// - timeScale=0 时 FixedUpdate 停，SimClock 也停——协程不会前进
     ///
     /// 使用：yield return new WaitForSecondsSim(2.0f);
     ///       yield return new WaitForTicksSim(100);  // 或直接按 tick 数等
@@ -26,7 +26,7 @@ namespace ReplaySystem
             targetTime = SimClock.SimTime + seconds;
         }
 
-        public override bool keepWaiting => SimClock.SimTime < targetTime;
+        public override bool keepWaiting => SimClock.SimTime < targetTime;// 是否需要继续等待
     }
 
     /// <summary>

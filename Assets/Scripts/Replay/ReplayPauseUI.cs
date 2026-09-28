@@ -23,7 +23,7 @@ public class ReplayPauseUI : MonoBehaviour
     public TextMeshProUGUI Button2;   // 返回菜单（恒定）
     
     [Header("音效")]
-    public AudioClip pauseEnterSfx;  // 🔴 进入暂停时播放
+    public AudioClip pauseEnterSfx;  //  进入暂停时播放
     public AudioClip chooseSfx;
     public AudioClip confirmSfx;
 
@@ -36,7 +36,7 @@ public class ReplayPauseUI : MonoBehaviour
 
     // ---- 生命周期 ----
 
-    // 🔴 Awake 不再管 SetActive —— UIManager 统一 Show/Hide
+    //  Awake 不再管 SetActive —— UIManager 统一 Show/Hide
     // ReplayManager.Update 触发 ShowReplayPause() → UIManager.SetActive(true) → 本脚本 OnEnable 初始化
 
     void OnEnable()
@@ -46,17 +46,17 @@ public class ReplayPauseUI : MonoBehaviour
 
         selectedIndex = 0;
         
-        // 🔴 注册硬暂停 —— 让 TimeScaleController 统一管理
+        //  注册硬暂停 —— 让 TimeScaleController 统一管理
         TimeScaleController.RegisterHardPause();
 
-        // 🔴 暂停 BGM（AudioSource 不受 timeScale 影响，需要手动 Pause）
+        //  暂停 BGM（AudioSource 不受 timeScale 影响，需要手动 Pause）
         if (Global_AudioManager.Instance != null) Global_AudioManager.Instance.PauseBGM();
         
-        // 🔴 暂停回放推进 —— AddSkipTickReason() 让 LateUpdate return early
+        //  暂停回放推进 —— AddSkipTickReason() 让 LateUpdate return early
         // 回放文件位置不前进、SimClock 不推进
         ReplayManager.AddSkipTickReason();
         
-        // 🔴 播放进入暂停音效
+        //  播放进入暂停音效
         PlaySfx(pauseEnterSfx);
         
         // 回放结束时 Button1 显示 ReStart
@@ -68,7 +68,7 @@ public class ReplayPauseUI : MonoBehaviour
 
     void OnDisable()
     {
-        // 🔴 Resume / ReStart 后恢复回放推进
+        //  Resume / ReStart 后恢复回放推进
         ReplayManager.RemoveSkipTickReason();
     }
 
@@ -132,9 +132,9 @@ public class ReplayPauseUI : MonoBehaviour
 
     private void Resume()
     {
-        // 🔴 释放硬暂停 —— controller 自动恢复到正确的值
+        //  释放硬暂停 —— controller 自动恢复到正确的值
         TimeScaleController.UnregisterHardPause();
-        // 🔴 UnPause BGM
+        //  UnPause BGM
         if (Global_AudioManager.Instance != null) Global_AudioManager.Instance.UnPauseBGM();
         ReplayManager.NotifyReplayResumed();
         ReplayManager.UIManagerInstance?.HideReplayPause();
@@ -142,7 +142,7 @@ public class ReplayPauseUI : MonoBehaviour
 
     private void ReturnToMenu()
     {
-        // 🔴 重置所有暂停/缩放状态 —— 返回菜单
+        //  重置所有暂停/缩放状态 —— 返回菜单
         TimeScaleController.ResetAll();
         ReplayManager.DiscardRecording();
         ReplayManager.NotifyReplayResumed();

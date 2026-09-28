@@ -7,12 +7,9 @@ using System.Collections.Generic;
 
 /// <summary>
 /// 热更加载器
-/// 挂在 GameStartLoading 场景的空 GameObject 上
 /// 流程：AA 初始化 → 更新 Catalog → 下载远程 Lua + 帧图 → xlua.hotfix 替换
 /// 
-/// 远程热更资源（都要打 Addressables 远程包）：
-///   - Assets/HotfixScripts/koishi_hotfix.lua.txt  → TextAsset
-///   - Assets/AA_assets/1.png ~ 12.png              → Sprite（Label: koishi_frames）
+/// 远程热更资源（都要打 Addressables 远程包）
 /// </summary>
 public class AAHotfixLoader : MonoBehaviour
 {
@@ -51,8 +48,6 @@ public class AAHotfixLoader : MonoBehaviour
             }
             catch (System.Exception ex)
             {
-                // XLua Dispose 会抛 callback 未释放异常（xlua.hotfix 注册的回调）
-                // 应用退出或场景销毁时，OS 会清理资源，忽略即可
                 Debug.LogWarning("[AAHotfixLoader] LuaEnv.Dispose 忽略异常（app 退出中）: " + ex.Message);
             }
             LuaEnv = null;
@@ -87,7 +82,7 @@ public class AAHotfixLoader : MonoBehaviour
         else
         {
             // 帧图不存在（V1 回滚场景），跳过，lua 里会自动 fallback
-            Debug.LogWarning($"[AAHotfixLoader] ② 帧图不存在或加载失败（Status={spritesHandle.Status}），跳过帧图注入，回退为非动画状态");
+            Debug.LogWarning($"[AAHotfixLoader] ② 帧图不存在或加载失败（Status={spritesHandle.Status}），跳过帧图注入，回退为v0.1.0版本");
         }
 
         // 3. 创建 LuaEnv
@@ -114,7 +109,7 @@ public class AAHotfixLoader : MonoBehaviour
         try
         {
             LuaEnv.DoString(luaContent);
-            Debug.Log("[AAHotfixLoader] ✅ Lua hotfix 执行成功！koishi 的 Start/Update 已被 Lua 接管");
+            Debug.Log("[AAHotfixLoader] Lua hotfix 执行成功！koishi 的 Start/Update 已被 Lua 接管");
             LoadSucceeded = true;
         }
         catch (System.Exception e)

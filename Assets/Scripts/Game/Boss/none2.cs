@@ -75,20 +75,19 @@ public class none2 : MonoBehaviour
             Vector3 startPosition = boss.transform.position;
             Vector3 targetPosition = new Vector3(-3f, 3f, 0f);
             float duration = 2f;
-            float elapsedTime = 0f;
+            float startSimTime = SimClock.SimTime;
             
-            // 平滑移动boss到中心位置
-            while (elapsedTime < duration)
+            //  用 SimClock 驱动，帧次数固定（2秒 = 100 tick @50Hz）
+            while (true)
             {
-                float t = elapsedTime / duration;
-                // 使用平滑的缓动函数
+                float t = Mathf.Clamp01((SimClock.SimTime - startSimTime) / duration);
                 t = Mathf.SmoothStep(0f, 1f, t);
                 boss.transform.position = Vector3.Lerp(startPosition, targetPosition, t);
-                elapsedTime += Time.deltaTime;
+
+                if (t >= 1f) break;
                 yield return null;
             }
             
-            // 确保boss到达精确位置
             boss.transform.position = targetPosition;
         }
     }
@@ -97,12 +96,13 @@ public class none2 : MonoBehaviour
     {
         while (true)
         {
-            // 等待移动间隔
+            // 等待移动间隔（SimClock 驱动，确定性）
             yield return new WaitForSecondsSim(moveInterval);
             
             if (boss != null && movePositions.Count > 1)
             {
                 // 随机选择下一个位置，排除当前位置
+                //  GameRNG.Range 必须在 WaitForSecondsSim 之后立即调用——此时刻确定性且无其他 RNG 干扰
                 int nextPositionIndex = currentPositionIndex;
                 while (nextPositionIndex == currentPositionIndex)
                 {
@@ -112,52 +112,38 @@ public class none2 : MonoBehaviour
                 Vector3 targetPosition = movePositions[nextPositionIndex];
                 Vector3 startPosition = boss.transform.position;
                 
-                // 确定移动方向并设置动画状态
                 if (targetPosition.x < startPosition.x)
                 {
-                    // 向左移动
-                    if (bossAnime != null)
-                    {
-                        bossAnime.SetLeft();
-                    }
+                    if (bossAnime != null) bossAnime.SetLeft();
                 }
                 else if (targetPosition.x > startPosition.x)
                 {
-                    // 向右移动
-                    if (bossAnime != null)
-                    {
-                        bossAnime.SetRight();
-                    }
+                    if (bossAnime != null) bossAnime.SetRight();
                 }
                 
-                // 平滑移动到目标位置
+                //  SimClock 驱动的平滑移动（duration=1f = 50 tick @50Hz）
+                // 帧次数固定 → none2RandomShoot 重启时机确定性 → RNG 消费顺序稳定
                 float duration = 1f;
-                float elapsedTime = 0f;
+                float startSimTime = SimClock.SimTime;
                 
-                while (elapsedTime < duration)
+                while (true)
                 {
-                    float t = elapsedTime / duration;
-                    t = Mathf.SmoothStep(0f, 1f, t);
-                    boss.transform.position = Vector3.Lerp(startPosition, targetPosition, t);
-                    elapsedTime += Time.deltaTime;
+                    float t = Mathf.Clamp01((SimClock.SimTime - startSimTime) / duration);
+                    float st = Mathf.SmoothStep(0f, 1f, t);
+                    boss.transform.position = Vector3.Lerp(startPosition, targetPosition, st);
+
+                    if (t >= 1f) break;
                     yield return null;
                 }
                 
-                // 确保boss到达精确位置
                 boss.transform.position = targetPosition;
                 currentPositionIndex = nextPositionIndex;
                 
-                // 恢复idle状态
-                if (bossAnime != null)
-                {
-                    bossAnime.SetIdle();
-                }
+                if (bossAnime != null) bossAnime.SetIdle();
                 
-                // 重新启动射击协程，传递新的目标位置
+                // 重新启动射击协程（此时刻确定性，不会因帧率偏移）
                 if (bossShootSystem != null)
                 {
-                    // 重新启动二非随机射击，传递当前boss位置作为目标位置
-                    // 注意：none2RandomShoot方法内部会停止之前的射击协程
                     bossShootSystem.none2RandomShoot(randomBulletPrefab, bulletSpeed, shootInterval, bulletCount);
                 }
             }

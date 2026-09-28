@@ -49,7 +49,7 @@ public class OptionAnime : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        // 🔴 启动时加载按键映射（PlayerPrefs）
+        //  启动时加载按键映射（PlayerPrefs）
         PhysicalKeyMapping.Load();
 
         if(DarkImages.Count == 0|| LightImages.Count == 0|| DarkImages.Count != LightImages.Count)
@@ -87,7 +87,7 @@ public class OptionAnime : MonoBehaviour
 
     private void CheckUpdate()
     {
-        // 🔴 KeySet 面板激活期间：OptionAnime 不处理输入，全交 KeySet
+        //  KeySet 面板激活期间：OptionAnime 不处理输入，全交 KeySet
         //（KeySet 内部有自己的状态机处理上下Z/X）
         if (keySetPanel != null && keySetPanel.activeSelf)
         {
@@ -355,7 +355,7 @@ public class OptionAnime : MonoBehaviour
         sfxVolume = 0.80f;
         Global_AudioManager.Instance.SetBGMVolume(bgmVolume);
         Global_AudioManager.Instance.SetSFXVolume(sfxVolume);
-        // 🔴 同时恢复默认按键
+        //  同时恢复默认按键
         PhysicalKeyMapping.ResetToDefaults();
         SetNumber();
     }

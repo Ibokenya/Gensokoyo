@@ -22,7 +22,7 @@ public class EnemyShoot : MonoBehaviour
     private int enemyIndex = 0; // 敌人在波次中的索引
     private float angleOffset = 0f; // 角度偏移
     private float timeOffset = 0f; // 时间偏移
-    // 🔴 不再在 FixedUpdate 消费 GameRNG —— spawner (CreateEnemy) 负责消费并通过 SetRngOffsets 注入
+    //  不再在 FixedUpdate 消费 GameRNG —— spawner (CreateEnemy) 负责消费并通过 SetRngOffsets 注入
     // 原因：多个 EnemyShoot 同帧激活时 Unity 不保证 FixedUpdate 执行顺序
 
     void OnEnable()
@@ -44,7 +44,7 @@ public class EnemyShoot : MonoBehaviour
     
     void FixedUpdate()
     {
-        // 🔴 已移除 GameRNG 消费 —— spawner 在实例化时通过 SetRngOffsets 注入确定值
+        //  已移除 GameRNG 消费 —— spawner 在实例化时通过 SetRngOffsets 注入确定值
 
         if(Global_GameManager.Instance.state == State.SpellCard)
         {
@@ -155,7 +155,7 @@ public class EnemyShoot : MonoBehaviour
         for (int i = 0; i < bulletCount; i++)
         {
             // 随机角度
-            // 🔴 改用 GameRNG —— 确定性随机角度
+            //  改用 GameRNG —— 确定性随机角度
             float randomAngle = currentConfig.shootAngle + angleOffset + GameRNG.Range(0f, currentConfig.angleRange);
             Quaternion rotation = Quaternion.Euler(0, 0, randomAngle);
             
@@ -378,7 +378,7 @@ public class EnemyShoot : MonoBehaviour
     }
 
     /// <summary>
-    /// 🔴 由 spawner (CreateEnemy) 调用，确定性注入 GameRNG 随机值
+    ///  由 spawner (CreateEnemy) 调用，确定性注入 GameRNG 随机值
     /// spawner 是 for 循环顺序调用，所以 GameRNG 消费顺序确定性
     /// EnemyShoot 自身不再消费 GameRNG（避免多个组件同帧顺序不确定）
     /// </summary>

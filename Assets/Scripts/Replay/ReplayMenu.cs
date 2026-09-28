@@ -113,7 +113,7 @@ public class ReplayMenu : MonoBehaviour
 
     private void HandleInput()
     {
-        // 🔴 meta 层 UI 全部读 Unity Input，不走 ReplayManager.Input
+        //  meta 层 UI 全部读 Unity Input，不走 ReplayManager.Input
         // 避免 ReplayInputProvider 的回放边沿或 LiveInputProvider 未清的边沿干扰
 
         if (Input.GetKeyDown(PhysicalKeyMapping.Escape))

@@ -8,8 +8,6 @@ namespace ReplaySystem
     /// 独立于 UnityEngine.Random，状态可完整序列化（用于回放/快照/校验）。
     /// 所有玩法脚本应调用 GameRNG；仅视觉表现（精灵变体、粒子种子、装饰抖动）允许继续用 UnityEngine.Random。
     ///
-    /// 注意：EnemyShoot.cs 中原代码 Random.InitState(enemyIndex * 37) 是定时炸弹——
-    /// 它中途重播种全局 RNG，会污染其他系统的随机数流。后续迁移时必须整段删除。
     /// 每个敌人的随机偏移改为在生成时从 GameRNG 一次性抽取，不再重播种。
     /// </summary>
     public static class GameRNG

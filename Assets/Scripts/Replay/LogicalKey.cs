@@ -19,7 +19,7 @@ namespace ReplaySystem
         Shift   = 4, // 慢速（Shift）
         Z       = 5, // 射击（Z）
         X       = 6, // 符卡（X）
-        HitFlag = 7, // 🔴 原 Esc 位，回放模式不用 Esc → 换成本 tick 是否中弹
+        HitFlag = 7, //  原 Esc 位，回放模式不用 Esc → 换成本 tick 是否中弹
         Ctrl    = 8  // 对话快进（左 Ctrl）—— 不存回放文件
     }
 
@@ -33,8 +33,8 @@ namespace ReplaySystem
         public const ushort Shift   = 1 << 4;
         public const ushort Z       = 1 << 5;
         public const ushort X       = 1 << 6;
-        public const ushort HitFlag = 1 << 7;  // 🔴 原 Escape 位 → 中弹标志
-        public const ushort Ctrl    = 1 << 8;
+        public const ushort HitFlag = 1 << 7;  //  原 Escape 位 → 中弹标志
+        public const ushort Ctrl    = 1 << 8;  //  不录制对话快进键位
 
         /// <summary>只取低 8 位（回放文件存储用）</summary>
         public static byte LowByte(ushort mask) => (byte)(mask & 0xFF);

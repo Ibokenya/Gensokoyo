@@ -20,7 +20,7 @@ public class MagicAnime : MonoBehaviour
     public GunAnime gunAnime;// 武器动画组件
 
     private bool isExiting = false; // 是否正在退出
-    private bool lastShiftHeld = false; // 🔴 自算边沿，不依赖 GetKeyUp
+    private bool lastShiftHeld = false; //  自算边沿，不依赖 GetKeyUp
 
     // 连线材质（可在Inspector面板赋值）
     public Material lineMaterial;
@@ -55,7 +55,7 @@ public class MagicAnime : MonoBehaviour
         Global_GameManager.Instance.state != State.NoDead &&
         Global_GameManager.Instance.state != State.SpellCard) return;
 
-        // 🔴 GetKeyUp 自算边沿 —— 不依赖 edgesUp
+        //  GetKeyUp 自算边沿 —— 不依赖 edgesUp
         bool shiftHeld = ReplayManager.Input.GetKey(LogicalKey.Shift);
         bool justReleased = !shiftHeld && lastShiftHeld;
         lastShiftHeld = shiftHeld;

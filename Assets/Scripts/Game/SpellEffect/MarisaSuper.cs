@@ -33,7 +33,7 @@ public class MarisaSuper : MonoBehaviour
     
     private List<GameObject> Enemys => Global_GameManager.Instance.EnemyList;// 敌人列表
     
-    // 🔴 用 SimTick 差分控制出伤节奏 —— 决死期间 timeScale=0 但 SimClock 继续 tick
+    //  用 SimTick 差分控制出伤节奏 —— 决死期间 timeScale=0 但 SimClock 继续 tick
     private float lastSimTick;
     
     void Awake()
@@ -59,11 +59,11 @@ public class MarisaSuper : MonoBehaviour
     
     void FixedUpdate()
     {
-        // 🔴 原来这里的逻辑搬到 Update 了 —— 决死期间 timeScale=0 停 FixedUpdate
+        //  原来这里的逻辑搬到 Update 了 —— 决死期间 timeScale=0 停 FixedUpdate
     }
 
     /// <summary>
-    /// 🔴 从 FixedUpdate 搬过来 —— Update 不受 timeScale 影响
+    ///  从 FixedUpdate 搬过来 —— Update 不受 timeScale 影响
     /// 用 SimClock.SimTick 差分控制 Timer 节奏（每 tick 减一次，50Hz）
     /// </summary>
     void Update()
@@ -225,7 +225,7 @@ public class MarisaSuper : MonoBehaviour
     /// </summary>
     public void TimeStop()
     {
-        // 🔴 注册硬暂停 —— 让 TimeScaleController 统一管理
+        //  注册硬暂停 —— 让 TimeScaleController 统一管理
         TimeScaleController.RegisterHardPause();
     }
 
@@ -261,7 +261,7 @@ public class MarisaSuper : MonoBehaviour
         IsAnime = false;
         isDamage = false;
 
-        // 🔴 释放硬暂停 —— controller 自动计算正确的最终值
+        //  释放硬暂停 —— controller 自动计算正确的最终值
         TimeScaleController.UnregisterHardPause();
         
         // 处理时停期间死亡的敌人

@@ -23,7 +23,8 @@ public class Global_SceneManager : Singleton<Global_SceneManager>
     private List<string> _LoadedSceneNames = new ();// 存储已加载场景的名称用于检索以及回退
 
     [Header("第二场景配置（Menu）")]// 游戏启动后默认跳转的菜单场景名称（Inspector面板可配置）
-    [SerializeField] private string _menuSceneName = "GameStartMenu";
+    [SerializeField] 
+    private string _menuSceneName = "GameStartMenu";
 
     [SerializeField]
     private List<string> _sceneToPreload = new ()// 所有需要预加载的场景名称
@@ -226,7 +227,7 @@ public class Global_SceneManager : Singleton<Global_SceneManager>
     private IEnumerator IntoNextSceneCoroutine(string NextSceneName, bool isHide, float minLoadTime = 0.1f)
     {
         float startTime = Time.time;
-        Debug.Log($"【场景切换】开始：从{CurrentSceneName}到{NextSceneName}，isHide={isHide}");
+        //Debug.Log($"【场景切换】开始：从{CurrentSceneName}到{NextSceneName}，isHide={isHide}");
 
         SimpleWaitingAnime(CurrentSceneName, NextSceneName);// 播放动画
 
@@ -270,7 +271,7 @@ public class Global_SceneManager : Singleton<Global_SceneManager>
         // 更新当前场景名称
         CurrentSceneName = NextSceneName;
 
-        // 🔴 关键：在 Game1 激活 PlayBGM 之前启动 ReplayManager。
+        //  关键：在 Game1 激活 PlayBGM 之前启动 ReplayManager。
         // Record 模式：BeginRecord（Seed 初始化 + SimClock 重置）
         // Playback 模式：跳过（BeginPlayback 已由 ReplayMenu 先调用了，不能再 BeginRecord 覆盖 Input=replay）
         if (CurrentSceneName == "Game1")
@@ -561,7 +562,7 @@ public class Global_SceneManager : Singleton<Global_SceneManager>
                 IntoNextScene("Game1", false);
             }
         }
-        // 🔴 重置所有暂停/缩放状态 —— 进入新场景
+        //  重置所有暂停/缩放状态 —— 进入新场景
         TimeScaleController.ResetAll();
         Global_AudioManager.Instance.PlayBGM("Game1");
         Global_GameManager.Instance.state = State.Gaming;

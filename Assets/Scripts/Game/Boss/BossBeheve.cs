@@ -290,7 +290,22 @@ public class BossBeheve : MonoBehaviour
             Debug.Log("调用BgAndBallon方法");
             changeBG.ShowBg("balloon", 0.5f);
             hasCalledBgAndBallon = true;
-            freezeSystem.IsStop = true;
+            //  停止冻结系统——但玩家可能正处于 Freeze/QTE 中
+            // 如果在 QTE 中，等 CompleteQTE 后再停（通过 pendingStopAfterQTE 标志），
+            // 确保 QTE 流程完整，且 QTE 后 FreezeSystem 不会继续累积 FreezeDegree
+            if (freezeSystem != null)
+            {
+                if (Global_GameManager.Instance.state == State.Frozen)
+                {
+                    freezeSystem.pendingStopAfterQTE = true;
+                    Debug.Log("冻结系统延迟停止：当前在 QTE 中，等 CompleteQTE 后应用 IsStop=true");
+                }
+                else
+                {
+                    freezeSystem.IsStop = true;
+                    Debug.Log("冻结系统已停止");
+                }
+            }
         }
         
         // 时间为88秒，调用FinalAnime方法
@@ -384,7 +399,7 @@ public class BossBeheve : MonoBehaviour
     /// </summary>
     private void AllOver()
     {
-        // 🔴 注册软缩放（慢放）—— 让 TimeScaleController 统一管理
+        //  注册软缩放（慢放）—— 让 TimeScaleController 统一管理
         // 如果此时有 Esc 暂停，硬暂停会覆盖慢放为 0；Esc 解除后自动回到 0.3
         TimeScaleController.RegisterSoftScale(0.3f);
         changeBG.BeginDeadStarEffect(); // 新星爆炸动画
@@ -408,7 +423,7 @@ public class BossBeheve : MonoBehaviour
     {
         // 恢复正常节奏
         SimClock.SetScale(1f);
-        // 🔴 释放软缩放 —— controller 自动恢复到正确的值
+        //  释放软缩放 —— controller 自动恢复到正确的值
         // 如果此时还有 Esc 暂停，最终 timeScale 仍是 0
         TimeScaleController.UnregisterSoftScale();
         bossAnime.ChrinoAnimator.enabled = true;
@@ -422,7 +437,7 @@ public class BossBeheve : MonoBehaviour
 
     public void ShowFinalUI()
     {
-        // 🔴 注册硬暂停 —— FinalUI 应该覆盖其他软缩放
+        //  注册硬暂停 —— FinalUI 应该覆盖其他软缩放
         TimeScaleController.RegisterHardPause();
         Debug.Log("显示最终UI");
         Global_GameManager.Instance.state=State.FinalUI;

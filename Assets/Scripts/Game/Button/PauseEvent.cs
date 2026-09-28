@@ -45,6 +45,9 @@ public class PauseEvent : MonoBehaviour
     private bool isManualIndex = true;
     private bool isManualActive = false;
 
+    /// <summary> 给 PauseUI 查：当前是否处于说明书界面——manual 中 Esc 只关 manual，不关暂停</summary>
+    public bool IsManualActive => isManualActive;
+
     // ---- 生命周期 ----
 
     void OnEnable()
@@ -337,8 +340,11 @@ public class PauseEvent : MonoBehaviour
         {
             BeClick(index);
         }
-        else if (Input.GetKeyDown(PhysicalKeyMapping.X) || Input.GetKeyDown(PhysicalKeyMapping.Escape))
+        else if (Input.GetKeyDown(PhysicalKeyMapping.X))
         {
+            //  只处理 X：Esc 完全由 PauseUI.CheckInput 统一路由
+            //    如果 PauseEvent 也读 Esc，会导致同一帧内 Esc 被双重消费
+            //    （PauseEvent 先 Resume → PauseUI 后又 Pause，按一次 Esc 等于没按）
             pauseUI.Resume();
         }
     }

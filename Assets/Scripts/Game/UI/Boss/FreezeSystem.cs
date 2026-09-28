@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,6 +15,7 @@ public class FreezeSystem : MonoBehaviour
     [Header("冻结相关参数")]
     public AudioClip freezeSound;//冻结音效
     public bool IsStop;//是否停止冻结系统
+    [NonSerialized] public bool pendingStopAfterQTE; //  BossBeheve 84秒等场景延迟停止：等 QTE 完成后再停
 
     [Header("玩家动画引用")]
     public PlayerAnime playerAnime; // 引用玩家动画脚本
@@ -135,23 +137,30 @@ public class FreezeSystem : MonoBehaviour
 
     private IEnumerator FreezeCoroutine()
     {
-        float duration =0.5f;
-        float elapsedTime = 0f;
-        while (elapsedTime < duration)
+        //  用 SimClock 驱动，消除帧速率绑定
+        // 原 Time.deltaTime + yield return null 在回放/SimScale 下不可靠
+        // 原 elapsedTicks++ + yield return null 也有渲染帧依赖（yield null 是每帧返回）
+        float duration = 0.5f;
+        float startSimTime = SimClock.SimTime;
+
+        while (true)
         {
-            elapsedTime += Time.deltaTime;
+            float t = Mathf.Clamp01((SimClock.SimTime - startSimTime) / duration);
+
             Color color = FrozenEffect.color;
-            float alpha = color.a;
-            color.a = Mathf.Lerp(alpha, 0.6f, elapsedTime / duration);
+            color.a = Mathf.Lerp(0f, 0.6f, t);
             FrozenEffect.color = color;
+
+            if (t >= 1f) break;
             yield return null;
         }
+
         // 播放冻结音效
         if (freezeSound != null)
         {
             Global_AudioManager.Instance.PlaySFX(freezeSound);
         }      
-        // 激活PlayerAnime中的Ice物体并启动QTE
+        //  先激活 QTE 再切状态——确保 HandleFrozenQTE 第一次进入时 isQteActive 已经是 true
         if (playerAnime != null)
         {
             playerAnime.ActivateFrozenQTE();

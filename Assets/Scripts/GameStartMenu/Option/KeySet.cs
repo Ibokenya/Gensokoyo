@@ -18,7 +18,7 @@ using UnityEngine;
 ///     ↓ 冲突/非法 → ErrorSound + 保持 Listening
 ///     ↓ 按 X/Escape → 取消，回到 Navigation
 ///
-/// 🔴 导航输入用 PhysicalKeyMapping 的当前映射（重绑后立即生效）。
+///  导航输入用 PhysicalKeyMapping 的当前映射（重绑后立即生效）。
 ///    Listening 态屏蔽导航，只监听"任意物理键"。
 /// </summary>
 public class KeySet : MonoBehaviour
@@ -204,7 +204,7 @@ public class KeySet : MonoBehaviour
             RefreshMapperTexts();
             if (MapperDesc != null) MapperDesc.text = "";
             state = UIState.Navigation;
-            // 🔴 Sword 保持在当前行，玩家继续上下选其他行改
+            //  Sword 保持在当前行，玩家继续上下选其他行改
         }
         else
         {

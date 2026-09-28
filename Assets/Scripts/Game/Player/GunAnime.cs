@@ -45,7 +45,7 @@ public class GunAnime : MonoBehaviour
     private bool isShifted = false;// 是否按下Shift
     public bool IsShiftedNow => isShifted;// 是否按下Shift
     public bool isExitingMagic = false; // 是否正在退出魔法状态
-    private bool lastShiftHeld = false;  // 🔴 上一帧 Shift held —— 自算边沿，不依赖 edgesDown/Up
+    private bool lastShiftHeld = false;  //  上一帧 Shift held —— 自算边沿，不依赖 edgesDown/Up
 
     void OnEnable()
     {
@@ -118,7 +118,7 @@ public class GunAnime : MonoBehaviour
 
     private void CheckUpdate()
     {
-        // 🔴 用 GetKey(held) 读 Shift，自算边沿 —— 不依赖 edgesDown/Up
+        //  用 GetKey(held) 读 Shift，自算边沿 —— 不依赖 edgesDown/Up
         // held 状态跨帧稳定，FixedUpdate 50Hz 不会漏读
         bool shiftHeld = ReplayManager.Input.GetKey(LogicalKey.Shift);
         bool justPressed = shiftHeld && !lastShiftHeld;   // 上升沿：本帧 held 上一帧没 held
@@ -293,7 +293,7 @@ public class GunAnime : MonoBehaviour
 
     private void CancelGun(State state)
     {
-        // 🔴 死亡时玩家 GameObject 可能被 Destroy，SetActive 要先判 activeInHierarchy
+        //  死亡时玩家 GameObject 可能被 Destroy，SetActive 要先判 activeInHierarchy
         if (NormalGuns != null && NormalGuns.Count >= 2)
         {
             if (NormalGuns[0] != null && NormalGuns[0].activeInHierarchy) NormalGuns[0].SetActive(false);
@@ -303,7 +303,7 @@ public class GunAnime : MonoBehaviour
         if (MarisaGun != null && MarisaGun.activeInHierarchy) MarisaGun.SetActive(false);
         if (ShootNormal != null) ShootNormal.SetLimited(true);
 
-        // 🔴 延迟 SwitchGun —— 用 this 捕获，回调里先判 destroyed
+        //  延迟 SwitchGun —— 用 this 捕获，回调里先判 destroyed
         var gunAnime = this;
         SimTimer.Once(() =>
         {

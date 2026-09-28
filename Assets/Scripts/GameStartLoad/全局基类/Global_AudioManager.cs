@@ -378,7 +378,7 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
                 return;
             }
             
-            // 🔴 BGM 切换时同步 Reset SimClock（如果在 Record/Playback 模式）
+            //  BGM 切换时同步 Reset SimClock（如果在 Record/Playback 模式）
             // Boss 场景加载 BossBGM 时 currentTime 应该从 0 开始，不能是 Game1 阶段累计的几十秒
             // 正常续播同一段 BGM 不会走到这里（bgmSource.clip 已经是 clip 时 Stop→time=0→Play 会重启，但那是重播不是切换）
             bool isNewClip = bgmSource.clip != clip;
@@ -390,7 +390,7 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
             bgmSource.volume = Mathf.Clamp01(volume) * bgmVolume;
             bgmSource.Play();
             
-            // 🔴 新 BGM 切换时 Reset SimClock（Record/Playback 模式才需要——Menu 让 SimClock 本来就是 Idle 不跑）
+            //  新 BGM 切换时 Reset SimClock（Record/Playback 模式才需要——Menu 让 SimClock 本来就是 Idle 不跑）
             if (isNewClip && ReplayManager.Instance != null &&
                 (ReplayManager.Instance.CurrentMode == ReplayManager.Mode.Record ||
                  ReplayManager.Instance.CurrentMode == ReplayManager.Mode.Playback))

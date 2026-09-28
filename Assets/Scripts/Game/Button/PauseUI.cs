@@ -18,9 +18,9 @@ public class PauseUI : MonoBehaviour
 
     private void CheckInput()
     {
-        // 🔴 Esc 路由中心：整个游戏只有这里读 Esc
+        //  Esc 路由中心：整个游戏只有这里读 Esc
         // 加 IsReplayPaused 让已暂停时 PauseUI 什么都不做，把 Esc 留给 ReplayPauseUI 消费
-        // 🔴 读 PhysicalKeyMapping.Escape 而非 KeyCode.Escape —— 玩家可重绑暂停键
+        //  读 PhysicalKeyMapping.Escape 而非 KeyCode.Escape —— 玩家可重绑暂停键
         if (!Input.GetKeyDown(PhysicalKeyMapping.Escape)) return;
         if (Global_GameManager.Instance.state == State.Over) return;
 
@@ -40,7 +40,15 @@ public class PauseUI : MonoBehaviour
 
         // 普通游戏：路由到自己的 Pause/Resume
         if (!isPaused) Pause();
-        else Resume();
+        else
+        {
+            //  manual 状态下 Esc 只让 PauseEvent 关 manual，不直接 Resume
+            // 否则 manual 关了同时暂停也关了，后续再按 Esc 打开会乱
+            var pauseEvent = PausePanel != null ? PausePanel.GetComponentInChildren<PauseEvent>() : null;
+            if (pauseEvent != null && pauseEvent.IsManualActive) return;
+
+            Resume();
+        }
     }
 
     private void Pause()
@@ -56,7 +64,7 @@ public class PauseUI : MonoBehaviour
         pastState = Global_GameManager.Instance.state;
         Global_GameManager.Instance.state = State.Pause;
         
-        // 🔴 暂停期间停止录制 —— AddSkipTickReason() 让 LateUpdate return early
+        //  暂停期间停止录制 —— AddSkipTickReason() 让 LateUpdate return early
         // 不推进 tick、不写入 recordBuffer、不推进回放文件位置
         ReplayManager.AddSkipTickReason();
         
@@ -81,8 +89,11 @@ public class PauseUI : MonoBehaviour
         isPaused = false;
         TimeScaleController.UnregisterHardPause();
         
-        // 🔴 恢复录制 —— RemoveSkipTickReason()
+        //  恢复录制 —— RemoveSkipTickReason()
         ReplayManager.RemoveSkipTickReason();
+
+        //  清掉 LiveInputProvider 的 edges + Z/X held —— 防止"用 Z/X 关闭暂停"的按键泄漏给射击/符卡脚本
+        ReplayManager.ClearInputAfterPause();
         
         // 恢复播放之前的BGM
         if(Global_AudioManager.Instance != null && !string.IsNullOrEmpty(currentBGMName))

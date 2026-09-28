@@ -234,7 +234,7 @@ public class Global_GameManager : Singleton<Global_GameManager>
         }
     }
 
-    /// <summary>🔴 回放时强制设游戏状态 —— 直接赋值 + 触发事件，跳过音效</summary>
+    /// <summary> 回放时强制设游戏状态 —— 直接赋值 + 触发事件，跳过音效</summary>
     public void ForceSetReplayState(int power, int hp, int bombCount)
     {
         Power = Mathf.Clamp(power, 0, 400);

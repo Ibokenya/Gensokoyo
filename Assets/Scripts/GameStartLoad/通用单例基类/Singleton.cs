@@ -9,7 +9,7 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
     // 静态实例（核心：外部通过 Instance 访问）
     private static T _instance;
 
-    // 公开的实例访问器（加锁保证线程安全，可选但推荐）
+    // 公开的实例访问器（加锁保证线程安全）
     public static T Instance
     {
         get

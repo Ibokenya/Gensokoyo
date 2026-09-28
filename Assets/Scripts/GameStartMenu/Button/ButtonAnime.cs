@@ -18,18 +18,6 @@ public class ButtonAnime : MonoBehaviour
     [SerializeField] private AudioClip moveoffSound;   // 取消选中音效
     [SerializeField] private AudioClip clickSound;      // 点击音效
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     /// <summary>
     /// 当按钮被选中时
     /// </summary>

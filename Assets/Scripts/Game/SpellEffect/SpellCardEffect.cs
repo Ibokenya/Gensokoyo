@@ -69,7 +69,7 @@ public class SpellCardEffect : MonoBehaviour
 
     void FixedUpdate()
     {
-        // 🔴 决死期间 Time.timeScale=0 会停 FixedUpdate —— 所以"读按键释放符卡"逻辑必须在 Update 里
+        //  决死期间 Time.timeScale=0 会停 FixedUpdate —— 所以"读按键释放符卡"逻辑必须在 Update 里
         // FixedUpdate 里只保留非时间敏感的逻辑（比如检查 Pause 状态提前返回）
         if (Global_GameManager.Instance.state == State.Pause)
         {
@@ -78,7 +78,7 @@ public class SpellCardEffect : MonoBehaviour
     }
 
     /// <summary>
-    /// 🔴 从 FixedUpdate 搬过来的技能释放逻辑 —— Update 里执行。
+    ///  从 FixedUpdate 搬过来的技能释放逻辑 —— Update 里执行。
     /// 原因：决死期间 Time.timeScale=0 会停 FixedUpdate，Update 仍然跑。
     /// 这是极少数必须在 Update 里读按键的玩法逻辑。
     /// </summary>
@@ -89,7 +89,7 @@ public class SpellCardEffect : MonoBehaviour
             return;
         }
 
-        // 🔴 X 键正常回放 → SpellCardEffect.Update 正常跑
+        //  X 键正常回放 → SpellCardEffect.Update 正常跑
         // 中弹已由 HitFlag 位驱动（回放时 PanDing.OnTriggerEnter2D return，ForceHit 设 isHitDelayActive）
         // 所以 isHitDelayActive 状态和录制完全一致 → 自动走决死/普通分支
         if (ReplayManager.Input.GetKeyDown(LogicalKey.X))
@@ -131,7 +131,7 @@ public class SpellCardEffect : MonoBehaviour
         }
     }
 
-    /// <summary>🔴 回放时由 ReplayManager 强制调用 —— 模拟一次符卡释放
+    /// <summary> 回放时由 ReplayManager 强制调用 —— 模拟一次符卡释放
     /// isSuper=true 表示决死符卡，false 表示普通符卡</summary>
     public void ForceReleaseSpell(bool isSuper)
     {
@@ -216,7 +216,7 @@ public class SpellCardEffect : MonoBehaviour
             StopCoroutine(hitDelayCoroutine);
         }
         isHitDelayActive = false;
-        // 🔴 释放硬暂停 —— 如果之前注册过决死延迟
+        //  释放硬暂停 —— 如果之前注册过决死延迟
         TimeScaleController.UnregisterHardPause();
         
         // 停止音乐并记录状态
@@ -285,11 +285,16 @@ public class SpellCardEffect : MonoBehaviour
     /// </summary>
     public void StartHitDelay()
     {
+        // 防重入守卫：同一帧内多弹重合时 PanDing.OnTriggerEnter2D 会被多次触发，
+        // 这里保证 RegisterHardPause 只执行一次，决死期间不会再累加引用计数。
+        // 这是解决"Tail 拖尾弹多物体重合导致硬暂停计数溢出"问题的关键。
+        if (isHitDelayActive) return;
+
         // 只有在低速移动（按下shift）且有符卡时才触发延迟
         if (ReplayManager.Input.GetKey(LogicalKey.Shift) && Global_GameManager.Instance.BombCount > 0)
         {
             isHitDelayActive = true;
-            // 🔴 注册硬暂停 —— 让 TimeScaleController 统一管理
+            //  注册硬暂停 —— 让 TimeScaleController 统一管理
             TimeScaleController.RegisterHardPause();
             Debug.Log("进入决死预备状态");
             if (DelayClip != null)
@@ -320,14 +325,14 @@ public class SpellCardEffect : MonoBehaviour
     /// </summary>
     private IEnumerator HitDelayCoroutine()
     {
-        // 🔴 必须用 WaitForSecondsRealtime —— 决死期间 Time.timeScale=0，SimClock 不推进，
+        //  必须用 WaitForSecondsRealtime —— 决死期间 Time.timeScale=0，SimClock 不推进，
         // WaitForSecondsSim 会永远卡住。原始代码就是用 WaitForSecondsRealtime 做的"真实时间倒计时"。
         // 这是极少数保留 WaitForSecondsRealtime 的玩法协程——决死倒计时属于"不管游戏停不停都要跑"的逻辑。
         yield return new WaitForSecondsRealtime(hitDelayTime);
 
         if (isHitDelayActive && Global_GameManager.Instance.state != State.NoDead)
         {
-            // 🔴 释放硬暂停 —— controller 自动恢复到正确的值
+            //  释放硬暂停 —— controller 自动恢复到正确的值
             TimeScaleController.UnregisterHardPause();
             if (BeHitClip != null)
             {
@@ -350,7 +355,7 @@ public class SpellCardEffect : MonoBehaviour
     {
         isAnimating = false;
 
-        // 🔴 只有当前不在暂停/结算/菜单状态才恢复到 Gaming
+        //  只有当前不在暂停/结算/菜单状态才恢复到 Gaming
         // 防止玩家在技能动画期间触发 Pause/GameOver/FinalUI 时被覆盖
         if (Global_GameManager.Instance.state != State.Pause &&
             Global_GameManager.Instance.state != State.FinalUI &&

@@ -27,7 +27,7 @@ public class PlayerCollision : MonoBehaviour
         }
         else
         {
-            // 🔴 把 Rigidbody2D 设为 Kinematic —— 从 Box2D 物理模拟里彻底摘掉
+            //  把 Rigidbody2D 设为 Kinematic —— 从 Box2D 物理模拟里彻底摘掉
             // 原因：即使我们不用 velocity，Dynamic 刚体的 gravity/碰撞仍会让 Box2D 修改位置
             // 我们用纯 transform 移动，不需要 Box2D 积分
             rb2D.bodyType = RigidbodyType2D.Kinematic;
@@ -68,7 +68,7 @@ public class PlayerCollision : MonoBehaviour
     }
 
     /// <summary>
-    /// 更新移动状态 —— 🔴 纯 transform 移动，完全绕开 Box2D velocity 积分
+    /// 更新移动状态 ——  纯 transform 移动，完全绕开 Box2D velocity 积分
     /// 原因：Unity 的 Rigidbody2D velocity 积分在不同 FixedUpdate 顺序下有微小差异（浮点舍入），
     ///      会导致录 vs 回放位置逐步偏移（0.3px → 累积到致命）
     ///      transform.position += direction * speed * dt 是纯确定性的浮点运算
@@ -95,7 +95,7 @@ public class PlayerCollision : MonoBehaviour
         float speed = moveSpeed;
         if (isDiagonalMove) speed = moveSpeed * 0.7f;
 
-        // 🔴 纯 transform 移动 —— 确定性浮点乘法，不走 Box2D
+        //  纯 transform 移动 —— 确定性浮点乘法，不走 Box2D
         Vector3 pos = transform.position;
         float dt = SimClock.FixedTickDt;  // 0.02f，固定值
         float scale = Global_GameManager.Instance.GetSpeedScale();

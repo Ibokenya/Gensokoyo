@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// 🔴 统一管理 Time.timeScale 的集中控制器
+///  统一管理 Time.timeScale 的集中控制器
 /// 解决"多个暂停源被一个恢复"的问题。
 ///
 /// 设计思路：
@@ -24,9 +24,9 @@ using UnityEngine;
 /// </summary>
 public static class TimeScaleController
 {
-    private static int hardPauseRefCount = 0;
-    private static readonly Stack<float> softScaleStack = new Stack<float>();
-    private const float DefaultScale = 1f;
+    private static int hardPauseRefCount = 0;// 硬暂停引用计数
+    private static readonly Stack<float> softScaleStack = new Stack<float>();// 软缩放栈
+    private const float DefaultScale = 1f;// 默认缩放值
 
     /// <summary>最终生效的 Time.timeScale 值（只读）</summary>
     public static float CurrentEffectiveScale
@@ -49,6 +49,12 @@ public static class TimeScaleController
     public static void RegisterHardPause()
     {
         hardPauseRefCount++;
+        // 异常检测：通常同一来源只会 +1，超过阈值说明某处有重复调用
+        if (hardPauseRefCount > 10)
+        {
+            Debug.LogWarning($"[TimeScaleController] hardPauseRefCount={hardPauseRefCount} 异常偏高！" +
+                             $"可能存在未成对的 Register/Unregister 调用。");
+        }
         Apply();
     }
 

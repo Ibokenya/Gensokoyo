@@ -11,12 +11,7 @@ namespace ReplaySystem
     ///   - Save() 把当前映射序列化到 PlayerPrefs（key 前缀 "KB_"）。
     ///   - Load() 从 PlayerPrefs 读回覆盖字段值；若无存过则保持默认。
     ///   - TrySetBinding() 提供统一重绑入口，含冲突检测 + 持久化。
-    ///
-    /// 为什么 LiveInputProvider 不需要改？
-    ///   LiveInputProvider.SampleFromUnity() 每帧调 Input.GetKey(PhysicalKeyMapping.Up) 等，
-    ///   所以 PhysicalKeyMapping 的静态字段一变，采样就立即反映新映射。
-    ///   ButtonManager / ButtonEvent 等也直接用 Input.GetKey(KeyCode.Z)—但它们只在菜单场景，
-    ///   菜单逻辑用固定 KeyCode（Z=确定、X=返回），不走重绑。
+
     /// </summary>
     public static class PhysicalKeyMapping
     {
@@ -61,7 +56,7 @@ namespace ReplaySystem
 
         /// <summary>
         /// 查询物理键是否已被某个逻辑键占用。返回 null 表示空闲。
-        /// 🔴 Escape 单独字段存，不在 LogicalKey 枚举里，所以 FindConflictingLogicalKey 返回 null；
+        ///  Escape 单独字段存，不在 LogicalKey 枚举里，所以 FindConflictingLogicalKey 返回 null；
         ///    冲突检测要在外层由 KeySet 结合 Escape 字段判断。
         /// </summary>
         public static LogicalKey? FindConflictingLogicalKey(KeyCode code)
@@ -208,12 +203,12 @@ namespace ReplaySystem
     /// <summary>
     /// 从 Unity Input 采样 → 映射到逻辑键
     ///
-    /// 🔴 覆盖式边沿模型（核心设计）：
+    ///  覆盖式边沿模型（核心设计）：
     ///   SampleFromUnity() 每帧 Update 调用，用 **=`（覆盖）而非 |=`（累加）** 计算 edgesDown/Up。
     ///   边沿只在按键状态变化的那一帧存在，没变化时 edgesDown/Up 自动 =0。
     ///
     ///   这意味着：
-    ///     - 🔴 **不需要 ConsumeEdges！** 覆盖式保证边沿不会跨帧泄漏
+    ///     -  **不需要 ConsumeEdges！** 覆盖式保证边沿不会跨帧泄漏
     ///     - 同一帧内：ReplayManager.Update（先 SampleFromUnity）→ 玩法脚本 Update（后读 GetKeyDown）→ 完美
     ///     - 跨帧（FixedUpdate 50Hz vs Update 60Hz）：edgesDown 从 SampleFromUnity 算出后，
     ///       存活到下一次 SampleFromUnity 覆盖 —— 足够让下一帧的 FixedUpdate 读到
@@ -230,24 +225,30 @@ namespace ReplaySystem
         private ushort edgesDown;
         private ushort edgesUp;
 
-        public ushort HeldMask => currentHeld;
+        /// <summary>
+        ///  暂停关闭后屏蔽 Z/X 若干个逻辑 tick（50Hz 固定步长）。
+        /// </summary>
+        private int suppressZXTicks;//  记录 Z/X 被屏蔽的 tick 数
+        public const int DefaultSuppressZXTicks = 2;//  默认屏蔽 2 个 tick
 
-        /// <summary>🔴 录制时由 PanDing.OnTriggerEnter2D 调这个，把 bit7 设为 1。
+        public ushort HeldMask => currentHeld;//  当前帧按下的键位（不包含 HitFlag）
+
+        /// <summary> 录制时由 PanDing.OnTriggerEnter2D 调这个，把 bit7 设为 1。
         /// 这个标志跨 FixedUpdate → Update → LateUpdate 保留，直到 LateUpdate.recordBuffer.Add 后才清。</summary>
         public void MarkHitThisTick() => currentHeld |= LogicalKeyMask.HitFlag;
 
-        /// <summary>🔴 LateUpdate 的 recordBuffer.Add 之后调，清掉本帧累积的 HitFlag</summary>
+        /// <summary> LateUpdate 的 recordBuffer.Add 之后调，清掉本帧累积的 HitFlag</summary>
         public void ClearHitFlag() => currentHeld &= 0xFF7F; // ~bit7 等价：0b1111111011111111
 
         /// <summary>
-        /// 🔴 覆盖式采样 —— 每帧 Update 调用。
+        ///  覆盖式采样 —— 每帧 Update 调用。
         /// 用 = 覆盖 edgesDown/Up，不用 |= 累加。
         /// HitFlag 不在此处清零——它由 FixedUpdate 的 OnTriggerEnter2D 设置，跨 Update 保留到 LateUpdate 写文件后清。
         /// </summary>
         public void SampleFromUnity()
         {
             previousHeld = currentHeld;
-            // 🔴 保留 HitFlag（由 PanDing 设，跨 FixedUpdate→Update→LateUpdate），只采样输入键位
+            //  保留 HitFlag（由 PanDing 设，跨 FixedUpdate→Update→LateUpdate），只采样输入键位
             ushort hit = (ushort)(currentHeld & LogicalKeyMask.HitFlag);
             currentHeld = hit; // 先只留 HitFlag
             if (Input.GetKey(PhysicalKeyMapping.Up))     currentHeld |= LogicalKeyMask.Up;
@@ -257,7 +258,7 @@ namespace ReplaySystem
             if (Input.GetKey(PhysicalKeyMapping.Shift))   currentHeld |= LogicalKeyMask.Shift;
             if (Input.GetKey(PhysicalKeyMapping.Z))   currentHeld |= LogicalKeyMask.Z;
             if (Input.GetKey(PhysicalKeyMapping.X))  currentHeld |= LogicalKeyMask.X;
-            // 🔴 Esc 不再采样 —— UI 层直接读 UnityEngine.Input
+            //  Esc 不再采样 —— UI 层直接读 UnityEngine.Input
             if (Input.GetKey(PhysicalKeyMapping.Ctrl))    currentHeld |= LogicalKeyMask.Ctrl;
 
             // 覆盖式边沿
@@ -267,7 +268,6 @@ namespace ReplaySystem
         }
 
         /// <summary>
-        /// 🔴 空壳！完全不需要 ConsumeEdges。
         /// 覆盖式 SampleFromUnity 自动保证边沿不会跨帧泄漏。
         /// 保留这个方法只是为了 IInputProvider 接口兼容 + ReplayManager 初始化时清残留。
         /// </summary>
@@ -277,9 +277,40 @@ namespace ReplaySystem
             edgesUp   = 0;
         }
 
-        public bool GetKey     (LogicalKey key) => LogicalKeyMask.Has(currentHeld, key);
-        public bool GetKeyDown (LogicalKey key) => LogicalKeyMask.Has(edgesDown, key);
-        public bool GetKeyUp   (LogicalKey key) => LogicalKeyMask.Has(edgesUp,   key);
+        /// <summary>
+        ///  Resume 后设：屏蔽 Z/X N 个 tick，防止"用 Z/X 关闭暂停"的按键泄漏给射击/符卡脚本。
+        /// 由 ReplayManager.ClearInputAfterPause() 调用。
+        /// </summary>
+        public void SuppressZXAfterResume(int ticks = DefaultSuppressZXTicks)
+        {
+            if (ticks > suppressZXTicks) suppressZXTicks = ticks;
+        }
+
+        /// <summary> 每 tick 推进时由 ReplayManager.LateUpdate 调用，递减屏蔽计数</summary>
+        public void TickSuppress()
+        {
+            if (suppressZXTicks > 0) suppressZXTicks--;
+        }
+
+        private bool IsZX(LogicalKey key) => key == LogicalKey.Z || key == LogicalKey.X;
+
+        public bool GetKey(LogicalKey key)
+        {
+            if (IsZX(key) && suppressZXTicks > 0) return false;
+            return LogicalKeyMask.Has(currentHeld, key);
+        }
+
+        public bool GetKeyDown(LogicalKey key)
+        {
+            if (IsZX(key) && suppressZXTicks > 0) return false;
+            return LogicalKeyMask.Has(edgesDown, key);
+        }
+
+        public bool GetKeyUp(LogicalKey key)
+        {
+            if (IsZX(key) && suppressZXTicks > 0) return false;
+            return LogicalKeyMask.Has(edgesUp, key);
+        }
     }
 
     /// <summary>
@@ -296,15 +327,15 @@ namespace ReplaySystem
         public ushort HeldMask => currentHeld;
         public bool IsFinished => tickIndex >= tickMasks.Length - 1;
 
-        /// <summary>🔴 回放 dialog 期间设 true → GetKey(Ctrl) 永远返回 true，让 AboutDialog 自动快进</summary>
+        /// <summary> 回放 dialog 期间设 true → GetKey(Ctrl) 永远返回 true，让 AboutDialog 自动快进</summary>
         public bool ForceCtrlHeld { get; set; }
 
         public ReplayInputProvider(byte[] masks)
         {
             tickMasks   = masks;
-            tickIndex   = -1;  // 🔴 从 -1 开始——第一帧 Update AdvanceTick 会变成 0
+            tickIndex   = -1;  //  从 -1 开始——第一帧 Update AdvanceTick 会变成 0
             previousHeld = 0;
-            currentHeld = 0;   // 🔴 初始 held = 0，等 AdvanceTick 到 masks[0]
+            currentHeld = 0;   //  初始 held = 0，等 AdvanceTick 到 masks[0]
         }
 
         /// <summary>每帧 Update 开头调用：前进到下一帧掩码（帧时序对齐 FixedUpdate 读到上一帧推进的 held）</summary>
@@ -320,7 +351,7 @@ namespace ReplaySystem
 
         public bool GetKey(LogicalKey key)
         {
-            // 🔴 Ctrl 特殊处理：回放期间强制 held（不管文件里有没有）
+            //  Ctrl 特殊处理：回放期间强制 held（不管文件里有没有）
             if (key == LogicalKey.Ctrl && ForceCtrlHeld) return true;
             return LogicalKeyMask.Has(currentHeld, key);
         }

@@ -36,7 +36,7 @@ public class UIManager : MonoBehaviour
     [Header("UI引用")]
     public GameObject FinalUI;
     public GameObject GameOverUI;
-    public GameObject ReplayPauseUI;  // 🔴 回放暂停 UI（Inspector 绑定）
+    public GameObject ReplayPauseUI;  //  回放暂停 UI（Inspector 绑定）
 
     public LeftLife leftLife;
     public SpeelCard speelCard;
@@ -82,7 +82,7 @@ public class UIManager : MonoBehaviour
     
     void OnEnable()
     {
-        // 🔴 注册自己给 ReplayManager（让它能触发回放暂停 UI）
+        //  注册自己给 ReplayManager（让它能触发回放暂停 UI）
         ReplayManager.UIManagerInstance = this;
 
 #region 订阅广播事件
@@ -117,7 +117,7 @@ public class UIManager : MonoBehaviour
 
     void OnDisable()
     {
-        // 🔴 注销
+        //  注销
         if (ReplayManager.UIManagerInstance == this) ReplayManager.UIManagerInstance = null;
 
         Global_GameManager.Instance.OnScoreChanged -= SetScoreText; 
@@ -200,7 +200,7 @@ public class UIManager : MonoBehaviour
         GameOverUI.SetActive(true);
     }
 
-    // ---- 🔴 回放暂停 UI ----
+    // ----  回放暂停 UI ----
 
     /// <summary>回放暂停 UI 打开（Esc 触发 / 回放自然结束触发）</summary>
     public void ShowReplayPause()

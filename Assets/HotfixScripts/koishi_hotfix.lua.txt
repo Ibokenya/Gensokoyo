@@ -4,7 +4,7 @@ local UnityEngine = CS.UnityEngine
 
 local frame_timer = 0
 local frame_index = 0
-local FRAME_INTERVAL = 12
+local FRAME_INTERVAL = 6
 local started = false
 
 local function Start_Hotfix(self)

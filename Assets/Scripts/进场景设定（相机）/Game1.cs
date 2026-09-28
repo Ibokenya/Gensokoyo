@@ -78,7 +78,7 @@ public class Game1 : MonoBehaviour
     void OnDisable()
     {
         clearAllBullet.ClearScreenBullet(false);
-        // 🔴 重置所有暂停/缩放状态 —— 场景初始化
+        //  重置所有暂停/缩放状态 —— 场景初始化
         TimeScaleController.ResetAll();
     }
 

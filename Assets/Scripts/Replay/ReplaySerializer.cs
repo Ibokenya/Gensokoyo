@@ -78,7 +78,7 @@ namespace ReplaySystem
         public ushort[] ValidateStates;    // [state0, state1, ...] 和 ValidatePositions 并行
     }
 
-    public interface IReplaySerializer
+    public interface IReplaySerializer// 回放文件序列化接口
     {
         void Save(ReplayFile file, string path);
         ReplayFile Load(string path);
