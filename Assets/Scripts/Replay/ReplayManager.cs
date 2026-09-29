@@ -74,8 +74,8 @@ namespace ReplaySystem
         //  LateUpdate 累计器 —— 用 unscaledDeltaTime 累计，不受 timeScale 影响
         private float unscaledAccumulator;
 
-        /// <summary>回放目录（桌面 Saves 文件夹，显式路径）</summary>
-        public static string SavesDir => @"C:\Users\34274\Desktop\Saves";
+        /// <summary>回放目录（打包后 persistentDataPath 下的 Saves 文件夹）</summary>
+        public static string SavesDir => Path.Combine(Application.persistentDataPath, "Saves");
 
         /// <summary>
         ///  引用计数的 SkipTick —— 任何来源（dialog / 暂停 UI / 回放暂停）
