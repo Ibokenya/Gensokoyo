@@ -45,8 +45,26 @@ public class PauseEvent : MonoBehaviour
     private bool isManualIndex = true;
     private bool isManualActive = false;
 
+    // Canvas 缩放缓存（EnterRecordingConfirm 中用偏移量移动 Really 面板时需要乘以 scaleFactor）
+    private Canvas _parentCanvas;
+
     /// <summary> 给 PauseUI 查：当前是否处于说明书界面——manual 中 Esc 只关 manual，不关暂停</summary>
     public bool IsManualActive => isManualActive;
+
+    /// <summary>获取 Canvas scaleFactor，若 Canvas 未找到则报错并返回 1（等价于无缩放）</summary>
+    private float GetCanvasScaleFactor()
+    {
+        if (_parentCanvas == null)
+        {
+            if (Really != null) _parentCanvas = Really.GetComponentInParent<Canvas>();
+            if (_parentCanvas == null)
+            {
+                Debug.LogError("[PauseEvent] GetCanvasScaleFactor: Really 未挂在 Canvas 下，UI 偏移将使用 1:1 缩放");
+                return 1f;
+            }
+        }
+        return _parentCanvas.scaleFactor;
+    }
 
     // ---- 生命周期 ----
 
@@ -239,7 +257,11 @@ public class PauseEvent : MonoBehaviour
     private void EnterRecordingConfirm()
     {
         isRecording = true;
-        Really.transform.position = DescriptionText.transform.position + savePanelPos;
+        // savePanelPos 是参考坐标系（1920×1080）的偏移量，
+        // DescriptionText.transform.position 是 CanvasScaler 缩放后的世界坐标，
+        // 需要把偏移也乘以 scaleFactor 才能在不同分辨率下对齐。
+        float sf = GetCanvasScaleFactor();
+        Really.transform.position = DescriptionText.transform.position + savePanelPos * sf;
         Really.SetActive(true);
         YesOrNo = false; // 默认选 No
         if (DescriptionText != null) DescriptionText.text = "是否保存回放？";

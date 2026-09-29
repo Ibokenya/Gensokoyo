@@ -32,6 +32,24 @@ public class GameOver : MonoBehaviour
     private Color ConfirmNoColor  = new(0.5f, 0.5f, 0.5f, 1f);
     private readonly List<TextMeshProUGUI> Options = new();
 
+    // Canvas 缩放缓存（EnterSaveConfirm 中用偏移量移动 Really 面板时需要乘以 scaleFactor）
+    private Canvas _parentCanvas;
+
+    /// <summary>获取 Canvas scaleFactor，若 Canvas 未找到则报错并返回 1（等价于无缩放）</summary>
+    private float GetCanvasScaleFactor()
+    {
+        if (_parentCanvas == null)
+        {
+            if (Really != null) _parentCanvas = Really.GetComponentInParent<Canvas>();
+            if (_parentCanvas == null)
+            {
+                Debug.LogError("[GameOver] GetCanvasScaleFactor: Really 未挂在 Canvas 下，UI 偏移将使用 1:1 缩放");
+                return 1f;
+            }
+        }
+        return _parentCanvas.scaleFactor;
+    }
+
     void OnEnable()
     {
         //  注册硬暂停 —— GameOver 也要覆盖其他软缩放
@@ -150,7 +168,9 @@ public class GameOver : MonoBehaviour
         chosen.alpha = 0f;
 
         // Really 面板（Yes/No）放到该选项的左边 —— 和现有 SaveRecording 方法保持一致
-        Really.transform.position = chosen.transform.position + (Vector3)confirmPanelOffset;
+        // confirmPanelOffset 是参考坐标系偏移量，需要乘以 Canvas.scaleFactor 适配不同分辨率
+        float sf = GetCanvasScaleFactor();
+        Really.transform.position = chosen.transform.position + (Vector3)confirmPanelOffset * sf;
         Really.SetActive(true);
 
         // 显示描述文本
