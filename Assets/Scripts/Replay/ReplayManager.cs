@@ -10,11 +10,6 @@ namespace ReplaySystem
     ///
     ///  关键架构（timeScale=0 也要跑的设计 + 覆盖式边沿模型）：
     ///
-    ///   Update（每帧，不受 timeScale 影响）：
-    ///     a. SampleFromUnity() —— 覆盖式采样物理按键，算 edgesDown/Up（live 模式）
-    ///         覆盖式 = 不需要 ConsumeEdges！按键没变时 edgesDown/Up 自动归零。
-    ///     b. 回放自然结束检测
-    ///
     ///   LateUpdate（每帧，不受 timeScale 影响，在所有 Update 之后执行）：
     ///     用 Time.unscaledDeltaTime 累计，按 50Hz 节奏推进：
     ///     1. SimClock.Tick()       —— 推进模拟时间
@@ -24,13 +19,6 @@ namespace ReplaySystem
     ///
     ///   FixedUpdate（只有 timeScale>0 时跑）：所有玩法逻辑在此运行。
     ///   timeScale=0 时物理引擎停（子弹、敌人不动），但 replay 系统继续推进 → 决死时停能正常工作。
-    ///
-    /// Script Execution Order 不再重要（LateUpdate 天然在所有 Update 之后执行）。
-    ///
-    ///  帧顺序详解（60fps 下）：
-    ///   FixedUpdate (~50Hz)：玩法脚本读 GetKeyDown/GetKeyUp —— edgesDown/Up 从上次 SampleFromUnity 存活到此刻 ✓
-    ///   Update：ReplayManager.SampleFromUnity → 覆盖式重算 edgesDown/Up → 下一帧 FixedUpdate 读 ✓
-    ///   LateUpdate：tick 推进（unscaledDeltaTime）
     /// </summary>
     public class ReplayManager : MonoBehaviour
     {
@@ -208,7 +196,7 @@ namespace ReplaySystem
             Instance.CurrentMode = Mode.Playback;
             Input = Instance.replay;
 
-            //  关键：把回放文件里的角色/难度元信息写回 Global_GameManager，
+            // 把回放文件里的角色/难度元信息写回 Global_GameManager，
             // 这样 GunAnime/PlayerAnime/SpellCardEffect 的 character 判断能正确走 Marisa 分支
             if (Global_GameManager.Instance != null)
             {
@@ -390,22 +378,9 @@ namespace ReplaySystem
         // --------------------------- 帧驱动 ---------------------------
 
         /// <summary>
-        ///  Update（每帧，不受 timeScale 影响）：
-        ///   1. live 模式：SampleFromUnity 采样物理键 → 覆盖式算 edgesDown/Up（不需要 ConsumeEdges！）
-        ///   2. 回放自然结束检测
-        ///
-        /// 帧顺序详解（60fps 下）：
-        ///   1. FixedUpdate（~50Hz）：所有玩法脚本在此读 GetKeyDown/GetKeyUp
-        ///      - 覆盖式 edgesDown/Up 从上一次 SampleFromUnity 算出后一直存活到这次 FixedUpdate 消费 ✓
-        ///   2. Update：ReplayManager.SampleFromUnity → 覆盖式重算 edgesDown/Up → 下一帧 FixedUpdate 读 ✓
-        ///   3. LateUpdate：tick 推进（unscaledDeltaTime，不受 timeScale 影响）
-        ///
-        /// 决死期间（timeScale=0）：
-        ///   Update 继续跑 → SampleFromUnity 正常算 edges → SpellCardEffect.Update 能读决死按键 ✓
-        ///   LateUpdate 继续跑 → SimClock 继续 tick → WaitForSecondsSim 正常等 ✓
-        ///   回放文件继续推 → 回放能读到决死按键 ✓
-        ///   录制继续写 → 录制包含决死按键 ✓
-        ///   ❌ FixedUpdate 停 → 物理停（时停视觉 ✓）
+        /// 每帧执行。live 模式下 SampleFromUnity 采样物理键（覆盖式算 edges，不需要 ConsumeEdges），
+        /// 同时检测回放自然结束。帧执行顺序：FixedUpdate(~50Hz 玩法逻辑) → Update(采样) → LateUpdate(tick推进)。
+        /// 决死期间 timeScale=0 时 FixedUpdate 停（物理时停视觉），但 Update/LateUpdate 继续跑。
         /// </summary>
         private void Update()
         {
@@ -427,19 +402,10 @@ namespace ReplaySystem
         }
 
         /// <summary>
-        ///  LateUpdate（每帧，不受 timeScale 影响，在所有 Update 之后执行）：
-        ///   用 Time.unscaledDeltaTime 累计，按 50Hz 节奏推进：
-        ///     SimClock.Tick → SimTimer.Tick → 回放文件推进 → 录制写文件
-        ///
-        ///    注意：ConsumeEdges 已完全移除！LiveInputProvider 用覆盖式 SampleFromUnity，
-        ///   edgesDown/Up 只在按键变化那一帧非零，不需要手动清。
-        ///
-        /// 决死期间 timeScale=0 时：
-        ///   LateUpdate 继续跑（不受 timeScale 影响）→ SimClock 继续 tick
-        ///   WaitForSecondsSim 能正常等待 → 决死协程能推进
-        ///   回放文件位置继续推进 → SpellCardEffect.Update 能读到正确边沿
-        ///   recordBuffer 继续写 → 录制包含决死期间的按键
-        ///   ❌ FixedUpdate 停 → 物理引擎停 → 子弹敌人不动（时停视觉效果保留 ✓）
+        /// 每帧在所有 Update 之后执行（不受 timeScale 影响）。
+        /// 用 unscaledDeltaTime 累计，按 50Hz 推进 SimClock → SimTimer → 回放文件/录制缓冲。
+        /// LiveInputProvider 已改为覆盖式 SampleFromUnity，edges 不需要手动清。
+        /// 决死期间 timeScale=0 时 FixedUpdate 停（子弹不动），但这里继续推进 tick。
         /// </summary>
         private void LateUpdate()
         {

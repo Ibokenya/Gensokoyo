@@ -213,7 +213,7 @@ namespace ReplaySystem
     ///     - 跨帧（FixedUpdate 50Hz vs Update 60Hz）：edgesDown 从 SampleFromUnity 算出后，
     ///       存活到下一次 SampleFromUnity 覆盖 —— 足够让下一帧的 FixedUpdate 读到
     ///     - 决死期间（timeScale=0）：FixedUpdate 停但 Update 继续跑 → edgesDown 正常算 →
-    ///       SpellCardEffect.Update 能正常读 GetKeyDown(X) ✓
+    ///       SpellCardEffect.Update 能正常读 GetKeyDown(X)
     ///       （GunAnime.CheckUpdate 在 FixedUpdate，所以决死期间 Shift 慢速切换不触发，但这没问题）
     ///
     ///   录制时每 tick 只写 HeldMask 低 8 位（Ctrl 不存），回放方自行比较前后 tick 算边沿。

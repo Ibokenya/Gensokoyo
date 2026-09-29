@@ -7,8 +7,6 @@ using UnityEngine;
 using ReplaySystem;
 
 /// <summary>
-/// 历史战绩管理脚本。绑定在 GameStartMenu 场景的"历史战绩"界面物体上。
-///
 /// 管理最多 10 条回放记录：
 ///   - 进入界面时从 SavesDir 读文件 → 按保存时间倒序 → 填充 10 条 slots
 ///   - 不足 10 条的 slot 文本置空

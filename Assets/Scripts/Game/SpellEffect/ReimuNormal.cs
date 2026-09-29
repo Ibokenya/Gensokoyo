@@ -5,7 +5,6 @@ using UnityEngine;
 
 /// <summary>
 /// 灵梦常规技能脚本
-/// 挂载在"灵梦常规"子物体上
 /// </summary>
 public class ReimuNormal : MonoBehaviour
 {

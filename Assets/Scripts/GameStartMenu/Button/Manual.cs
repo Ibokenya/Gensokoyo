@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -32,7 +32,6 @@ public class Manual : MonoBehaviour
     [SerializeField] private AudioClip XSound;   // X音效
     [SerializeField] private AudioClip PageSound;// 翻页音效
 
-    // Start is called before the first frame update
     void Start()
     {
         if (Texts.Count == 0 || Panels.Count == 0 || Texts.Count != Panels.Count)
@@ -51,7 +50,6 @@ public class Manual : MonoBehaviour
         BeSelected(Index);
     }
 
-    // Update is called once per frame
     void Update()
     {
         CheckUpDate();

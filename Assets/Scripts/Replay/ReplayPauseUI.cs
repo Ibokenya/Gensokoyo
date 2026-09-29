@@ -5,10 +5,6 @@ using ReplaySystem;
 /// <summary>
 /// 回放暂停 UI（Playback 模式 Esc 触发 / 回放自然结束也触发）。
 ///
-/// 绑定在 Game1 场景的"回放暂停"UI 根物体上，该物体下应有：
-///   - 两个按钮 TextMeshProUGUI（Button1=恢复/ReStart, Button2=返回菜单）
-///   - 主界面/背景装饰等（任意）
-///
 /// 状态：
 ///   回放进行中 Esc → 打开，Button1 文本="Return To Game"
 ///   回放自然结束   → 打开，Button1 文本="ReStart"

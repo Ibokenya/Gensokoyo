@@ -43,7 +43,6 @@ public class ButtonEvent : MonoBehaviour
         TimeScaleController.ResetAll();
     }
 
-    // Update is called once per frame
     void Update()
     {
         // 更新输入冷却时间

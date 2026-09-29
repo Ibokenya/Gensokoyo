@@ -65,7 +65,6 @@ public class EvilEyeAttack : MonoBehaviour
         InitializeGiantHandPool();
     }
 
-    // Start is called before the first frame update
     void Start()
     {
         // 初始化逻辑
@@ -100,8 +99,7 @@ public class EvilEyeAttack : MonoBehaviour
         isFadeInComplete = false;
     }
 
-    // Update is called once per frame
-    void FixedUpdate()
+    void Update()
     {
         //  自算 Shift + Z 边沿 —— 都不依赖 edgesDown/Up
         bool shiftHeld = ReplayManager.Input.GetKey(LogicalKey.Shift);

@@ -38,7 +38,7 @@ public class PanDing : MonoBehaviour
                 Debug.Log($"玩家碰撞到{collision.name}");
                 StopGrazeSound();
 
-                //  录制关键：设置本帧 HitFlag（写入回放文件的 bit7）
+                //  设置本帧 HitFlag（写入回放文件的 bit7）
                 // 回放时 ReplayInputProvider.GetKey(HitFlag) 返回 true → ForceHit 被触发
                 ReplayManager.MarkHitThisTick();
 

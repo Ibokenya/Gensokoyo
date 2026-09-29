@@ -185,7 +185,6 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
     
     #endregion
     
-    // Start is called before the first frame update
     void Start()
     {
         // 添加AudioSource组件用于播放BGM

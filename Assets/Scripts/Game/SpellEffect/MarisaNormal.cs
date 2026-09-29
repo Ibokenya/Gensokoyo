@@ -5,7 +5,6 @@ using ReplaySystem;
 
 /// <summary>
 /// 魔理沙常规技能脚本
-/// 挂载在"魔理沙常规"子物体上
 /// </summary>
 public class MarisaNormal : MonoBehaviour
 {

@@ -32,7 +32,7 @@ public class BGImageScroll : MonoBehaviour
         Vector2 deltaOffset = scrollSpeed * SimClock.FixedTickDt;
         // 累加偏移量
         Offset += deltaOffset;
-        // 关键：循环偏移（超过1个平铺单位则重置，实现无缝）
+        // 循环偏移（超过1个平铺单位则重置，实现无缝）
         Offset = new Vector2(
             Mathf.Repeat(Offset.x, 1f), // X轴循环
             Mathf.Repeat(Offset.y, 1f)  // Y轴循环

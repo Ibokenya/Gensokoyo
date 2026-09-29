@@ -5,7 +5,6 @@ using ReplaySystem;
 
 /// <summary>
 /// 灵梦决死技能脚本
-/// 挂载在"灵梦决死"子物体上
 /// </summary>
 public class ReimuSuper : MonoBehaviour
 {

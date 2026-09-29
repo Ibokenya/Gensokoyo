@@ -15,7 +15,7 @@ namespace ReplaySystem
     /// - timeScale=0 时 FixedUpdate 停，SimClock 也停——协程不会前进
     ///
     /// 使用：yield return new WaitForSecondsSim(2.0f);
-    ///       yield return new WaitForTicksSim(100);  // 或直接按 tick 数等
+    ///       yield return new WaitForTicksSim(100);
     /// </summary>
     public class WaitForSecondsSim : CustomYieldInstruction
     {

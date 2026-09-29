@@ -22,7 +22,7 @@ public class Global_SceneManager : Singleton<Global_SceneManager>
 
     private List<string> _LoadedSceneNames = new ();// 存储已加载场景的名称用于检索以及回退
 
-    [Header("第二场景配置（Menu）")]// 游戏启动后默认跳转的菜单场景名称（Inspector面板可配置）
+    [Header("第二场景配置（Menu）")]// 游戏启动后默认跳转的菜单场景名称
     [SerializeField] 
     private string _menuSceneName = "GameStartMenu";
 
@@ -89,7 +89,7 @@ public class Global_SceneManager : Singleton<Global_SceneManager>
                 yield return null;
             }
 
-            // 关键：允许场景激活并等待完全加载
+            // 允许场景激活并等待完全加载
             asyncOp.allowSceneActivation = true;
             while (!asyncOp.isDone)
             {
@@ -154,7 +154,7 @@ public class Global_SceneManager : Singleton<Global_SceneManager>
             yield return null;
         }
 
-        // 关键：允许场景激活并等待完全加载
+        // 允许场景激活并等待完全加载
         // 如果不这样做，SceneManager.SetActiveScene会失败，因为场景还没有完全加载
         asyncOp.allowSceneActivation = true;
         
@@ -271,7 +271,7 @@ public class Global_SceneManager : Singleton<Global_SceneManager>
         // 更新当前场景名称
         CurrentSceneName = NextSceneName;
 
-        //  关键：在 Game1 激活 PlayBGM 之前启动 ReplayManager。
+        // 在 Game1 激活 PlayBGM 之前启动 ReplayManager。
         // Record 模式：BeginRecord（Seed 初始化 + SimClock 重置）
         // Playback 模式：跳过（BeginPlayback 已由 ReplayMenu 先调用了，不能再 BeginRecord 覆盖 Input=replay）
         if (CurrentSceneName == "Game1")

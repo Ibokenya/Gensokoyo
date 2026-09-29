@@ -36,7 +36,7 @@ public class UIManager : MonoBehaviour
     [Header("UI引用")]
     public GameObject FinalUI;
     public GameObject GameOverUI;
-    public GameObject ReplayPauseUI;  //  回放暂停 UI（Inspector 绑定）
+    public GameObject ReplayPauseUI;
 
     public LeftLife leftLife;
     public SpeelCard speelCard;

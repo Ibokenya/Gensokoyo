@@ -166,7 +166,7 @@ public class PlayerAnime : MonoBehaviour
         
         HandleAnimation();
         
-        //  注意：State.Reincarnation 不加——重生动画期间 CheckInput 会改精灵，
+        //  State.Reincarnation 不加——重生动画期间 CheckInput 会改精灵，
         // 与 ReincarnationAnimation 协程控制的透明度/位置渐变冲突。
         // 重生后输入丢失的真正根因已通过 StopMove() 重置按键标志 + SimClock 驱动协程修复。
         if(Global_GameManager.Instance.state == State.Gaming || 

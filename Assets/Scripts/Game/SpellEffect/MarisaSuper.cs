@@ -5,7 +5,6 @@ using ReplaySystem;
 
 /// <summary>
 /// 魔理沙决死技能脚本
-/// 挂载在"魔理沙决死"子物体上
 /// </summary>
 public class MarisaSuper : MonoBehaviour
 {

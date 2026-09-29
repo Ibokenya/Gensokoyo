@@ -7,7 +7,7 @@ using ReplaySystem;
 
 
 /// <summary>
-/// 此状态应该在ModeChoose状态下
+/// 难度选择界面按钮
 /// </summary>
 public class ModeChooseButton : MonoBehaviour
 {
@@ -37,7 +37,6 @@ public class ModeChooseButton : MonoBehaviour
         ButtonAnime.ButtonBeMoveoff(buttons[currentButtonIndex]);
         currentButtonIndex = defaultButtonIndex;
     }
-    // Update is called once per frame
     void Update()
     {
         CheckButtonSwitch();

@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -13,7 +13,6 @@ public class Flashing : MonoBehaviour
     public float maxTransparent = 1f;   // 最大透明度
     public float delta = 0.005f;        // 每帧透明度变化值
 
-    // Start is called before the first frame update
     void Start()
     {
         text = targetObject.GetComponent<TextMeshProUGUI>();
@@ -24,7 +23,6 @@ public class Flashing : MonoBehaviour
         text.color = initColor;
     }
 
-    // Update is called once per frame
     void Update()
     {
         flashing();

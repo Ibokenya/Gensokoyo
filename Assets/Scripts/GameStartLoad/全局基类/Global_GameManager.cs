@@ -87,7 +87,6 @@ public class Global_GameManager : Singleton<Global_GameManager>
         base.Awake(); // 调用基类的Awake，保证单例生效
     }
 
-    // Start is called before the first frame update
     void Start()
     {
         gameMode = GameMode.Easy;     // 游戏难度（根据难度调整残机与灵力）

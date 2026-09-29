@@ -38,7 +38,7 @@ public class KeySet : MonoBehaviour
         public LogicalKey LogicalKey;
     }
 
-    // ========= 外部引用（Inspector 里拖）=========
+    // ---- UI 引用 ----
 
     [Header("UI 引用")]
     public GameObject Sword;                     // 剑型箭头

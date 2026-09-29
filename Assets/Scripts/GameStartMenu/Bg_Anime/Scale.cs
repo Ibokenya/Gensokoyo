@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,7 +13,6 @@ public class Scale : MonoBehaviour
     {
         TrueSpeed = ScaleSpeed;
 }
-    // Update is called once per frame
     void Update()
     {
         myself.transform.localScale += new Vector3(TrueSpeed, TrueSpeed);

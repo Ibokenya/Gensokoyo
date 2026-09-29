@@ -243,7 +243,6 @@ public class Game2 : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
     void Update()
     {
         // 检测R键或ESC键按下，返回菜单界面

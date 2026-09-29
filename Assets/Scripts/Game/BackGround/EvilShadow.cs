@@ -18,14 +18,12 @@ public class EvilShadow : MonoBehaviour
     public bool isStartFadeIn = false;
     private Coroutine fadeCoroutine;
 
-    // Start is called before the first frame update
     void Start()
     {
         // 初始化 SpriteRenderer
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
-    // Update is called once per frame
     void FixedUpdate()
     {
         // 旋转逻辑，转速与透明度成正比

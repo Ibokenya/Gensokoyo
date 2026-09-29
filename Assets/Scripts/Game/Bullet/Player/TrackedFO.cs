@@ -46,7 +46,6 @@ public class TrackedFO : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
     void FixedUpdate()
     {
         // 每SCAN_INTERVAL帧扫描一次目标

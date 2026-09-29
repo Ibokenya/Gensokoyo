@@ -83,7 +83,7 @@ public class CreateEnemy : MonoBehaviour
         
         // 重置生成状态
         CurrentSpawn = 0;
-        // 注意：不再手动写 audioManager.CurrentBGMTime = 0f
+        // 不再手动写 audioManager.CurrentBGMTime = 0f
         // CurrentBGMTime 已改为返回 SimClock.SimTime，由 ReplayManager.BeginRecord()/BeginPlayback() 时 Reset 时钟
     }
 

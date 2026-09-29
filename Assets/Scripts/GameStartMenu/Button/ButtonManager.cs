@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -17,7 +17,6 @@ public class ButtonManager : MonoBehaviour
 
     private int currentButtonIndex;
 
-    // Start is called before the first frame update
     void Start()
     {
         if(buttons.Count == 0)
@@ -33,7 +32,6 @@ public class ButtonManager : MonoBehaviour
         ButtonAnime.ButtonBeChoose(buttons[currentButtonIndex]);
     }
 
-    // Update is called once per frame
     void Update()
     {
         // 检测上下键切换按钮（GetKeyDown确保只触发一次）

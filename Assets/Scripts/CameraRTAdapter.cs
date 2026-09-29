@@ -13,16 +13,15 @@ using UnityEngine.UI;
 [RequireComponent(typeof(Camera))]
 public class CameraRTAdapter : MonoBehaviour
 {
-    [Header("手动赋值（Inspector 里拖）")]
 
-    /// <summary>RenderTexture，你在 Project 里手动创建的 1920×1080 RT</summary>
+    /// <summary>RenderTexture</summary>
     public RenderTexture targetRT;
 
-    /// <summary>Canvas 里的 RawImage，显示 RT 用的那张</summary>
+    /// <summary>Canvas 里的 RawImage</summary>
     public RawImage displayImage;
 
     [Header("可选参数")]
-    [Tooltip("强制 Camera aspect = 16:9。关闭则保留你原来的 aspect 设置。")]
+    [Tooltip("强制 Camera aspect = 16:9。")]
     public bool forceAspect16_9 = true;
     [Tooltip("Camera 清除背景色")]
     public Color clearColor = Color.black;

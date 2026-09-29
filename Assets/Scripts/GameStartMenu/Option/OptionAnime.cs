@@ -43,10 +43,9 @@ public class OptionAnime : MonoBehaviour
     [SerializeField] private AudioClip ErrorSound;    // 取消音效
 
     [Header("按键设置面板")]
-    public GameObject keySetPanel;  // 绑定 KeySet.cs 的面板根物体（Inspector 里拖）
+    public GameObject keySetPanel;  // KeySet 面板根物体
     private KeySet keySet;
 
-    // Start is called before the first frame update
     void Start()
     {
         //  启动时加载按键映射（PlayerPrefs）
@@ -79,7 +78,6 @@ public class OptionAnime : MonoBehaviour
         SetNumber();
     }
 
-    // Update is called once per frame
     void Update()
     {
         CheckUpdate();

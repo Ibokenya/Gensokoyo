@@ -28,7 +28,6 @@ private readonly float minX = -9.5f;
         }
     }
 
-    // Update is called once per frame
     void FixedUpdate()
     {
         Move(speed);

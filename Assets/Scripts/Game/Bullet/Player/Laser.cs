@@ -13,7 +13,7 @@ public class Laser : MonoBehaviour
 {
     [Header("激光配置")]
     public float MaxLength = 12f; // 激光长度（固定12）
-    public float LaserWidth = 0.02f; // 激光宽度（public，由Inspector赋值）
+    public float LaserWidth = 0.02f; // 激光宽度
     public int damage = 1; // 激光伤害(每帧)
     public LayerMask HitLayer;// 激光可攻击目标层
 
@@ -57,8 +57,7 @@ public class Laser : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
-    void FixedUpdate()
+    void Update()
     {
         if(!isActive || lineRenderer == null)
         {
