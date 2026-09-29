@@ -25,14 +25,48 @@ public class BossAnime : MonoBehaviour
     [Header("琪露诺的相关物体")]
     public GameObject HP;// 琪露诺的血条
     public GameObject Mark;// 琪露诺的标记物
-    
+
+    [Header("RT 渲染管线 —— 必需引用")]
+    public RawImage gameRTDisplay;
+
     private BossAnimeType currentState = BossAnimeType.Idle;
+
+    // 缓存引用（OnEnable 中初始化，避免每帧 GetComponent）
+    private RectTransform _hpRect;
+    private RectTransform _rtRawImageRect;
+    private Camera _rtCamera;        // 渲染到 RT 的那个摄像机
 
     void OnEnable()
     {
         ChrinoAnimator.SetBool("IsAppear", true);
         spriteRenderer = GetComponent<SpriteRenderer>();
         SetState(BossAnimeType.Idle);
+
+        // ---- 缓存坐标转换所需引用 ----
+        if (HP != null) _hpRect = HP.GetComponent<RectTransform>();
+
+        // RawImage 引用：优先用 Inspector 拖的 gameRTDisplay；否则尝试自动查找
+        if (gameRTDisplay != null)
+        {
+            _rtRawImageRect = gameRTDisplay.rectTransform;
+        }
+        else
+        {
+            // 兜底：找 CameraRTAdapter 上的 displayImage
+            var adapter = FindObjectOfType<CameraRTAdapter>();
+            if (adapter != null && adapter.displayImage != null)
+            {
+                gameRTDisplay = adapter.displayImage;
+                _rtRawImageRect = gameRTDisplay.rectTransform;
+            }
+            else
+            {
+                Debug.LogWarning("[BossAnime] gameRTDisplay 未设置且 CameraRTAdapter 也没找到 —— 血条位置可能不准！");
+            }
+        }
+
+        // 渲染到 RT 的摄像机 = Camera.main（Game1 场景的主摄像机）
+        _rtCamera = Camera.main;
     }
 
     void FixedUpdate()
@@ -55,34 +89,34 @@ public class BossAnime : MonoBehaviour
     }
     
     /// <summary>
-    /// 更新血条相对位置，不受时间缩放影响
+    /// 更新血条位置 —— RT + RawImage 管线专用
+    /// 
+    /// 正确坐标链路：
+    ///   1. Boss 世界坐标 → 渲染 RT 的摄像机 → RT 内部 UV (0~1, 0~1)
+    ///   2. RT UV → RawImage 的世界空间矩形四角 → 双线性插值
+    ///   3. 结果 = HP 应该放在屏幕世界坐标的位置
     /// </summary>
     private void UpdateHPBarPosition()
     {
-        if(HP != null)
-        {
-            // 获取主相机
-            Camera mainCamera = Camera.main;
-            if(mainCamera != null)
-            {
-                // 将boss的世界坐标转换为屏幕坐标
-                Vector3 screenPos = mainCamera.WorldToScreenPoint(transform.position);
-                
-                // 获取血条所在的Canvas
-                Canvas canvas = HP.GetComponentInParent<Canvas>();
-                if(canvas != null)
-                {
-                    // 将屏幕坐标转换为Canvas局部坐标
-                    RectTransform canvasRect = canvas.GetComponent<RectTransform>();
-                    Vector2 localPos;
-                    RectTransformUtility.ScreenPointToLocalPointInRectangle
-                    (canvasRect, screenPos, canvas.worldCamera, out localPos);
-                    
-                    // 设置血条的局部坐标
-                    HP.GetComponent<RectTransform>().localPosition = localPos;
-                }
-            }
-        }
+        if (_hpRect == null || _rtRawImageRect == null || _rtCamera == null) return;
+
+        // 步骤1：Boss 世界坐标 → RT 内部的归一化视口坐标 (0~1, 0~1)
+        Vector3 viewportPoint = _rtCamera.WorldToViewportPoint(transform.position);
+        float vx = Mathf.Clamp01(viewportPoint.x);
+        float vy = Mathf.Clamp01(viewportPoint.y);
+
+        // 步骤2：RawImage 在世界空间中的四个角点（GetWorldCorners 自动处理
+        //   Canvas scaleFactor / 锚点 / pivot / 父物体变换 —— 一步到位）
+        Vector3[] corners = new Vector3[4];
+        _rtRawImageRect.GetWorldCorners(corners);
+        // Unity 约定：corners[0]=左下, [1]=左上, [2]=右上, [3]=右下
+
+        // 步骤3：用 RT UV 在四角之间双线性插值 → HP 应在的世界坐标
+        Vector3 bottomEdge = Vector3.Lerp(corners[0], corners[3], vx); // 左→右 at y=0
+        Vector3 topEdge    = Vector3.Lerp(corners[1], corners[2], vx); // 左→右 at y=1
+        Vector3 worldPos   = Vector3.Lerp(bottomEdge, topEdge, vy);    // 下→上 at x=vx
+
+        _hpRect.position = worldPos;
     }
 
     /// <summary>
@@ -277,7 +311,7 @@ public class BossAnime : MonoBehaviour
             {
                 float t = elapsedTime / duration;
                 sprite.color = Color.Lerp(startColor, targetColor, t);
-                elapsedTime += Time.deltaTime;
+                elapsedTime += Time.unscaledDeltaTime;
                 yield return null;
             }
             

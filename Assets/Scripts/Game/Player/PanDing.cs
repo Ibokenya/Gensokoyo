@@ -30,7 +30,8 @@ public class PanDing : MonoBehaviour
             if (lastHitProcessedTick == SimClock.SimTick) return;
 
             if(collision.CompareTag("Enemy") || collision.CompareTag("EnemyBullet") ||
-             collision.CompareTag("BossBullet") || collision.CompareTag("Terrain"))
+             collision.CompareTag("BossBullet") || collision.CompareTag("Terrain") ||
+             collision.CompareTag("MiniBall") || collision.CompareTag("Boss"))
             {
                 // 标记本 tick 已处理 —— 后续同一 tick 的其他 OnTriggerEnter2D 直接跳过
                 lastHitProcessedTick = SimClock.SimTick;

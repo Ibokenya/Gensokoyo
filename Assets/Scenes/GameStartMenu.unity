@@ -1402,8 +1402,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   myself: {fileID: 223299444}
-  ScaleSpeed: 0.03
-  Scale_a: -0.00005
+  ScaleSpeed: 2
+  Scale_a: -0.003
+  resetThreshold: 4
+  initialScale: 0
 --- !u!114 &223299450
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1416,7 +1418,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38784eb221d4f9941aa13a0edd870149, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RotationSpeed: -100
+  RotationSpeed: -150
 --- !u!1 &229350644
 GameObject:
   m_ObjectHideFlags: 0
@@ -8567,8 +8569,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dfe0b01ed68d9a34887129dd95488703, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  myself: {fileID: 1270386893}
-  TransSpeed: 0.001
+  targetImage: {fileID: 1270386895}
+  minAlpha: 0.1
+  maxAlpha: 0.9
+  cycleSeconds: 5
 --- !u!1 &1301328712
 GameObject:
   m_ObjectHideFlags: 0

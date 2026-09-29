@@ -23,6 +23,8 @@ public class PauseUI : MonoBehaviour
         //  读 PhysicalKeyMapping.Escape 而非 KeyCode.Escape —— 玩家可重绑暂停键
         if (!Input.GetKeyDown(PhysicalKeyMapping.Escape)) return;
         if (Global_GameManager.Instance.state == State.Over) return;
+        // 决死时停期间，禁止 Esc 暂停（普通 Pause 和回放 ReplayPause 均屏蔽）
+        if (Global_GameManager.Instance.state == State.TimeStop) return;
 
         // 回放模式：路由到回放暂停 UI
         var rm = ReplayManager.Instance;

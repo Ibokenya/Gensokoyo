@@ -182,7 +182,7 @@ public class BossUI : MonoBehaviour
                 timeTextComponent.color = color;
             }
             
-            elapsedTime += Time.deltaTime;
+            elapsedTime += Time.unscaledDeltaTime;
             yield return null;
         }
         
@@ -285,7 +285,7 @@ public class BossUI : MonoBehaviour
         
         while (elapsedTime < duration)
         {
-            elapsedTime += Time.deltaTime;
+            elapsedTime += Time.unscaledDeltaTime;
             float t = elapsedTime / duration;
             // 使用线性插值从当前时间过渡到目标时间
             currentTime = Mathf.Lerp(startTime, targetTime, t);

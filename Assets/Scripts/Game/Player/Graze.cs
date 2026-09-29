@@ -40,8 +40,8 @@ public class Graze : MonoBehaviour
     {
         if(Global_GameManager.Instance.state == State.Gaming)
         {
-            // 确保只对敌人和敌人子弹和Boss子弹生效
-            if (collision.CompareTag("Enemy") || collision.CompareTag("EnemyBullet") || collision.CompareTag("BossBullet"))
+            // 确保只对敌人和敌人子弹和Boss子弹和MiniBall生效
+            if (collision.CompareTag("Enemy") || collision.CompareTag("EnemyBullet") || collision.CompareTag("BossBullet") || collision.CompareTag("MiniBall"))
             {
                 // 增加擦弹数
                 Global_GameManager.Instance.AddGraze(1);

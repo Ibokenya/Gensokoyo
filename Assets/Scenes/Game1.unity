@@ -10103,7 +10103,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30fd04456e96c7543988f873e5e1be82, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  barColor: {r: 0, g: 0, b: 0, a: 1}
 --- !u!1 &263780572
 GameObject:
   m_ObjectHideFlags: 0
@@ -25361,6 +25360,7 @@ GameObject:
   - component: {fileID: 1101957862}
   - component: {fileID: 1101957864}
   - component: {fileID: 1101957865}
+  - component: {fileID: 1101957866}
   m_Layer: 11
   m_Name: "\u5224\u5B9A\u70B9"
   m_TagString: Untagged
@@ -25510,6 +25510,33 @@ MonoBehaviour:
   clearAllBullet: {fileID: 1283300306}
   spellCardEffect: {fileID: 273036238}
   graze: {fileID: 1896029630}
+--- !u!50 &1101957866
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1101957859}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!1 &1104395251
 GameObject:
   m_ObjectHideFlags: 0
@@ -41846,6 +41873,7 @@ MonoBehaviour:
   - {fileID: -1308550951, guid: eaeca724285ec594e8e3e5aa046f652b, type: 3}
   HP: {fileID: 1561676700}
   Mark: {fileID: 208800697}
+  gameRTDisplay: {fileID: 2121865003}
 --- !u!95 &1800135225
 Animator:
   serializedVersion: 5

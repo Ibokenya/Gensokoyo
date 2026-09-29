@@ -26,7 +26,23 @@ namespace ReplaySystem
 
         public static ReplayManager Instance { get; private set; }
 
-        public Mode CurrentMode { get; private set; } = Mode.Idle;
+        public Mode CurrentMode { get; set; } = Mode.Idle;
+
+        /// <summary>
+        /// 本局游戏是否已使用过"复活/续关"（Continue）。
+        /// 续关后的回放从重生节点开始，回放文件里只有后半段——
+        /// 回放时会当作从头放，导致确定性错位。
+        /// 所以一旦续关，之后退出游戏时不再询问"保存回放"，直接丢弃。
+        /// 新一局 BeginRecord 时自动 reset 为 false。
+        /// </summary>
+        public bool HasContinued { get; private set; } = false;
+
+        /// <summary>玩家使用了续关。GameOver.ContinueGame() 里调这个</summary>
+        public void MarkContinued()
+        {
+            HasContinued = true;
+            Debug.Log("[ReplayManager] MarkContinued = true —— 后续退出不再询问保存回放");
+        }
 
         /// <summary>所有玩法脚本应读这里拿逻辑按键</summary>
         public static IInputProvider Input { get; private set; }
@@ -164,6 +180,7 @@ namespace ReplaySystem
             Instance.replay = null; // 清掉上一次回放残留
             Input = Instance.live;
             skipTickRefCount = 0;                //  重置 SkipTick 引用计数
+            Instance.HasContinued = false;       //  新一局从头开始，续关标记清零
             //  清掉菜单场景残留的物理键边沿（用户可能在菜单按过 X/Esc/Z 后还没进 Game1）
             Instance.live.ConsumeEdges();
             Debug.Log($"[ReplayManager] BeginRecord seed=0x{Instance.recordSeed:X16}");

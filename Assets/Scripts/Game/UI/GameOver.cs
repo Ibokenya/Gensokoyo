@@ -54,6 +54,10 @@ public class GameOver : MonoBehaviour
     {
         //  注册硬暂停 —— GameOver 也要覆盖其他软缩放
         TimeScaleController.RegisterHardPause();
+        //  关键：正常暂停/回放暂停都调了 AddSkipTickReason()，GameOver 漏了！
+        //  SkipTick 让 ReplayManager.LateUpdate return early → SimClock 不推进
+        //  否则 none2 等协程继续跑 yield return null + SimClock.SimTime → Boss 继续移动
+        ReplayManager.AddSkipTickReason();
         currentBGMName = Global_AudioManager.Instance.GetCurrentBGMName();
         currentBgmPosition = Global_AudioManager.Instance.GetCurrentBGMPosition();
         Global_AudioManager.Instance.StopBGM();
@@ -153,11 +157,16 @@ public class GameOver : MonoBehaviour
         }
     }
 
-    /// <summary>是否存在正在录制、需要玩家决定去留的回放</summary>
+    /// <summary>
+    /// 是否存在"可以保存"的正在录制的回放。
+    /// 如果玩家已经续过关（HasContinued=true），回放文件从重生节点开始，
+    /// 后半段是残缺的，回放时会当作从头放导致确定性错位 —— 直接丢弃不询问。
+    /// </summary>
     private static bool IsRecording()
     {
         return ReplayManager.Instance != null &&
-               ReplayManager.Instance.CurrentMode == ReplayManager.Mode.Record;
+               ReplayManager.Instance.CurrentMode == ReplayManager.Mode.Record &&
+               !ReplayManager.Instance.HasContinued;
     }
 
     /// <summary>进入"是否保存回放"确认</summary>
@@ -233,6 +242,10 @@ public class GameOver : MonoBehaviour
         // 确认面板已经可以关掉了
         if (Really != null) Really.SetActive(false);
 
+        //  GameOver OnEnable 加了 AddSkipTickReason，退出前必须 Remove
+        //  否则 ReplayManager.LateUpdate 永远 return，下一局 SimClock 不动
+        ReplayManager.RemoveSkipTickReason();
+
         switch (CurrentIndex)
         {
             case 0:
@@ -294,6 +307,17 @@ public class GameOver : MonoBehaviour
     {
         //  重置所有暂停/缩放状态 —— 续关等于重新开始游戏
         TimeScaleController.ResetAll();
+
+        // ✅ 关键修复：CommitSaveOrDiscard() 里 DiscardRecording() 把 ReplayManager 切到了 Mode.Idle，
+        // ReplayManager.LateUpdate 第一行 if (Mode.Idle) return —— SimClock 永远不推进！
+        // 不能调用 BeginRecord() —— 它会 SimClock.Reset() 把游戏时间归零，
+        // 续关应该从死亡时刻继续计时。
+        if (ReplayManager.Instance != null)
+        {
+            ReplayManager.Instance.CurrentMode = ReplayManager.Mode.Record;
+            ReplayManager.Instance.MarkContinued(); // ← 标记已续关，后续退出不再询问保存回放
+        }
+
         Global_GameManager.Instance.state = State.Gaming;
 
         // 恢复玩家 HP 为 2,0

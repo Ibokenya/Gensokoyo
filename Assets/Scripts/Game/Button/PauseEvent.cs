@@ -247,7 +247,8 @@ public class PauseEvent : MonoBehaviour
 
     private static bool IsRecording() =>
         ReplayManager.Instance != null &&
-        ReplayManager.Instance.CurrentMode == ReplayManager.Mode.Record;
+        ReplayManager.Instance.CurrentMode == ReplayManager.Mode.Record &&
+        !ReplayManager.Instance.HasContinued; // 续关后的回放残缺，不询问保存
 
     /// <summary>
     /// 进入"是否保存回放"确认（第二层）。

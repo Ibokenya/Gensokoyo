@@ -1,36 +1,47 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// 透明度呼吸动画 —— 菜单场景背景装饰用
+/// alpha 在初始值和 0 之间平滑往返。
+/// 加 Time.deltaTime 保证帧率无关。
+/// </summary>
 public class Transparent : MonoBehaviour
 {
-    public GameObject myself;
-    public float TransSpeed = 0.001f;// 按照1->255来计算，最大值是1
-    private bool isAdd = false;
-    private Color InitColor;
+    [Header("引用")]
+    public Image targetImage; // 要变透明的 Image（若为空则从自身取）
 
-    private void Start()
+    [Header("透明度设置")]
+    public float minAlpha = 0f;      // 最小透明度（0=完全透明）
+    public float maxAlpha = 1f;      // 最大透明度
+    public float cycleSeconds = 3f;  // 一次完整呼吸的秒数
+
+    private float _time;
+    private Color _baseColor; // 颜色的 RGB 部分缓存，只改 alpha
+
+    void Reset()
     {
-        InitColor = myself.GetComponent<Image>().color;
+        if (targetImage == null) targetImage = GetComponent<Image>();
     }
+
+    void Start()
+    {
+        if (targetImage == null) targetImage = GetComponent<Image>();
+        if (targetImage != null) _baseColor = targetImage.color;
+    }
+
     void Update()
     {
-        if(!isAdd)
-        {
-            myself.GetComponent<Image>().color -= new Color(0, 0, 0, TransSpeed);
-            if(myself.GetComponent<Image>().color.a<=0)
-            {
-                isAdd = true;
-            }
-        }
-        else
-        {
-            myself.GetComponent<Image>().color += new Color(0, 0, 0, TransSpeed);
-            if (myself.GetComponent<Image>().color.a >= InitColor.a)
-            {
-                isAdd = false;
-            }
-        }
+        if (targetImage == null) return;
+
+        _time += Time.deltaTime;
+
+        // 正弦波做平滑往返
+        float t = (Mathf.Sin(_time / cycleSeconds * Mathf.PI * 2f) + 1f) * 0.5f;
+        float alpha = Mathf.Lerp(minAlpha, maxAlpha, t);
+
+        Color c = _baseColor;
+        c.a = alpha;
+        targetImage.color = c;
     }
 }

@@ -528,6 +528,11 @@ public class PlayerAnime : MonoBehaviour
         StopPandingAnime();
         SetIdleAnime();
         
+        // ✅ 关键：确保 SimClock 能推进（如果之前被 Freeze ramp 降到 0.2 或更低）
+        // 视觉动画用 unscaledDeltaTime 不管时钟停没停都跑完，
+        // 但 NoDead→Gaming 的状态切换用 SimTimer.Once 必须依赖 SimTick 推进
+        SimClock.SetScale(1f);
+        
         // 立刻将玩家坐标设置为(-3,-6)，透明度设为0
         this.transform.position = new Vector3(-3f, -6f, 0f);
         if (spriteRenderer != null)
@@ -542,19 +547,22 @@ public class PlayerAnime : MonoBehaviour
     }
     
     /// <summary>
-    /// 重生动画协程（ SimClock 驱动，消除帧速率绑定）
+    /// 重生动画协程
+    /// 视觉插值用 Time.unscaledDeltaTime（不受 timeScale / SimScale 影响）——
+    /// 视觉过渡动画必须跑完，不管模拟时钟停没停。
+    /// 和 HitDelayCoroutine 用 WaitForSecondsRealtime 是同一个道理。
+    /// 但 NoDead→Gaming 状态切换保持 SimTimer.Once 以保证录/回放确定性。
     /// </summary>
     private IEnumerator ReincarnationAnimation()
     {
-        // 1 秒 = 50 tick（50Hz），SimClock 驱动，回放时确定性一致
         float duration = 1f;
-        float startSimTime = SimClock.SimTime;
+        float elapsedTime = 0f;
         Vector3 startPosition = new Vector3(-3f, -6f, 0f);
         Vector3 endPosition = new Vector3(-3f, -4f, 0f);
         
-        while (true)
+        while (elapsedTime < duration)
         {
-            float t = Mathf.Clamp01((SimClock.SimTime - startSimTime) / duration);
+            float t = Mathf.Clamp01(elapsedTime / duration);
             
             // 移动位置
             transform.position = Vector3.Lerp(startPosition, endPosition, t);
@@ -566,7 +574,7 @@ public class PlayerAnime : MonoBehaviour
                 spriteRenderer.color = color;
             }
 
-            if (t >= 1f) break;
+            elapsedTime += Time.unscaledDeltaTime;
             yield return null;
         }
         
@@ -595,6 +603,8 @@ public class PlayerAnime : MonoBehaviour
         {
             movespeed = MoveSpeed;
         }
+        // ✅ 状态切换保持 SimTimer —— 录/回放确定性要求 tick 对齐
+        // 50 tick @ 50Hz = 1 秒；SimScale 已在 ReincarnationAnime 开头设为 1，保证推进
         SimTimer.Once(() => NoDeadEnd(), 50);
     }
 

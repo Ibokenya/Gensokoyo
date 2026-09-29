@@ -486,7 +486,7 @@ public class BossBeheve : MonoBehaviour
                 IcePinion_left.color = color;
                 IcePinion_right.color = color;
             }
-            elapsedTime += Time.deltaTime;
+            elapsedTime += Time.unscaledDeltaTime;
             yield return null;
         }
     }
