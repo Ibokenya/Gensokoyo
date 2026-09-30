@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
@@ -102,7 +102,10 @@ public class FinalUI : MonoBehaviour
     void OnEnable()
     {
         // 通关时自动保存回放
-        if (ReplayManager.Instance != null && ReplayManager.Instance.CurrentMode == ReplayManager.Mode.Record)
+        // 但如果玩家续关过（HasContinued=true），回放从重生节点开始录，是残缺的 → 丢弃不保存
+        if (ReplayManager.Instance != null && 
+            ReplayManager.Instance.CurrentMode == ReplayManager.Mode.Record &&
+            !ReplayManager.Instance.HasContinued)
         {
             string path = ReplayManager.SaveRecording();
             Debug.Log($"[ReplayManager] 通关回放已保存: {path}");
@@ -127,9 +130,7 @@ public class FinalUI : MonoBehaviour
         StartCoroutine(ShowFinalUIElements());
     }
     
-    /// <summary>
-    /// 解析CSV文件
-    /// </summary>
+    // 解析CSV文件
     private void ParseCSVFile()
     {
         csvTextData.Clear();
@@ -169,9 +170,7 @@ public class FinalUI : MonoBehaviour
         reader.Close();
     }
     
-    /// <summary>
-    /// 根据ID获取文本内容
-    /// </summary>
+    // 根据ID获取文本内容
     private string GetTextById(int id)
     {
         if (csvTextData.ContainsKey(id))
@@ -182,9 +181,7 @@ public class FinalUI : MonoBehaviour
         return "未找到文本";
     }
     
-    /// <summary>
-    /// 初始化所有UI元素为隐藏状态
-    /// </summary>
+    // 初始化所有UI元素为隐藏状态
     private void InitializeUIElements()
     {
 
@@ -221,9 +218,7 @@ public class FinalUI : MonoBehaviour
         Card3?.SetActive(false);
     }
     
-    /// <summary>
-    /// 按序显示所有UI元素
-    /// </summary>
+    // 按序显示所有UI元素
     private IEnumerator ShowFinalUIElements()
     {
         // 1. 激活琪露诺大头照
@@ -326,9 +321,7 @@ public class FinalUI : MonoBehaviour
         TransitionToGame2();
     }
     
-    /// <summary>
-    /// 将最终得分加到总分上
-    /// </summary>
+    // 将最终得分加到总分上
     private void AddFinalScoreToTotal()
     {
         if (Global_GameManager.Instance != null && uiManager != null)
@@ -344,9 +337,7 @@ public class FinalUI : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 重置数据并跳转到Game2场景
-    /// </summary>
+    // 重置数据并跳转到Game2场景
     private void TransitionToGame2()
     {
         // 重置GameManager数据
@@ -369,18 +360,14 @@ public class FinalUI : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 激活元素并等待
-    /// </summary>
+    // 激活元素并等待
     private IEnumerator ActivateElementWithDelay(GameObject element)
     {
         element?.SetActive(true);
         yield return WaitForFrames(UI_INTERVAL);
     }
     
-    /// <summary>
-    /// 逐字输出文本并等待完成
-    /// </summary>
+    // 逐字输出文本并等待完成
     private IEnumerator PrintTextWithDelay(TextMeshProUGUI target, string text)
     {
         if (target == null)
@@ -398,9 +385,7 @@ public class FinalUI : MonoBehaviour
         yield return WaitForFrames(UI_INTERVAL);
     }
     
-    /// <summary>
-    /// 计算得分并等待完成
-    /// </summary>
+    // 计算得分并等待完成
     private IEnumerator CalculateScoreWithDelay()
     {
         CalculateScore(5); // 使用较短的间隔加快计算过程
@@ -414,9 +399,7 @@ public class FinalUI : MonoBehaviour
         yield return WaitForFrames(UI_INTERVAL);
     }
     
-    /// <summary>
-    /// 显示符卡信息
-    /// </summary>
+    // 显示符卡信息
     private IEnumerator ShowCard(GameObject cardObj, TextMeshProUGUI statusText, TextMeshProUGUI descText, 
         bool isGet, string successDesc, string failedDesc)
     {
@@ -456,9 +439,7 @@ public class FinalUI : MonoBehaviour
         yield return WaitForFrames(UI_INTERVAL);
     }
     
-    /// <summary>
-    /// UI元素包装类
-    /// </summary>
+    // UI元素包装类
     public class UIElement
     {
         public GameObject gameObject;
@@ -480,13 +461,7 @@ public class FinalUI : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 逐字输出文本
-    /// </summary>
-    /// <param name="target">目标TextMeshProUGUI组件</param>
-    /// <param name="text">要输出的文本</param>
-    /// <param name="interval">输出间隔（帧）</param>
-    /// <returns>是否输出完毕</returns>
+    // 逐字输出文本
     public bool PrintText(TextMeshProUGUI target, string text, int interval)
     {
         if (!isPrinting)
@@ -510,9 +485,7 @@ public class FinalUI : MonoBehaviour
         return !isPrinting;
     }
     
-    /// <summary>
-    /// 逐字输出协程
-    /// </summary>
+    // 逐字输出协程
     private IEnumerator PrintTextCoroutine()
     {
         while (currentCharIndex < currentPrintText.Length)
@@ -534,11 +507,7 @@ public class FinalUI : MonoBehaviour
         printCoroutine = null;
     }
     
-    /// <summary>
-    /// 按顺序显示UI元素
-    /// </summary>
-    /// <param name="lists">UI元素列表</param>
-    /// <param name="interval">间隔（帧）</param>
+    // 按顺序显示UI元素
     public void ShowUIOneByOne(List<UIElement> lists, int interval)
     {
         if (isShowingUI)
@@ -559,9 +528,7 @@ public class FinalUI : MonoBehaviour
         showUICoroutine = StartCoroutine(ShowUIOneByOneCoroutine());
     }
     
-    /// <summary>
-    /// 顺序显示UI协程
-    /// </summary>
+    // 顺序显示UI协程
     private IEnumerator ShowUIOneByOneCoroutine()
     {
         while (currentUIIndex < currentUIList.Count)
@@ -601,25 +568,19 @@ public class FinalUI : MonoBehaviour
         showUICoroutine = null;
     }
     
-    /// <summary>
-    /// 检查是否正在逐字输出
-    /// </summary>
+    // 检查是否正在逐字输出
     public bool IsPrinting()
     {
         return isPrinting;
     }
     
-    /// <summary>
-    /// 检查是否正在显示UI
-    /// </summary>
+    // 检查是否正在显示UI
     public bool IsShowingUI()
     {
         return isShowingUI;
     }
     
-    /// <summary>
-    /// 停止所有动画
-    /// </summary>
+    // 停止所有动画
     public void StopAllAnimations()
     {
         if (printCoroutine != null)
@@ -645,10 +606,7 @@ public class FinalUI : MonoBehaviour
         isCalculatingScore = false;
     }
     
-    /// <summary>
-    /// 计算最终得分并逐帧输出计算过程
-    /// </summary>
-    /// <param name="interval">输出间隔（帧）</param>
+    // 计算最终得分并逐帧输出计算过程
     public void CalculateScore(int interval)
     {
         if (isCalculatingScore)
@@ -666,9 +624,7 @@ public class FinalUI : MonoBehaviour
         calculateScoreCoroutine = StartCoroutine(CalculateScoreCoroutine(interval));
     }
     
-    /// <summary>
-    /// 计算得分协程
-    /// </summary>
+    // 计算得分协程
     private IEnumerator CalculateScoreCoroutine(int interval)
     {
         // 获取数据
@@ -772,9 +728,7 @@ public class FinalUI : MonoBehaviour
         calculateScoreCoroutine = null;
     }
     
-    /// <summary>
-    /// 获取难度系数
-    /// </summary>
+    // 获取难度系数
     private float GetDifficultyMultiplier(GameMode mode)
     {
         switch (mode)
@@ -792,9 +746,7 @@ public class FinalUI : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 获取难度名称
-    /// </summary>
+    // 获取难度名称
     private string GetDifficultyName(GameMode mode)
     {
         switch (mode)
@@ -812,9 +764,7 @@ public class FinalUI : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 等待指定帧数
-    /// </summary>
+    // 等待指定帧数
     private IEnumerator WaitForFrames(int frames)
     {
         for (int i = 0; i < frames; i++)
@@ -823,17 +773,13 @@ public class FinalUI : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 获取最终得分结果
-    /// </summary>
+    // 获取最终得分结果
     public int GetFinalScore()
     {
         return finalScoreResult;
     }
     
-    /// <summary>
-    /// 检查是否正在计算得分
-    /// </summary>
+    // 检查是否正在计算得分
     public bool IsCalculatingScore()
     {
         return isCalculatingScore;
@@ -845,9 +791,7 @@ public class FinalUI : MonoBehaviour
         UpdateChrinoAnimation();
     }
     
-    /// <summary>
-    /// 更新Chrino动画状态
-    /// </summary>
+    // 更新Chrino动画状态
     private void UpdateChrinoAnimation()
     {
         if (ChrinoAnim == null) return;
@@ -880,9 +824,7 @@ public class FinalUI : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 尝试触发旋转动画
-    /// </summary>
+    // 尝试触发旋转动画
     private void TryTriggerRotate()
     {
         float randomValue = GameRNG.value;
@@ -896,9 +838,7 @@ public class FinalUI : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 尝试触发起身动画
-    /// </summary>
+    // 尝试触发起身动画
     private void TryTriggerStandUp()
     {   
         if (!isStand)
@@ -915,9 +855,7 @@ public class FinalUI : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 重置Chrino动画状态为站立
-    /// </summary>
+    // 重置Chrino动画状态为站立
     public void ResetChrinoAnimation()
     {
         if (ChrinoAnim != null)

@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ReplaySystem;
@@ -41,9 +41,7 @@ public class BallsAnime : Enemy
         base.FixedUpdate();
     }
 
-    /// <summary>
-    /// 旋转小球
-    /// </summary>
+    // 旋转小球
     private void RotateBall()
     {
         transform.Rotate(Vector3.forward, RotateSpeed * SimClock.FixedTickDt);

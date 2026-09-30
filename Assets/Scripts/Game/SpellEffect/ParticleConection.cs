@@ -29,10 +29,8 @@ public class ParticleConection : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 开始创建连线
-    /// 由动画事件调用
-    /// </summary>
+    // 开始创建连线
+    // 由动画事件调用
     public void StartCreateLines()
     {
         currentIndex = 0;
@@ -42,10 +40,7 @@ public class ParticleConection : MonoBehaviour
         StartCoroutine(CreateLinesCoroutine(framesPerLine));
     }
     
-    /// <summary>
-    /// 创建连线的协程
-    /// </summary>
-    /// <param name="framesPerLine">每根连线的帧数</param>
+    // 创建连线的协程
     private IEnumerator CreateLinesCoroutine(int framesPerLine)
     {
         while (createdLines < maxLines && currentIndex < particles.Count && nextIndex < particles.Count && createdLines < lineRenderers.Length)
@@ -60,13 +55,7 @@ public class ParticleConection : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 显示连线，从起点缓缓画到终点
-    /// </summary>
-    /// <param name="lineRenderer">连线的LineRenderer</param>
-    /// <param name="start">起点</param>
-    /// <param name="end">终点</param>
-    /// <param name="frames">绘制连线的帧数</param>
+    // 显示连线，从起点缓缓画到终点
     private IEnumerator ShowLine(LineRenderer lineRenderer, Transform start, Transform end, int frames)
     {
         if (lineRenderer == null || start == null || end == null)
@@ -117,18 +106,14 @@ public class ParticleConection : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 淡出所有连线和质点
-    /// 在0.5秒内将所有连线和质点淡出
-    /// </summary>
+    // 淡出所有连线和质点
+    // 在0.5秒内将所有连线和质点淡出
     public void ClearLines()
     {
         StartCoroutine(FadeOutCoroutine());
     }
     
-    /// <summary>
-    /// 淡出效果的协程
-    /// </summary>
+    // 淡出效果的协程
     private IEnumerator FadeOutCoroutine()
     {
         // 淡出所有连线

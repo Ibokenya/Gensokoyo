@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using ReplaySystem;
 using UnityEngine;
@@ -63,9 +63,7 @@ public class BossBeheve : MonoBehaviour
         HandleTimeEvents();
     }
     
-    /// <summary>
-    /// 处理时间事件
-    /// </summary>
+    // 处理时间事件
     private void HandleTimeEvents()
     {
         // 时间为0秒时，播放角色动画
@@ -368,35 +366,27 @@ public class BossBeheve : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 播放角色动画
-    /// </summary>
+    // 播放角色动画
     private void PlayCharacterAnimation()
     {
         bossAnime.PlayShowAnime();
     }
     
-    /// <summary>
-    /// BgAndBallon方法
-    /// </summary>
+    // BgAndBallon方法
     private void BgAndBallon()
     {
         FinalWordsUI.SetActive(true);
     }
     
-    /// <summary>
-    /// FinalAnime方法
-    /// </summary>
+    // FinalAnime方法
     private void FinalAnime()
     {
         // 空方法，内部不实现
         Debug.Log("调用FinalAnime方法");
     }
     
-    /// <summary>
-    /// AllOver方法
-    /// 时符结束后，时间流速变缓，播放新星爆炸动画，隐藏背景，播放音效
-    /// </summary>
+    // AllOver方法
+    // 时符结束后，时间流速变缓，播放新星爆炸动画，隐藏背景，播放音效
     private void AllOver()
     {
         //  注册软缩放（慢放）—— 让 TimeScaleController 统一管理
@@ -416,9 +406,7 @@ public class BossBeheve : MonoBehaviour
         Global_AudioManager.Instance.PlaySFX(finalOverSound);// 时符击败音效
     }
 
-    /// <summary>
-    /// 新星爆炸结束方法
-    /// </summary>
+    // 新星爆炸结束方法
     public void ExplosionEnd()
     {
         // 恢复正常节奏
@@ -444,10 +432,7 @@ public class BossBeheve : MonoBehaviour
         uiManager.ShowFinalUI();
     }
     
-    /// <summary>
-    /// 触发Boss移动
-    /// </summary>
-    /// <param name="direction">移动方向</param>
+    // 触发Boss移动
     public void MoveBoss(BossAnimeType direction)
     {
         if (bossAnime != null)
@@ -456,9 +441,7 @@ public class BossBeheve : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 显示冰翼
-    /// </summary>
+    // 显示冰翼
     public void ShowPinion()
     {
         StartCoroutine(ShowIcePinion());

@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -40,9 +40,7 @@ public class ButtonManager : MonoBehaviour
         CheckButtonClick();
     }
 
-    /// <summary>
-    /// 检测按钮选择的方法，每一帧都监听是否按下上下键切换选中按钮，允许按住一直切换
-    /// </summary>
+    // 检测按钮选择的方法，每一帧都监听是否按下上下键切换选中按钮，允许按住一直切换
     private void CheckButtonSwitch()
     {
         if(Input.GetKeyDown(PhysicalKeyMapping.Up))// 按下↑键（逻辑上）
@@ -67,10 +65,8 @@ public class ButtonManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 主要是检测Z键，按下的时候根据当前选中的按钮执行对应的按下逻辑
-    /// 还有X键，X键默认选中退出按钮
-    /// </summary>
+    // 主要是检测Z键，按下的时候根据当前选中的按钮执行对应的按下逻辑
+    // 还有X键，X键默认选中退出按钮
     private void CheckButtonClick()
     {
         if(Input.GetKeyDown(PhysicalKeyMapping.Z))

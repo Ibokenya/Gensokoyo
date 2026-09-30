@@ -1,11 +1,9 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ReplaySystem;
 
-/// <summary>
-/// 冰珠子弹脚本(自带旋转效果)
-/// </summary>
+// 冰珠子弹脚本(自带旋转效果)
 public class IcePearl : MonoBehaviour
 {
     public GameObject icePoint; // 冰点对象
@@ -62,9 +60,7 @@ public class IcePearl : MonoBehaviour
         CheckBounds();
     }
     
-    /// <summary>
-    /// 检查边界，超出范围则回收
-    /// </summary>
+    // 检查边界，超出范围则回收
     private void CheckBounds()
     {
         Vector2 position = transform.position;

@@ -1,4 +1,4 @@
-using ReplaySystem;
+﻿using ReplaySystem;
 using UnityEngine;
 
 public class Game1 : MonoBehaviour
@@ -14,7 +14,6 @@ public class Game1 : MonoBehaviour
     [Header("进入对话相关")]
     public GameObject DialogBox;
     
-
     [Header("镜头抖动设置")]
     [Range(0f, 1f)] public float defaultShakeIntensity = 0.5f; // 默认震动强度
     [Range(5f, 20f)] public float defaultShakeFrequency = 12f; // 默认震动频率
@@ -82,9 +81,7 @@ public class Game1 : MonoBehaviour
         TimeScaleController.ResetAll();
     }
 
-    /// <summary>
-    /// 处理镜头抖动
-    /// </summary>
+    // 处理镜头抖动
     private void HandleCameraShake()
     {
         if (shakeIntensity > 0 && shakeDuration > 0)
@@ -115,13 +112,7 @@ public class Game1 : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 触发镜头抖动
-    /// </summary>
-    /// <param name="duration">抖动时长（秒）</param>
-    /// <param name="strength">震动强度（默认0.5）</param>
-    /// <param name="frequency">震动频率（默认12）</param>
-    /// <param name="decay">衰减速度（默认2）</param>
+    // 触发镜头抖动
     public void Shake(float duration = 0.5f, float strength = -1f, float frequency = -1f, float decay = -1f)
     {
         shakeDuration = duration;

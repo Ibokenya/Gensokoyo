@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using TMPro;
 using ReplaySystem;
 using System;
@@ -53,9 +53,7 @@ public class UIManager : MonoBehaviour
     public float gameTime = 0f; // 游戏时长（秒）
     private bool isTimerRunning = true; // 计时器是否运行
     
-    /// <summary>
-    /// 获取游戏时长字符串（格式：Xm'Ys'）
-    /// </summary>
+    // 获取游戏时长字符串（格式：Xm'Ys'）
     public string GetGameTimeString()
     {
         int minutes = Mathf.FloorToInt(gameTime / 60f);
@@ -63,9 +61,7 @@ public class UIManager : MonoBehaviour
         return $"{minutes}m'{seconds}s'";
     }
     
-    /// <summary>
-    /// 停止计时器
-    /// </summary>
+    // 停止计时器
     public void StopTimer()
     {
         isTimerRunning = false;
@@ -200,15 +196,11 @@ public class UIManager : MonoBehaviour
         GameOverUI.SetActive(true);
     }
 
-    // ----  回放暂停 UI ----
-
-    /// <summary>回放暂停 UI 打开（Esc 触发 / 回放自然结束触发）</summary>
     public void ShowReplayPause()
     {
         if (ReplayPauseUI != null) ReplayPauseUI.SetActive(true);
     }
 
-    /// <summary>回放暂停 UI 关闭（Resume / ReturnToMenu / ReStart）</summary>
     public void HideReplayPause()
     {
         if (ReplayPauseUI != null) ReplayPauseUI.SetActive(false);

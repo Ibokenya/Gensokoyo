@@ -1,11 +1,9 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ReplaySystem;
 
-/// <summary>
-/// 玩家碰撞触发器
-/// </summary>
+// 玩家碰撞触发器
 public class PlayerCollision : MonoBehaviour
 {
     private Rigidbody2D rb2D;// 刚体组件
@@ -67,12 +65,10 @@ public class PlayerCollision : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 更新移动状态 ——  纯 transform 移动，完全绕开 Box2D velocity 积分
-    /// 原因：Unity 的 Rigidbody2D velocity 积分在不同 FixedUpdate 顺序下有微小差异（浮点舍入），
-    ///      会导致录 vs 回放位置逐步偏移（0.3px → 累积到致命）
-    ///      transform.position += direction * speed * dt 是纯确定性的浮点运算
-    /// </summary>
+    // 更新移动状态 ——  纯 transform 移动，完全绕开 Box2D velocity 积分
+    // 原因：Unity 的 Rigidbody2D velocity 积分在不同 FixedUpdate 顺序下有微小差异（浮点舍入），
+    //      会导致录 vs 回放位置逐步偏移（0.3px → 累积到致命）
+    //      transform.position += direction * speed * dt 是纯确定性的浮点运算
     public void UpdateMovement(bool leftPressed, bool rightPressed, bool upPressed, bool downPressed, float moveSpeed)
     {
         // 只有在游戏状态、无敌状态和符卡状态时才处理移动
@@ -104,10 +100,8 @@ public class PlayerCollision : MonoBehaviour
         transform.position = pos;
     }
 
-    /// <summary>
-    /// 强行停止玩家移动
-    /// 即使玩家还按着方向键，也会立即停止
-    /// </summary>
+    // 强行停止玩家移动
+    // 即使玩家还按着方向键，也会立即停止
     public void StopMove()
     {
         // 确保rb2D已获取
@@ -126,9 +120,7 @@ public class PlayerCollision : MonoBehaviour
         moveDirection = Vector2.zero;
     }
 
-    /// <summary>
-    /// 处理边界检测
-    /// </summary>
+    // 处理边界检测
     private void HandleBounds()
     {
         // 只有在游戏状态和无敌状态时才处理边界检测

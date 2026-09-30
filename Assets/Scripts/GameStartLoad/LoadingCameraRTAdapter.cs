@@ -1,9 +1,7 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>
-/// Loading 场景 RT 渲染配置
-/// </summary>
+// Loading 场景 RT 渲染配置
 public class LoadingCameraRTAdapter : MonoBehaviour
 {
     [Header("引用")]

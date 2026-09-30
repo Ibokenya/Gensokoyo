@@ -1,15 +1,13 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ReplaySystem;
 
-/// <summary>
-/// 拖尾弹Tail
-/// 移动时会不断以更低的速度复制自己
-/// 姬虫百百世同款
-/// 每次复制令速度-1直到为0
-/// 子弹
-/// </summary>
+// 拖尾弹Tail
+// 移动时会不断以更低的速度复制自己
+// 姬虫百百世同款
+// 每次复制令速度-1直到为0
+// 子弹
 public class Tail : MonoBehaviour
 {
     public bool CanClone = true;// 是否可以自我复制（仅母弹可以）
@@ -89,9 +87,7 @@ public class Tail : MonoBehaviour
         CheckBounds();
     }
     
-    /// <summary>
-    /// 创建克隆体
-    /// </summary>
+    // 创建克隆体
     private void CreateClone()
     {
         // 计算克隆体的速度
@@ -147,9 +143,7 @@ public class Tail : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 检查边界，超出边界则回收
-    /// </summary>
+    // 检查边界，超出边界则回收
     private void CheckBounds()
     {
         Vector2 position = transform.position;

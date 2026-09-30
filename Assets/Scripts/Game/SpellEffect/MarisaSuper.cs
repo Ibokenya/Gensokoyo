@@ -1,11 +1,9 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ReplaySystem;
 
-/// <summary>
-/// 魔理沙决死技能脚本
-/// </summary>
+// 魔理沙决死技能脚本
 public class MarisaSuper : MonoBehaviour
 {
     [Header("播放控制")]
@@ -61,10 +59,8 @@ public class MarisaSuper : MonoBehaviour
         //  原来这里的逻辑搬到 Update 了 —— 决死期间 timeScale=0 停 FixedUpdate
     }
 
-    /// <summary>
-    ///  从 FixedUpdate 搬过来 —— Update 不受 timeScale 影响
-    /// 用 SimClock.SimTick 差分控制 Timer 节奏（每 tick 减一次，50Hz）
-    /// </summary>
+    //  从 FixedUpdate 搬过来 —— Update 不受 timeScale 影响
+    // 用 SimClock.SimTick 差分控制 Timer 节奏（每 tick 减一次，50Hz）
     void Update()
     {
         // 设置 Animator 参数 —— 必须在 Update 里（决死期间 FixedUpdate 停）
@@ -85,9 +81,7 @@ public class MarisaSuper : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 处理出伤逻辑
-    /// </summary>
+    // 处理出伤逻辑
     void HandleDamage()
     {
         if (Timer > 0)
@@ -104,17 +98,13 @@ public class MarisaSuper : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 开始出伤
-    /// </summary>
+    // 开始出伤
     public void StartToDamage()
     {
         isDamage = true;
     }
     
-    /// <summary>
-    /// 魔理沙决死伤害
-    /// </summary>
+    // 魔理沙决死伤害
     public void MarisaHitDamage()
     {
         if (Enemys.Count > 0)
@@ -136,9 +126,7 @@ public class MarisaSuper : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 魔理沙决死对Boss发送技能攻击通知
-    /// </summary>
+    // 魔理沙决死对Boss发送技能攻击通知
     private void MarisaHitDamageToBoss()
     {
         if (boss != null && boss.activeInHierarchy)
@@ -152,9 +140,7 @@ public class MarisaSuper : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 处理时停期间死亡的敌人
-    /// </summary>
+    // 处理时停期间死亡的敌人
     private void ProcessDeadEnemies()
     {
         // 创建敌人列表的副本以避免遍历过程中修改原始列表
@@ -174,9 +160,7 @@ public class MarisaSuper : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 播放钟声音效
-    /// </summary>
+    // 播放钟声音效
     public void AudioTimeOver()
     {
         if (TimeOverClip != null)
@@ -189,9 +173,7 @@ public class MarisaSuper : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 播放火焰音效
-    /// </summary>
+    // 播放火焰音效
     public void AudioFire()
     {
         if (FireClip != null)
@@ -204,9 +186,7 @@ public class MarisaSuper : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 清除屏幕子弹
-    /// </summary>
+    // 清除屏幕子弹
     public void ClearAllBullet()
     {
         if (clearAllBullet != null)
@@ -219,19 +199,15 @@ public class MarisaSuper : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 时停方法
-    /// </summary>
+    // 时停方法
     public void TimeStop()
     {
         //  注册硬暂停 —— 让 TimeScaleController 统一管理
         TimeScaleController.RegisterHardPause();
     }
 
-    /// <summary>
-    /// 开始创建连线
-    /// 由动画事件调用
-    /// </summary>
+    // 开始创建连线
+    // 由动画事件调用
     public void StartCreateLines()
     {
         if (particleConection != null)
@@ -240,10 +216,8 @@ public class MarisaSuper : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 清除质点连线
-    /// 由动画事件调用
-    /// </summary>
+    // 清除质点连线
+    // 由动画事件调用
     public void ClearPointLines()
     {
         if (particleConection != null)
@@ -252,9 +226,7 @@ public class MarisaSuper : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 动画结束回调
-    /// </summary>
+    // 动画结束回调
     public void OnAnimationEnd()
     {
         IsAnime = false;

@@ -1,11 +1,9 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ReplaySystem;
 
-/// <summary>
-/// 魔理沙常规技能脚本
-/// </summary>
+// 魔理沙常规技能脚本
 public class MarisaNormal : MonoBehaviour
 {
     [Header("播放控制")]
@@ -60,10 +58,8 @@ public class MarisaNormal : MonoBehaviour
         if (animator != null) animator.SetBool("IsAnime", IsAnime);
     }
     
-    /// <summary>
-    /// HandleDamage 必须在 Update 里跑（和 Animator.StartToDamage/OnAnimationEnd 同步）。
-    /// 用 SimClock.SimTime 差值保证确定性。
-    /// </summary>
+    // HandleDamage 必须在 Update 里跑（和 Animator.StartToDamage/OnAnimationEnd 同步）。
+    // 用 SimClock.SimTime 差值保证确定性。
     void Update()
     {
         if (IsAnime && isDamage)
@@ -79,25 +75,19 @@ public class MarisaNormal : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 开始出伤
-    /// </summary>
+    // 开始出伤
     public void StartToDamage()
     {
         isDamage = true;
     }
 
-    /// <summary>
-    /// 停止出伤
-    /// </summary>
+    // 停止出伤
     public void StopToDamage()
     {
         isDamage = false;
     }
 
-    /// <summary>
-    /// 清除所有连线
-    /// </summary>
+    // 清除所有连线
     public void ClearMagicLines()
     {
         if (magicAnime != null)
@@ -106,9 +96,7 @@ public class MarisaNormal : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 魔理沙常规伤害
-    /// </summary>
+    // 魔理沙常规伤害
     public void MarisaNormalDamage()
     {
         if (Enemys.Count > 0)
@@ -126,9 +114,7 @@ public class MarisaNormal : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 魔理沙常规对Boss发送技能攻击通知
-    /// </summary>
+    // 魔理沙常规对Boss发送技能攻击通知
     private void MarisaNormalDamageToBoss()
     {
         if (boss != null && boss.activeInHierarchy)
@@ -142,9 +128,7 @@ public class MarisaNormal : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 播放魔理沙常规音效
-    /// </summary>
+    // 播放魔理沙常规音效
     public void AudioMarisaNormal()
     {
         if (MarisaNormalClip != null)
@@ -157,9 +141,7 @@ public class MarisaNormal : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 清除屏幕子弹
-    /// </summary>
+    // 清除屏幕子弹
     public void ClearAllBullet()
     {
         if (clearAllBullet != null)
@@ -194,9 +176,7 @@ public class MarisaNormal : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 动画结束回调
-    /// </summary>
+    // 动画结束回调
     public void OnAnimationEnd()
     {
         Global_GameManager.Instance.SetNoDead(0.1f,State.Gaming);

@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using static ShootMode;
@@ -72,7 +72,6 @@ public class CreateEnemy : MonoBehaviour
     private int CurrentSpawn = 0;//第0波次
     public GameObject player;// 玩家对象引用
 
-
     void OnEnable()
     {
         // 初始化对象池
@@ -99,9 +98,7 @@ public class CreateEnemy : MonoBehaviour
         CheckSpawnEnemies();
     }
     
-    /// <summary>
-    /// 初始化对象池
-    /// </summary>
+    // 初始化对象池
     private void InitializeObjectPools()
     {
         if (Global_ObjectPool.Instance == null)
@@ -179,9 +176,7 @@ public class CreateEnemy : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 检查是否需要生成敌人
-    /// </summary>
+    // 检查是否需要生成敌人
     private void CheckSpawnEnemies()
     {
         while(CurrentSpawn < spawnConfigs.Count && 
@@ -195,20 +190,14 @@ public class CreateEnemy : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 生成敌人
-    /// </summary>
-    /// <param name="config">生成配置</param>
+    // 生成敌人
     private void SpawnEnemy(EnemySpawnConfig config)
     {
         // 开始生成多个敌人
         StartCoroutine(SpawnEnemiesCoroutine(config));
     }
     
-    /// <summary>
-    /// 生成多个敌人的协程
-    /// </summary>
-    /// <param name="config">生成配置</param>
+    // 生成多个敌人的协程
     private IEnumerator SpawnEnemiesCoroutine(EnemySpawnConfig config)
     {
         for (int i = 0; i < config.spawnCount; i++)
@@ -296,9 +285,7 @@ public class CreateEnemy : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 设置敌人参数（使用基类Enemy统一设置）
-    /// </summary>
+    // 设置敌人参数（使用基类Enemy统一设置）
     private void SetupEnemy(GameObject enemy, EnemySpawnConfig config, int enemyIndex)
     {
         Enemy enemyComponent = enemy.GetComponent<Enemy>();
@@ -357,10 +344,7 @@ public class CreateEnemy : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 检查路径点数量是否正确
-    /// </summary>
-    /// <param name="config">生成配置</param>
+    // 检查路径点数量是否正确
     private void CheckMovePointsCount(EnemySpawnConfig config)
     {
         int movePointsCount = config.movePoints != null ? config.movePoints.Count : 0;

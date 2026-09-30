@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ReplaySystem;
@@ -57,8 +57,7 @@ public class PanDing : MonoBehaviour
         }  
     }
 
-    /// <summary> 回放时由 ReplayManager 强制调用 —— 模拟一次中弹
-    /// 逻辑和 OnTriggerEnter2D 里完全相同，但绕过物理碰撞</summary>
+    // 逻辑和 OnTriggerEnter2D 里完全相同，但绕过物理碰撞</summary>
     public void ForceHit()
     {
         StopGrazeSound();

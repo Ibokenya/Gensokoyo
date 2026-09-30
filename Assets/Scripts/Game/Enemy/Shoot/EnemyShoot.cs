@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using ReplaySystem;
 using UnityEngine;
@@ -79,9 +79,7 @@ public class EnemyShoot : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 发射子弹
-    /// </summary>
+    // 发射子弹
     private void FireBullet()
     {
         if (shootConfigs.Count == 0) {
@@ -105,10 +103,8 @@ public class EnemyShoot : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 发射发散圆子弹
-    /// 需要的参数有：子弹数量、起始角度、角度范围、发射间隔
-    /// </summary>
+    // 发射发散圆子弹
+    // 需要的参数有：子弹数量、起始角度、角度范围、发射间隔
     private void FireDivergeBullets()
     {
         if (shootConfigs.Count == 0) return;
@@ -142,10 +138,8 @@ public class EnemyShoot : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 发射随机子弹
-    /// 需要的参数有：子弹数量、起始角度、角度范围（在范围内随机化）、发射间隔
-    /// </summary>
+    // 发射随机子弹
+    // 需要的参数有：子弹数量、起始角度、角度范围（在范围内随机化）、发射间隔
     private void FireRandomBullets()
     {
         if (shootConfigs.Count == 0) return;
@@ -173,12 +167,8 @@ public class EnemyShoot : MonoBehaviour
         }
     }
     
-
-    
-    /// <summary>
-    /// 发射螺旋子弹
-    /// 需要的参数有：起始角度、角度范围（每次旋转的角度差）、发射间隔
-    /// </summary>
+    // 发射螺旋子弹
+    // 需要的参数有：起始角度、角度范围（每次旋转的角度差）、发射间隔
     private void FireSprialBullets()
     {
         if (shootConfigs.Count == 0) return;
@@ -204,12 +194,7 @@ public class EnemyShoot : MonoBehaviour
         currentSprialAngle += currentConfig.angleRange;
     }
     
-
-    
-    /// <summary>
-    /// 设置子弹参数
-    /// </summary>
-    /// <param name="bullet">子弹对象</param>
+    // 设置子弹参数
     private void SetBulletParameters(GameObject bullet)
     {
         if (shootConfigs.Count == 0) return;
@@ -332,14 +317,9 @@ public class EnemyShoot : MonoBehaviour
             }
         }
         
-
     }
     
-    /// <summary>
-    /// 设置子弹的精灵变体
-    /// </summary>
-    /// <param name="spriteRenderer">精灵渲染器</param>
-    /// <param name="spriteVariants">精灵变体列表</param>
+    // 设置子弹的精灵变体
     private void SetBulletSpriteVariant(SpriteRenderer spriteRenderer, List<Sprite> spriteVariants)
     {
         if (spriteRenderer != null && spriteVariants != null && spriteVariants.Count > 0)
@@ -350,38 +330,27 @@ public class EnemyShoot : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 设置射击配置列表
-    /// </summary>
-    /// <param name="configs">射击配置列表</param>
+    // 设置射击配置列表
     public void SetShootConfig(List<ShootMode> configs)
     {
         shootConfigs = configs;
     }
     
-    /// <summary>
-    /// 设置玩家对象
-    /// </summary>
-    /// <param name="playerObj">玩家对象</param>
+    // 设置玩家对象
     public void SetPlayer(GameObject playerObj)
     {
         player = playerObj;
     }
     
-    /// <summary>
-    /// 设置敌人在波次中的索引
-    /// </summary>
-    /// <param name="index">敌人在波次中的索引</param>
+    // 设置敌人在波次中的索引
     public void SetEnemyIndex(int index)
     {
         enemyIndex = index;
     }
 
-    /// <summary>
-    ///  由 spawner (CreateEnemy) 调用，确定性注入 GameRNG 随机值
-    /// spawner 是 for 循环顺序调用，所以 GameRNG 消费顺序确定性
-    /// EnemyShoot 自身不再消费 GameRNG（避免多个组件同帧顺序不确定）
-    /// </summary>
+    //  由 spawner (CreateEnemy) 调用，确定性注入 GameRNG 随机值
+    // spawner 是 for 循环顺序调用，所以 GameRNG 消费顺序确定性
+    // EnemyShoot 自身不再消费 GameRNG（避免多个组件同帧顺序不确定）
     public void SetRngOffsets(int colorIdx, float angleOff, float timeOff)
     {
         bulletColorIndex = colorIdx;

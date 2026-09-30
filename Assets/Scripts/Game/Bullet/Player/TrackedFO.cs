@@ -1,12 +1,10 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ReplaySystem;
 
-/// <summary>
-/// 追踪飞行物（Tracked Flying Object）
-/// 追踪距离最近的敌人
-/// </summary>
+// 追踪飞行物（Tracked Flying Object）
+// 追踪距离最近的敌人
 public class TrackedFO : MonoBehaviour
 {
     [Header("追踪配置")]
@@ -60,17 +58,13 @@ public class TrackedFO : MonoBehaviour
         MoveCheck();
     }
 
-    /// <summary>
-    /// 检查目标是否存在，如果不存在则重新寻找
-    /// </summary>
+    // 检查目标是否存在，如果不存在则重新寻找
     private void CheckAndFindTarget()
     {
         FindTarget();
     }
 
-    /// <summary>
-    /// 寻找距离最近的敌人作为目标（包括Boss）
-    /// </summary>
+    // 寻找距离最近的敌人作为目标（包括Boss）
     private void FindTarget()
     {
         GameObject closestEnemy = null;
@@ -108,10 +102,7 @@ public class TrackedFO : MonoBehaviour
         target = closestEnemy;
     }
     
-    /// <summary>
-    /// 查找活跃的Boss
-    /// </summary>
-    /// <returns>当前场景中的Boss对象</returns>
+    // 查找活跃的Boss
     private GameObject FindActiveBoss()
     {
         GameObject[] bosses = GameObject.FindGameObjectsWithTag("Boss");
@@ -125,9 +116,7 @@ public class TrackedFO : MonoBehaviour
         return null;
     }
 
-    /// <summary>
-    /// 追踪飞行物的移动
-    /// </summary>
+    // 追踪飞行物的移动
     public void TrackedMove()
     {
         if (rb2D != null)
@@ -155,9 +144,7 @@ public class TrackedFO : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 边界检查
-    /// </summary>
+    // 边界检查
     public void MoveCheck()
     {
         if(transform.position.x<minX || transform.position.x>maxX || transform.position.y<minY || transform.position.y>maxY)
@@ -166,9 +153,7 @@ public class TrackedFO : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 碰撞检测
-    /// </summary>
+    // 碰撞检测
     void OnTriggerEnter2D(Collider2D collision)
     {
         switch (collision.tag)

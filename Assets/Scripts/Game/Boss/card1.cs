@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ReplaySystem;
@@ -115,10 +115,8 @@ public class card1 : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 检查boss是否已经死亡或处于锁血状态
-    /// 如果boss处于锁血状态，说明玩家成功讨伐当前阶段
-    /// </summary>
+    // 检查boss是否已经死亡或处于锁血状态
+    // 如果boss处于锁血状态，说明玩家成功讨伐当前阶段
     public void CheckOver()
     {
         if (bossBase != null)
@@ -141,9 +139,7 @@ public class card1 : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 生成符卡收取奖励
-    /// </summary>
+    // 生成符卡收取奖励
     private void SpawnClearRewards()
     {
         if (boss != null && card1ClearRewards != null && card1ClearRewards.Count > 0)

@@ -1,12 +1,10 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ReplaySystem;
 
-/// <summary>
-/// 暗影弹脚本
-/// 负责暗影弹的移动、碰撞和回收逻辑
-/// </summary>
+// 暗影弹脚本
+// 负责暗影弹的移动、碰撞和回收逻辑
 public class DarkFO : MonoBehaviour
 {
     [Header("伤害属性")]
@@ -67,9 +65,7 @@ public class DarkFO : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 重置所有属性
-    /// </summary>
+    // 重置所有属性
     private void ResetAllProperties()
     {
         // 重置状态
@@ -95,12 +91,7 @@ public class DarkFO : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 初始化暗影弹
-    /// </summary>
-    /// <param name="blackHole">黑洞位置</param>
-    /// <param name="outerBottomLeft">最大矩形左下角</param>
-    /// <param name="outerTopRight">最大矩形右上角</param>
+    // 初始化暗影弹
     public void Initialize(Transform blackHole, Vector2 outerBottomLeft, Vector2 outerTopRight)
     {
         blackHoleTransform = blackHole;
@@ -118,10 +109,7 @@ public class DarkFO : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 强化后重新发射
-    /// </summary>
-    /// <param name="blackHole">黑洞位置</param>
+    // 强化后重新发射
     public void ReLaunch(Transform blackHole)
     {
         blackHoleTransform = blackHole;
@@ -148,9 +136,7 @@ public class DarkFO : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 移动逻辑
-    /// </summary>
+    // 移动逻辑
     private void MoveTowardsTarget()
     {
         if (rb != null)
@@ -159,9 +145,7 @@ public class DarkFO : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 检查是否接近黑洞
-    /// </summary>
+    // 检查是否接近黑洞
     private void CheckAbsorbDistance()
     {
         if (blackHoleTransform == null || isAbsorbed || isEnhanced)
@@ -186,9 +170,7 @@ public class DarkFO : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 更新淡入效果
-    /// </summary>
+    // 更新淡入效果
     private void UpdateFade()
     {
         fadeTimer += Time.deltaTime;
@@ -221,9 +203,7 @@ public class DarkFO : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 检查是否超出最大矩形范围
-    /// </summary>
+    // 检查是否超出最大矩形范围
     private void CheckOutOfBounds()
     {
         Vector2 currentPos = transform.position;
@@ -237,10 +217,7 @@ public class DarkFO : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 碰撞检测
-    /// </summary>
-    /// <param name="collision">碰撞信息</param>
+    // 碰撞检测
     void OnTriggerEnter2D(Collider2D collision)
     {
         switch (collision.tag)
@@ -287,9 +264,7 @@ public class DarkFO : MonoBehaviour
         Recycle();
     }
     
-    /// <summary>
-    /// 回收暗影弹
-    /// </summary>
+    // 回收暗影弹
     public void Recycle()
     {
         // 重置所有属性

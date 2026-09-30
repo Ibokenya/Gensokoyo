@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ReplaySystem;
@@ -135,9 +135,7 @@ public class IceRealm : MonoBehaviour
         Debug.Log("冰囚笼淡入");
     }
     
-    /// <summary>
-    /// 开始淡出冰领域并禁用碰撞器
-    /// </summary>
+    // 开始淡出冰领域并禁用碰撞器
     public void StartFadeOut()
     {
         if (isFadingOut)

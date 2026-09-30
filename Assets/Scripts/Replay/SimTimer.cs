@@ -1,21 +1,19 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace ReplaySystem
 {
-    /// <summary>
-    /// 确定性 tick 定时器。替代 Unity 的 Invoke / CancelInvoke。
-    ///
-    /// 生命周期：ReplayManager.FixedUpdate 每帧 SimClock.Tick() 之后、其他 FixedUpdate 之前调用 SimTimer.Tick()。
-    /// 这样 tick 定时器的触发时机和所有玩法逻辑的 SimClock 推进是同步的。
-    ///
-    /// 使用：
-    ///   SimTimer.Once(callback, 100);        // 100 tick (2 秒) 后触发
-    ///   SimTimer.Once(callback, 0);          // 下一 tick 触发
-    ///   SimTimer.Repeat(callback, 25);       // 每 25 tick 触发一次
-    ///   SimTimer.CancelAll();                // 全清
-    ///   SimTimer.Cancel(handle);             // 清单个
-    /// </summary>
+    // 确定性 tick 定时器。替代 Unity 的 Invoke / CancelInvoke。
+    //
+    // 生命周期：ReplayManager.FixedUpdate 每帧 SimClock.Tick() 之后、其他 FixedUpdate 之前调用 SimTimer.Tick()。
+    // 这样 tick 定时器的触发时机和所有玩法逻辑的 SimClock 推进是同步的。
+    //
+    // 使用：
+    //   SimTimer.Once(callback, 100);        // 100 tick (2 秒) 后触发
+    //   SimTimer.Once(callback, 0);          // 下一 tick 触发
+    //   SimTimer.Repeat(callback, 25);       // 每 25 tick 触发一次
+    //   SimTimer.CancelAll();                // 全清
+    //   SimTimer.Cancel(handle);             // 清单个
     public static class SimTimer
     {
         private static readonly List<TimerEntry> pending = new();// 待执行定时器列表
@@ -30,7 +28,6 @@ namespace ReplaySystem
             public int PeriodTicks;     // Repeat 时 > 0；Once 时 = 0
         }
 
-        /// <summary>注册一次性定时回调；返回句柄</summary>
         public static long Once(Action callback, int delayTicks)
         {
             if (delayTicks < 0) delayTicks = 0;
@@ -45,7 +42,6 @@ namespace ReplaySystem
             return entry.Handle;
         }
 
-        /// <summary>注册重复定时回调；返回句柄</summary>
         public static long Repeat(Action callback, int periodTicks)
         {
             if (periodTicks <= 0) periodTicks = 1;
@@ -60,20 +56,17 @@ namespace ReplaySystem
             return entry.Handle;
         }
 
-        /// <summary>取消指定 handle 的定时器</summary>
         public static void Cancel(long handle)
         {
             for (int i = 0; i < pending.Count; i++)
                 if (pending[i].Handle == handle) { pending.RemoveAt(i); return; }
         }
 
-        /// <summary>取消所有定时器（等价于 CancelInvoke()）</summary>
         public static void CancelAll()
         {
             pending.Clear();
         }
 
-        /// <summary>ReplayManager.FixedUpdate 开头调用一次 —— 推进定时器</summary>
         public static void Tick()
         {
             ulong now = SimClock.SimTick;

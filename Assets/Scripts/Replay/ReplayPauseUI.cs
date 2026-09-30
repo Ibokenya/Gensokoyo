@@ -1,17 +1,15 @@
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 using ReplaySystem;
 
-/// <summary>
-/// 回放暂停 UI（Playback 模式 Esc 触发 / 回放自然结束也触发）。
-///
-/// 状态：
-///   回放进行中 Esc → 打开，Button1 文本="Return To Game"
-///   回放自然结束   → 打开，Button1 文本="ReStart"
-///
-/// 走 meta 层：读 Unity 原始 Input（不经过 ReplayManager.Input），
-/// timeScale=0 时也能正常响应。
-/// </summary>
+// 回放暂停 UI（Playback 模式 Esc 触发 / 回放自然结束也触发）。
+//
+// 状态：
+//   回放进行中 Esc → 打开，Button1 文本="Return To Game"
+//   回放自然结束   → 打开，Button1 文本="ReStart"
+//
+// 走 meta 层：读 Unity 原始 Input（不经过 ReplayManager.Input），
+// timeScale=0 时也能正常响应。
 public class ReplayPauseUI : MonoBehaviour
 {
     [Header("按钮 UI")]
@@ -29,8 +27,6 @@ public class ReplayPauseUI : MonoBehaviour
 
     private int selectedIndex = 0;
     private bool isAtEnd = false;  // 回放是否已自然结束
-
-    // ---- 生命周期 ----
 
     //  Awake 不再管 SetActive —— UIManager 统一 Show/Hide
     // ReplayManager.Update 触发 ShowReplayPause() → UIManager.SetActive(true) → 本脚本 OnEnable 初始化
@@ -72,8 +68,6 @@ public class ReplayPauseUI : MonoBehaviour
     {
         HandleInput();
     }
-
-    // ---- 输入 ----
 
     private void HandleInput()
     {
@@ -124,8 +118,6 @@ public class ReplayPauseUI : MonoBehaviour
         }
     }
 
-    // ---- 动作 ----
-
     private void Resume()
     {
         //  释放硬暂停 —— controller 自动恢复到正确的值
@@ -146,8 +138,6 @@ public class ReplayPauseUI : MonoBehaviour
             Global_SceneManager.Instance.IntoNextScene("GameStartMenu", false);
         ReplayManager.UIManagerInstance?.HideReplayPause();
     }
-
-    // ---- UI 辅助 ----
 
     private void BeChoose(int i)
     {

@@ -1,11 +1,9 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>
-/// 游戏摄像机 RT 适配脚本 —— 把 2D 世界渲染到 RenderTexture，再显示到 Canvas 的 RawImage。
-/// CanvasLetterbox 配合 ScaleWithScreenSize 让 Canvas 填满屏幕，屏幕清屏色作为黑条遮罩。
-/// LateUpdate 兜底防止 targetTexture 被意外清除导致画面泄漏到屏幕。
-/// </summary>
+// 游戏摄像机 RT 适配脚本 —— 把 2D 世界渲染到 RenderTexture，再显示到 Canvas 的 RawImage。
+// CanvasLetterbox 配合 ScaleWithScreenSize 让 Canvas 填满屏幕，屏幕清屏色作为黑条遮罩。
+// LateUpdate 兜底防止 targetTexture 被意外清除导致画面泄漏到屏幕。
 [RequireComponent(typeof(Camera))]
 public class CameraRTAdapter : MonoBehaviour
 {

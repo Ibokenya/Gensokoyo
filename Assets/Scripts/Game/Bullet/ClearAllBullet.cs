@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ReplaySystem;
@@ -19,9 +19,7 @@ public class ClearAllBullet : MonoBehaviour
         CheckClearTimes();
     }
 
-    /// <summary>
-    /// 检查是否到达清屏时间点
-    /// </summary>
+    // 检查是否到达清屏时间点
     private void CheckClearTimes()
     {
         // 遍历时间点列表
@@ -39,9 +37,7 @@ public class ClearAllBullet : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 清空屏幕中的所有子弹
-    /// </summary>
+    // 清空屏幕中的所有子弹
     public void ClearScreenBullet(bool isPlaySound = true)
     {
         // 找到所有敌人子弹

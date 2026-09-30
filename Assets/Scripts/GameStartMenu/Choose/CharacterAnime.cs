@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -27,7 +27,6 @@ public class CharacterAnime : MonoBehaviour
     // 左上角 worldPos(200, 980)  = 锚框中心 + anchoredPos(-760, 440)
     private static readonly Vector2 LogoPosRight = new Vector2(760, 440);
     private static readonly Vector2 LogoPosLeft  = new Vector2(-760, 440);
-
 
     void Awake()
     {

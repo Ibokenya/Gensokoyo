@@ -1,12 +1,10 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ReplaySystem;
 
-/// <summary>
-/// 魔理沙的瞄准攻击
-/// 当完全进入魔法态时，搜寻场景中尚未被标记的敌人并标记它们
-/// </summary>
+// 魔理沙的瞄准攻击
+// 当完全进入魔法态时，搜寻场景中尚未被标记的敌人并标记它们
 public class MagicAttack : MonoBehaviour
 {
     [Header("标记预制体")]
@@ -186,17 +184,13 @@ public class MagicAttack : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 进入魔法态
-    /// </summary>
+    // 进入魔法态
     private void EnterMagicState()
     {
         isMagicActive = true;
     }
     
-    /// <summary>
-    /// 从对象池获取标记
-    /// </summary>
+    // 从对象池获取标记
     private GameObject GetMarkerFromPool()
     {
         if (Global_ObjectPool.Instance != null && markerPrefab != null)
@@ -210,9 +204,7 @@ public class MagicAttack : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 回收标记到对象池
-    /// </summary>
+    // 回收标记到对象池
     public void RecycleMarker(GameObject marker)
     {
         if (marker != null && Global_ObjectPool.Instance != null)
@@ -234,9 +226,7 @@ public class MagicAttack : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 标记所有未被标记的敌人
-    /// </summary>
+    // 标记所有未被标记的敌人
     private void MarkAllEnemies()
     {
         
@@ -275,9 +265,7 @@ public class MagicAttack : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 为敌人创建标记
-    /// </summary>
+    // 为敌人创建标记
     private void CreateMarkerForEnemy(Enemy enemy)
     {
         // 60%的概率不为敌人添加瞄准点
@@ -316,12 +304,7 @@ public class MagicAttack : MonoBehaviour
         StartCoroutine(DelayedFadeIn(marker, randomDelay, pearlPrefab));
     }
     
-    /// <summary>
-    /// 延迟淡入协程
-    /// </summary>
-    /// <param name="marker">标记对象</param>
-    /// <param name="delay">延迟时间</param>
-    /// <param name="pearlPrefab">神秘珠预制件</param>
+    // 延迟淡入协程
     private IEnumerator DelayedFadeIn(GameObject marker, float delay, GameObject swordPrefab)
     {
         yield return new WaitForSecondsSim(delay);
@@ -341,9 +324,7 @@ public class MagicAttack : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 标记淡入协程
-    /// </summary>
+    // 标记淡入协程
     private IEnumerator FadeInMarker(GameObject marker)
     {
         if (!marker.TryGetComponent<SpriteRenderer>(out var spriteRenderer))
@@ -367,9 +348,7 @@ public class MagicAttack : MonoBehaviour
         spriteRenderer.color = new Color(1, 1, 1, 1f);
     }
     
-    /// <summary>
-    /// 清理所有标记
-    /// </summary>
+    // 清理所有标记
     private void ClearAllMarkers()
     {
         foreach (GameObject marker in activeMarkers)
@@ -383,9 +362,7 @@ public class MagicAttack : MonoBehaviour
         activeMarkers.Clear();
     }
     
-    /// <summary>
-    /// 切换到恶魔之眼攻击方式
-    /// </summary>
+    // 切换到恶魔之眼攻击方式
     private void SwitchToEvilEyeAttack()
     {
         // 清理所有活跃的标记

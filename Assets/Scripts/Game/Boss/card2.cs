@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ReplaySystem;
@@ -120,9 +120,7 @@ public class card2 : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 带延迟启动彗星攻击
-    /// </summary>
+    // 带延迟启动彗星攻击
     private IEnumerator StartCometAttackWithDelay()
     {
         // 等待启动延迟时间
@@ -140,9 +138,7 @@ public class card2 : MonoBehaviour
         yield return null;
     }
 
-    /// <summary>
-    /// 雪花攻击循环
-    /// </summary>
+    // 雪花攻击循环
     private IEnumerator SnowFlakeAttackLoop()
     {
         // 等待移动到目标位置
@@ -161,10 +157,8 @@ public class card2 : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 检查boss是否已经死亡或处于锁血状态
-    /// 如果boss处于锁血状态，说明玩家成功讨伐当前阶段
-    /// </summary>
+    // 检查boss是否已经死亡或处于锁血状态
+    // 如果boss处于锁血状态，说明玩家成功讨伐当前阶段
     public void CheckOver()
     {
         if (bossBase != null)
@@ -187,9 +181,7 @@ public class card2 : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 生成符卡收取奖励
-    /// </summary>
+    // 生成符卡收取奖励
     private void SpawnClearRewards()
     {
         if (bossShootSystem != null && bossShootSystem.boss != null &&

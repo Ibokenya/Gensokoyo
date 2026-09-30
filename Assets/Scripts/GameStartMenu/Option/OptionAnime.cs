@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using ReplaySystem;
@@ -358,7 +358,6 @@ public class OptionAnime : MonoBehaviour
         SetNumber();
     }
 
-    /// <summary>打开按键设置面板</summary>
     private void OpenKeySetPanel()
     {
         IsOption = true;
@@ -366,7 +365,6 @@ public class OptionAnime : MonoBehaviour
         AllButtons.SetActive(false);
     }
 
-    /// <summary>关闭按键设置面板（由 KeySet 内部在 Navigation 态按 X 时调用）</summary>
     public void CloseKeySetPanel()
     {
         IsOption = false;

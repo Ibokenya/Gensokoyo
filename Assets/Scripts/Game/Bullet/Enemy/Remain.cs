@@ -1,13 +1,11 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections.Generic;
 using ReplaySystem;
 
-/// <summary>
-/// 滞留子弹Remain
-/// 留在场上不会移动，等到了生命周期后消失
-/// 会旋转
-/// 小星星，大星星
-/// </summary>
+// 滞留子弹Remain
+// 留在场上不会移动，等到了生命周期后消失
+// 会旋转
+// 小星星，大星星
 public class Remain : MonoBehaviour
 {
     public float LifeTime = 5f;// 生存时间
@@ -147,9 +145,7 @@ public class Remain : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 回收子弹
-    /// </summary>
+    // 回收子弹
     private void RecycleBullet()
     {
         // 重置状态
@@ -165,9 +161,7 @@ public class Remain : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 重置状态
-    /// </summary>
+    // 重置状态
     private void ResetState()
     {
         lifeTimer = 0f;

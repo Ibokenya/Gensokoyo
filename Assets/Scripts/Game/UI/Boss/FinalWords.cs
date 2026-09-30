@@ -4,10 +4,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 
-/// <summary>
-/// 最终符卡宣言
-/// 这是UI部分的
-/// </summary>
+// 最终符卡宣言
+// 这是UI部分的
 public class FinalWords : MonoBehaviour
 {
     public TextMeshProUGUI TextRight;
@@ -74,9 +72,7 @@ public class FinalWords : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 解析CSV内容
-    /// </summary>
+    // 解析CSV内容
     private List<string> ParseCSVContent(string content)
     {
         List<string> lines = new List<string>();
@@ -106,9 +102,7 @@ public class FinalWords : MonoBehaviour
         return lines;
     }
 
-    /// <summary>
-    /// 解析CSV行
-    /// </summary>
+    // 解析CSV行
     private FinalWordsData ParseCSVLine(string line)
     {
         string[] parts = line.Split(',');
@@ -129,9 +123,7 @@ public class FinalWords : MonoBehaviour
         return data;
     }
 
-    /// <summary>
-    /// 显示最终宣言序列
-    /// </summary>
+    // 显示最终宣言序列
     private IEnumerator ShowFinalWordsSequence()
     {
         yield return new WaitForSeconds(0.5f);    
@@ -154,9 +146,7 @@ public class FinalWords : MonoBehaviour
         EndFinalWords();
     }
 
-    /// <summary>
-    /// 结束最终宣言
-    /// </summary>
+    // 结束最终宣言
     private void EndFinalWords()
     {
         // 清空文本

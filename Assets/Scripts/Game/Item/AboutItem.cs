@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using UnityEngine;
 using ReplaySystem;
@@ -93,9 +93,7 @@ public class AboutItem : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 检测SpellCard状态，将道具标记为自动飞向玩家状态
-    /// </summary>
+    // 检测SpellCard状态，将道具标记为自动飞向玩家状态
     private void CheckSpellCardState()
     {
         // 如果已经在自动飞向状态或正在收集，无需处理
@@ -133,11 +131,7 @@ public class AboutItem : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 设置自动飞向玩家模式
-    /// </summary>
-    /// <param name="autoFly">是否自动飞向玩家</param>
-    /// <param name="flySpeed">飞行速度</param>
+    // 设置自动飞向玩家模式
     public void SetAutoFlyToPlayer(bool autoFly, float flySpeed = 15f)
     {
         isAutoFlying = autoFly;
@@ -165,9 +159,7 @@ public class AboutItem : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 持续飞向玩家（每隔autoFlyCheckInterval更新目标位置，每帧平滑移动）
-    /// </summary>
+    // 持续飞向玩家（每隔autoFlyCheckInterval更新目标位置，每帧平滑移动）
     private void FlyToPlayerContinuous()
     {
         if (player == null || isCollecting)
@@ -199,9 +191,7 @@ public class AboutItem : MonoBehaviour
         transform.position += direction * autoFlySpeed * Time.deltaTime;
     }
 
-    /// <summary>
-    /// 立即收集（用于自动飞向模式到达玩家时）
-    /// </summary>
+    // 立即收集（用于自动飞向模式到达玩家时）
     private IEnumerator CollectItemImmediate()
     {
         // 触发效果
@@ -225,9 +215,7 @@ public class AboutItem : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 碰撞器事件代表进入玩家收集范围
-    /// </summary>
+    // 碰撞器事件代表进入玩家收集范围
     void OnTriggerEnter2D(Collider2D collision)
     {
         if (!isCollecting && !isAutoFlying)
@@ -236,20 +224,14 @@ public class AboutItem : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 道具自动被玩家收取
-    /// </summary>
-    /// <param name="playerTransform">玩家transform</param>
-    /// <param name="isRecycleLineTriggered">是否由回收线触发</param>
+    // 道具自动被玩家收取
     public void FlyToPlayer(Transform playerTransform, bool isRecycleLineTriggered = false)
     {
         isCollecting = true;
         collectCoroutine = StartCoroutine(CollectItem(playerTransform, isRecycleLineTriggered));
     }
 
-    /// <summary>
-    /// 收集道具的协程
-    /// </summary>
+    // 收集道具的协程
     private IEnumerator CollectItem(Transform playerTransform, bool isRecycleLineTriggered)
     {
         // 禁用重力，使道具不受重力影响
@@ -370,9 +352,7 @@ public class AboutItem : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 检查回收线逻辑
-    /// </summary>
+    // 检查回收线逻辑
     private void CheckRecycleLine()
     {
         // 回收线高度（与PlayerCollision中的BorderGetLine保持一致）

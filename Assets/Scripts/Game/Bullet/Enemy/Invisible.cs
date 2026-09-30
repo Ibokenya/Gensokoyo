@@ -1,12 +1,10 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections.Generic;
 using ReplaySystem;
 
-/// <summary>
-/// 不可见子弹Invisible
-/// 当靠近自机时才会显现
-/// 中玉，大玉
-/// </summary>
+// 不可见子弹Invisible
+// 当靠近自机时才会显现
+// 中玉，大玉
 public class Invisible : MonoBehaviour
 {
     public bool isVisible = true;
@@ -126,9 +124,7 @@ public class Invisible : MonoBehaviour
         CheckBounds();
     }
     
-    /// <summary>
-    /// 检查边界，超出边界则回收
-    /// </summary>
+    // 检查边界，超出边界则回收
     private void CheckBounds()
     {
         Vector2 position = transform.position;

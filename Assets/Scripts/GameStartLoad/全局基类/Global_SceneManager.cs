@@ -1,18 +1,15 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
-
-/// <summary>
-/// 全局场景管理单例类
-/// 管理场景之间的切换，回退，加载与删除
-/// 以及切换场景的动画（如果有的话）
-/// </summary>
-/// 该类目前提供的对外函数有：
-/// IntoNextScene（进入下一个场景，函数内部会自动处理删除旧场景，重置数据等操作）
+// 全局场景管理单例类
+// 管理场景之间的切换，回退，加载与删除
+// 以及切换场景的动画（如果有的话）
+// 该类目前提供的对外函数有：
+// IntoNextScene（进入下一个场景，函数内部会自动处理删除旧场景，重置数据等操作）
 public class Global_SceneManager : Singleton<Global_SceneManager>
 {
     private bool _isAllSceneLoaded = false;// 全部场景预加载完成的标志位
@@ -31,7 +28,6 @@ public class Global_SceneManager : Singleton<Global_SceneManager>
     {
         "GameStartMenu","Game1","Game2","GameOver"
     };
-
 
     [Header("需要重置数据，且不卸载的场景")]// 标记需要重置业务数据的场景（目前只有：菜单）
     [SerializeField] private List<string> _needResetScenes = new () { "GameStartMenu" };
@@ -59,10 +55,7 @@ public class Global_SceneManager : Singleton<Global_SceneManager>
         }
     }
 
-    /// <summary>
-    /// 异步预加载所有的场景
-    /// </summary>
-    /// <returns></returns>
+    // 异步预加载所有的场景
     private IEnumerator PreLoadAllScenes()
     {
         _LoadedSceneNames.Clear();// 清空已加载场景列表名单（毕竟还没开始加载对吧？）
@@ -114,12 +107,7 @@ public class Global_SceneManager : Singleton<Global_SceneManager>
     }
     }
 
-    /// 单独加载下一个场景
-    /// </summary>
-    /// <param name="nextSceneName">需要加载的下一场景的名称</param>
-    /// <param name="isActiveNow">是否在加载后立刻激活，true为立刻激活选项</param>
-    /// <param name="minLoadTime">最小加载时间（秒），确保加载过程至少持续指定时间</param>
-    /// <returns></returns>
+    // 单独加载下一个场景
     public IEnumerator LoadNextScene(string nextSceneName, bool isActiveNow, float minLoadTime = 0.1f)
     {
         float startTime = Time.time;
@@ -188,11 +176,7 @@ public class Global_SceneManager : Singleton<Global_SceneManager>
         }
     }
 
-    /// <summary>
-    /// 删除/隐藏当前场景
-    /// </summary>
-    /// <param name="sceneName">要处理的场景的名称（通常是当前场景名称）</param>
-    /// <param name="isHide">是否隐藏，当该值为true时只隐藏刚当前场景（可能回退），为false时删除</param>
+    // 删除/隐藏当前场景
     public void DeleteCurrentScene(string sceneName, bool isHide)
     {
         Scene scene = SceneManager.GetSceneByName(sceneName);
@@ -213,12 +197,7 @@ public class Global_SceneManager : Singleton<Global_SceneManager>
         }
     }
 
-    /// <summary>
-    /// 跳转下一个场景（该函数启动协程，协程内部则再调用删除/隐藏当前场景的逻辑）
-    /// </summary>
-    /// <param name="NextSceneName">跳转的目标场景名称</param>
-    /// <param name="isHide">处理当前场景时是否隐藏当前场景（或者删除）</param>
-    /// <param name="minLoadTime">最小加载时间（秒），确保加载过程至少持续指定时间</param>
+    // 跳转下一个场景（该函数启动协程，协程内部则再调用删除/隐藏当前场景的逻辑）
     public void IntoNextScene(string NextSceneName, bool isHide, float minLoadTime = 0f)
     {
         StartCoroutine(IntoNextSceneCoroutine(NextSceneName, isHide, minLoadTime));
@@ -318,9 +297,7 @@ public class Global_SceneManager : Singleton<Global_SceneManager>
         }
     }
 
-    /// <summary>
-    /// 激活场景 + 重置场景数据
-    /// </summary>
+    // 激活场景 + 重置场景数据
     private void ActivateSceneWithReset(string sceneName)
     {
         Scene scene = SceneManager.GetSceneByName(sceneName);
@@ -353,10 +330,7 @@ public class Global_SceneManager : Singleton<Global_SceneManager>
         }
     }
 
-    /// <summary>
-    /// 从JSON文件读取场景数据并进行重置
-    /// </summary>
-    /// <param name="sceneName">需要重置的场景名称</param>
+    // 从JSON文件读取场景数据并进行重置
     private void ResetSceneFromJson(string sceneName)
     {
         // 1. 拼接Resources路径（使用Resources.Load方式，兼容编辑器和打包后环境）
@@ -417,9 +391,7 @@ public class Global_SceneManager : Singleton<Global_SceneManager>
         }
     }
 
-    /// <summary>
-    /// 辅助方法：根据层级路径在指定场景中查找物体
-    /// </summary>
+    // 辅助方法：根据层级路径在指定场景中查找物体
     private GameObject FindObjectByPath(Scene scene, string objectPath)
     {
         string[] pathParts = objectPath.Split('/');
@@ -448,9 +420,7 @@ public class Global_SceneManager : Singleton<Global_SceneManager>
         return currentTrans.gameObject;
     }
 
-    /// <summary>
-    /// 禁用场景所有根物体（预加载/隐藏时用）
-    /// </summary>
+    // 禁用场景所有根物体（预加载/隐藏时用）
     private void DisableAllRootObjects(string sceneName)
     {
         Scene scene = SceneManager.GetSceneByName(sceneName);
@@ -463,13 +433,11 @@ public class Global_SceneManager : Singleton<Global_SceneManager>
         }
     }
 
-    /// <summary>
-    /// 场景切换之间的简易小动画（我还得做技美？？！）
-    /// 按照不同场景进行不同的动画设计
-    /// 1.加载转菜单———
-    /// 2.关卡跳转———截屏，缩放，体现分数，熄屏，少女祈祷中
-    /// 3.关卡返回菜单———
-    /// </summary>
+    // 场景切换之间的简易小动画（我还得做技美？？！）
+    // 按照不同场景进行不同的动画设计
+    // 1.加载转菜单———
+    // 2.关卡跳转———截屏，缩放，体现分数，熄屏，少女祈祷中
+    // 3.关卡返回菜单———
     public void SimpleWaitingAnime(string currentSceneName, string nextSceneName)
     {
         switch (currentSceneName)
@@ -496,11 +464,9 @@ public class Global_SceneManager : Singleton<Global_SceneManager>
         }
     }
 
-    /// <summary>
-    /// 重新开始游戏
-    /// 重新开始游戏必定是重加载Game1场景
-    /// 重新开始时判断当前场景，若不为Game1则直接LoadScene("Game1")，若当前场景就是Game1则LoadScene(SceneManager.GetActiveScene().buildIndex)
-    /// </summary>
+    // 重新开始游戏
+    // 重新开始游戏必定是重加载Game1场景
+    // 重新开始时判断当前场景，若不为Game1则直接LoadScene("Game1")，若当前场景就是Game1则LoadScene(SceneManager.GetActiveScene().buildIndex)
     public void RestartGame()
     {
         // 回收所有敌人

@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ReplaySystem;
@@ -150,10 +150,8 @@ public class none2 : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 检查boss是否已经死亡或处于锁血状态
-    /// 如果boss处于锁血状态，说明玩家成功讨伐当前阶段
-    /// </summary>
+    // 检查boss是否已经死亡或处于锁血状态
+    // 如果boss处于锁血状态，说明玩家成功讨伐当前阶段
     public void CheckOver()
     {
         if (bossBase != null)

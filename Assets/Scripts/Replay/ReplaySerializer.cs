@@ -1,30 +1,28 @@
-using System.IO;
+﻿using System.IO;
 using UnityEngine;
 using System;
 
 namespace ReplaySystem
 {
-    /// <summary>
-    /// 回放文件头（二进制紧凑）。
-    ///
-    /// 布局（112 字节，HeaderSize 固定）：
-    ///   [0..3]   magic       : 0x594C5052 "RPLY"
-    ///   [4..7]   version     : int32（2 = 当前版本）
-    ///   [8..15]  seed        : uint64
-    ///   [16..19] character   : Character enum
-    ///   [20..23] gameMode    : GameMode enum
-    ///   [24..27] tickRate    : 固定 50
-    ///   [28..31] tickCount   : int32 tick 总数
-    ///   [32]     metaReserved: 0
-    ///   [33..36] score       : int32 最终得分（从预留区启用）
-    ///   [37..40] stage       : int32 最终关卡（从预留区启用）
-    ///   [41..48] saveTimeMs  : int64 Unix 毫秒时间戳（保存时刻，从预留区启用）
-    ///   [49..111] reserved   : 63 字节继续预留
-    ///   [112..]  tick body   : tickCount 字节 HeldMask
-    ///
-    /// Load 对旧版本文件（version=1，无 score/stage/saveTime）友好：
-    /// score/stage/saveTime 默认 0，调用方用 score==0 判断是否有得分信息。
-    /// </summary>
+    // 回放文件头（二进制紧凑）。
+    //
+    // 布局（112 字节，HeaderSize 固定）：
+    //   [0..3]   magic       : 0x594C5052 "RPLY"
+    //   [4..7]   version     : int32（2 = 当前版本）
+    //   [8..15]  seed        : uint64
+    //   [16..19] character   : Character enum
+    //   [20..23] gameMode    : GameMode enum
+    //   [24..27] tickRate    : 固定 50
+    //   [28..31] tickCount   : int32 tick 总数
+    //   [32]     metaReserved: 0
+    //   [33..36] score       : int32 最终得分（从预留区启用）
+    //   [37..40] stage       : int32 最终关卡（从预留区启用）
+    //   [41..48] saveTimeMs  : int64 Unix 毫秒时间戳（保存时刻，从预留区启用）
+    //   [49..111] reserved   : 63 字节继续预留
+    //   [112..]  tick body   : tickCount 字节 HeldMask
+    //
+    // Load 对旧版本文件（version=1，无 score/stage/saveTime）友好：
+    // score/stage/saveTime 默认 0，调用方用 score==0 判断是否有得分信息。
     public struct ReplayHeader
     {
         public const int  Magic           = 0x594C5052; // "RPLY"（小端）
@@ -53,9 +51,8 @@ namespace ReplaySystem
         // v3 新增：校验帧数量 = ceil(tickCount / ValidateInterval)
         public int ValidateFrameCount => tickCount > 0 ? (tickCount + ValidateInterval - 1) / ValidateInterval : 0;
 
-        /// <summary>saveTimeMs → DateTime（本地时区）。
-        /// 用 .NET 内置 DateTimeOffset.FromUnixTimeMilliseconds，正确处理 epoch 偏移。
-        /// 之前手动 ×10000 但漏加 epoch 偏移，导致年份变成 0001 后加 560 年 → 显示 0561。</summary>
+        // 用 .NET 内置 DateTimeOffset.FromUnixTimeMilliseconds，正确处理 epoch 偏移。
+        // 之前手动 ×10000 但漏加 epoch 偏移，导致年份变成 0001 后加 560 年 → 显示 0561。</summary>
         public System.DateTime SaveDateTime
         {
             get
@@ -66,10 +63,9 @@ namespace ReplaySystem
         }
     }
 
-    /// <summary>回放文件的内存表示：头 + tick 数组 + 校验帧位置表
-    /// v3 新增：校验帧位置表（每 ValidateInterval tick 的玩家位置 + 游戏状态）
-    /// v3 更改：回放文件每 tick 1 字节 bit7 从 Esc 换成 HitFlag
-    /// v3.1：校验帧扩展为 [x, y, state] = 10 bytes（4+4+2）</summary>
+    // v3 新增：校验帧位置表（每 ValidateInterval tick 的玩家位置 + 游戏状态）
+    // v3 更改：回放文件每 tick 1 字节 bit7 从 Esc 换成 HitFlag
+    // v3.1：校验帧扩展为 [x, y, state] = 10 bytes（4+4+2）</summary>
     public struct ReplayFile
     {
         public ReplayHeader Header;
@@ -84,7 +80,6 @@ namespace ReplaySystem
         ReplayFile Load(string path);
     }
 
-    /// <summary>二进制紧凑序列化（正式）</summary>
     public class BinaryReplaySerializer : IReplaySerializer
     {
         public void Save(ReplayFile file, string path)
@@ -198,7 +193,6 @@ namespace ReplaySystem
         }
     }
 
-    /// <summary>JSON 调试序列化（可读性好，体积大）。只用于开发期排查失步。</summary>
     public class JsonReplaySerializer : IReplaySerializer
     {
         [System.Serializable]

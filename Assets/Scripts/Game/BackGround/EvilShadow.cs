@@ -1,12 +1,10 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ReplaySystem;
 
-/// <summary>
-/// 恶魔阴影脚本
-/// 负责处理屏幕变黑特效的旋转和透明度变化
-/// </summary>
+// 恶魔阴影脚本
+// 负责处理屏幕变黑特效的旋转和透明度变化
 public class EvilShadow : MonoBehaviour
 {
     public float maxRotationSpeed = 180f; // 最大旋转速度（度/秒）
@@ -53,9 +51,7 @@ public class EvilShadow : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 开始淡入
-    /// </summary>
+    // 开始淡入
     public void StartFadeIn()
     {
         if (gameObject.activeInHierarchy)
@@ -65,9 +61,7 @@ public class EvilShadow : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 淡入协程
-    /// </summary>
+    // 淡入协程
     private IEnumerator FadeIn()
     {
         if (spriteRenderer == null)
@@ -99,9 +93,7 @@ public class EvilShadow : MonoBehaviour
         spriteRenderer.color = originalColor;
     }
     
-    /// <summary>
-    /// 开始淡出
-    /// </summary>
+    // 开始淡出
     public void StartFadeOut()
     {
         if (gameObject.activeInHierarchy)
@@ -118,9 +110,7 @@ public class EvilShadow : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 淡出协程
-    /// </summary>
+    // 淡出协程
     private IEnumerator FadeOut()
     {
         if (spriteRenderer == null)

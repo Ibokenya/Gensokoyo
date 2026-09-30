@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using ReplaySystem;
 using UnityEngine;
@@ -148,17 +148,13 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 设置玩家对象
-    /// </summary>
+    // 设置玩家对象
     public virtual void SetPlayer(GameObject playerObj)
     {
         player = playerObj;
     }
 
-    /// <summary>
-    /// 设置移动点列表
-    /// </summary>
+    // 设置移动点列表
     public virtual void SetMovePoints(List<GameObject> movePoints)
     {
         MovePoints = movePoints;
@@ -169,17 +165,13 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 设置掉落物配置
-    /// </summary>
+    // 设置掉落物配置
     public virtual void SetItemDrops(List<ItemDropConfig> drops)
     {
         itemDrops = drops;
     }
 
-    /// <summary>
-    /// 伤害敌人
-    /// </summary>
+    // 伤害敌人
     public virtual void Damage(int damage)
     {
         Hp -= damage;
@@ -189,9 +181,7 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 处理敌人死亡
-    /// </summary>
+    // 处理敌人死亡
     public virtual void Die()
     {
         // 防止重复调用
@@ -223,10 +213,7 @@ public class Enemy : MonoBehaviour
         } 
     }
     
-    /// <summary>
-    /// 检查是否满足处决条件
-    /// </summary>
-    /// <returns>是否满足处决条件</returns>
+    // 检查是否满足处决条件
     private bool CheckExecuteCondition()
     {
         // 检查敌人初始血量是否>=700
@@ -256,9 +243,7 @@ public class Enemy : MonoBehaviour
         return false;
     }
     
-    /// <summary>
-    /// 停止敌人的一切行为
-    /// </summary>
+    // 停止敌人的一切行为
     private void StopEnemyActions()
     {
         // 停止移动
@@ -293,9 +278,7 @@ public class Enemy : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 延迟回收敌人
-    /// </summary>
+    // 延迟回收敌人
     private IEnumerator DelayedDelete()
     {
         // 等待1秒，让处决动画完成
@@ -335,9 +318,7 @@ public class Enemy : MonoBehaviour
         Global_ObjectPool.Instance.Recycle(gameObject);
     }
 
-    /// <summary>
-    /// 生成掉落物
-    /// </summary>
+    // 生成掉落物
     protected virtual void SpawnItemDrops()
     {
         if (itemDrops == null || itemDrops.Count == 0)
@@ -348,9 +329,7 @@ public class Enemy : MonoBehaviour
         CreateItem.Instance.SpawnItems(transform.position, itemDrops);
     }
 
-    /// <summary>
-    /// 更新移动方向
-    /// </summary>
+    // 更新移动方向
     protected virtual void UpdateMoveDirection()
     {
         if (MovePoints == null || MovePoints.Count == 0 || currentPointIndex >= MovePoints.Count)
@@ -366,15 +345,7 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 计算3次贝塞尔曲线上的点
-    /// </summary>
-    /// <param name="t">曲线参数，范围[0,1]</param>
-    /// <param name="p0">控制点0</param>
-    /// <param name="p1">控制点1</param>
-    /// <param name="p2">控制点2</param>
-    /// <param name="p3">控制点3</param>
-    /// <returns>曲线上的点</returns>
+    // 计算3次贝塞尔曲线上的点
     protected Vector2 CalculateCubicBezierPoint(float t, Vector2 p0, Vector2 p1, Vector2 p2, Vector2 p3)
     {
         float u = 1f - t;
@@ -391,9 +362,7 @@ public class Enemy : MonoBehaviour
         return point;
     }
 
-    /// <summary>
-    /// 初始化贝塞尔曲线控制点
-    /// </summary>
+    // 初始化贝塞尔曲线控制点
     protected virtual void InitializeBezierCurve()
     {
         if (MovePoints == null || MovePoints.Count < 2)
@@ -433,9 +402,7 @@ public class Enemy : MonoBehaviour
         bezierT = 0f;
     }
 
-    /// <summary>
-    /// 移动到下一个点（使用3次贝塞尔曲线）
-    /// </summary>
+    // 移动到下一个点（使用3次贝塞尔曲线）
     protected virtual void MoveToNextPoint()
     {
         if (MovePoints == null || MovePoints.Count == 0 || currentPointIndex >= MovePoints.Count)
@@ -463,9 +430,7 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 使用贝塞尔曲线移动
-    /// </summary>
+    // 使用贝塞尔曲线移动
     protected virtual void MoveWithBezierCurve()
     {
         if (rb2D == null)
@@ -526,9 +491,7 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 直线移动到目标点（用于两个点的简单路径）
-    /// </summary>
+    // 直线移动到目标点（用于两个点的简单路径）
     protected virtual void MoveToNextPointLinear(GameObject targetPoint)
     {
         if (rb2D == null)
@@ -571,18 +534,14 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 初始化路径移动模式
-    /// </summary>
+    // 初始化路径移动模式
     protected virtual void InitializePath()
     {
         // 初始化贝塞尔曲线
         InitializeBezierCurve();
     }
 
-    /// <summary>
-    /// 初始化追踪模式
-    /// </summary>
+    // 初始化追踪模式
     protected virtual void InitializeTracking()
     {
         if (player != null)
@@ -592,9 +551,7 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 追踪式移动
-    /// </summary>
+    // 追踪式移动
     protected virtual void TrackMove()
     {
         if (rb2D == null)
@@ -608,9 +565,7 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 初始化闪烁模式
-    /// </summary>
+    // 初始化闪烁模式
     protected virtual void InitializeFlicker()
     {
         if (spriteRenderer != null)
@@ -621,9 +576,7 @@ public class Enemy : MonoBehaviour
         fadeTimer = 0f;
     }
 
-    /// <summary>
-    /// 闪烁模式更新
-    /// </summary>
+    // 闪烁模式更新
     protected virtual void FlickerUpdate()
     {
         if (fadeTimer < fadeTime)
@@ -646,9 +599,7 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 初始化重力模式
-    /// </summary>
+    // 初始化重力模式
     public virtual void InitializeGravity()
     {
         if (rb2D != null)
@@ -658,9 +609,7 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 切换到二段移动模式
-    /// </summary>
+    // 切换到二段移动模式
     protected virtual void SwitchToSecondaryMoveMode()
     {
         switch (secondaryMoveMode)
@@ -685,9 +634,7 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 初始化闪烁淡出模式
-    /// </summary>
+    // 初始化闪烁淡出模式
     protected virtual void InitializeFlickerOut()
     {
         flickerTimer = 0f;
@@ -701,9 +648,7 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 闪烁淡出模式更新
-    /// </summary>
+    // 闪烁淡出模式更新
     protected virtual void FlickerOutUpdate()
     {
         flickerTimer += SimClock.FixedTickDt;
@@ -719,9 +664,7 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 检查边界
-    /// </summary>
+    // 检查边界
     protected virtual void CheckBounds()
     {
         if (transform.position.x < minX || transform.position.x > maxX ||
@@ -731,9 +674,7 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 重置颜色
-    /// </summary>
+    // 重置颜色
     public void ResetColor()
     {
         if (spriteRenderer != null)
@@ -744,11 +685,7 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 更新红色度（基于剩余血量）
-    /// </summary>
-    /// <param name="currentHp">当前血量</param>
-    /// <param name="maxHpValue">最大血量</param>
+    // 更新红色度（基于剩余血量）
     public void UpdateRedIntensity()
     {
         if (spriteRenderer == null)

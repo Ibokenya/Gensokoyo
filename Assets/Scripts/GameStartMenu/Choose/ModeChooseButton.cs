@@ -1,14 +1,11 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using ReplaySystem;
 
-
-/// <summary>
-/// 难度选择界面按钮
-/// </summary>
+// 难度选择界面按钮
 public class ModeChooseButton : MonoBehaviour
 {
     [Header("管理四个难度按钮")]
@@ -86,10 +83,7 @@ public class ModeChooseButton : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 按照当前选中按钮的索引改变描述文本的内容
-    /// </summary>
-    /// <param name="index"></param>
+    // 按照当前选中按钮的索引改变描述文本的内容
     private void ChangeText(int index)
     {
         text.color = buttons[currentButtonIndex].GetComponentInChildren<TMP_Text>().color;// 先变色

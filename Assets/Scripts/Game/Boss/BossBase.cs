@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ReplaySystem;
@@ -92,18 +92,13 @@ public class BossBase : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 灵力改变事件处理器
-    /// </summary>
-    /// <param name="power">当前灵力值</param>
+    // 灵力改变事件处理器
     private void OnPowerChangedHandler(int power)
     {
         UpdateDefense();
     }
     
-    /// <summary>
-    /// 根据当前角色和灵力值更新受伤系数
-    /// </summary>
+    // 根据当前角色和灵力值更新受伤系数
     private void UpdateDefense()
     {
         if (Global_GameManager.Instance == null)
@@ -165,10 +160,7 @@ public class BossBase : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 处理Boss受伤
-    /// </summary>
-    /// <param name="damage">伤害值</param>
+    // 处理Boss受伤
     public void TakeDamage(int damage)
     {
         // 如果无敌，直接返回
@@ -201,12 +193,8 @@ public class BossBase : MonoBehaviour
         CheckLockHPThreshold();
     }
     
-    /// <summary>
-    /// 检查时间进度并应用伤害补正
-    /// 由BossBeheve调用，传入当前阶段已进行时间和总时间
-    /// </summary>
-    /// <param name="currentTime">当前阶段已进行时间</param>
-    /// <param name="totalTime">当前阶段总时间</param>
+    // 检查时间进度并应用伤害补正
+    // 由BossBeheve调用，传入当前阶段已进行时间和总时间
     public void CheckTimeCorrection(float currentTime, float totalTime)
     {
         if (totalTime <= 0) return;
@@ -228,10 +216,7 @@ public class BossBase : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 应用伤害补正
-    /// </summary>
-    /// <param name="timePercent">当前时间百分比（0.3或0.7）</param>
+    // 应用伤害补正
     private void ApplyDamageCorrection(float timePercent)
     {
         // 计算实际失去的血量
@@ -260,11 +245,8 @@ public class BossBase : MonoBehaviour
         
     }
     
-    /// <summary>
-    /// 输出当前符卡受到的伤害统计并重置
-    /// 在每张符卡（none或card脚本）结束时调用
-    /// </summary>
-    /// <param name="phaseName">当前符卡名称</param>
+    // 输出当前符卡受到的伤害统计并重置
+    // 在每张符卡（none或card脚本）结束时调用
     public void LogPhaseDamage(string phaseName)
     {
         Debug.Log($"符卡 [{phaseName}] 期间受到的总伤害: {currentPhaseDamage}");
@@ -272,9 +254,7 @@ public class BossBase : MonoBehaviour
         currentPhaseDamage = 0;
     }
     
-    /// <summary>
-    /// 检查是否达到锁血阈值
-    /// </summary>
+    // 检查是否达到锁血阈值
     private void CheckLockHPThreshold()
     {
         // 当血量下降到1%时，触发锁血
@@ -284,10 +264,8 @@ public class BossBase : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 锁血方法
-    /// 当血量下降到1%时触发，停止射击并显示锁血UI和动画
-    /// </summary>
+    // 锁血方法
+    // 当血量下降到1%时触发，停止射击并显示锁血UI和动画
     public void LockHP()
     {
         // 播放锁血音效
@@ -299,22 +277,16 @@ public class BossBase : MonoBehaviour
         Debug.Log("Boss进入锁血状态");
     }
     
-    /// <summary>
-    /// 将伤害转化为奖励
-    /// 锁血状态下，boss被击中时调用此方法
-    /// </summary>
-    /// <param name="damage">子弹伤害</param>
+    // 将伤害转化为奖励
+    // 锁血状态下，boss被击中时调用此方法
     private void ConvertDamageToReward(int damage)
     {
         uiManager.AddExScore(damage);
         CreateItem.Instance.SpawnPowerItems(transform.position);
     }
     
-    /// <summary>
-    /// 玩家释放技能攻击的通知
-    /// boss可以通过特殊动画来规避掉玩家的技能伤害
-    /// </summary>
-    /// <param name="skillType">技能类型（1:灵梦常规, 2:灵梦决死, 3:魔理沙常规, 4:魔理沙决死）</param>
+    // 玩家释放技能攻击的通知
+    // boss可以通过特殊动画来规避掉玩家的技能伤害
     public void OnPlayerSkillAttack(int skillType)
     {
         // 开启防御屏障
@@ -332,10 +304,7 @@ public class BossBase : MonoBehaviour
         DefenseRealm.SetActive(false);
     }
     
-    /// <summary>
-    /// 检查战斗结果
-    /// </summary>
-    /// <returns>true表示玩家击败成功（boss处于锁血状态），false表示玩家失败（boss仍存活）</returns>
+    // 检查战斗结果
     public bool CheckOver()
     {
         if (isLockingHP)
@@ -352,9 +321,7 @@ public class BossBase : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 更新血条显示
-    /// </summary>
+    // 更新血条显示
     private void UpdateHPBar()
     {
         if (bossAnime != null)
@@ -363,11 +330,7 @@ public class BossBase : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 设置对应波次的血量
-    /// </summary>
-    /// <param name="phaseIndex">波次索引（0: none1, 1: card1, 2: none2, 3: card2）</param>
-    /// <param name="totalTime">当前阶段总时长（秒）</param>
+    // 设置对应波次的血量
     public void SetPhaseHP_Time(int phaseIndex, float totalTime = 0f)
     {
         // 更新当前阶段索引
@@ -414,28 +377,19 @@ public class BossBase : MonoBehaviour
         Debug.Log($"阶段 [{phaseIndex}] 开始，总时长={totalTime}秒，血量={HP}");
     }
     
-    /// <summary>
-    /// 获取当前阶段索引
-    /// </summary>
-    /// <returns>当前阶段索引</returns>
+    // 获取当前阶段索引
     private int GetCurrentPhaseIndex()
     {
         return currentPhaseIndex;
     }
     
-    /// <summary>
-    /// 获取当前血量
-    /// </summary>
-    /// <returns>当前血量值</returns>
+    // 获取当前血量
     public int GetHP()
     {
         return HP;
     }
     
-    /// <summary>
-    /// 获取最大血量
-    /// </summary>
-    /// <returns>最大血量值</returns>
+    // 获取最大血量
     public int GetMaxHP()
     {
         return MaxHP;

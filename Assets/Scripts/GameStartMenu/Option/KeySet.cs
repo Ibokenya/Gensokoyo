@@ -1,29 +1,26 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using ReplaySystem;
 using TMPro;
 using UnityEngine;
 
-/// <summary>
-/// 按键设置界面控制器。
-///
-/// 9 种逻辑键（PhysicalKeyMapping 字段）：
-///   上下左右、Shift、Z、X、Ctrl、Escape
-///
-/// 状态机：
-///   Navigation —— Sword 指向当前行
-///     ↓ 按 Z → Listening
-///     ↓ 按 X → 通知 OptionAnime 关闭面板
-///   Listening  —— 等玩家按物理键
-///     ↓ 成功绑定 → 保存 + 回到 Navigation（Sword 仍在当前行）
-///     ↓ 冲突/非法 → ErrorSound + 保持 Listening
-///     ↓ 按 X/Escape → 取消，回到 Navigation
-///
-///  导航输入用 PhysicalKeyMapping 的当前映射（重绑后立即生效）。
-///    Listening 态屏蔽导航，只监听"任意物理键"。
-/// </summary>
+// 按键设置界面控制器。
+//
+// 9 种逻辑键（PhysicalKeyMapping 字段）：
+//   上下左右、Shift、Z、X、Ctrl、Escape
+//
+// 状态机：
+//   Navigation —— Sword 指向当前行
+//     ↓ 按 Z → Listening
+//     ↓ 按 X → 通知 OptionAnime 关闭面板
+//   Listening  —— 等玩家按物理键
+//     ↓ 成功绑定 → 保存 + 回到 Navigation（Sword 仍在当前行）
+//     ↓ 冲突/非法 → ErrorSound + 保持 Listening
+//     ↓ 按 X/Escape → 取消，回到 Navigation
+//
+//  导航输入用 PhysicalKeyMapping 的当前映射（重绑后立即生效）。
+//    Listening 态屏蔽导航，只监听"任意物理键"。
 public class KeySet : MonoBehaviour
 {
-    // ---- Row 定义（一行 = 一个可重绑的逻辑键）----
 
     [System.Serializable]
     public class KeySetRow
@@ -37,8 +34,6 @@ public class KeySet : MonoBehaviour
         [Tooltip("逻辑键枚举（当 IsEscapeRow=false 时生效）")]
         public LogicalKey LogicalKey;
     }
-
-    // ---- UI 引用 ----
 
     [Header("UI 引用")]
     public GameObject Sword;                     // 剑型箭头
@@ -65,8 +60,6 @@ public class KeySet : MonoBehaviour
     [SerializeField] private AudioClip clickSound;  // Z 确认音效
     [SerializeField] private AudioClip errorSound;  // 冲突/非法音效
     [SerializeField] private AudioClip successSound;// 绑定成功音效
-
-    // ========= 运行时 =========
 
     public enum UIState { Navigation, Listening }
     private UIState state = UIState.Navigation;
@@ -100,8 +93,6 @@ public class KeySet : MonoBehaviour
         else HandleNavigation();
     }
 
-    // ========== Navigation ==========
-
     private void HandleNavigation()
     {
         if (Input.GetKeyDown(PhysicalKeyMapping.Up))
@@ -129,8 +120,6 @@ public class KeySet : MonoBehaviour
             else gameObject.SetActive(false);
         }
     }
-
-    // ========== Listening ==========
 
     private void HandleListening()
     {
@@ -212,8 +201,6 @@ public class KeySet : MonoBehaviour
             Debug.LogWarning($"[KeySet] 绑定 {row.DisplayName} → {newCode} 失败");
         }
     }
-
-    // ========== UI 刷新 ==========
 
     private void UpdateSwordPosition()
     {

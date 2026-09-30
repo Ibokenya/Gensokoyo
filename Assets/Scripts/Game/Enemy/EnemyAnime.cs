@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ReplaySystem;
@@ -95,9 +95,7 @@ public class EnemyAnime : Enemy
         }
     }
 
-    /// <summary>
-    /// 设置敌人的移动方向
-    /// </summary>
+    // 设置敌人的移动方向
     public void SetDirection(Dir newDir)
     {
         if (_currentDir != newDir)
@@ -161,9 +159,7 @@ public class EnemyAnime : Enemy
         }
     }
 
-    /// <summary>
-    /// 初始化淡入效果
-    /// </summary>
+    // 初始化淡入效果
     private void InitializeFadeIn()
     {
         if (spriteRenderer != null)
@@ -173,9 +169,7 @@ public class EnemyAnime : Enemy
         fadeTimer = 0f;
     }
 
-    /// <summary>
-    /// 处理淡入效果
-    /// </summary>
+    // 处理淡入效果
     private void HandleFadeIn()
     {
         if (fadeTimer < fadeTime)
@@ -189,9 +183,7 @@ public class EnemyAnime : Enemy
         }
     }
 
-    /// <summary>
-    /// 播放动画
-    /// </summary>
+    // 播放动画
     private void PlayAnimation()
     {
         TimeClock += SimClock.FixedTickDt;
@@ -205,9 +197,7 @@ public class EnemyAnime : Enemy
         }
     }
 
-    /// <summary>
-    /// 更新精灵图
-    /// </summary>
+    // 更新精灵图
     private void UpdateSprite()
     {
         if (spriteRenderer != null && currentEnemySprites != null && currentEnemySprites.Count > 0)

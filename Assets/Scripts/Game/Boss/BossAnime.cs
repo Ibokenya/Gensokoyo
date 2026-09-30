@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -42,7 +42,6 @@ public class BossAnime : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         SetState(BossAnimeType.Idle);
 
-        // ---- 缓存坐标转换所需引用 ----
         if (HP != null) _hpRect = HP.GetComponent<RectTransform>();
 
         // RawImage 引用：优先用 Inspector 拖的 gameRTDisplay；否则尝试自动查找
@@ -88,14 +87,12 @@ public class BossAnime : MonoBehaviour
         UpdateMarkPosition();
     }
     
-    /// <summary>
-    /// 更新血条位置 —— RT + RawImage 管线专用
-    /// 
-    /// 正确坐标链路：
-    ///   1. Boss 世界坐标 → 渲染 RT 的摄像机 → RT 内部 UV (0~1, 0~1)
-    ///   2. RT UV → RawImage 的世界空间矩形四角 → 双线性插值
-    ///   3. 结果 = HP 应该放在屏幕世界坐标的位置
-    /// </summary>
+    // 更新血条位置 —— RT + RawImage 管线专用
+    // 
+    // 正确坐标链路：
+    //   1. Boss 世界坐标 → 渲染 RT 的摄像机 → RT 内部 UV (0~1, 0~1)
+    //   2. RT UV → RawImage 的世界空间矩形四角 → 双线性插值
+    //   3. 结果 = HP 应该放在屏幕世界坐标的位置
     private void UpdateHPBarPosition()
     {
         if (_hpRect == null || _rtRawImageRect == null || _rtCamera == null) return;
@@ -119,9 +116,7 @@ public class BossAnime : MonoBehaviour
         _hpRect.position = worldPos;
     }
 
-    /// <summary>
-    /// 更新标记物相对位置，不受时间缩放影响
-    /// </summary>
+    // 更新标记物相对位置，不受时间缩放影响
     private void UpdateMarkPosition()
     {
         Vector3 markPos = Mark.transform.position;
@@ -158,10 +153,7 @@ public class BossAnime : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 设置Boss的动画状态
-    /// </summary>
-    /// <param name="newState">新的状态</param>
+    // 设置Boss的动画状态
     public void SetState(BossAnimeType newState)
     {
         if(currentState != newState)
@@ -211,10 +203,7 @@ public class BossAnime : MonoBehaviour
         StartCoroutine(SmoothHPFill());
     }
     
-    /// <summary>
-    /// 平滑填充血条协程
-    /// </summary>
-    /// <returns></returns>
+    // 平滑填充血条协程
     private IEnumerator SmoothHPFill()
     {
         if (HP != null)
@@ -248,11 +237,7 @@ public class BossAnime : MonoBehaviour
         HP.SetActive(false);
     }
     
-    /// <summary>
-    /// 设置血条填充比例
-    /// </summary>
-    /// <param name="currenthp">当前血量</param>
-    /// <param name="maxhp">最大血量</param>
+    // 设置血条填充比例
     public void SetHpBar(float currenthp, float maxhp)
     {
         if(HP != null)
@@ -285,10 +270,8 @@ public class BossAnime : MonoBehaviour
         CircleAnimator.SetBool("IsRotate", true);
     }
     
-    /// <summary>
-    /// 隐藏Boss方法
-    /// 在1秒内将Boss对象的透明度平滑淡出为0.5f，淡出完成后隐藏血条
-    /// </summary>
+    // 隐藏Boss方法
+    // 在1秒内将Boss对象的透明度平滑淡出为0.5f，淡出完成后隐藏血条
     public void Conceal()
     {
         GetComponent<Collider2D>().enabled = false;

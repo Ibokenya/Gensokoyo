@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ReplaySystem;
@@ -80,9 +80,7 @@ public class CreateItem : MonoBehaviour
         InitItemPool();
     }
 
-    /// <summary>
-    /// 初始化物品池
-    /// </summary>
+    // 初始化物品池
     private void InitItemPool()
     {
         for (int i = 0; i < ItemPrefabs.Count; i++)
@@ -91,11 +89,7 @@ public class CreateItem : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 生成掉落物
-    /// </summary>
-    /// <param name="position">生成位置</param>
-    /// <param name="dropConfigs">掉落物配置列表</param>
+    // 生成掉落物
     public void SpawnItems(Vector3 position, List<ItemDropConfig> dropConfigs)
     {
         if (dropConfigs == null || dropConfigs.Count == 0)
@@ -155,10 +149,7 @@ public class CreateItem : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 生成得分点（8~20随机整数，商个GradeMinus + 余数个GradeMinusMinus）
-    /// </summary>
-    /// <param name="position">生成位置</param>
+    // 生成得分点（8~20随机整数，商个GradeMinus + 余数个GradeMinusMinus）
     public void SpawnScoreItems(Vector3 position)
     {
         if (Global_ObjectPool.Instance == null)
@@ -261,9 +252,7 @@ public class CreateItem : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 生成指定类型的得分点
-    /// </summary>
+    // 生成指定类型的得分点
     private void SpawnScoreItemType(Vector3 position, ItemType itemType, int count, GameObject player)
     {
         int prefabIndex = (int)itemType;
@@ -290,10 +279,7 @@ public class CreateItem : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 获取随机偏移向量
-    /// </summary>
-    /// <returns>随机偏移向量</returns>
+    // 获取随机偏移向量
     private Vector3 GetRandomOffset()
     {
         float offsetX = GameRNG.Range(-spawnOffset, spawnOffset);

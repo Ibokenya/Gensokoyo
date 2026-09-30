@@ -1,21 +1,18 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace ReplaySystem
 {
-    /// <summary>
-    /// 物理键 → 逻辑键的映射表。
-    ///
-    /// 设计：
-    ///   - 所有字段默认值保持原硬编码（保证老玩家不受影响）。
-    ///   - Save() 把当前映射序列化到 PlayerPrefs（key 前缀 "KB_"）。
-    ///   - Load() 从 PlayerPrefs 读回覆盖字段值；若无存过则保持默认。
-    ///   - TrySetBinding() 提供统一重绑入口，含冲突检测 + 持久化。
+    // 物理键 → 逻辑键的映射表。
+    //
+    // 设计：
+    //   - 所有字段默认值保持原硬编码（保证老玩家不受影响）。
+    //   - Save() 把当前映射序列化到 PlayerPrefs（key 前缀 "KB_"）。
+    //   - Load() 从 PlayerPrefs 读回覆盖字段值；若无存过则保持默认。
+    //   - TrySetBinding() 提供统一重绑入口，含冲突检测 + 持久化。
 
-    /// </summary>
     public static class PhysicalKeyMapping
     {
-        // ---- 默认值 ----
         public static KeyCode Up      = KeyCode.UpArrow;
         public static KeyCode Down    = KeyCode.DownArrow;
         public static KeyCode Left    = KeyCode.LeftArrow;
@@ -28,14 +25,7 @@ namespace ReplaySystem
 
         private const string Prefix = "KB_";
 
-        // ---- 重绑入口 ----
-
-        /// <summary>
-        /// 尝试把逻辑键绑定到新的物理键。
-        /// </summary>
-        /// <param name="logical">要改的逻辑键（Up/Down/Left/Right/Shift/Z/X/Ctrl）</param>
-        /// <param name="newCode">新的物理键码</param>
-        /// <returns>true=成功；false=冲突或无效</returns>
+        // 尝试把逻辑键绑定到新的物理键。
         public static bool TrySetBinding(LogicalKey logical, KeyCode newCode)
         {
             // 1) 过滤不可绑定的键
@@ -54,11 +44,9 @@ namespace ReplaySystem
             return true;
         }
 
-        /// <summary>
-        /// 查询物理键是否已被某个逻辑键占用。返回 null 表示空闲。
-        ///  Escape 单独字段存，不在 LogicalKey 枚举里，所以 FindConflictingLogicalKey 返回 null；
-        ///    冲突检测要在外层由 KeySet 结合 Escape 字段判断。
-        /// </summary>
+        // 查询物理键是否已被某个逻辑键占用。返回 null 表示空闲。
+        //  Escape 单独字段存，不在 LogicalKey 枚举里，所以 FindConflictingLogicalKey 返回 null；
+        //    冲突检测要在外层由 KeySet 结合 Escape 字段判断。
         public static LogicalKey? FindConflictingLogicalKey(KeyCode code)
         {
             if (Up     == code) return LogicalKey.Up;
@@ -72,10 +60,8 @@ namespace ReplaySystem
             return null;
         }
 
-        /// <summary>判断 KeyCode 是否已被 Escape 字段占用</summary>
         public static bool IsCodeUsedByEscape(KeyCode code) => Escape == code;
 
-        /// <summary>判断 KeyCode 是否被任何逻辑键（含 Escape）占用。返回被占用的逻辑键描述</summary>
         public static string FindConflictDescription(KeyCode code)
         {
             if (Escape == code) return "Escape（暂停键）";
@@ -84,14 +70,12 @@ namespace ReplaySystem
             return null;
         }
 
-        /// <summary>
-        /// 禁止绑定的键：
-        ///   - None
-        ///   - 鼠标物理键（手柄键允许绑定）
-        ///   - Delete（ReplayMenu 删除存档）
-        ///   - R（Game2 返回菜单）
-        /// Escape 是可绑定的逻辑键，不在这里过滤。
-        /// </summary>
+        // 禁止绑定的键：
+        //   - None
+        //   - 鼠标物理键（手柄键允许绑定）
+        //   - Delete（ReplayMenu 删除存档）
+        //   - R（Game2 返回菜单）
+        // Escape 是可绑定的逻辑键，不在这里过滤。
         public static bool IsBindable(KeyCode code)
         {
             if (code == KeyCode.None) return false;
@@ -132,8 +116,6 @@ namespace ReplaySystem
             Save();
         }
 
-        // ---- 持久化 ----
-
         public static void Save()
         {
             PlayerPrefs.SetInt(Prefix + "Up",     (int)Up);
@@ -148,10 +130,8 @@ namespace ReplaySystem
             PlayerPrefs.Save();
         }
 
-        /// <summary>
-        /// 启动时调用：从 PlayerPrefs 加载已保存的映射。
-        /// 如果某键没有存过，保持默认值（由 static 字段初始化器给定）。
-        /// </summary>
+        // 启动时调用：从 PlayerPrefs 加载已保存的映射。
+        // 如果某键没有存过，保持默认值（由 static 字段初始化器给定）。
         public static void Load()
         {
             if (PlayerPrefs.HasKey(Prefix + "Up"))     Up     = (KeyCode)PlayerPrefs.GetInt(Prefix + "Up");
@@ -164,8 +144,6 @@ namespace ReplaySystem
             if (PlayerPrefs.HasKey(Prefix + "Escape")) Escape = (KeyCode)PlayerPrefs.GetInt(Prefix + "Escape");
             if (PlayerPrefs.HasKey(Prefix + "Ctrl"))   Ctrl   = (KeyCode)PlayerPrefs.GetInt(Prefix + "Ctrl");
         }
-
-        // ---- 辅助 ----
 
         private static void SetBindingField(LogicalKey key, KeyCode code)
         {
@@ -182,7 +160,6 @@ namespace ReplaySystem
             }
         }
 
-        /// <summary>逻辑键名显示（给 AllKeys 的描述用）。Escape 单独字段，不走此枚举。</summary>
         public static string LogicalKeyToDisplayName(LogicalKey key)
         {
             return key switch
@@ -200,24 +177,22 @@ namespace ReplaySystem
         }
     }
 
-    /// <summary>
-    /// 从 Unity Input 采样 → 映射到逻辑键
-    ///
-    ///  覆盖式边沿模型（核心设计）：
-    ///   SampleFromUnity() 每帧 Update 调用，用 **=`（覆盖）而非 |=`（累加）** 计算 edgesDown/Up。
-    ///   边沿只在按键状态变化的那一帧存在，没变化时 edgesDown/Up 自动 =0。
-    ///
-    ///   这意味着：
-    ///     -  **不需要 ConsumeEdges！** 覆盖式保证边沿不会跨帧泄漏
-    ///     - 同一帧内：ReplayManager.Update（先 SampleFromUnity）→ 玩法脚本 Update（后读 GetKeyDown）→ 完美
-    ///     - 跨帧（FixedUpdate 50Hz vs Update 60Hz）：edgesDown 从 SampleFromUnity 算出后，
-    ///       存活到下一次 SampleFromUnity 覆盖 —— 足够让下一帧的 FixedUpdate 读到
-    ///     - 决死期间（timeScale=0）：FixedUpdate 停但 Update 继续跑 → edgesDown 正常算 →
-    ///       SpellCardEffect.Update 能正常读 GetKeyDown(X)
-    ///       （GunAnime.CheckUpdate 在 FixedUpdate，所以决死期间 Shift 慢速切换不触发，但这没问题）
-    ///
-    ///   录制时每 tick 只写 HeldMask 低 8 位（Ctrl 不存），回放方自行比较前后 tick 算边沿。
-    /// </summary>
+    // 从 Unity Input 采样 → 映射到逻辑键
+    //
+    //  覆盖式边沿模型（核心设计）：
+    //   SampleFromUnity() 每帧 Update 调用，用 **=`（覆盖）而非 |=`（累加）** 计算 edgesDown/Up。
+    //   边沿只在按键状态变化的那一帧存在，没变化时 edgesDown/Up 自动 =0。
+    //
+    //   这意味着：
+    //     -  **不需要 ConsumeEdges！** 覆盖式保证边沿不会跨帧泄漏
+    //     - 同一帧内：ReplayManager.Update（先 SampleFromUnity）→ 玩法脚本 Update（后读 GetKeyDown）→ 完美
+    //     - 跨帧（FixedUpdate 50Hz vs Update 60Hz）：edgesDown 从 SampleFromUnity 算出后，
+    //       存活到下一次 SampleFromUnity 覆盖 —— 足够让下一帧的 FixedUpdate 读到
+    //     - 决死期间（timeScale=0）：FixedUpdate 停但 Update 继续跑 → edgesDown 正常算 →
+    //       SpellCardEffect.Update 能正常读 GetKeyDown(X)
+    //       （GunAnime.CheckUpdate 在 FixedUpdate，所以决死期间 Shift 慢速切换不触发，但这没问题）
+    //
+    //   录制时每 tick 只写 HeldMask 低 8 位（Ctrl 不存），回放方自行比较前后 tick 算边沿。
     public class LiveInputProvider : IInputProvider
     {
         private ushort currentHeld;
@@ -225,26 +200,20 @@ namespace ReplaySystem
         private ushort edgesDown;
         private ushort edgesUp;
 
-        /// <summary>
-        ///  暂停关闭后屏蔽 Z/X 若干个逻辑 tick（50Hz 固定步长）。
-        /// </summary>
+        //  暂停关闭后屏蔽 Z/X 若干个逻辑 tick（50Hz 固定步长）。
         private int suppressZXTicks;//  记录 Z/X 被屏蔽的 tick 数
         public const int DefaultSuppressZXTicks = 2;//  默认屏蔽 2 个 tick
 
         public ushort HeldMask => currentHeld;//  当前帧按下的键位（不包含 HitFlag）
 
-        /// <summary> 录制时由 PanDing.OnTriggerEnter2D 调这个，把 bit7 设为 1。
-        /// 这个标志跨 FixedUpdate → Update → LateUpdate 保留，直到 LateUpdate.recordBuffer.Add 后才清。</summary>
+        // 这个标志跨 FixedUpdate → Update → LateUpdate 保留，直到 LateUpdate.recordBuffer.Add 后才清。</summary>
         public void MarkHitThisTick() => currentHeld |= LogicalKeyMask.HitFlag;
 
-        /// <summary> LateUpdate 的 recordBuffer.Add 之后调，清掉本帧累积的 HitFlag</summary>
         public void ClearHitFlag() => currentHeld &= 0xFF7F; // ~bit7 等价：0b1111111011111111
 
-        /// <summary>
-        ///  覆盖式采样 —— 每帧 Update 调用。
-        /// 用 = 覆盖 edgesDown/Up，不用 |= 累加。
-        /// HitFlag 不在此处清零——它由 FixedUpdate 的 OnTriggerEnter2D 设置，跨 Update 保留到 LateUpdate 写文件后清。
-        /// </summary>
+        //  覆盖式采样 —— 每帧 Update 调用。
+        // 用 = 覆盖 edgesDown/Up，不用 |= 累加。
+        // HitFlag 不在此处清零——它由 FixedUpdate 的 OnTriggerEnter2D 设置，跨 Update 保留到 LateUpdate 写文件后清。
         public void SampleFromUnity()
         {
             previousHeld = currentHeld;
@@ -267,26 +236,21 @@ namespace ReplaySystem
             edgesUp   = (ushort)(xor & ~currentHeld);
         }
 
-        /// <summary>
-        /// 覆盖式 SampleFromUnity 自动保证边沿不会跨帧泄漏。
-        /// 保留这个方法只是为了 IInputProvider 接口兼容 + ReplayManager 初始化时清残留。
-        /// </summary>
+        // 覆盖式 SampleFromUnity 自动保证边沿不会跨帧泄漏。
+        // 保留这个方法只是为了 IInputProvider 接口兼容 + ReplayManager 初始化时清残留。
         public void ConsumeEdges()
         {
             edgesDown = 0;
             edgesUp   = 0;
         }
 
-        /// <summary>
-        ///  Resume 后设：屏蔽 Z/X N 个 tick，防止"用 Z/X 关闭暂停"的按键泄漏给射击/符卡脚本。
-        /// 由 ReplayManager.ClearInputAfterPause() 调用。
-        /// </summary>
+        //  Resume 后设：屏蔽 Z/X N 个 tick，防止"用 Z/X 关闭暂停"的按键泄漏给射击/符卡脚本。
+        // 由 ReplayManager.ClearInputAfterPause() 调用。
         public void SuppressZXAfterResume(int ticks = DefaultSuppressZXTicks)
         {
             if (ticks > suppressZXTicks) suppressZXTicks = ticks;
         }
 
-        /// <summary> 每 tick 推进时由 ReplayManager.LateUpdate 调用，递减屏蔽计数</summary>
         public void TickSuppress()
         {
             if (suppressZXTicks > 0) suppressZXTicks--;
@@ -313,10 +277,8 @@ namespace ReplaySystem
         }
     }
 
-    /// <summary>
-    /// 回放输入源：每 tick 从数组读取 held 掩码（低 8 位），边沿由相邻 tick 差分计算。
-    /// Ctrl（第 8 位）回放期间不存文件，通过 ForceCtrlHeld 属性在 dialog 期间强制 held。
-    /// </summary>
+    // 回放输入源：每 tick 从数组读取 held 掩码（低 8 位），边沿由相邻 tick 差分计算。
+    // Ctrl（第 8 位）回放期间不存文件，通过 ForceCtrlHeld 属性在 dialog 期间强制 held。
     public class ReplayInputProvider : IInputProvider
     {
         private ushort currentHeld;
@@ -327,7 +289,6 @@ namespace ReplaySystem
         public ushort HeldMask => currentHeld;
         public bool IsFinished => tickIndex >= tickMasks.Length - 1;
 
-        /// <summary> 回放 dialog 期间设 true → GetKey(Ctrl) 永远返回 true，让 AboutDialog 自动快进</summary>
         public bool ForceCtrlHeld { get; set; }
 
         public ReplayInputProvider(byte[] masks)
@@ -338,7 +299,6 @@ namespace ReplaySystem
             currentHeld = 0;   //  初始 held = 0，等 AdvanceTick 到 masks[0]
         }
 
-        /// <summary>每帧 Update 开头调用：前进到下一帧掩码（帧时序对齐 FixedUpdate 读到上一帧推进的 held）</summary>
         public void AdvanceTick()
         {
             previousHeld = currentHeld;

@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using ReplaySystem;
@@ -11,8 +11,6 @@ enum AnimeType
     Left,
     Right,
 }
-
-
 
 public class PlayerAnime : MonoBehaviour
 {
@@ -55,7 +53,6 @@ public class PlayerAnime : MonoBehaviour
     public float PandingdianSpeed = 360f;// 玩家判定点旋转速度
     public Animator PandingdianAnimator;// 判定点动画组件
 
-
     [Header("虹人环动画")]
     public List<Sprite> ReimuCircles;
     public List<Sprite> MarisaCircles;
@@ -64,7 +61,6 @@ public class PlayerAnime : MonoBehaviour
     public GameObject Circle2;// 中层虹人环
     public GameObject Circle3;// 外层虹人环
     public Animator CircleAnimator;// 虹人环动画组件
-
 
     private bool isPandingAnimePlaying = false;// 判定点动画是否正在播放
     private bool isCircleAnimePlaying = false;// 虹人环动画是否正在播放
@@ -119,9 +115,7 @@ public class PlayerAnime : MonoBehaviour
         Global_GameManager.Instance.OnReincarnation -= ReincarnationAnime;
     }
 
-    /// <summary>
-    /// 初始化精灵列表
-    /// </summary>
+    // 初始化精灵列表
     private void InitSpriteLists()
     {
         if(Global_GameManager.Instance.character == Character.Reimu)
@@ -179,9 +173,7 @@ public class PlayerAnime : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 检查输入（从 ReplayManager.Input 读逻辑键，与物理按键解耦）
-    /// </summary>
+    // 检查输入（从 ReplayManager.Input 读逻辑键，与物理按键解耦）
     private void CheckInput()
     {
         var inp = ReplayManager.Input;
@@ -273,9 +265,7 @@ public class PlayerAnime : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 处理动画
-    /// </summary>
+    // 处理动画
     private void HandleAnimation()
     {
         // 根据当前动画类型播放对应动画
@@ -304,9 +294,7 @@ public class PlayerAnime : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 开始判定点动画
-    /// </summary>
+    // 开始判定点动画
     public void StartPandingAnime()
     {
         // 播放判定点动画
@@ -316,9 +304,7 @@ public class PlayerAnime : MonoBehaviour
         isCircleAnimePlaying = true;
     }
 
-    /// <summary>
-    /// 停止判定点动画
-    /// </summary>
+    // 停止判定点动画
     public void StopPandingAnime()
     {
         // 停止判定点动画
@@ -328,10 +314,8 @@ public class PlayerAnime : MonoBehaviour
         isCircleAnimePlaying = false;
     }
 
-    /// <summary>
-    /// 播放Idle动画
-    /// 按帧检测时间，每隔AnimeSpeed帧切换一次动画
-    /// </summary>
+    // 播放Idle动画
+    // 按帧检测时间，每隔AnimeSpeed帧切换一次动画
     private void PlayIdleAnime()
     {
         // 增加时钟计数
@@ -357,10 +341,8 @@ public class PlayerAnime : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 播放左移动画
-    /// 按帧检测时间，每隔AnimeSpeed帧切换一次动画
-    /// </summary>
+    // 播放左移动画
+    // 按帧检测时间，每隔AnimeSpeed帧切换一次动画
     private void PlayLeftAnime()
     {
         // 增加时钟计数
@@ -384,10 +366,8 @@ public class PlayerAnime : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 播放右移动画
-    /// 按帧检测时间，每隔AnimeSpeed帧切换一次动画
-    /// </summary>
+    // 播放右移动画
+    // 按帧检测时间，每隔AnimeSpeed帧切换一次动画
     private void PlayRightAnime()
     {
         // 增加时钟计数
@@ -411,9 +391,7 @@ public class PlayerAnime : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 设置Idle动画（供外部调用切换到Idle状态）
-    /// </summary>
+    // 设置Idle动画（供外部调用切换到Idle状态）
     public void SetIdleAnime()
     {
         // 如果当前不是Idle状态，切换到Idle状态
@@ -431,9 +409,7 @@ public class PlayerAnime : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 设置左移动画（供外部调用切换到Left状态）
-    /// </summary>
+    // 设置左移动画（供外部调用切换到Left状态）
     public void SetLeftAnime()
     {
         // 检查LeftSprites列表是否为空
@@ -458,9 +434,7 @@ public class PlayerAnime : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 设置右移动画（供外部调用切换到Right状态）
-    /// </summary>
+    // 设置右移动画（供外部调用切换到Right状态）
     public void SetRightAnime()
     {
         // 检查RightSprites列表是否为空
@@ -485,11 +459,9 @@ public class PlayerAnime : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 强行停止玩家移动
-    /// 即使玩家还按着方向键，也会立即停止
-    /// 并重置按键状态和动画
-    /// </summary>
+    // 强行停止玩家移动
+    // 即使玩家还按着方向键，也会立即停止
+    // 并重置按键状态和动画
     public void StopMove()
     {
         // 重置按键状态
@@ -513,9 +485,7 @@ public class PlayerAnime : MonoBehaviour
         Pandingdian.transform.Rotate(PandingdianRotation, PandingdianSpeed * Time.deltaTime);
     }
 
-    /// <summary>
-    /// 播放虹人环动画
-    /// </summary>
+    // 播放虹人环动画
     private void CircleAnime()
     {
         CircleAnimator.SetBool("IsShift", isCircleAnimePlaying);
@@ -527,6 +497,11 @@ public class PlayerAnime : MonoBehaviour
         StopMove();
         StopPandingAnime();
         SetIdleAnime();
+        
+        // ✅ 清冻结残留 —— 如果玩家在 Frozen/QTE 状态下中弹重生，
+        // Ice 物体（包裹玩家的冰冻层）和 FreezeSystem.FrozenEffect（屏幕冻结图片）都不会自动消失
+        // 正常释放 X 技能会调 CompleteQTE() + freezeSystem.ResetFreeze()，但重生时没人调
+        ClearFrozenResidue();
         
         // ✅ 关键：确保 SimClock 能推进（如果之前被 Freeze ramp 降到 0.2 或更低）
         // 视觉动画用 unscaledDeltaTime 不管时钟停没停都跑完，
@@ -546,13 +521,11 @@ public class PlayerAnime : MonoBehaviour
         StartCoroutine(ReincarnationAnimation());
     }
     
-    /// <summary>
-    /// 重生动画协程
-    /// 视觉插值用 Time.unscaledDeltaTime（不受 timeScale / SimScale 影响）——
-    /// 视觉过渡动画必须跑完，不管模拟时钟停没停。
-    /// 和 HitDelayCoroutine 用 WaitForSecondsRealtime 是同一个道理。
-    /// 但 NoDead→Gaming 状态切换保持 SimTimer.Once 以保证录/回放确定性。
-    /// </summary>
+    // 重生动画协程
+    // 视觉插值用 Time.unscaledDeltaTime（不受 timeScale / SimScale 影响）——
+    // 视觉过渡动画必须跑完，不管模拟时钟停没停。
+    // 和 HitDelayCoroutine 用 WaitForSecondsRealtime 是同一个道理。
+    // 但 NoDead→Gaming 状态切换保持 SimTimer.Once 以保证录/回放确定性。
     private IEnumerator ReincarnationAnimation()
     {
         float duration = 1f;
@@ -618,11 +591,9 @@ public class PlayerAnime : MonoBehaviour
         movespeed = speed;
     }
 
-    /// <summary>
-    /// 处理冻结状态的QTE
-    ///  改用 GetKey + 内部边沿检测——首次进入 QTE 时 held 键也算一次新按下，
-    ///    避免玩家在冻结过渡期间按着方向键导致 GetKeyDown 边沿丢失
-    /// </summary>
+    // 处理冻结状态的QTE
+    //  改用 GetKey + 内部边沿检测——首次进入 QTE 时 held 键也算一次新按下，
+    //    避免玩家在冻结过渡期间按着方向键导致 GetKeyDown 边沿丢失
     private void HandleFrozenQTE()
     {
         if (!isQteActive) return;
@@ -658,10 +629,8 @@ public class PlayerAnime : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 激活冻结QTE
-    ///  重置内部边沿状态——让玩家在冻结前一直按着的键也能被当作第一次按下
-    /// </summary>
+    // 激活冻结QTE
+    //  重置内部边沿状态——让玩家在冻结前一直按着的键也能被当作第一次按下
     public void ActivateFrozenQTE()
     {
         isQteActive = true;
@@ -678,9 +647,7 @@ public class PlayerAnime : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 完成QTE
-    /// </summary>
+    // 完成QTE
     public void CompleteQTE()
     {
         isQteActive = false;
@@ -705,5 +672,27 @@ public class PlayerAnime : MonoBehaviour
         
         // 恢复游戏状态
         Global_GameManager.Instance.state = State.Gaming;
+    }
+
+    // 重生时清理冻结残留：关 Ice 物体 + 重置 FreezeSystem 视觉层。
+    // 只在真的被冻过（IsFrozen / QTE 激活 / 有冻结进度）时才调 FreezeSystem 清理，
+    // 非 Boss 场景（FreezeSystem.IsStop=true 从不启用冻结）完全跳过。
+    // 不调 CompleteQTE 是因为重生状态机不应该被强制切到 Gaming。
+    private void ClearFrozenResidue()
+    {
+        isQteActive = false;
+        qteCurrentCount = 0;
+        
+        if (Ice != null)
+        {
+            Ice.SetActive(false);
+        }
+
+        // 只有真的进入过冻结状态才清 FreezeSystem —— 非 Boss 场景 FreezeSystem 一直 IsStop=true，
+        // 不该在重生时被误触发 UpdateUI 去改 FrozenEffect/FrozenSprite 的 alpha
+        if (freezeSystem != null && (freezeSystem.IsFrozen || freezeSystem.CurrentFrozenDegree > 0f))
+        {
+            freezeSystem.FullResetForReincarnation();
+        }
     }
 }

@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ReplaySystem;
@@ -26,9 +26,7 @@ public class IceSpike : MonoBehaviour
         CheckBounds();
     }
     
-    /// <summary>
-    /// 检查边界，超出范围则回收
-    /// </summary>
+    // 检查边界，超出范围则回收
     private void CheckBounds()
     {
         Vector2 position = transform.position;

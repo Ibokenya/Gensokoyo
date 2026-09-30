@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ReplaySystem;
@@ -70,9 +70,7 @@ public class miniIceBall : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 转向目标位置
-    /// </summary>
+    // 转向目标位置
     private void TurnToTarget()
     {
         if (rb2D != null)
@@ -86,9 +84,7 @@ public class miniIceBall : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 检查边界，超出范围则回收
-    /// </summary>
+    // 检查边界，超出范围则回收
     private void CheckBounds()
     {
         Vector2 position = transform.position;
@@ -98,10 +94,7 @@ public class miniIceBall : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 受伤方法
-    /// </summary>
-    /// <param name="damage">伤害值</param>
+    // 受伤方法
     public void TakeDamage(int damage)
     {
         hp -= damage;
@@ -111,9 +104,7 @@ public class miniIceBall : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 回收子弹
-    /// </summary>
+    // 回收子弹
     public void Recycle()
     {
         if (Global_ObjectPool.Instance != null)
@@ -126,10 +117,7 @@ public class miniIceBall : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 向指定方向发射
-    /// </summary>
-    /// <param name="direction">方向向量</param>
+    // 向指定方向发射
     public void FireInDirection(Vector2 direction)
     {
         if (rb2D != null)

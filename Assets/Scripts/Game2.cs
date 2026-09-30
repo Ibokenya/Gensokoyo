@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -52,17 +52,13 @@ public class Game2 : MonoBehaviour
         StartCoroutine(DelayAfterActivate());
     }
 
-    /// <summary>
-    /// 启动走廊绘制和淡入效果
-    /// </summary>
+    // 启动走廊绘制和淡入效果
     public void StartCorridorEffect()
     {
         StartCoroutine(CorridorDrawAndFade());
     }
 
-    /// <summary>
-    /// 走廊绘制和淡入协程
-    /// </summary>
+    // 走廊绘制和淡入协程
     private IEnumerator CorridorDrawAndFade()
     {
         RotateCameraZ(30f);
@@ -73,16 +69,14 @@ public class Game2 : MonoBehaviour
         // 绘制和淡入完成后，启用所有BGImageScroll脚本
     }
 
-    /// <summary>
-    /// 绘制走廊协程（高度从0变为目标值）
-    /// </summary>
+    // 绘制走廊协程（高度从0变为目标值）
     private IEnumerator DrawCorridors()
     {
         float elapsedTime = 0f;
 
         while (elapsedTime < drawDuration)
         {
-            elapsedTime += Time.deltaTime;
+            elapsedTime += Time.unscaledDeltaTime; // 结局场景视觉效果，不受 timeScale 影响
             float t = Mathf.Clamp01(elapsedTime / drawDuration);
 
             // 更新左右物体的高度（目标13）
@@ -103,9 +97,7 @@ public class Game2 : MonoBehaviour
         UpdateSpriteHeight(corridorDown, 1f, targetHeightDouble);
     }
 
-    /// <summary>
-    /// 更新物体及其子物体的SpriteRenderer高度
-    /// </summary>
+    // 更新物体及其子物体的SpriteRenderer高度
     private void UpdateSpriteHeight(GameObject parent, float t, float target)
     {
         if (parent == null) return;
@@ -129,16 +121,14 @@ public class Game2 : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 淡入走廊协程（透明度从0变为1）
-    /// </summary>
+    // 淡入走廊协程（透明度从0变为1）
     private IEnumerator FadeInCorridors()
     {
         float elapsedTime = 0f;
 
         while (elapsedTime < fadeInDuration)
         {
-            elapsedTime += Time.deltaTime;
+            elapsedTime += Time.unscaledDeltaTime; // 结局场景视觉效果
             float t = Mathf.Clamp01(elapsedTime / fadeInDuration);
             float currentAlpha = Mathf.Lerp(initialAlpha, targetAlpha, t);
 
@@ -168,9 +158,7 @@ public class Game2 : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 启用所有BGImageScroll脚本
-    /// </summary>
+    // 启用所有BGImageScroll脚本
     private void EnableBGScrolls()
     {
         foreach (BGImageScroll scroll in allBgScrolls)
@@ -182,18 +170,13 @@ public class Game2 : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 让摄像机沿Z轴旋转的方法
-    /// </summary>
-    /// <param name="Speed">旋转速度</param>
+    // 让摄像机沿Z轴旋转的方法
     public void RotateCameraZ(float Speed)
     {
         StartCoroutine(RotateCameraZCoroutine(Speed));
     }
 
-    /// <summary>
-    /// 摄像机Z轴旋转协程
-    /// </summary>
+    // 摄像机Z轴旋转协程
     private IEnumerator RotateCameraZCoroutine(float Speed)
     {
         if (mainCamera == null)
@@ -203,14 +186,14 @@ public class Game2 : MonoBehaviour
         }
         while (true)
         {
-            mainCamera.transform.Rotate(Vector3.forward, Speed * Time.deltaTime);
+            mainCamera.transform.Rotate(Vector3.forward, Speed * Time.unscaledDeltaTime);
             yield return null;
         }
     }
 
     IEnumerator DelayAfterActivate()
     {
-        yield return new WaitForSeconds(10f);
+        yield return new WaitForSecondsRealtime(10f); // 结局场景可能 timeScale=0
 
         // 禁用Msg1和Msg2
         if (Msg1 != null)
@@ -252,9 +235,7 @@ public class Game2 : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 返回菜单界面
-    /// </summary>
+    // 返回菜单界面
     private void ReturnToMenu()
     {
         // 回收所有敌人
@@ -283,14 +264,15 @@ public class Game2 : MonoBehaviour
         }
         while (elapsedTime < duration)
         {
-            elapsedTime += Time.deltaTime;
+            elapsedTime += Time.unscaledDeltaTime; // 结局场景不依赖 SimClock，用 unscaledDeltaTime
+            float alpha = Mathf.Clamp01(1 - elapsedTime / duration);
 
             Color color = UIImage.GetComponent<Image>().color;
-            color.a = 1 - elapsedTime / duration;
+            color.a = alpha;
             UIImage.GetComponent<Image>().color = color;
 
             color = RightUI.GetComponent<Image>().color;
-            color.a = 1 - elapsedTime / duration;
+            color.a = alpha;
             RightUI.GetComponent<Image>().color = color;
 
             yield return null;
@@ -299,7 +281,9 @@ public class Game2 : MonoBehaviour
         RightUI.SetActive(false);
         Global_AudioManager.Instance.PlayBGM("Ending");
         StartBgMove();
-        // 4 秒 = 200 tick。Invoke 替换为 SimTimer 确定性 tick
-        SimTimer.Once(StartCorridorEffect, 200);
+        // 结局场景不依赖 SimClock/SimTimer（ReplayManager 可能已经 Idle），
+        // 用 WaitForSecondsRealtime 延迟 4 秒后开始走廊绘制 —— 纯视觉效果不要求确定性
+        yield return new WaitForSecondsRealtime(4f);
+        StartCorridorEffect();
     }
 }

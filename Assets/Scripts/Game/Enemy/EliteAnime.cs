@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using ReplaySystem;
 using UnityEngine;
@@ -137,9 +137,7 @@ public class EliteAnime : Enemy
         }
     }
 
-    /// <summary>
-    /// 直线移动到目标点（用于两个点的简单路径）
-    /// </summary>
+    // 直线移动到目标点（用于两个点的简单路径）
     protected override void MoveToNextPointLinear(GameObject targetPoint)
     {
         if (rb2D == null)
@@ -169,9 +167,7 @@ public class EliteAnime : Enemy
         }
     }
 
-    /// <summary>
-    /// 初始化淡入效果
-    /// </summary>
+    // 初始化淡入效果
     private void InitializeFadeIn()
     {
         if (spriteRenderer != null)
@@ -181,9 +177,7 @@ public class EliteAnime : Enemy
         fadeTimer = 0f;
     }
 
-    /// <summary>
-    /// 处理淡入效果
-    /// </summary>
+    // 处理淡入效果
     private void HandleFadeIn()
     {
         if (fadeTimer < fadeTime)
@@ -197,9 +191,7 @@ public class EliteAnime : Enemy
         }
     }
 
-    /// <summary>
-    /// 播放动画
-    /// </summary>
+    // 播放动画
     private void PlayAnimation()
     {
         TimeClock += SimClock.FixedTickDt;

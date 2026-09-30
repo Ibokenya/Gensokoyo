@@ -1,13 +1,10 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using ReplaySystem;
 using UnityEngine;
 
-
-/// <summary>
-/// 全局音频管理单例类
-/// 负责管理游戏中的背景音乐和音效
-/// </summary>
+// 全局音频管理单例类
+// 负责管理游戏中的背景音乐和音效
 public class Global_AudioManager : Singleton<Global_AudioManager>
 {
     #region 音频源组件
@@ -57,11 +54,9 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
         InitializeBGMDictionary();
     }
 
-    /// <summary>
-    /// 记录当前 BGM 的逻辑播放位置，供外部查询。
-    /// AudioSource 本身的播放完全由 PlayBGM/StopBGM 等方法控制，
-    /// 本方法**不硬改** bgmSource.time（只有续关恢复位置等特殊场景才手动 Set）。
-    /// </summary>
+    // 记录当前 BGM 的逻辑播放位置，供外部查询。
+    // AudioSource 本身的播放完全由 PlayBGM/StopBGM 等方法控制，
+    // 本方法**不硬改** bgmSource.time（只有续关恢复位置等特殊场景才手动 Set）。
     void FixedUpdate()
     {
         if (bgmSource == null || !bgmSource.isPlaying || bgmSource.clip == null)
@@ -86,9 +81,7 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
         }
     }
     
-    /// <summary>
-    /// 初始化背景音乐字典
-    /// </summary>
+    // 初始化背景音乐字典
     private void InitializeBGMDictionary()
     {
         bgmDictionary = new Dictionary<string, AudioClip>
@@ -101,9 +94,7 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
         };
     }
     
-    /// <summary>
-    /// 管理AudioListener，确保场景中只有一个
-    /// </summary>
+    // 管理AudioListener，确保场景中只有一个
     private void ManageAudioListener()
     {
         // 获取场景中所有的AudioListener
@@ -133,23 +124,19 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
   
     #region 公共访问属性
     
-    /// <summary>
-    /// 当前播放的背景音乐
-    /// </summary>
+    // 当前播放的背景音乐
     public AudioClip CurrentBGM
     {
         get { return bgmSource != null ? bgmSource.clip : null; }
     }
     
-    /// <summary>
-    /// 当前 BGM 的逻辑时间（秒）。
-    ///
-    /// 游戏态且在录制/回放中 → 返回 SimClock.SimTime（确定性主时钟）；
-    /// 其他状态（菜单/音乐室等） → 返回 bgmSource.time（自然播放的硬件时钟）。
-    ///
-    /// 所有游戏逻辑（出怪/Boss 阶段/清屏/对话触发）读这个。
-    /// set 仅在"续关恢复 BGM 位置"等场景使用。
-    /// </summary>
+    // 当前 BGM 的逻辑时间（秒）。
+    //
+    // 游戏态且在录制/回放中 → 返回 SimClock.SimTime（确定性主时钟）；
+    // 其他状态（菜单/音乐室等） → 返回 bgmSource.time（自然播放的硬件时钟）。
+    //
+    // 所有游戏逻辑（出怪/Boss 阶段/清屏/对话触发）读这个。
+    // set 仅在"续关恢复 BGM 位置"等场景使用。
     public float CurrentBGMTime
     {
         get
@@ -167,17 +154,13 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
         set { if (bgmSource != null) bgmSource.time = value; }
     }
     
-    /// <summary>
-    /// 背景音乐是否正在播放
-    /// </summary>
+    // 背景音乐是否正在播放
     public bool IsBGMPlaying
     {
         get { return bgmSource != null && bgmSource.isPlaying; }
     }
     
-    /// <summary>
-    /// 背景音乐是否已暂停
-    /// </summary>
+    // 背景音乐是否已暂停
     public bool IsBGMPaused
     {
         get { return bgmSource != null && !bgmSource.isPlaying && bgmSource.time > 0f; }
@@ -205,9 +188,7 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
 
     #region 音效池管理
     
-    /// <summary>
-    /// 初始化音效池
-    /// </summary>
+    // 初始化音效池
     private void InitializeSFXPool()
     {
         sfxPool = new List<AudioSource>();
@@ -222,10 +203,7 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
         }
     }
     
-    /// <summary>
-    /// 从音效池中获取可用的AudioSource
-    /// </summary>
-    /// <returns>可用的AudioSource，如果没有则创建新的</returns>
+    // 从音效池中获取可用的AudioSource
     private AudioSource GetAvailableSFXSource()
     {
         // 查找未在播放的AudioSource
@@ -275,13 +253,8 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
     
     #region 音效播放方法
     
-    /// <summary>
-    /// 音效播放
-    /// 可以在播放背景音乐的同时播放音效
-    /// </summary>
-    /// <param name="clip">音效剪辑</param>
-    /// <param name="isLoop">是否循环播放</param>
-    /// <param name="volume">音量（0-1）</param>
+    // 音效播放
+    // 可以在播放背景音乐的同时播放音效
     public void PlaySFX(AudioClip clip, bool isLoop = false, float volume = 1f)
     {
         if (clip == null)
@@ -306,11 +279,7 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
     // 收集音效最大同时播放数量
     private const int maxCollectSoundCount = 3;
     
-    /// <summary>
-    /// 播放收集音效（限制同时播放数量）
-    /// </summary>
-    /// <param name="clip">音效剪辑</param>
-    /// <param name="volume">音量（0-1）</param>
+    // 播放收集音效（限制同时播放数量）
     public void PlayCollectSFX(AudioClip clip, float volume = 1f)
     {
         if (clip == null)
@@ -340,10 +309,7 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
         }
     }
     
-    /// <summary>
-    /// 监听收集音效播放完成
-    /// </summary>
-    /// <param name="source">音频源</param>
+    // 监听收集音效播放完成
     private IEnumerator MonitorCollectSound(AudioSource source)
     {
         yield return new WaitWhile(() => source.isPlaying);
@@ -354,12 +320,8 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
     
     #region 背景音乐方法
     
-    /// <summary>
-    /// 播放背景音乐（通过名称）
-    /// 同一时间内只能播放一首背景音乐，切换时必须停止正在进行的
-    /// </summary>
-    /// <param name="bgmName">背景音乐名称（Menu, Game1, Boss, Over, Ending）</param>
-    /// <param name="volume">音量（0-1）</param>
+    // 播放背景音乐（通过名称）
+    // 同一时间内只能播放一首背景音乐，切换时必须停止正在进行的
     public void PlayBGM(string bgmName, float volume = 1.0f)
     {
         if (bgmSource == null)
@@ -405,9 +367,7 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
         }
     }
     
-    /// <summary>
-    /// 停止当前播放的背景音乐
-    /// </summary>
+    // 停止当前播放的背景音乐
     public void StopBGM()
     {
         if (bgmSource != null)
@@ -416,18 +376,14 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
         }
     }
     
-    /// <summary>
-    /// 暂停当前背景音乐（AudioSource 不受 timeScale 影响，需要手动 Pause）
-    /// </summary>
+    // 暂停当前背景音乐（AudioSource 不受 timeScale 影响，需要手动 Pause）
     public void PauseBGM()
     {
         if (bgmSource != null && bgmSource.isPlaying)
             bgmSource.Pause();
     }
     
-    /// <summary>
-    /// 恢复暂停的背景音乐
-    /// </summary>
+    // 恢复暂停的背景音乐
     public void UnPauseBGM()
     {
         if (bgmSource != null && !bgmSource.isPlaying && bgmSource.time > 0f)
@@ -438,10 +394,7 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
     
     #region 音量控制方法
     
-    /// <summary>
-    /// 调整背景音乐音量
-    /// </summary>
-    /// <param name="volume">音量值（0-1）</param>
+    // 调整背景音乐音量
     public void SetBGMVolume(float volume)
     {
         bgmVolume = Mathf.Clamp01(volume);
@@ -455,10 +408,7 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
         SaveVolumeSettings();
     }
     
-    /// <summary>
-    /// 调整音效音量
-    /// </summary>
-    /// <param name="volume">音量值（0-1）</param>
+    // 调整音效音量
     public void SetSFXVolume(float volume)
     {
         sfxVolume = Mathf.Clamp01(volume);
@@ -476,9 +426,7 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
         SaveVolumeSettings();
     }
     
-    /// <summary>
-    /// 保存音量设置到PlayerPrefs
-    /// </summary>
+    // 保存音量设置到PlayerPrefs
     private void SaveVolumeSettings()
     {
         PlayerPrefs.SetFloat("BGMVolume", bgmVolume);
@@ -486,9 +434,7 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
         PlayerPrefs.Save();
     }
     
-    /// <summary>
-    /// 从PlayerPrefs加载音量设置
-    /// </summary>
+    // 从PlayerPrefs加载音量设置
     private void LoadVolumeSettings()
     {
         bgmVolume = PlayerPrefs.GetFloat("BGMVolume", 0.7f); // 默认值0.7
@@ -499,9 +445,7 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
     
     #region 额外功能
     
-    /// <summary>
-    /// 停止所有音效
-    /// </summary>
+    // 停止所有音效
     public void StopAllSFX()
     {
         foreach (AudioSource source in sfxPool)
@@ -513,10 +457,7 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
         }
     }
     
-    /// <summary>
-    /// 停止指定的循环音效
-    /// </summary>
-    /// <param name="clip">要停止的音效剪辑</param>
+    // 停止指定的循环音效
     public void StopLoopSFX(AudioClip clip)
     {
         foreach (AudioSource source in sfxPool)
@@ -528,10 +469,7 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
         }
     }
     
-    /// <summary>
-    /// 获取当前播放的背景音乐名称
-    /// </summary>
-    /// <returns>当前背景音乐名称，如果没有播放则返回空字符串</returns>
+    // 获取当前播放的背景音乐名称
     public string GetCurrentBGMName()
     {
         if (bgmSource == null || bgmSource.clip == null)
@@ -551,19 +489,13 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
         return "";
     }
     
-    /// <summary>
-    /// 获取当前背景音乐的播放位置
-    /// </summary>
-    /// <returns>当前播放位置（秒）</returns>
+    // 获取当前背景音乐的播放位置
     public float GetCurrentBGMPosition()
     {
         return bgmSource != null ? bgmSource.time : 0f;
     }
     
-    /// <summary>
-    /// 设置背景音乐的播放位置
-    /// </summary>
-    /// <param name="position">播放位置（秒）</param>
+    // 设置背景音乐的播放位置
     public void SetBGMPosition(float position)
     {
         if (bgmSource != null)
@@ -572,11 +504,8 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
         }
     }
 
-    /// <summary>
-    /// 音乐淡出
-    /// 在指定时间内将当前播放的背景音乐音量均匀降低到0
-    /// </summary>
-    /// <param name="fadeOutTime">淡出时间（秒）</param>
+    // 音乐淡出
+    // 在指定时间内将当前播放的背景音乐音量均匀降低到0
     public void FadeOutMusic(float fadeOutTime)
     {
         if (bgmSource != null && bgmSource.isPlaying)
@@ -591,10 +520,7 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
         }
     }
     
-    /// <summary>
-    /// 音乐淡出协程
-    /// </summary>
-    /// <param name="fadeOutTime">淡出时间（秒）</param>
+    // 音乐淡出协程
     private IEnumerator FadeOutMusicCoroutine(float fadeOutTime)
     {
         if (fadeOutTime <= 0f)
@@ -624,9 +550,7 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
         fadeOutCoroutine = null;
     }
     
-    /// <summary>
-    /// 停止淡出协程并清理背景音乐
-    /// </summary>
+    // 停止淡出协程并清理背景音乐
     public void StopFadeOutAndClearBGM()
     {
         // 停止淡出协程
@@ -647,5 +571,3 @@ public class Global_AudioManager : Singleton<Global_AudioManager>
     
     #endregion
 }
-
-

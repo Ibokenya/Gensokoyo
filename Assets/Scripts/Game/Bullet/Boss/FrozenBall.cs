@@ -14,10 +14,7 @@ public class FrozenBall : MonoBehaviour
         rb2D = GetComponent<Rigidbody2D>();
     }
     
-    /// <summary>
-    /// 受伤方法
-    /// </summary>
-    /// <param name="damage">伤害值</param>
+    // 受伤方法
     public void TakeDamage(int damage)
     {
         hp -= damage;
@@ -27,9 +24,7 @@ public class FrozenBall : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 回收子弹
-    /// </summary>
+    // 回收子弹
     private void Recycle()
     {
         // 通知BossShootSystem释放冰珠和生成冰锥

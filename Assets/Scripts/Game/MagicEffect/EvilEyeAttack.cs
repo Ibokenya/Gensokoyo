@@ -1,12 +1,10 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ReplaySystem;
 
-/// <summary>
-/// 恶魔之眼攻击脚本
-/// 负责处理恶魔之眼的攻击逻辑
-/// </summary>
+// 恶魔之眼攻击脚本
+// 负责处理恶魔之眼的攻击逻辑
 public class EvilEyeAttack : MonoBehaviour
 {
     public float fadeDuration = 1f; // 淡出时间
@@ -146,9 +144,7 @@ public class EvilEyeAttack : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 开始淡入
-    /// </summary>
+    // 开始淡入
     public void StartFadeIn()
     {
         if (gameObject.activeInHierarchy)
@@ -157,9 +153,7 @@ public class EvilEyeAttack : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 淡入协程
-    /// </summary>
+    // 淡入协程
     private IEnumerator FadeIn()
     {
         if (spriteRenderer == null)
@@ -224,9 +218,7 @@ public class EvilEyeAttack : MonoBehaviour
         isInEvilEyeMode = true;
     }
     
-    /// <summary>
-    /// 开始淡出
-    /// </summary>
+    // 开始淡出
     public void StartFadeOut()
     {
         if (gameObject.activeInHierarchy)
@@ -242,9 +234,7 @@ public class EvilEyeAttack : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 淡出协程
-    /// </summary>
+    // 淡出协程
     private IEnumerator FadeOut()
     {
         if (spriteRenderer == null)
@@ -294,9 +284,7 @@ public class EvilEyeAttack : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 创建连线
-    /// </summary>
+    // 创建连线
     private void CreateLasers()
     {
         // 清理之前的连线
@@ -319,9 +307,7 @@ public class EvilEyeAttack : MonoBehaviour
         }   
     }
     
-    /// <summary>
-    /// 创建到目标位置的连线（使用对象池复用）
-    /// </summary>
+    // 创建到目标位置的连线（使用对象池复用）
     private void CreateLaserToTarget(Vector3 targetPosition)
     {
         // 从对象池获取或创建连线对象
@@ -341,9 +327,7 @@ public class EvilEyeAttack : MonoBehaviour
         activeLasers.Add(laserObj);
     }
     
-    /// <summary>
-    /// 从对象池获取连线对象
-    /// </summary>
+    // 从对象池获取连线对象
     private GameObject GetLaserFromPool()
     {
         if (laserPool.Count > 0)
@@ -374,18 +358,14 @@ public class EvilEyeAttack : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 更新连线
-    /// </summary>
+    // 更新连线
     private void UpdateLasers()
     {
         // 每帧重新创建连线，确保连线到所有敌人
         CreateLasers();
     }
     
-    /// <summary>
-    /// 清理所有连线（放回对象池）
-    /// </summary>
+    // 清理所有连线（放回对象池）
     public void ClearAllLasers()
     {
         // 将活跃连线放回对象池
@@ -403,9 +383,7 @@ public class EvilEyeAttack : MonoBehaviour
         activeLasers.Clear();
     }
     
-    /// <summary>
-    /// 对敌人造成伤害
-    /// </summary>
+    // 对敌人造成伤害
     private void DealDamageToEnemies()
     {
         // 如果Boss激活，直接对Boss造成伤害，跳过遍历敌人列表
@@ -444,9 +422,7 @@ public class EvilEyeAttack : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 对Boss造成伤害
-    /// </summary>
+    // 对Boss造成伤害
     private void DealDamageToBoss()
     {
         if (boss != null && boss.activeInHierarchy)
@@ -461,10 +437,7 @@ public class EvilEyeAttack : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 从 GameManager 获取活跃敌人
-    /// </summary>
-    /// <returns>活跃敌人列表</returns>
+    // 从 GameManager 获取活跃敌人
     private List<GameObject> GetActiveEnemies()
     {
         if (Global_GameManager.Instance != null)
@@ -483,18 +456,13 @@ public class EvilEyeAttack : MonoBehaviour
         return new List<GameObject>();
     }
     
-    /// <summary>
-    /// 计算伤害
-    /// </summary>
-    /// <returns>每伤害帧伤害值</returns>
+    // 计算伤害
     private int CalDamage()
     {
         return 3+(Global_GameManager.Instance.Power/100);
     }
     
-    /// <summary>
-    /// 更新黑洞
-    /// </summary>
+    // 更新黑洞
     private void UpdateBlackHole()
     {
         // 黑洞旋转
@@ -504,9 +472,7 @@ public class EvilEyeAttack : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 更新暗影弹
-    /// </summary>
+    // 更新暗影弹
     private void UpdateShadowBullets()
     {
         // 检查黑洞是否存在
@@ -536,9 +502,7 @@ public class EvilEyeAttack : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 生成暗影弹
-    /// </summary>
+    // 生成暗影弹
     private void SpawnShadowBullet()
     {
         // 检查是否有暗影弹预制件
@@ -580,11 +544,8 @@ public class EvilEyeAttack : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 获取空心矩形范围内的随机位置
-    /// 暗影弹只在外矩形边框上生成，但排除内矩形覆盖的区域
-    /// </summary>
-    /// <returns>随机位置</returns>
+    // 获取空心矩形范围内的随机位置
+    // 暗影弹只在外矩形边框上生成，但排除内矩形覆盖的区域
     private Vector3 GetRandomPositionInHollowRect()
     {
         float x, y;
@@ -639,9 +600,7 @@ public class EvilEyeAttack : MonoBehaviour
         return transform.position + new Vector3(x, y, 0f);
     }
     
-    /// <summary>
-    /// 初始化暗影弹对象池
-    /// </summary>
+    // 初始化暗影弹对象池
     private void InitializeShadowBulletPools()
     {
         // 检查是否有暗影弹预制件
@@ -660,9 +619,7 @@ public class EvilEyeAttack : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 初始化巨手对象池
-    /// </summary>
+    // 初始化巨手对象池
     private void InitializeGiantHandPool()
     {
         if (giantHandPrefab == null)
@@ -678,10 +635,7 @@ public class EvilEyeAttack : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 从对象池获取巨手
-    /// </summary>
-    /// <returns>巨手对象</returns>
+    // 从对象池获取巨手
     private GameObject GetGiantHandFromPool()
     {
         if (giantHandPool.Count > 0)
@@ -698,10 +652,7 @@ public class EvilEyeAttack : MonoBehaviour
         return null;
     }
     
-    /// <summary>
-    /// 回收巨手到对象池
-    /// </summary>
-    /// <param name="hand">要回收的巨手</param>
+    // 回收巨手到对象池
     private void RecycleGiantHand(GameObject hand)
     {
         if (hand != null)
@@ -711,10 +662,7 @@ public class EvilEyeAttack : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 执行处决效果
-    /// </summary>
-    /// <param name="enemyPosition">敌人位置</param>
+    // 执行处决效果
     public void ExecuteEnemy(Vector3 enemyPosition)
     {
         // 从对象池获取巨手
@@ -753,11 +701,7 @@ public class EvilEyeAttack : MonoBehaviour
         StartCoroutine(ExecuteAnimation(hand, targetPosition));
     }
     
-    /// <summary>
-    /// 处决动画协程
-    /// </summary>
-    /// <param name="hand">巨手对象</param>
-    /// <param name="targetPosition">目标位置</param>
+    // 处决动画协程
     private IEnumerator ExecuteAnimation(GameObject hand, Vector3 targetPosition)
     {
         SpriteRenderer handRenderer = hand.GetComponent<SpriteRenderer>();

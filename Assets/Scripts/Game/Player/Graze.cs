@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections.Generic;
 using ReplaySystem;
 
@@ -89,10 +89,8 @@ public class Graze : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 强制停止擦弹音效
-    /// 在时停动画结束后调用，确保擦弹音效被正确停止
-    /// </summary>
+    // 强制停止擦弹音效
+    // 在时停动画结束后调用，确保擦弹音效被正确停止
     public void ForceStopGrazeSound()
     {
         currentBullets.Clear();

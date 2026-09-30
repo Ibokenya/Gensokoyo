@@ -1,14 +1,12 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ReplaySystem;
 
-/// <summary>
-/// 激光类
-/// 魔理沙使用激光作为高速副手攻击
-/// 使用LineRenderer+激光材质实现
-/// 激光连线固定为(0,0,0)-(0,12,0)，通过父物体旋转控制方向
-/// </summary>
+// 激光类
+// 魔理沙使用激光作为高速副手攻击
+// 使用LineRenderer+激光材质实现
+// 激光连线固定为(0,0,0)-(0,12,0)，通过父物体旋转控制方向
 public class Laser : MonoBehaviour
 {
     [Header("激光配置")]
@@ -73,9 +71,7 @@ public class Laser : MonoBehaviour
         }   
     }
 
-    /// <summary>
-    /// 激光持续伤害判定
-    /// </summary>
+    // 激光持续伤害判定
     private void UpdateLaserDamage()
     {
         // 使用RaycastAll检测路径上的所有物体
@@ -131,9 +127,7 @@ public class Laser : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 激活激光
-    /// </summary>
+    // 激活激光
     public void ActivateLaser()
     {
         isActive = true;
@@ -143,9 +137,7 @@ public class Laser : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 停用激光
-    /// </summary>
+    // 停用激光
     public void StopLaser()
     {
         isActive = false;
@@ -155,9 +147,7 @@ public class Laser : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 更新激光动画（通过切换材质纹理实现）
-    /// </summary>
+    // 更新激光动画（通过切换材质纹理实现）
     private void UpdateLaserAnime()
     {
         if (LaserTextures.Count == 0 || laserMaterial == null)

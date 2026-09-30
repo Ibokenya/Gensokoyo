@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ReplaySystem;
@@ -61,9 +61,7 @@ public class ShootNormal : MonoBehaviour
         Shoot();
     }
 
-    /// <summary>
-    /// 更新Normal预制体引用
-    /// </summary>
+    // 更新Normal预制体引用
     private void UpdateNormalPrefab()
     {
         if (Global_GameManager.Instance != null)

@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ReplaySystem;
@@ -18,7 +18,6 @@ public class FrozenIce : MonoBehaviour
     private readonly float minY = -9f;
     private readonly float maxY = 9f;
 
-    
     void FixedUpdate()
     {
         if (ParentOb != null)
@@ -41,10 +40,7 @@ public class FrozenIce : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 受伤方法
-    /// </summary>
-    /// <param name="damage">伤害值</param>
+    // 受伤方法
     public void TakeDamage(int damage)
     {
         hp -= damage;
@@ -54,9 +50,7 @@ public class FrozenIce : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 检查边界，超出范围则回收
-    /// </summary>
+    // 检查边界，超出范围则回收
     private void CheckBounds()
     {
         Vector2 position = transform.position;
@@ -66,9 +60,7 @@ public class FrozenIce : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 回收子弹
-    /// </summary>
+    // 回收子弹
     private void Recycle()
     {
         // 保存当前位置用于发射破裂子弹

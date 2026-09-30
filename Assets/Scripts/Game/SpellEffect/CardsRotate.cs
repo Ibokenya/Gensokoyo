@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using ReplaySystem;
 using UnityEngine;
@@ -54,9 +54,7 @@ public class CardsRotate : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 淡入协程
-    /// </summary>
+    // 淡入协程
     private IEnumerator FadeInCoroutine()
     {
         while (fadeTimer < fadeInDuration)
@@ -85,17 +83,13 @@ public class CardsRotate : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 淡出方法（供动画事件调用）
-    /// </summary>
+    // 淡出方法（供动画事件调用）
     public void FadeOut()
     {
         StartCoroutine(FadeOutCoroutine());
     }
 
-    /// <summary>
-    /// 淡出协程
-    /// </summary>
+    // 淡出协程
     private IEnumerator FadeOutCoroutine()
     {
         float fadeOutTimer = 0f;
@@ -125,9 +119,7 @@ public class CardsRotate : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 设置符卡的透明度
-    /// </summary>
+    // 设置符卡的透明度
     private void SetCardAlpha(GameObject card, float alpha)
     {
         // 获取符卡的所有渲染器组件

@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ReplaySystem;
@@ -24,10 +24,8 @@ public class NormalIce : MonoBehaviour
         rb2D = GetComponent<Rigidbody2D>();
     }
     
-    /// <summary>
-    ///  由 BossShootSystem spawner 层调用 —— 确定性消费 GameRNG + 设好速度
-    /// 顺序调用，GameRNG 消费顺序 100% 确定
-    /// </summary>
+    //  由 BossShootSystem spawner 层调用 —— 确定性消费 GameRNG + 设好速度
+    // 顺序调用，GameRNG 消费顺序 100% 确定
     public void SetSpeed(float speed)
     {
         BaseSpeed = speed;
@@ -35,7 +33,6 @@ public class NormalIce : MonoBehaviour
         ApplyVelocity();
     }
 
-    /// <summary> 从 GameRNG 计算实际速度 —— 只在 spawner 层或 FixedUpdate 第一帧调用一次</summary>
     private void InitSpeedFromRng()
     {
         if (useSpeedOffset)
@@ -50,7 +47,6 @@ public class NormalIce : MonoBehaviour
         speedInitialized = true;
     }
 
-    /// <summary> 把 actualSpeed 应用到 Rigidbody2D（spawner 和 FixedUpdate 都复用）</summary>
     private void ApplyVelocity()
     {
         if (rb2D != null)
@@ -80,9 +76,7 @@ public class NormalIce : MonoBehaviour
         CheckBounds();
     }
     
-    /// <summary>
-    /// 检查边界，超出范围则回收
-    /// </summary>
+    // 检查边界，超出范围则回收
     private void CheckBounds()
     {
         Vector2 position = transform.position;

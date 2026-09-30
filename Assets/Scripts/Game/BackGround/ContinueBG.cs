@@ -21,7 +21,6 @@ public class ContinueBG : MonoBehaviour
     private Vector2 darkstarOriginalSpeed = new (0,0.12f);
     private Vector2 dreamroadOriginalSpeed = new (0,-1f);
 
-    
     // 存储协程引用，用于控制协程的执行
     private Coroutine transitionCoroutine;
     private Coroutine recoveryCoroutine;
@@ -117,9 +116,7 @@ public class ContinueBG : MonoBehaviour
         EnsureFinalRecoveryValues();
     }
 
-    /// <summary>
-    /// 确保最终速度为目标速度
-    /// </summary>
+    // 确保最终速度为目标速度
     private void EnsureFinalValues()
     {
         if (Star != null)
@@ -150,9 +147,7 @@ public class ContinueBG : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 确保恢复到原始速度
-    /// </summary>
+    // 确保恢复到原始速度
     private void EnsureFinalRecoveryValues()
     {
         if (Star != null)
@@ -179,10 +174,7 @@ public class ContinueBG : MonoBehaviour
         }
     }
 
-
-    /// <summary>
-    /// 开始过渡到目标速度（5秒内平滑降速，同时DarkCloud淡出）
-    /// </summary>
+    // 开始过渡到目标速度（5秒内平滑降速，同时DarkCloud淡出）
     public void StartTransition()
     {
         // 停止之前可能正在运行的协程
@@ -199,9 +191,7 @@ public class ContinueBG : MonoBehaviour
         transitionCoroutine = StartCoroutine(TransitionToTargetSpeed());
     }
 
-    /// <summary>
-    /// 恢复到原始速度（3秒内平滑恢复）
-    /// </summary>
+    // 恢复到原始速度（3秒内平滑恢复）
     public void StartRecovery()
     {
         // 停止之前可能正在运行的协程

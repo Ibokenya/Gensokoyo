@@ -1,10 +1,8 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using ReplaySystem;
-
-
 
 public class BossShootSystem : MonoBehaviour
 {
@@ -349,14 +347,7 @@ public class BossShootSystem : MonoBehaviour
     }
 #endregion
 #region 陨石冰冻旋转攻击（一符）
-    /// <summary>
-    /// 陨石冰冻旋转攻击
-    /// </summary>
-    /// <param name="stoneBullet">陨石子弹预制体</param>
-    /// <param name="frozenIceBullet">冰冻子弹预制体</param>
-    /// <param name="normalIceBullet">普通冰子弹预制体（用于冰块破裂）</param>
-    /// <param name="stoneCount">陨石数量</param>
-    /// <param name="rotationSpeed">旋转速度</param>
+    // 陨石冰冻旋转攻击
     public void StoneFrozenAttack(GameObject stoneBullet, GameObject frozenIceBullet, GameObject normalIceBullet, int stoneCount, float rotationSpeed)
     {
         StartCoroutine(StoneFrozenAttackCoroutine(stoneBullet, frozenIceBullet, normalIceBullet, stoneCount, rotationSpeed));
@@ -499,13 +490,7 @@ public class BossShootSystem : MonoBehaviour
     }
 #endregion
 #region 随机射击（一符）
-    /// <summary>
-    /// 随机射击方法（一符专用）
-    /// </summary>
-    /// <param name="bullet">子弹预制件</param>
-    /// <param name="bulletSpeed">射击速度</param>
-    /// <param name="shootInterval">射击间隔</param>
-    /// <param name="bulletCount">每轮射击子弹数</param>
+    // 随机射击方法（一符专用）
     public void randomIcePick(GameObject bullet, float bulletSpeed, float shootInterval, int bulletCount = 5)
     {
         randomIcePickBulletCount = bulletCount;
@@ -546,11 +531,7 @@ public class BossShootSystem : MonoBehaviour
     } 
 #endregion
 #region 冰块破裂攻击（一符）
-    /// <summary>
-    /// 冰块破裂攻击——以指定位置为中心发射一圈NormalIce子弹
-    /// </summary>
-    /// <param name="position">冰块摧毁位置</param>
-    /// <param name="normalIcePrefab">NormalIce子弹预制件</param>
+    // 冰块破裂攻击——以指定位置为中心发射一圈NormalIce子弹
     public void FrozenIceExplode(Vector3 position, GameObject normalIcePrefab)
     {
         // 发射4枚均匀分布的NormalIce子弹
@@ -578,9 +559,7 @@ public class BossShootSystem : MonoBehaviour
             }
         }
     }
-    /// <summary>
-    /// 当FrozenIce被摧毁时调用，增加陨石旋转速度和随机子弹数量
-    /// </summary>
+    // 当FrozenIce被摧毁时调用，增加陨石旋转速度和随机子弹数量
     public void OnFrozenIceDestroyed()
     {
         // 增加随机射击的子弹数量
@@ -596,13 +575,7 @@ public class BossShootSystem : MonoBehaviour
 #region 小冰珠随机射击（二非）
     private Coroutine none2ShootingCoroutine;
     
-    /// <summary>
-    /// 二非随机射击方法
-    /// </summary>
-    /// <param name="bullet">子弹预制件（miniIceBall）</param>
-    /// <param name="bulletSpeed">射击速度</param>
-    /// <param name="shootInterval">射击间隔</param>
-    /// <param name="bulletCount">每轮射击子弹数</param>
+    // 二非随机射击方法
     public void none2RandomShoot(GameObject bullet, float bulletSpeed, float shootInterval, int bulletCount = 5)
     {
         // 停止之前的射击协程
@@ -662,9 +635,7 @@ public class BossShootSystem : MonoBehaviour
     }
 #endregion
 #region 子弹融合攻击（二非）
-    /// <summary>
-    /// 子弹波次数据类
-    /// </summary>
+    // 子弹波次数据类
     private class BulletWave
     {
         public int waveId;
@@ -679,11 +650,7 @@ public class BossShootSystem : MonoBehaviour
     private List<BulletWave> activeWaves = new List<BulletWave>();
     private int currentWaveId = 0;
     
-    /// <summary>
-    /// 开始单波子弹融合攻击
-    /// </summary>
-    /// <param name="bullets">子弹列表</param>
-    /// <param name="targetPosition">目标位置</param>
+    // 开始单波子弹融合攻击
     public void StartBulletWave(List<GameObject> bullets, Vector3 targetPosition)
     {
         if (bullets == null || bullets.Count == 0)
@@ -779,9 +746,7 @@ public class BossShootSystem : MonoBehaviour
         activeWaves.Remove(wave);
     }
     
-    /// <summary>
-    /// 停止所有子弹波次
-    /// </summary>
+    // 停止所有子弹波次
     public void StopAllBulletWaves()
     {
         foreach (var wave in activeWaves)
@@ -802,11 +767,7 @@ public class BossShootSystem : MonoBehaviour
     }
 #endregion
 #region 雪花攻击（二符）
-    /// <summary>
-    /// 雪花攻击方法
-    /// </summary>
-    /// <param name="flakePrefab">雪花子弹预制体</param>
-    /// <param name="totalCount">生成的雪花总数</param>
+    // 雪花攻击方法
     public void SnowFlakeAttack(GameObject flakePrefab, int totalCount)
     {
         StartCoroutine(SnowFlakeAttackCoroutine(flakePrefab, totalCount));
@@ -850,11 +811,7 @@ public class BossShootSystem : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 根据生成点位置确定雪花移动方向
-    /// </summary>
-    /// <param name="position">生成点位置</param>
-    /// <returns>移动方向向量</returns>
+    // 根据生成点位置确定雪花移动方向
     private Vector2 GetSnowFlakeDirection(Vector2 position)
     {
         float x = position.x;
@@ -930,13 +887,7 @@ public class BossShootSystem : MonoBehaviour
     }
 #endregion
 #region 冰云攻击（二符）
-    /// <summary>
-    /// 创建冰云方法
-    /// </summary>
-    /// <param name="prefab">冰云预制件</param>
-    /// <param name="minPos">生成范围左下角</param>
-    /// <param name="maxPos">生成范围右上角</param>
-    /// <param name="count">生成数量</param>
+    // 创建冰云方法
     public void CreateCloud(GameObject prefab, Vector2 minPos, Vector2 maxPos, int count)
     {
         cloudPrefab = prefab;
@@ -951,9 +902,7 @@ public class BossShootSystem : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 生成单个冰云
-    /// </summary>
+    // 生成单个冰云
     private void SpawnCloud()
     {
         if (cloudPrefab == null)
@@ -969,9 +918,7 @@ public class BossShootSystem : MonoBehaviour
         cloudInstance.GetComponent<IceCloud>().bossShootSystem = this;
     }
     
-    /// <summary>
-    /// 当冰云被回收时调用，生成新的冰云
-    /// </summary>
+    // 当冰云被回收时调用，生成新的冰云
     public void OnCloudRecycled()
     {
         // 生成新的冰云
@@ -979,13 +926,7 @@ public class BossShootSystem : MonoBehaviour
     }
 #endregion
 #region 彗星攻击（二符）
-    /// <summary>
-    /// 开始彗星攻击
-    /// </summary>
-    /// <param name="comet">彗星预制件</param>
-    /// <param name="line">连线预制件</param>
-    /// <param name="interval">攻击间隔</param>
-    /// <param name="spawnY">彗星生成y坐标</param>
+    // 开始彗星攻击
     public void StartCometAttack(GameObject comet, GameObject line, float interval, float spawnY)
     {
         cometPrefab = comet;
@@ -997,9 +938,7 @@ public class BossShootSystem : MonoBehaviour
         StartCoroutine(CometAttackCoroutine());
     }
     
-    /// <summary>
-    /// 彗星攻击协程
-    /// </summary>
+    // 彗星攻击协程
     private IEnumerator CometAttackCoroutine()
     {
         while (true)
@@ -1027,10 +966,7 @@ public class BossShootSystem : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 生成连线并等待动画完成
-    /// </summary>
-    /// <param name="x">连线的x坐标</param>
+    // 生成连线并等待动画完成
     private IEnumerator GenerateLineAndWait(float x)
     {
         if (linePrefab == null)
@@ -1048,10 +984,7 @@ public class BossShootSystem : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 连线动画
-    /// </summary>
-    /// <param name="line">连线对象</param>
+    // 连线动画
     private IEnumerator LineAnimation(GameObject line)
     {
         if (line == null)
@@ -1108,10 +1041,7 @@ public class BossShootSystem : MonoBehaviour
         Global_ObjectPool.Instance.Recycle(line);
     }
     
-    /// <summary>
-    /// 生成彗星
-    /// </summary>
-    /// <param name="x">彗星生成的x坐标</param>
+    // 生成彗星
     private void SpawnComet(float x)
     {
         if (cometPrefab == null)
@@ -1123,29 +1053,13 @@ public class BossShootSystem : MonoBehaviour
     }
 #endregion
 #region 往复扫射射击（Final）
-    /// <summary>
-    /// 重复扫射射击方法
-    /// </summary>
-    /// <param name="bullet">子弹预制件</param>
-    /// <param name="angleOffset">角度偏移范围，默认60度</param>
-    /// <param name="angleStep">射击偏移角度，默认10度</param>
-    /// <param name="shootInterval">射击间隔，默认0.5秒</param>
-    /// <param name="startFromLeft">是否从区间左侧开始（从左向右扫），默认true</param>
-    /// <param name="storeBullets">是否存储子弹以执行后续冻结效果，默认false</param>
+    // 重复扫射射击方法
     public Coroutine RepeatShoot(GameObject bullet, float angleOffset = 60f, float angleStep = 10f, float shootInterval = 0.5f, bool startFromLeft = true, bool storeBullets = false)
     {
         return StartCoroutine(RepeatShootCoroutine(bullet, angleOffset, angleStep, shootInterval, startFromLeft, storeBullets));
     }
     
-    /// <summary>
-    /// 重复扫射射击协程
-    /// </summary>
-    /// <param name="bullet">子弹预制件</param>
-    /// <param name="angleOffset">角度偏移范围</param>
-    /// <param name="angleStep">射击偏移角度</param>
-    /// <param name="shootInterval">射击间隔</param>
-    /// <param name="startFromLeft">是否从区间左侧开始（从左向右扫）</param>
-    /// <param name="storeBullets">是否存储子弹以执行后续冻结效果</param>
+    // 重复扫射射击协程
     private IEnumerator RepeatShootCoroutine(GameObject bullet, float angleOffset, float angleStep, float shootInterval, bool startFromLeft, bool storeBullets)
     {
         while (true)
@@ -1214,12 +1128,7 @@ public class BossShootSystem : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 发射子弹
-    /// </summary>
-    /// <param name="angle">发射角度</param>
-    /// <param name="bullet">子弹预制件</param>
-    /// <param name="storeBullet">是否存储子弹引用</param>
+    // 发射子弹
     private void FireBullet(float angle, GameObject bullet, bool storeBullet = false)
     {
         Quaternion rotation = Quaternion.Euler(0, 0, angle);
@@ -1238,10 +1147,7 @@ public class BossShootSystem : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 从活跃冰珠列表中移除子弹
-    /// </summary>
-    /// <param name="icePearl">要移除的冰珠</param>
+    // 从活跃冰珠列表中移除子弹
     public void RemoveIcePearl(GameObject icePearl)
     {
         if (icePearl != null && activeIcePearls.Contains(icePearl))
@@ -1250,10 +1156,7 @@ public class BossShootSystem : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 释放单个冻结的冰珠
-    /// </summary>
-    /// <param name="icePearl">要释放的冰珠</param>
+    // 释放单个冻结的冰珠
     public void ReleaseFrozenPearl(GameObject icePearl)
     {
         if (player == null || icePearl == null || !icePearl.activeInHierarchy)
@@ -1284,13 +1187,9 @@ public class BossShootSystem : MonoBehaviour
         }
     }
     
-    
 #endregion
 #region 冰珠冻结（Final）
-    /// <summary>
-    /// 冻结所有冰珠并生成冰球
-    /// </summary>
-    /// <param name="frozenIcePrefab">冰球预制件</param>
+    // 冻结所有冰珠并生成冰球
     public void FrozenPearl(GameObject frozenIcePrefab)
     {
         List<GameObject> frozenIceList = new ();
@@ -1357,9 +1256,7 @@ public class BossShootSystem : MonoBehaviour
             StartCoroutine(GrowFrozenIceCoroutine(frozenIceList));
         }
     }
-    /// <summary>
-    /// 冰球变大协程
-    /// </summary>
+    // 冰球变大协程
     private IEnumerator GrowFrozenIceCoroutine(List<GameObject> frozenIceList)
     {
         float growthDuration = 8f; // 变大持续时间
@@ -1395,16 +1292,7 @@ public class BossShootSystem : MonoBehaviour
     }
 #endregion
 #region 区域限制攻击（Final）
-    /// <summary>
-    /// 区域限制攻击
-    /// </summary>
-    /// <param name="bullet">子弹预制件</param>
-    /// <param name="center">中心点</param>
-    /// <param name="radius">初始半径</param>
-    /// <param name="rotationSpeed">旋转速度</param>
-    /// <param name="shrinkSpeed">收缩速度</param>
-    /// <param name="stopDistance">停止收缩的距离</param>
-    /// <param name="checkRadius">检测玩家是否在范围内的半径</param>
+    // 区域限制攻击
     public void AreaLimit(GameObject bullet, Vector3 center, float radius = 5f, float rotationSpeed = 90f,
      float shrinkSpeed = 2f, float stopDistance = 2f, float checkRadius = 2.5f)
     {
@@ -1428,16 +1316,7 @@ public class BossShootSystem : MonoBehaviour
          shrinkSpeed, stopDistance));
     }
     
-    /// <summary>
-    /// 区域限制攻击协程
-    /// <param name="bullet">子弹预制件</param>
-    /// <param name="center">中心点</param>
-    /// <param name="radius">初始半径</param>
-    /// <param name="rotationSpeed">旋转速度</param>
-    /// <param name="shrinkSpeed">收缩速度</param>
-    /// <param name="duration">持续时间</param>
-    /// <param name="stopDistance">停止收缩的距离</param>
-    /// </summary>
+    // 区域限制攻击协程
     private IEnumerator AreaLimitCoroutine(GameObject bullet, Vector3 center, float radius,
      float rotationSpeed, float shrinkSpeed, float stopDistance)
     {
@@ -1569,9 +1448,7 @@ public class BossShootSystem : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 淡出并重启区域限制攻击
-    /// </summary>
+    // 淡出并重启区域限制攻击
     private void StartFadeOutAndRestart()
     {
         if (fadeOutCoroutine != null)
@@ -1585,9 +1462,7 @@ public class BossShootSystem : MonoBehaviour
         fadeOutCoroutine = StartCoroutine(FadeOutAreaLimitCoroutine());
     }
     
-    /// <summary>
-    /// 区域限制攻击淡出协程
-    /// </summary>
+    // 区域限制攻击淡出协程
     private IEnumerator FadeOutAreaLimitCoroutine()
     {
         float fadeDuration = 1f;
@@ -1644,10 +1519,7 @@ public class BossShootSystem : MonoBehaviour
     }
 #endregion
 #region 冰球破碎（Final）
-    /// <summary>
-    /// 激活冰领域
-    /// </summary>
-    /// <param name="position">激活位置</param>
+    // 激活冰领域
     public void ActivateIceRealm(Vector3 position)
     {
         if (IceRealm == null)
@@ -1658,10 +1530,7 @@ public class BossShootSystem : MonoBehaviour
         IceRealm.Activate();
     }
     
-    /// <summary>
-    /// 生成冰锥
-    /// </summary>
-    /// <param name="count">生成数量</param>
+    // 生成冰锥
     public void SpawnIceSpikes(int count)
     {
         if (IceSpike == null)
@@ -1685,7 +1554,6 @@ public class BossShootSystem : MonoBehaviour
         }
     }
 #endregion
-    
     
 #region 冰刺地形相关
     public void ShowTerrain()
@@ -1853,9 +1721,7 @@ public class BossShootSystem : MonoBehaviour
     }
 #endregion    
 
-    /// <summary>
-    /// 恢复所有陨石的重力
-    /// </summary>
+    // 恢复所有陨石的重力
     public void ResumeAllStonesGravity()
     {
         foreach (var stone in stones)
@@ -1875,9 +1741,7 @@ public class BossShootSystem : MonoBehaviour
         GameCamera.Shake(ShakeTime);
     }
 
-    /// <summary>
-    /// 冻结副卡特效
-    /// </summary>
+    // 冻结副卡特效
     public void FreezeSpellCard()
     {
         StartCoroutine(FreezeSpellCardCoroutine());
@@ -1903,9 +1767,7 @@ public class BossShootSystem : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 停止所有射击协程
-    /// </summary>
+    // 停止所有射击协程
     public void StopAllShooting()
     {
         // 停止所有协程

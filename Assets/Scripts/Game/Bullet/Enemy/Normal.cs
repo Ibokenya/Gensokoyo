@@ -1,13 +1,11 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ReplaySystem;
 
-/// <summary>
-/// 普通子弹Normal
-/// 可以通过设置移速的方式实现快慢效果
-/// 小玉，持国天，小米弹，大米弹
-/// </summary>
+// 普通子弹Normal
+// 可以通过设置移速的方式实现快慢效果
+// 小玉，持国天，小米弹，大米弹
 public class Normal : MonoBehaviour
 {
     public float Speed = 5f;
@@ -66,9 +64,7 @@ public class Normal : MonoBehaviour
         CheckBounds();
     }
     
-    /// <summary>
-    /// 检查边界，超出边界则回收
-    /// </summary>
+    // 检查边界，超出边界则回收
     private void CheckBounds()
     {
         Vector2 position = transform.position;

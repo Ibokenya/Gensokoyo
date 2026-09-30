@@ -1,13 +1,11 @@
-using UnityEngine;
+﻿using UnityEngine;
 
-/// <summary>
-/// 单向脉冲式缩放 —— 从初始大小扩散到 maxScale 后瞬间重置重来（模拟月亮光晕一圈圈扩散）。
-/// 保留原始设计意图 + 加速度逐渐减速，修复：
-///   1. 加 Time.deltaTime 保证帧率无关（编辑器/打包速度一致）
-///   2. 钳制 TrueSpeed 防负值（防止"越缩越快永不重置"的 bug）
-///   3. 修复 .transform.transform 笔误
-///   4. localScale 保持 z=1（防 2D 精灵消失）
-/// </summary>
+// 单向脉冲式缩放 —— 从初始大小扩散到 maxScale 后瞬间重置重来（模拟月亮光晕一圈圈扩散）。
+// 保留原始设计意图 + 加速度逐渐减速，修复：
+//   1. 加 Time.deltaTime 保证帧率无关（编辑器/打包速度一致）
+//   2. 钳制 TrueSpeed 防负值（防止"越缩越快永不重置"的 bug）
+//   3. 修复 .transform.transform 笔误
+//   4. localScale 保持 z=1（防 2D 精灵消失）
 public class Scale : MonoBehaviour
 {
     [Header("引用")]

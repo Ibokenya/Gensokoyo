@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -18,9 +18,7 @@ public enum State
     SpellCard,Dialog,Frozen,FinalUI
 }
 
-/// <summary>
-/// 游戏重置配置类
-/// </summary>
+// 游戏重置配置类
 [System.Serializable]
 public class GameResetConfig
 {
@@ -34,11 +32,9 @@ public class GameResetConfig
     public int Graze;
 }
 
-/// <summary>
-/// 全局游戏管理单例
-/// 存储机体，难度，残机，得点等数据
-/// 以及状态机，还有生成敌人相关的波次管理
-/// </summary>
+// 全局游戏管理单例
+// 存储机体，难度，残机，得点等数据
+// 以及状态机，还有生成敌人相关的波次管理
 public class Global_GameManager : Singleton<Global_GameManager>
 {
     public GameMode gameMode;    // 游戏难度
@@ -68,9 +64,7 @@ public class Global_GameManager : Singleton<Global_GameManager>
 
     int pastPower = 0;//上一次灵力值，用于判断是否需要播放音效
 
-/// <summary>
-/// 事件系统
-/// </summary>
+// 事件系统
 #region 事件系统
     public event Action<int> OnScoreChanged;        // 得分数改变事件
     public event Action<int> OnPowerChanged;        // 灵力值改变事件
@@ -194,15 +188,12 @@ public class Global_GameManager : Singleton<Global_GameManager>
         }
     }
 
-    /// <summary>
-    /// 重新生成玩家
-    /// </summary>
+    // 重新生成玩家
     public void ReBack()
     {
         state = State.Reincarnation;
         OnReincarnation?.Invoke(state);
     }
-
 
     public void AddBomb(int bomb = 0 , int piece = 0)
     {
@@ -233,7 +224,6 @@ public class Global_GameManager : Singleton<Global_GameManager>
         }
     }
 
-    /// <summary> 回放时强制设游戏状态 —— 直接赋值 + 触发事件，跳过音效</summary>
     public void ForceSetReplayState(int power, int hp, int bombCount)
     {
         Power = Mathf.Clamp(power, 0, 400);
@@ -273,10 +263,8 @@ public class Global_GameManager : Singleton<Global_GameManager>
         return SpeedScale;
     }
 
-    /// <summary>
-    /// 重置游戏数据
-    /// 从JSON配置文件读取初始数据，保留当前机体和难度
-    /// </summary>
+    // 重置游戏数据
+    // 从JSON配置文件读取初始数据，保留当前机体和难度
     public void ResetGameDate()
     {  
         // 从Resources加载JSON配置文件（兼容编辑器和打包后环境）
@@ -328,9 +316,7 @@ public class Global_GameManager : Singleton<Global_GameManager>
         OnGrazeChanged?.Invoke(Graze);
     }
     
-    /// <summary>
-    /// 设置默认游戏数据
-    /// </summary>
+    // 设置默认游戏数据
     private void SetDefaultValues()
     {
         ResetBomb = 2;
@@ -347,10 +333,8 @@ public class Global_GameManager : Singleton<Global_GameManager>
         state = State.Gaming;
     }
     
-    /// <summary>
-    /// 重置为Game2的初始数据
-    /// 保留当前得分，重置Grade、Graze为0，SceneLevel为2
-    /// </summary>
+    // 重置为Game2的初始数据
+    // 保留当前得分，重置Grade、Graze为0，SceneLevel为2
     public void ResetFor_Game2()
     {
         // 保留当前得分（已经在FinalUI中累加过了）
@@ -368,10 +352,7 @@ public class Global_GameManager : Singleton<Global_GameManager>
         Debug.Log("已重置为Game2初始数据 - Grade: 0, Graze: 0, SceneLevel: 2, Score保留当前值");
     }
 
-    /// <summary>
-    /// 添加敌人到敌人列表
-    /// </summary>
-    /// <param name="enemy">敌人对象</param>
+    // 添加敌人到敌人列表
     public void AddEnemy(GameObject enemy)
     {
         if (enemy != null && !EnemyList.Contains(enemy))
@@ -380,10 +361,7 @@ public class Global_GameManager : Singleton<Global_GameManager>
         }
     }
 
-    /// <summary>
-    /// 从敌人列表中移除敌人
-    /// </summary>
-    /// <param name="enemy">敌人对象</param>
+    // 从敌人列表中移除敌人
     public void RemoveEnemy(GameObject enemy)
     {
         if (enemy != null && EnemyList.Contains(enemy))
@@ -392,9 +370,7 @@ public class Global_GameManager : Singleton<Global_GameManager>
         }
     }
 
-    /// <summary>
-    /// 回收所有敌人
-    /// </summary>
+    // 回收所有敌人
     public void RecycleAllEnemies()
     {
         foreach (GameObject enemy in EnemyList)
@@ -407,10 +383,7 @@ public class Global_GameManager : Singleton<Global_GameManager>
         EnemyList.Clear();
     }
     
-    /// <summary>
-    /// 设置无敌状态
-    /// </summary>
-    /// <param name="time">无敌持续时间（秒）</param>
+    // 设置无敌状态
     public void SetNoDead(float time,State thestate)
     {
         // 记录当前状态
@@ -421,10 +394,7 @@ public class Global_GameManager : Singleton<Global_GameManager>
         StartCoroutine(RecoverStateAfterTime(time));
     }
     
-    /// <summary>
-    /// 在指定时间后恢复之前的状态
-    /// </summary>
-    /// <param name="time">等待时间（秒）</param>
+    // 在指定时间后恢复之前的状态
     private IEnumerator RecoverStateAfterTime(float time)
     {
         yield return new WaitForSeconds(time);
@@ -432,9 +402,7 @@ public class Global_GameManager : Singleton<Global_GameManager>
         state = previousState;
     }
 
-    /// <summary>
-    /// 是否为游戏中
-    /// </summary>
+    // 是否为游戏中
     public bool IsGameplayState()
     {
         if(state == State.Gaming || 

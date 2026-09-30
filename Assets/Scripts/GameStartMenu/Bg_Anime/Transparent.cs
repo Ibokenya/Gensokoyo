@@ -1,11 +1,9 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>
-/// 透明度呼吸动画 —— 菜单场景背景装饰用
-/// alpha 在初始值和 0 之间平滑往返。
-/// 加 Time.deltaTime 保证帧率无关。
-/// </summary>
+// 透明度呼吸动画 —— 菜单场景背景装饰用
+// alpha 在初始值和 0 之间平滑往返。
+// 加 Time.deltaTime 保证帧率无关。
 public class Transparent : MonoBehaviour
 {
     [Header("引用")]

@@ -18,10 +18,7 @@ public class ButtonAnime : MonoBehaviour
     [SerializeField] private AudioClip moveoffSound;   // 取消选中音效
     [SerializeField] private AudioClip clickSound;      // 点击音效
 
-    /// <summary>
-    /// 当按钮被选中时
-    /// </summary>
-    /// <param name="button">将被选中的按钮传递进来</param>
+    // 当按钮被选中时
     public void ButtonBeChoose(Button button)
     {
         text=button.GetComponentInChildren<TMP_Text>();
@@ -29,10 +26,7 @@ public class ButtonAnime : MonoBehaviour
         text.color += color;
     }
 
-    /// <summary>
-    /// 当按钮被取消选中时，必须恢复原状
-    /// </summary>
-    /// <param name="button">被移除选中状态的按钮</param>
+    // 当按钮被取消选中时，必须恢复原状
     public void ButtonBeMoveoff(Button button)
     {
         text = button.GetComponentInChildren<TMP_Text>();
@@ -46,10 +40,7 @@ public class ButtonAnime : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 按钮被选择时（按下了Z键），不过这时候也没什么动画可做的，但，还有音效不是吗？
-    /// </summary>
-    /// <param name="button">被按下的按钮</param>
+    // 按钮被选择时（按下了Z键），不过这时候也没什么动画可做的，但，还有音效不是吗？
     public void ButtonBeClick(Button button)
     {
         // 播放点击音效

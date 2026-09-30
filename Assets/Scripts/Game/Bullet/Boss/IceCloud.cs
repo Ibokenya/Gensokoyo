@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ReplaySystem;
@@ -68,9 +68,7 @@ public class IceCloud : MonoBehaviour
         CheckBounds();
     }
     
-    /// <summary>
-    /// 随机飘浮
-    /// </summary>
+    // 随机飘浮
     private void FloatRandomly()
     {
         perlinOffsetX += perlinSpeed * SimClock.FixedTickDt;
@@ -90,9 +88,7 @@ public class IceCloud : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 边界检测
-    /// </summary>
+    // 边界检测
     private void CheckBounds()
     {
         Vector3 position = transform.position;
@@ -104,9 +100,7 @@ public class IceCloud : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 淡入效果
-    /// </summary>
+    // 淡入效果
     private IEnumerator FadeIn()
     {
         fadeTimer = 0f;
@@ -133,9 +127,7 @@ public class IceCloud : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 回收冰云
-    /// </summary>
+    // 回收冰云
     public void Recycle()
     {
         Global_ObjectPool.Instance.Recycle(this.gameObject);

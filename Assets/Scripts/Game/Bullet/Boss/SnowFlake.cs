@@ -1,11 +1,9 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ReplaySystem;
 
-/// <summary>
-/// 雪花型子弹
-/// </summary>
+// 雪花型子弹
 public class SnowFlake : MonoBehaviour
 {
     public float rotationSpeed = 30f; // 旋转速度（度/秒）
@@ -81,9 +79,7 @@ public class SnowFlake : MonoBehaviour
         CheckBounds();
     }
     
-    /// <summary>
-    /// 检查边界，超出范围则回收
-    /// </summary>
+    // 检查边界，超出范围则回收
     private void CheckBounds()
     {
         Vector2 position = transform.position;
@@ -93,9 +89,7 @@ public class SnowFlake : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 回收子弹
-    /// </summary>
+    // 回收子弹
     private void Recycle()
     {
         // 解除父子关系
@@ -111,19 +105,13 @@ public class SnowFlake : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 设置基础移动方向
-    /// </summary>
-    /// <param name="direction">归一化的方向向量</param>
+    // 设置基础移动方向
     public void SetDirection(Vector2 direction)
     {
         baseDirection = direction.normalized;
     }
     
-    /// <summary>
-    /// 设置移动速度
-    /// </summary>
-    /// <param name="speed">移动速度</param>
+    // 设置移动速度
     public void SetSpeed(float speed)
     {
         moveSpeed = speed;

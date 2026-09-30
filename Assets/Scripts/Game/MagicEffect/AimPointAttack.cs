@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
 using ReplaySystem;
@@ -51,9 +51,7 @@ public class AimPointAttack : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 从对象池获取魔法珠
-    /// </summary>
+    // 从对象池获取魔法珠
     private void SpawnPearl()
     {
         if (!gameObject.activeInHierarchy)
@@ -81,9 +79,7 @@ public class AimPointAttack : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 获取随机生成位置
-    /// </summary>
+    // 获取随机生成位置
     private Vector3 GetRandomSpawnPosition()
     {
         float x;
@@ -102,9 +98,7 @@ public class AimPointAttack : MonoBehaviour
         return new Vector3(x, y, z);
     }
 
-    /// <summary>
-    /// 魔法珠的淡入协程
-    /// </summary>
+    // 魔法珠的淡入协程
     private IEnumerator FadeInPearl(GameObject pearlObj)
     {
         if (pearlObj == null) yield break;
@@ -134,9 +128,7 @@ public class AimPointAttack : MonoBehaviour
         UpdatePearl();
     }
 
-    /// <summary>
-    /// 更新魔法珠状态
-    /// </summary>
+    // 更新魔法珠状态
     private void UpdatePearl()
     {
         if (pearl == null)
@@ -171,9 +163,7 @@ public class AimPointAttack : MonoBehaviour
         pearl.transform.position += moveAmount;
     }
 
-    /// <summary>
-    /// 计算伤害
-    /// </summary>
+    // 计算伤害
     private int CalculateDamage()
     {
         int baseDamage = 120;
@@ -187,9 +177,7 @@ public class AimPointAttack : MonoBehaviour
         return baseDamage + powerBonus;
     }
 
-    /// <summary>
-    /// 对敌人造成伤害
-    /// </summary>
+    // 对敌人造成伤害
     private void DealDamageToEnemy(int damage)
     {
         if (transform.parent != null)
@@ -202,9 +190,7 @@ public class AimPointAttack : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 播放爆炸动画
-    /// </summary>
+    // 播放爆炸动画
     private IEnumerator PlayExplosionAnimation()
     {
         if (spriteRenderer == null)
@@ -234,9 +220,7 @@ public class AimPointAttack : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 设置魔法珠预制件（通过脚本传递）
-    /// </summary>
+    // 设置魔法珠预制件（通过脚本传递）
     public void SetPearlPrefab(GameObject prefab)
     {
         SimTimer.CancelAll();

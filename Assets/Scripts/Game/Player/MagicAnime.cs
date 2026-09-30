@@ -1,17 +1,15 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using ReplaySystem;
 using UnityEngine;
 
-/// <summary>
-/// 魔理沙的七曜攻击之~
-/// 超级炫酷的七曜运动
-/// 话说七曜有8个，是因为计算机里的索引从0开始
-/// 只管理七曜珠子的初始动画和环绕特效。七曜珠会先旋转排列，这将耗费几秒（期间无法攻击，算作是蓄力起手阶段）
-/// 旋转完毕后，生成珠子间连线，并保持缓慢继续转动
-/// 此时开始特殊攻击
-/// </summary>
+// 魔理沙的七曜攻击之~
+// 超级炫酷的七曜运动
+// 话说七曜有8个，是因为计算机里的索引从0开始
+// 只管理七曜珠子的初始动画和环绕特效。七曜珠会先旋转排列，这将耗费几秒（期间无法攻击，算作是蓄力起手阶段）
+// 旋转完毕后，生成珠子间连线，并保持缓慢继续转动
+// 此时开始特殊攻击
 public class MagicAnime : MonoBehaviour
 {
     public List<GameObject> MagicBalls = new();// 这里是七曜贤者之石仓库
@@ -89,9 +87,7 @@ public class MagicAnime : MonoBehaviour
         ClearLines();
     }
 
-    /// <summary>
-    /// 初始化所有连线
-    /// </summary>
+    // 初始化所有连线
     public void InitLines()
     {
         // 先清理旧连线
@@ -103,9 +99,7 @@ public class MagicAnime : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 清理所有连线
-    /// </summary>
+    // 清理所有连线
     public void ClearLines()
     {
         foreach (var kvp in linePairs)
@@ -118,11 +112,7 @@ public class MagicAnime : MonoBehaviour
         linePairs.Clear();
     }
 
-    /// <summary>
-    /// 创建单条连线
-    /// </summary>
-    /// <param name="startIdx">起始球体索引</param>
-    /// <param name="endIdx">结束球体索引</param>
+    // 创建单条连线
     private void CreateLine(int startIdx, int endIdx)
     {
         // 创建空物体承载LineRenderer
@@ -143,9 +133,7 @@ public class MagicAnime : MonoBehaviour
         linePairs.Add(lineRenderer, (startIdx, endIdx));
     }
 
-        /// <summary>
-    /// 实时更新所有连线的位置
-    /// </summary>
+    // 实时更新所有连线的位置
     private void UpdateLinePositions()
     {
         foreach (var kvp in linePairs)

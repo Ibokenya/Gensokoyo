@@ -1,14 +1,12 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>
-/// Canvas 16:9 适配脚本 —— ScaleWithScreenSize + matchWidthOrHeight 动态选值
-///
-/// 核心原理：
-///   宽屏时 Canvas 逻辑变宽，窄屏时 Canvas 逻辑变高。
-///   所有 UI 元素设计在 0~RefW / 0~RefH 参考区域内，
-///   CanvasScaler 自动 scale 到真实屏幕像素。
-/// </summary>
+// Canvas 16:9 适配脚本 —— ScaleWithScreenSize + matchWidthOrHeight 动态选值
+//
+// 核心原理：
+//   宽屏时 Canvas 逻辑变宽，窄屏时 Canvas 逻辑变高。
+//   所有 UI 元素设计在 0~RefW / 0~RefH 参考区域内，
+//   CanvasScaler 自动 scale 到真实屏幕像素。
 [RequireComponent(typeof(Canvas))]
 public class CanvasLetterbox : MonoBehaviour
 {

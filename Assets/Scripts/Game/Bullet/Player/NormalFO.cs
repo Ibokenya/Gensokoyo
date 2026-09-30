@@ -1,12 +1,10 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ReplaySystem;
 
-/// <summary>
-/// 一般飞行物（Normal Flying Object）
-/// 啊，这就是NFO!
-/// </summary>
+// 一般飞行物（Normal Flying Object）
+// 啊，这就是NFO!
 public class NormalFO : MonoBehaviour
 {
     public float speed;
@@ -34,10 +32,7 @@ private readonly float minX = -9.5f;
         MoveCheck();
     }
 
-    /// <summary>
-    /// 普通飞行物的移动
-    /// </summary>
-    /// <param name="speed">移动速度</param>
+    // 普通飞行物的移动
     public void Move(float speed)
     {
         if (rb2D != null)

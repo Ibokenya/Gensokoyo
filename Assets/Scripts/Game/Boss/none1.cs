@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ReplaySystem;
@@ -23,7 +23,6 @@ public class none1 : MonoBehaviour
     public BossUI bossUI; // BossUI脚本引用
     public BossBase bossBase; // Boss基础属性引用
     
-       
     private void OnEnable()
     {
         // 初始化弹幕池
@@ -79,10 +78,8 @@ public class none1 : MonoBehaviour
         bossShootSystem.IcePoint_Shoot(iceBulletPrefab1, iceBulletPrefab2, shoot_interval1, shoot_interval2, rotationSpeed, icePickSpeed, icePearlSpeed);
     }
     
-    /// <summary>
-    /// 检查boss是否已经死亡或处于锁血状态
-    /// 如果boss处于锁血状态，说明玩家成功讨伐当前阶段
-    /// </summary>
+    // 检查boss是否已经死亡或处于锁血状态
+    // 如果boss处于锁血状态，说明玩家成功讨伐当前阶段
     public void CheckOver()
     {
         if (bossBase != null)

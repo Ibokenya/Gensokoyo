@@ -1,11 +1,9 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// 全局"池"型单例类 —— 已改为确定性实现。
-/// 所有活跃对象集合用 List（顺序稳定），不碰 HashSet（遍历顺序不保证）。
-/// </summary>
+// 全局"池"型单例类 —— 已改为确定性实现。
+// 所有活跃对象集合用 List（顺序稳定），不碰 HashSet（遍历顺序不保证）。
 public class Global_ObjectPool : Singleton<Global_ObjectPool>   
 {
     // 存储不同类型的物品池
@@ -23,9 +21,7 @@ public class Global_ObjectPool : Singleton<Global_ObjectPool>
         base.Awake(); // 调用基类的Awake，保证单例生效
     }
 
-    /// <summary>
-    /// 初始化物品池
-    /// </summary>
+    // 初始化物品池
     public void InitPool(GameObject itemPrefab, int count)   
     {
         if(count == 0) count = ObjectsInPool_Count;
@@ -42,9 +38,7 @@ public class Global_ObjectPool : Singleton<Global_ObjectPool>
         }
     }
 
-    /// <summary>
-    /// 从对象池获取对象
-    /// </summary>
+    // 从对象池获取对象
     public GameObject GetObject(GameObject itemPrefab, Vector3 position, Quaternion rotation)
     {
         if (itemPrefab == null) {
@@ -83,9 +77,7 @@ public class Global_ObjectPool : Singleton<Global_ObjectPool>
         return item;
     }
     
-    /// <summary>
-    /// 检查并动态扩容对象池
-    /// </summary>
+    // 检查并动态扩容对象池
     private void CheckAndExpandPool(GameObject itemPrefab)
     {
         string poolKey = itemPrefab.name;
@@ -111,9 +103,7 @@ public class Global_ObjectPool : Singleton<Global_ObjectPool>
         }
     }
 
-    /// <summary>
-    /// 回收物品到池子里
-    /// </summary>
+    // 回收物品到池子里
     public void Recycle(GameObject item)
     {
         if (item == null || !item) return;
@@ -175,24 +165,18 @@ public class Global_ObjectPool : Singleton<Global_ObjectPool>
         if (item != null && item) Recycle(item);
     }
 
-    /// <summary>
-    /// 公共查询：遍历某类型的所有活跃对象（List 顺序稳定）
-    /// 用于 ClearAllBullet / BossShootSystem 等脚本，替代 FindGameObjectsWithTag（顺序不保证）。
-    /// </summary>
+    // 公共查询：遍历某类型的所有活跃对象（List 顺序稳定）
+    // 用于 ClearAllBullet / BossShootSystem 等脚本，替代 FindGameObjectsWithTag（顺序不保证）。
     public IReadOnlyList<GameObject> GetActiveObjects(string poolKey)
     {
         return ActiveObjects.TryGetValue(poolKey, out var list) ? list : System.Array.Empty<GameObject>();
     }
 
-    /// <summary>遍历所有活跃对象类型的 key（供遍历所有活跃池用）</summary>
     public IEnumerable<string> GetAllActivePoolKeys() => ActiveObjects.Keys;
 
-    /// <summary>是否有任意活跃对象</summary>
     public bool HasActiveObjects => ActiveObjects.Count > 0;
 
-    /// <summary>
-    /// 禁用并回收所有活跃对象（场景切换时使用）
-    /// </summary>
+    // 禁用并回收所有活跃对象（场景切换时使用）
     public void DisableAndRecycleAllActiveObjects()
     {
         foreach (var kvp in ActiveObjects)
@@ -228,9 +212,7 @@ public class Global_ObjectPool : Singleton<Global_ObjectPool>
         Debug.Log("已禁用并回收所有活跃对象");
     }
     
-    /// <summary>
-    /// 清空所有物品池
-    /// </summary>
+    // 清空所有物品池
     public void ClearAllPools()
     {
         DisableAndRecycleAllActiveObjects();

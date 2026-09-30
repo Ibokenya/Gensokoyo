@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -6,17 +6,15 @@ using TMPro;
 using UnityEngine;
 using ReplaySystem;
 
-/// <summary>
-/// 管理最多 10 条回放记录：
-///   - 进入界面时从 SavesDir 读文件 → 按保存时间倒序 → 填充 10 条 slots
-///   - 不足 10 条的 slot 文本置空
-///   - 默认选第 0 条（最新的）
-///   - ↑↓ 切换（选中项加粗/高亮），Z 进入回放，Del 删除选中
-///   - 删除后自动重排序、默认选第 0 条
-///
-/// ReplayMenu 是 UI 脚本：读文件、调 ReplayManager.BeginPlayback、调 SceneManager 进 Game1。
-/// 回放的 tick 驱动、SimClock 管理、Input 提供都归 ReplayManager。
-/// </summary>
+// 管理最多 10 条回放记录：
+//   - 进入界面时从 SavesDir 读文件 → 按保存时间倒序 → 填充 10 条 slots
+//   - 不足 10 条的 slot 文本置空
+//   - 默认选第 0 条（最新的）
+//   - ↑↓ 切换（选中项加粗/高亮），Z 进入回放，Del 删除选中
+//   - 删除后自动重排序、默认选第 0 条
+//
+// ReplayMenu 是 UI 脚本：读文件、调 ReplayManager.BeginPlayback、调 SceneManager 进 Game1。
+// 回放的 tick 驱动、SimClock 管理、Input 提供都归 ReplayManager。
 public class ReplayMenu : MonoBehaviour
 {
     [Header("UI 绑定（10 条，按顺序从第 0 到第 9）")]
@@ -33,13 +31,10 @@ public class ReplayMenu : MonoBehaviour
     public AudioClip confirmSfx;
     public AudioClip deleteSfx;
 
-    /// <summary>slot 0..9 对应的数据（可能 null 表示无存档）</summary>
     private readonly List<ReplayHeader> slots = new(10);
     private readonly List<string> slotPaths = new(10); // 对应每个 slot 的物理路径（可能 null）
     private int selectedIndex = 0;
     private int skipFrames = 2; // OnEnable 后前 N 帧屏蔽输入，避免菜单切换时的按键边沿被新面板误消费
-
-    // ---- 生命周期 ----
 
     void OnEnable()
     {
@@ -55,9 +50,6 @@ public class ReplayMenu : MonoBehaviour
         HandleInput();
     }
 
-    // ---- 对外 ----
-
-    /// <summary>重新从磁盘读所有 .rply 文件、排序、填充 UI</summary>
     public void Reload()
     {
         slots.Clear();
@@ -107,8 +99,6 @@ public class ReplayMenu : MonoBehaviour
         RefreshSelection();
     }
 
-    // ---- 输入 ----
-
     private void HandleInput()
     {
         //  meta 层 UI 全部读 Unity Input，不走 ReplayManager.Input
@@ -145,8 +135,6 @@ public class ReplayMenu : MonoBehaviour
             DeleteSelected();
         }
     }
-
-    // ---- 动作 ----
 
     private void EnterSelectedReplay()
     {
@@ -209,8 +197,6 @@ public class ReplayMenu : MonoBehaviour
         if (mainMenuRoot != null) mainMenuRoot.SetActive(true);
     }
 
-    // ---- UI ----
-
     private void RefreshSelection()
     {
         for (int i = 0; i < slotTexts.Count; i++)
@@ -227,11 +213,9 @@ public class ReplayMenu : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 拼接存档名：日期 -- 时间 -- 机体 -- 得分 -- 难度 -- Stage X
-    /// 例："2026-9-8  --  17:18  --  Reimu  --  12892200  --  Easy  --  Stage 2"
-    /// 旧格式文件（saveTimeMs==0）："（旧格式）Reimu 0 Easy Stage 1"
-    /// </summary>
+    // 拼接存档名：日期 -- 时间 -- 机体 -- 得分 -- 难度 -- Stage X
+    // 例："2026-9-8  --  17:18  --  Reimu  --  12892200  --  Easy  --  Stage 2"
+    // 旧格式文件（saveTimeMs==0）："（旧格式）Reimu 0 Easy Stage 1"
     public static string BuildSlotName(ReplayHeader h)
     {
         string charStr   = ((Character)h.character).ToString();

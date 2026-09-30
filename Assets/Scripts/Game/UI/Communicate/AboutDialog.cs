@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using ReplaySystem;
 using UnityEngine;
@@ -46,7 +46,6 @@ public class AboutDialog : MonoBehaviour
     public ContinueBG continueBG;// 继续背景脚本
     public Game1 game1;// 游戏1脚本
     public GameObject Boss;// 敌人物体
-
 
     private void Awake()
     {
@@ -181,12 +180,8 @@ public class AboutDialog : MonoBehaviour
         return dialogList;
     }
     
-    /// <summary>
-    /// 解析CSV内容，支持多行文本
-    /// 把每次对话的所有内容(ID,Role,Text,Emotion)解析为一个个字符串存入列表中
-    /// </summary>
-    /// <param name="content">CSV内容字符串</param>
-    /// <returns>包含每行文本的列表</returns>
+    // 解析CSV内容，支持多行文本
+    // 把每次对话的所有内容(ID,Role,Text,Emotion)解析为一个个字符串存入列表中
     private List<string> ParseCSVContent(string content)
     {
         List<string> lines = new List<string>();
@@ -221,11 +216,7 @@ public class AboutDialog : MonoBehaviour
         return lines;
     }
 
-    /// <summary>
-    /// 解析CSV行，支持多行文本
-    /// </summary>
-    /// <param name="line">CSV行字符串</param>
-    /// <returns>解析后的对话数据</returns>
+    // 解析CSV行，支持多行文本
     private DialogData ParseCSVLine(string line)
     {
         // CSV格式：ID,Role,Text,Emotion
@@ -246,11 +237,7 @@ public class AboutDialog : MonoBehaviour
         return dialog;
     }
 
-    /// <summary>
-    /// 分割CSV行，支持多行文本
-    /// </summary>
-    /// <param name="line">CSV行字符串</param>
-    /// <returns>包含每个字段的字符串数组</returns>
+    // 分割CSV行，支持多行文本
     private string[] SplitCSVLine(string line)
     {
         // 处理CSV中的引号，支持多行text
@@ -362,9 +349,7 @@ public class AboutDialog : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 淡出背景音乐协程
-    /// </summary>
+    // 淡出背景音乐协程
     private IEnumerator FadeOutBGM()
     {
         if (Global_AudioManager.Instance != null)
@@ -375,9 +360,7 @@ public class AboutDialog : MonoBehaviour
         yield return null;
     }
     
-    /// <summary>
-    /// 处理音乐切换
-    /// </summary>
+    // 处理音乐切换
     private void HandleMusicSwitch()
     {
         if (Global_AudioManager.Instance != null)
@@ -404,5 +387,3 @@ public class AboutDialog : MonoBehaviour
             ReplayManager.Instance.replay.ForceCtrlHeld = false;
     }
 }
-
-

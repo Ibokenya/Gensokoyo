@@ -1,11 +1,9 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ReplaySystem;
 
-/// <summary>
-/// 灵梦决死技能脚本
-/// </summary>
+// 灵梦决死技能脚本
 public class ReimuSuper : MonoBehaviour
 {
     [Header("播放控制")]
@@ -54,10 +52,8 @@ public class ReimuSuper : MonoBehaviour
         //  逻辑搬到 Update 了 —— 决死期间 timeScale=0 停 FixedUpdate
     }
 
-    /// <summary>
-    ///  从 FixedUpdate 搬过来 —— Update 不受 timeScale 影响
-    /// 决死期间亚空穴要继续绑定玩家位置
-    /// </summary>
+    //  从 FixedUpdate 搬过来 —— Update 不受 timeScale 影响
+    // 决死期间亚空穴要继续绑定玩家位置
     void Update()
     {     
         if (animator != null)
@@ -80,9 +76,7 @@ public class ReimuSuper : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 亚空穴绑定玩家坐标
-    /// </summary>
+    // 亚空穴绑定玩家坐标
     public void SpaceEyeToPlayer()
     {
         if (spaceEye != null && player != null)
@@ -91,17 +85,13 @@ public class ReimuSuper : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 开关亚空穴（反转状态）
-    /// </summary>
+    // 开关亚空穴（反转状态）
     public void OpenOrCloseSpaceEye()
     {
         isOpenOrCloseEye = !isOpenOrCloseEye;
     }
     
-    /// <summary>
-    /// 播放决死时停音效
-    /// </summary>
+    // 播放决死时停音效
     public void AudioTimeStop()
     {
         if (TimeStopClip != null)
@@ -110,9 +100,7 @@ public class ReimuSuper : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 随机播放两种击打音效之一
-    /// </summary>
+    // 随机播放两种击打音效之一
     public void AudioReimuHit()
     {
         if (ReimuHitList != null && ReimuHitList.Count > 0)
@@ -122,9 +110,7 @@ public class ReimuSuper : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 清除屏幕子弹
-    /// </summary>
+    // 清除屏幕子弹
     public void ClearAllBullet()
     {
         if (clearAllBullet != null)
@@ -137,17 +123,13 @@ public class ReimuSuper : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 时停结束，开始猎杀
-    /// </summary>
+    // 时停结束，开始猎杀
     public void TimeStopOver()
     {
         huntCoroutine = StartCoroutine(HuntEnemiesCoroutine());
     }
     
-    /// <summary>
-    /// 猎杀敌人的协程
-    /// </summary>
+    // 猎杀敌人的协程
     private IEnumerator HuntEnemiesCoroutine()
     {
         // 记录协程开始时间（用于控制退治效果显示时机）
@@ -285,9 +267,7 @@ public class ReimuSuper : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 禁用攻击效果并造成伤害的协程
-    /// </summary>
+    // 禁用攻击效果并造成伤害的协程
     private IEnumerator DisableAttackEffectAndDamage(GameObject attackEffect, List<GameObject> activeAttackEffects, GameObject enemy)
     {
         yield return new WaitForSecondsSim(attackEffectDuration);
@@ -310,9 +290,7 @@ public class ReimuSuper : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 灵梦决死对Boss发送技能攻击通知
-    /// </summary>
+    // 灵梦决死对Boss发送技能攻击通知
     private void ReimuSuperDamageToBoss()
     {
         if (boss != null && boss.activeInHierarchy)
@@ -326,9 +304,7 @@ public class ReimuSuper : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 动画结束回调
-    /// </summary>
+    // 动画结束回调
     public void OnAnimationEnd()
     {
         Global_GameManager.Instance.SetNoDead(0.1f,State.Gaming);
@@ -363,9 +339,7 @@ public class ReimuSuper : MonoBehaviour
             spellCardEffect.OnChildAnimationEnd(2); // 2表示灵梦决死
         }
     }
-    /// <summary>
-    /// 灵梦从亚空穴返回（关闭退治效果）
-    /// </summary>
+    // 灵梦从亚空穴返回（关闭退治效果）
     public void Back()
     {
         player.transform.position = new(-3,-4,0);
@@ -385,9 +359,7 @@ public class ReimuSuper : MonoBehaviour
         ProcessDeadEnemies();
     }
     
-    /// <summary>
-    /// 处理时停期间死亡的敌人
-    /// </summary>
+    // 处理时停期间死亡的敌人
     private void ProcessDeadEnemies()
     {
         // 创建敌人列表的副本以避免遍历过程中修改原始列表

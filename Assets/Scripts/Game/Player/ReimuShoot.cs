@@ -1,13 +1,11 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ReplaySystem;
 
-/// <summary>
-/// 这里是灵梦的子机射击脚本
-/// 子机种包含封魔针与追踪阴阳玉
-/// 因此需要初始化两种弹幕池
-/// </summary>
+// 这里是灵梦的子机射击脚本
+// 子机种包含封魔针与追踪阴阳玉
+// 因此需要初始化两种弹幕池
 public class ReimuShoot : MonoBehaviour
 {
     public GameObject NeedlePrefab;// 封魔针预制体
@@ -41,9 +39,7 @@ public class ReimuShoot : MonoBehaviour
         CheckShift();
     }
 
-    /// <summary>
-    /// 检查是否按下了Shift键
-    /// </summary>
+    // 检查是否按下了Shift键
     private void CheckShift()
     {
         if (GunAnime.IsShiftedNow)

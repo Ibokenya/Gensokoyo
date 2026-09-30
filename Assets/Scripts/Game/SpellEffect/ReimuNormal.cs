@@ -1,11 +1,9 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using ReplaySystem;
 using UnityEngine;
 
-/// <summary>
-/// 灵梦常规技能脚本
-/// </summary>
+// 灵梦常规技能脚本
 public class ReimuNormal : MonoBehaviour
 {
     [Header("播放控制")]
@@ -48,10 +46,8 @@ public class ReimuNormal : MonoBehaviour
         if (animator != null) animator.SetBool("IsAnime", IsAnime);
     }
     
-    /// <summary>
-    /// HandleDamage 必须在 Update（渲染帧）里跑，和 Animator 事件同步。
-    /// 用 SimClock.SimTime 时间间隔保证确定性（不依赖 Update 帧计数）。
-    /// </summary>
+    // HandleDamage 必须在 Update（渲染帧）里跑，和 Animator 事件同步。
+    // 用 SimClock.SimTime 时间间隔保证确定性（不依赖 Update 帧计数）。
     void Update()
     {
         if (IsAnime && isDamage)
@@ -67,17 +63,13 @@ public class ReimuNormal : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 开始出伤
-    /// </summary>
+    // 开始出伤
     public void StartToDamage()
     {
         isDamage = true;
     }
     
-    /// <summary>
-    /// 灵梦常规伤害
-    /// </summary>
+    // 灵梦常规伤害
     public void ReimuNormalDamage()
     {
         if (Enemys.Count > 0)
@@ -94,9 +86,7 @@ public class ReimuNormal : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 灵梦常规对Boss发送技能攻击通知
-    /// </summary>
+    // 灵梦常规对Boss发送技能攻击通知
     private void ReimuNormalDamageToBoss()
     {
         if (boss != null && boss.activeInHierarchy)
@@ -110,9 +100,7 @@ public class ReimuNormal : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 播放灵梦常规音效
-    /// </summary>
+    // 播放灵梦常规音效
     public void AudioReimuNormal()
     {
         if (ReimuNormalClip != null)
@@ -125,9 +113,7 @@ public class ReimuNormal : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 播放火焰音效
-    /// </summary>
+    // 播放火焰音效
     public void AudioFire()
     {
         if (FireClip != null)
@@ -140,9 +126,7 @@ public class ReimuNormal : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 符卡淡出
-    /// </summary>
+    // 符卡淡出
     public void SpellCardFadeOut()
     {
         if (cardsRotate != null)
@@ -151,9 +135,7 @@ public class ReimuNormal : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 清除屏幕子弹
-    /// </summary>
+    // 清除屏幕子弹
     public void ClearAllBullet()
     {
         if (clearAllBullet != null)
@@ -166,9 +148,7 @@ public class ReimuNormal : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 动画结束回调
-    /// </summary>
+    // 动画结束回调
     public void OnAnimationEnd()
     {
         Global_GameManager.Instance.SetNoDead(0.1f,State.Gaming);

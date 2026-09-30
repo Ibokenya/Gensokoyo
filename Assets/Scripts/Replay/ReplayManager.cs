@@ -1,25 +1,23 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
 namespace ReplaySystem
 {
-    /// <summary>
-    /// 回放子系统总控。
-    ///
-    ///  关键架构（timeScale=0 也要跑的设计 + 覆盖式边沿模型）：
-    ///
-    ///   LateUpdate（每帧，不受 timeScale 影响，在所有 Update 之后执行）：
-    ///     用 Time.unscaledDeltaTime 累计，按 50Hz 节奏推进：
-    ///     1. SimClock.Tick()       —— 推进模拟时间
-    ///     2. SimTimer.Tick()       —— 驱动 tick 定时器
-    ///     3. replay.AdvanceTick()   —— 回放文件位置前进
-    ///     4. recordBuffer.Add()    —— 录制写入 held（低 8 位）
-    ///
-    ///   FixedUpdate（只有 timeScale>0 时跑）：所有玩法逻辑在此运行。
-    ///   timeScale=0 时物理引擎停（子弹、敌人不动），但 replay 系统继续推进 → 决死时停能正常工作。
-    /// </summary>
+    // 回放子系统总控。
+    //
+    //  关键架构（timeScale=0 也要跑的设计 + 覆盖式边沿模型）：
+    //
+    //   LateUpdate（每帧，不受 timeScale 影响，在所有 Update 之后执行）：
+    //     用 Time.unscaledDeltaTime 累计，按 50Hz 节奏推进：
+    //     1. SimClock.Tick()       —— 推进模拟时间
+    //     2. SimTimer.Tick()       —— 驱动 tick 定时器
+    //     3. replay.AdvanceTick()   —— 回放文件位置前进
+    //     4. recordBuffer.Add()    —— 录制写入 held（低 8 位）
+    //
+    //   FixedUpdate（只有 timeScale>0 时跑）：所有玩法逻辑在此运行。
+    //   timeScale=0 时物理引擎停（子弹、敌人不动），但 replay 系统继续推进 → 决死时停能正常工作。
     public class ReplayManager : MonoBehaviour
     {
         public enum Mode { Idle, Record, Playback }
@@ -28,26 +26,21 @@ namespace ReplaySystem
 
         public Mode CurrentMode { get; set; } = Mode.Idle;
 
-        /// <summary>
-        /// 本局游戏是否已使用过"复活/续关"（Continue）。
-        /// 续关后的回放从重生节点开始，回放文件里只有后半段——
-        /// 回放时会当作从头放，导致确定性错位。
-        /// 所以一旦续关，之后退出游戏时不再询问"保存回放"，直接丢弃。
-        /// 新一局 BeginRecord 时自动 reset 为 false。
-        /// </summary>
+        // 本局游戏是否已使用过"复活/续关"（Continue）。
+        // 续关后的回放从重生节点开始，回放文件里只有后半段——
+        // 回放时会当作从头放，导致确定性错位。
+        // 所以一旦续关，之后退出游戏时不再询问"保存回放"，直接丢弃。
+        // 新一局 BeginRecord 时自动 reset 为 false。
         public bool HasContinued { get; private set; } = false;
 
-        /// <summary>玩家使用了续关。GameOver.ContinueGame() 里调这个</summary>
         public void MarkContinued()
         {
             HasContinued = true;
             Debug.Log("[ReplayManager] MarkContinued = true —— 后续退出不再询问保存回放");
         }
 
-        /// <summary>所有玩法脚本应读这里拿逻辑按键</summary>
         public static IInputProvider Input { get; private set; }
 
-        // ---- 帧校验：每 VALIDATE_INTERVAL tick 记录/强制 (位置 + 游戏状态) ----
         // 校验帧结构：[float x(4)][float y(4)][ushort state(2)] = 10 bytes
         // ushort state 布局：[S(1) | Bomb(3) | Hp(3) | Power(9)]
         //   Power 0~400 → 9 bits, Hp 0~7 → 3 bits, Bomb 0~7 → 3 bits, S 留空=1 bit
@@ -60,7 +53,6 @@ namespace ReplaySystem
         private ushort[] playbackValidateStates; //  新增
         private int nextValidateIndex = 0;
 
-        /// <summary>把 Power(9bits) + Hp(3bits) + BombCount(3bits) 打包成 ushort</summary>
         private static ushort PackReplayState(int power, int hp, int bombCount)
         {
             power = Mathf.Clamp(power, 0, 400);   // 9 bits
@@ -69,7 +61,6 @@ namespace ReplaySystem
             return (ushort)((power & 0x1FF) | ((hp & 0x7) << 9) | ((bombCount & 0x7) << 12));
         }
 
-        /// <summary>把 ushort 解包出 Power + Hp + BombCount</summary>
         private static void UnpackReplayState(ushort packed, out int power, out int hp, out int bombCount)
         {
             power     = packed & 0x1FF;
@@ -90,35 +81,29 @@ namespace ReplaySystem
         //  LateUpdate 累计器 —— 用 unscaledDeltaTime 累计，不受 timeScale 影响
         private float unscaledAccumulator;
 
-        /// <summary>回放目录（打包后 persistentDataPath 下的 Saves 文件夹）</summary>
         public static string SavesDir => Path.Combine(Application.persistentDataPath, "Saves");
 
-        /// <summary>
-        ///  引用计数的 SkipTick —— 任何来源（dialog / 暂停 UI / 回放暂停）
-        /// 只要 count > 0 就跳过 tick 推进（不 tick、不 record、不 AdvanceTick）。
-        /// AddSkipTick / RemoveSkipTick 必须成对调用（推荐在 OnEnable/OnDisable 里）。
-        /// </summary>
+        //  引用计数的 SkipTick —— 任何来源（dialog / 暂停 UI / 回放暂停）
+        // 只要 count > 0 就跳过 tick 推进（不 tick、不 record、不 AdvanceTick）。
+        // AddSkipTick / RemoveSkipTick 必须成对调用（推荐在 OnEnable/OnDisable 里）。
         private static int skipTickRefCount;
         public static bool SkipTick => skipTickRefCount > 0;
 
-        /// <summary>
-        ///  暂停关闭后由 PauseUI.Resume() 调用：
-        /// 在 LiveInputProvider 里屏蔽 Z/X 若干个 tick（50Hz 固定步长），
-        /// 防止"用 Z/X 关闭暂停"的按键泄漏给射击/符卡脚本。
-        ///
-        /// 为什么不是清 edges/held？因为 PauseEvent.Update 和 ReplayManager.Update
-        /// 执行顺序不确定——清完 SampleFromUnity 会覆盖式重算采样回来，白清。
-        /// 所以在**消费端**（GetKey/GetKeyDown）屏蔽，而不是在**采样端**清除。
-        ///
-        /// 只影响 Mode.Record 的 live；Mode.Playback 有自己的 ReplayPauseUI，不走这里。
-        /// </summary>
+        //  暂停关闭后由 PauseUI.Resume() 调用：
+        // 在 LiveInputProvider 里屏蔽 Z/X 若干个 tick（50Hz 固定步长），
+        // 防止"用 Z/X 关闭暂停"的按键泄漏给射击/符卡脚本。
+        //
+        // 为什么不是清 edges/held？因为 PauseEvent.Update 和 ReplayManager.Update
+        // 执行顺序不确定——清完 SampleFromUnity 会覆盖式重算采样回来，白清。
+        // 所以在**消费端**（GetKey/GetKeyDown）屏蔽，而不是在**采样端**清除。
+        //
+        // 只影响 Mode.Record 的 live；Mode.Playback 有自己的 ReplayPauseUI，不走这里。
         public static void ClearInputAfterPause()
         {
             if (Instance != null && Instance.CurrentMode == Mode.Record)
                 Instance.live.SuppressZXAfterResume();
         }
 
-        /// <summary>新增一个暂停 tick 的来源（dialog 打开、暂停菜单打开等）</summary>
         public static void AddSkipTickReason()
         {
             skipTickRefCount++;
@@ -126,21 +111,17 @@ namespace ReplaySystem
                 Debug.Log($"[ReplayManager] SkipTick ON (ref=1)");
         }
 
-        // ======================================================================
         //  HitFlag 位驱动系统 —— 回放文件 bit7（原 Esc 位）换成中弹标志
         // 回放模式：每 tick 读 replay.GetKey(HitFlag) → true 就 ForceHit
         // 录制模式：PanDing.OnTriggerEnter2D 调 MarkHitThisTick() → live.currentHeld |= HitFlag
         // X 键正常回放 → SpellCardEffect.Update 正常跑 → 决死由 HitFlag 自动决定
-        // ======================================================================
 
-        /// <summary> 录制模式：PanDing 中弹时调这个 —— live.currentHeld |= HitFlag，写入回放文件 bit7</summary>
         public static void MarkHitThisTick()
         {
             if (Instance == null || Instance.CurrentMode != Mode.Record) return;
             Instance.live.MarkHitThisTick();
         }
 
-        /// <summary> 回放模式：当前 tick replay.HitFlag 为 true → 强制中弹</summary>
         private static void ProcessHitFlagForPlayback()
         {
             if (Instance == null || Instance.replay == null) return;
@@ -153,7 +134,6 @@ namespace ReplaySystem
             if (panDing != null) panDing.ForceHit();
         }
 
-        /// <summary>移除一个暂停 tick 的来源 —— 最后一个移除后恢复 tick 推进</summary>
         public static void RemoveSkipTickReason()
         {
             skipTickRefCount--;
@@ -186,10 +166,8 @@ namespace ReplaySystem
             Debug.Log($"[ReplayManager] BeginRecord seed=0x{Instance.recordSeed:X16}");
         }
 
-        /// <summary>UIManager 由 UIManager.OnEnable 时注册（它负责 Show/Hide 回放暂停 UI）</summary>
         public static UIManager UIManagerInstance;
         
-        /// <summary>上一次 BeginPlayback 的路径（供 ReStart 用）</summary>
         public static string playbackPath;
         
         public static void BeginPlayback(string path)
@@ -226,7 +204,6 @@ namespace ReplaySystem
             Debug.Log($"[ReplayManager] BeginPlayback seed=0x{file.Header.seed:X16} ticks={file.Header.tickCount} character={(Character)file.Header.character} mode={(GameMode)file.Header.gameMode}");
         }
 
-        /// <summary>回放自然结束 / 用户 ReStart 时调用：完整清理 + 重新加载 Game1 场景从头播放</summary>
         public static void RestartPlayback()
         {
             if (Instance == null || string.IsNullOrEmpty(playbackPath)) return;
@@ -255,10 +232,8 @@ namespace ReplaySystem
             Debug.Log($"[ReplayManager] RestartPlayback → clean restart from Game1, seed=0x{Instance.recordSeed:X16}");
         }
 
-        /// <summary>
-        /// 手动保存当前录制为下一个 Saves_x 文件；保存后自动回到 Idle 模式。
-        /// 超过 10 条时自动淘汰：优先删得分最低的，同分时删保存时间最久的。
-        /// </summary>
+        // 手动保存当前录制为下一个 Saves_x 文件；保存后自动回到 Idle 模式。
+        // 超过 10 条时自动淘汰：优先删得分最低的，同分时删保存时间最久的。
         public static string SaveRecording()
         {
             EnsureInstance();
@@ -297,13 +272,14 @@ namespace ReplaySystem
             };
             serializer.Save(file, path);
             Instance.recordBuffer.Clear();
+            Instance.recordValidatePositions.Clear();
+            Instance.recordValidateStates.Clear();
             Instance.CurrentMode = Mode.Idle;
             Input = Instance.live;
             Debug.Log($"[ReplayManager] SaveRecording → seed=0x{file.Header.seed:X16} ticks={file.Header.tickCount} score={file.Header.score} stage={file.Header.stage} → {path}");
             return path;
         }
 
-        /// <summary>当目录内文件 >= 10 时：读每个文件的头，淘汰得分最低（同分则保存时间最久）的</summary>
         private static void PruneIfNeeded(string dir)
         {
             var files = Directory.GetFiles(dir, "*.rply");
@@ -336,11 +312,12 @@ namespace ReplaySystem
             }
         }
 
-        /// <summary>放弃当前录制（不保留），同时回到 Idle</summary>
         public static void DiscardRecording()
         {
             EnsureInstance();
             Instance.recordBuffer.Clear();
+            Instance.recordValidatePositions.Clear();
+            Instance.recordValidateStates.Clear();
             Instance.replay = null;
             Instance.CurrentMode = Mode.Idle;
             Input = Instance.live;
@@ -362,8 +339,6 @@ namespace ReplaySystem
         {
             if (Instance == this) Instance = null;
         }
-
-        // --------------------------- 回放暂停 API ---------------------------
 
         public static bool IsReplayPaused { get; private set; }
         
@@ -392,13 +367,9 @@ namespace ReplaySystem
                    inst.replay != null && inst.replay.IsFinished;
         }
 
-        // --------------------------- 帧驱动 ---------------------------
-
-        /// <summary>
-        /// 每帧执行。live 模式下 SampleFromUnity 采样物理键（覆盖式算 edges，不需要 ConsumeEdges），
-        /// 同时检测回放自然结束。帧执行顺序：FixedUpdate(~50Hz 玩法逻辑) → Update(采样) → LateUpdate(tick推进)。
-        /// 决死期间 timeScale=0 时 FixedUpdate 停（物理时停视觉），但 Update/LateUpdate 继续跑。
-        /// </summary>
+        // 每帧执行。live 模式下 SampleFromUnity 采样物理键（覆盖式算 edges，不需要 ConsumeEdges），
+        // 同时检测回放自然结束。帧执行顺序：FixedUpdate(~50Hz 玩法逻辑) → Update(采样) → LateUpdate(tick推进)。
+        // 决死期间 timeScale=0 时 FixedUpdate 停（物理时停视觉），但 Update/LateUpdate 继续跑。
         private void Update()
         {
             //  回放自然结束检测
@@ -418,12 +389,10 @@ namespace ReplaySystem
             // AdvanceTick 必须和 SimClock.Tick 同频（50Hz），放在 LateUpdate 的 tick 循环里
         }
 
-        /// <summary>
-        /// 每帧在所有 Update 之后执行（不受 timeScale 影响）。
-        /// 用 unscaledDeltaTime 累计，按 50Hz 推进 SimClock → SimTimer → 回放文件/录制缓冲。
-        /// LiveInputProvider 已改为覆盖式 SampleFromUnity，edges 不需要手动清。
-        /// 决死期间 timeScale=0 时 FixedUpdate 停（子弹不动），但这里继续推进 tick。
-        /// </summary>
+        // 每帧在所有 Update 之后执行（不受 timeScale 影响）。
+        // 用 unscaledDeltaTime 累计，按 50Hz 推进 SimClock → SimTimer → 回放文件/录制缓冲。
+        // LiveInputProvider 已改为覆盖式 SampleFromUnity，edges 不需要手动清。
+        // 决死期间 timeScale=0 时 FixedUpdate 停（子弹不动），但这里继续推进 tick。
         private void LateUpdate()
         {
             if (CurrentMode == Mode.Idle) return;
@@ -521,13 +490,11 @@ namespace ReplaySystem
             }
         }
 
-        /// <summary>
-        ///  每 50 tick 对游戏状态做指纹，用于定位录 vs 回放的第一个分叉点。
-        /// 指纹内容：SimTick + GameRNG 状态 + 玩家位置 + 玩家移动方向。
-        /// 录制时 Console 打 [HASH-REC]，回放时打 [HASH-PLAY]，搜 hash 字符串就能对齐比对。
-        ///
-        /// 如果录和回放的 hash 在 tick 100 不同，说明 tick 51-100 之间发生了第一次分叉。
-        /// </summary>
+        //  每 50 tick 对游戏状态做指纹，用于定位录 vs 回放的第一个分叉点。
+        // 指纹内容：SimTick + GameRNG 状态 + 玩家位置 + 玩家移动方向。
+        // 录制时 Console 打 [HASH-REC]，回放时打 [HASH-PLAY]，搜 hash 字符串就能对齐比对。
+        //
+        // 如果录和回放的 hash 在 tick 100 不同，说明 tick 51-100 之间发生了第一次分叉。
         private static void LogStateHash()
         {
             var gm = Global_GameManager.Instance;

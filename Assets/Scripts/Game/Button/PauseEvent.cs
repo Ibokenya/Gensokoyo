@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using ReplaySystem;
@@ -48,10 +48,8 @@ public class PauseEvent : MonoBehaviour
     // Canvas 缩放缓存（EnterRecordingConfirm 中用偏移量移动 Really 面板时需要乘以 scaleFactor）
     private Canvas _parentCanvas;
 
-    /// <summary> 给 PauseUI 查：当前是否处于说明书界面——manual 中 Esc 只关 manual，不关暂停</summary>
     public bool IsManualActive => isManualActive;
 
-    /// <summary>获取 Canvas scaleFactor，若 Canvas 未找到则报错并返回 1（等价于无缩放）</summary>
     private float GetCanvasScaleFactor()
     {
         if (_parentCanvas == null)
@@ -65,8 +63,6 @@ public class PauseEvent : MonoBehaviour
         }
         return _parentCanvas.scaleFactor;
     }
-
-    // ---- 生命周期 ----
 
     void OnEnable()
     {
@@ -105,8 +101,6 @@ public class PauseEvent : MonoBehaviour
         CheckChoose();
     }
 
-    // ---- 主调度 ----
-
     private void CheckChoose()
     {
         // 说明书激活时优先处理（不经过 isReally/isRecording）
@@ -129,8 +123,6 @@ public class PauseEvent : MonoBehaviour
             HandleMenuNavigation();   // 非确认：按钮导航
         }
     }
-
-    // ---- 说明书（保持原样） ----
 
     private void HandleManual()
     {
@@ -205,8 +197,6 @@ public class PauseEvent : MonoBehaviour
         }
     }
 
-    // ---- 第一层确认：确认执行按钮操作 ----
-
     private void HandleActionConfirm()
     {
         if (Input.GetKeyDown(PhysicalKeyMapping.Left) || Input.GetKeyDown(PhysicalKeyMapping.Right))
@@ -240,7 +230,6 @@ public class PauseEvent : MonoBehaviour
         }
     }
 
-    /// <summary>是否是"需要离开游戏"、因而应询问回放去留的按钮</summary>
     private static bool NeedsSaveConfirm(int buttonIndex) =>
         buttonIndex == 1 || // 回菜单
         buttonIndex == 3;   // 重开
@@ -250,11 +239,9 @@ public class PauseEvent : MonoBehaviour
         ReplayManager.Instance.CurrentMode == ReplayManager.Mode.Record &&
         !ReplayManager.Instance.HasContinued; // 续关后的回放残缺，不询问保存
 
-    /// <summary>
-    /// 进入"是否保存回放"确认（第二层）。
-    /// Really 面板从按钮位置移到 savePanelPos（0, -210, 0），
-    /// DescriptionText 显式询问，按钮文本 Yes/No 对应保存/不保存。
-    /// </summary>
+    // 进入"是否保存回放"确认（第二层）。
+    // Really 面板从按钮位置移到 savePanelPos（0, -210, 0），
+    // DescriptionText 显式询问，按钮文本 Yes/No 对应保存/不保存。
     private void EnterRecordingConfirm()
     {
         isRecording = true;
@@ -270,7 +257,6 @@ public class PauseEvent : MonoBehaviour
         Global_AudioManager.Instance.PlaySFX(Choose);
     }
 
-    /// <summary>处理保存回放确认环节的按键</summary>
     private void HandleRecordingConfirm()
     {
         if (Input.GetKeyDown(PhysicalKeyMapping.Left) || Input.GetKeyDown(PhysicalKeyMapping.Right))
@@ -312,7 +298,6 @@ public class PauseEvent : MonoBehaviour
         Global_AudioManager.Instance.PlaySFX(Choose);
     }
 
-    /// <summary>保存或丢弃回放后，执行 pauseButtons[index] 真正的操作</summary>
     private void CommitAndExecute(int btnIndex)
     {
         // 无论上一层是确认执行还是中途跳过保存确认面板，这里统一收尾
@@ -340,8 +325,6 @@ public class PauseEvent : MonoBehaviour
                 break;
         }
     }
-
-    // ---- 非确认：暂停菜单按钮导航 ----
 
     private void HandleMenuNavigation()
     {
@@ -371,8 +354,6 @@ public class PauseEvent : MonoBehaviour
             pauseUI.Resume();
         }
     }
-
-    // ---- UI 辅助 ----
 
     private void BeChoose(int i, bool isOnEnable = false)
     {

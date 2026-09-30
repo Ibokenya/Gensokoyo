@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ReplaySystem;
@@ -93,9 +93,7 @@ public class FinalCard : MonoBehaviour
         UpdatePhase();
     }
     
-    /// <summary>
-    /// 更新阶段
-    /// </summary>
+    // 更新阶段
     private void UpdatePhase()
     {
         switch (currentPhase)
@@ -142,9 +140,7 @@ public class FinalCard : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 开始射击
-    /// </summary>
+    // 开始射击
     private void StartShooting()
     {
         if (bossShootSystem != null)
@@ -200,9 +196,7 @@ public class FinalCard : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 雪花攻击循环
-    /// </summary>
+    // 雪花攻击循环
     private IEnumerator SnowFlakeAttackLoop()
     {
         while (true)

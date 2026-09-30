@@ -1,12 +1,10 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ReplaySystem;
 
-/// <summary>
-/// 符卡效果管理器
-/// 负责管理4种符卡技能的释放和协调
-/// </summary>
+// 符卡效果管理器
+// 负责管理4种符卡技能的释放和协调
 public class SpellCardEffect : MonoBehaviour
 {
     [Header("4种符卡攻击设置")]
@@ -77,11 +75,9 @@ public class SpellCardEffect : MonoBehaviour
         }
     }
 
-    /// <summary>
-    ///  从 FixedUpdate 搬过来的技能释放逻辑 —— Update 里执行。
-    /// 原因：决死期间 Time.timeScale=0 会停 FixedUpdate，Update 仍然跑。
-    /// 这是极少数必须在 Update 里读按键的玩法逻辑。
-    /// </summary>
+    //  从 FixedUpdate 搬过来的技能释放逻辑 —— Update 里执行。
+    // 原因：决死期间 Time.timeScale=0 会停 FixedUpdate，Update 仍然跑。
+    // 这是极少数必须在 Update 里读按键的玩法逻辑。
     void Update()
     {
         if (Global_GameManager.Instance.state == State.Pause)
@@ -131,8 +127,7 @@ public class SpellCardEffect : MonoBehaviour
         }
     }
 
-    /// <summary> 回放时由 ReplayManager 强制调用 —— 模拟一次符卡释放
-    /// isSuper=true 表示决死符卡，false 表示普通符卡</summary>
+    // isSuper=true 表示决死符卡，false 表示普通符卡</summary>
     public void ForceReleaseSpell(bool isSuper)
     {
         if (isFrozen || Global_GameManager.Instance.BombCount <= 0 || isAnimating) return;
@@ -152,9 +147,7 @@ public class SpellCardEffect : MonoBehaviour
 
     #region 释放技能相关
 
-    /// <summary>
-    /// 正常释放技能
-    /// </summary>
+    // 正常释放技能
     public void ReleaseNormalSpellCard()
     {
         // 停止擦弹音效并清空擦弹列表
@@ -199,9 +192,7 @@ public class SpellCardEffect : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 受击时释放特殊符卡
-    /// </summary>
+    // 受击时释放特殊符卡
     public void ReleaseSpecialSpellCard()
     {
         Debug.Log("释放特殊符卡");
@@ -280,9 +271,7 @@ public class SpellCardEffect : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 开始受击延迟
-    /// </summary>
+    // 开始受击延迟
     public void StartHitDelay()
     {
         // 防重入守卫：同一帧内多弹重合时 PanDing.OnTriggerEnter2D 会被多次触发，
@@ -320,9 +309,7 @@ public class SpellCardEffect : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 受击延迟协程
-    /// </summary>
+    // 受击延迟协程
     private IEnumerator HitDelayCoroutine()
     {
         //  必须用 WaitForSecondsRealtime —— 决死期间 Time.timeScale=0，SimClock 不推进，
@@ -347,10 +334,7 @@ public class SpellCardEffect : MonoBehaviour
 
     #endregion
 
-    /// <summary>
-    /// 子脚本动画结束回调
-    /// </summary>
-    /// <param name="skillType">技能类型：1-灵梦常规，2-灵梦决死，3-魔理沙常规，4-魔理沙决死</param>
+    // 子脚本动画结束回调
     public void OnChildAnimationEnd(int skillType)
     {
         isAnimating = false;
@@ -403,9 +387,7 @@ public class SpellCardEffect : MonoBehaviour
         Debug.Log($"技能 {skillType} 动画结束");
     }
     
-    /// <summary>
-    /// 恢复音乐播放
-    /// </summary>
+    // 恢复音乐播放
     private void ResumeMusic()
     {
         // 恢复之前的BGM
@@ -416,10 +398,8 @@ public class SpellCardEffect : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 重置玩家动画状态
-    /// 检测当前按键状态并更新玩家动画
-    /// </summary>
+    // 重置玩家动画状态
+    // 检测当前按键状态并更新玩家动画
     private void ResetPlayerAnimationState()
     {
         if (player != null)
@@ -482,9 +462,7 @@ public class SpellCardEffect : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 重置恶魔之眼和暗影视界效果
-    /// </summary>
+    // 重置恶魔之眼和暗影视界效果
     private void ResetEvilEffects()
     {
         // 检查是否需要重置恶魔之眼
@@ -506,9 +484,7 @@ public class SpellCardEffect : MonoBehaviour
         wasEvilShadowActive = false;
     }
 
-    /// <summary>
-    /// 清除屏幕子弹（供子脚本调用）
-    /// </summary>
+    // 清除屏幕子弹（供子脚本调用）
     public void ClearAllBullet()
     {
         if (clearAllBullet != null)
@@ -522,9 +498,7 @@ public class SpellCardEffect : MonoBehaviour
         isFrozen = true;
     }
 
-    /// <summary>
-    /// 收取场上所有道具（与回收线收取逻辑一致）
-    /// </summary>
+    // 收取场上所有道具（与回收线收取逻辑一致）
     private void CollectAllItems()
     {
         // 查找场景中所有的AboutItem组件

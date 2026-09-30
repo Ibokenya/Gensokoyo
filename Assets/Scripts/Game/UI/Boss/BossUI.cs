@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
@@ -40,9 +40,7 @@ public class BossUI : MonoBehaviour
         ShowUI();
     }
 
-    /// <summary>
-    /// 更新时间
-    /// </summary>
+    // 更新时间
     void FixedUpdate()
     {
         if (currentTime > 0f)
@@ -60,9 +58,7 @@ public class BossUI : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 重置所有HPs的sprite为满血状态
-    /// </summary>
+    // 重置所有HPs的sprite为满血状态
     private void ResetAllHPs()
     {
         currentHpIndex = 0;
@@ -79,13 +75,11 @@ public class BossUI : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 扣除一格血
-    /// 正常情况下共2个血量指示物
-    /// 第一次扣血：将索引末尾的指示物的sprite设为HpIcons[1]（半个心形）
-    /// 第二次扣血：将该物体sprite设为HpIcons[0]（空心心形）
-    /// 再扣血：按照HPs索引末尾往前递推
-    /// </summary>
+    // 扣除一格血
+    // 正常情况下共2个血量指示物
+    // 第一次扣血：将索引末尾的指示物的sprite设为HpIcons[1]（半个心形）
+    // 第二次扣血：将该物体sprite设为HpIcons[0]（空心心形）
+    // 再扣血：按照HPs索引末尾往前递推
     public void SubLife()
     {
         // 计算当前应该修改的指示物索引（从末尾开始）
@@ -116,18 +110,13 @@ public class BossUI : MonoBehaviour
         
         currentHpIndex++;
     }
-    /// <summary>
-    /// 显示UI，1秒内淡入
-    /// </summary>
+    // 显示UI，1秒内淡入
     public void ShowUI()
     {
         StartCoroutine(FadeInUI());
     }
     
-    /// <summary>
-    /// UI淡入协程
-    /// </summary>
-    /// <returns></returns>
+    // UI淡入协程
     private IEnumerator FadeInUI()
     {
         float duration = 1f;
@@ -209,10 +198,8 @@ public class BossUI : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 播放倒计时音效
-    /// 当剩余时间为5秒时开始，每一秒播放一次（仅在正整数秒5,4,3,2,1播放）
-    /// </summary>
+    // 播放倒计时音效
+    // 当剩余时间为5秒时开始，每一秒播放一次（仅在正整数秒5,4,3,2,1播放）
     private void PlayCountdownSound()
     {
         // 正在进行时间过渡时不播放音效
@@ -249,9 +236,7 @@ public class BossUI : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 播放超时音效
-    /// </summary>
+    // 播放超时音效
     private void PlayTimeoutSound()
     {
         if (timeoutSound != null)
@@ -260,20 +245,13 @@ public class BossUI : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 设置符卡时间
-    /// </summary>
-    /// <param name="time">时间（秒）</param>
+    // 设置符卡时间
     public void SetCardTime(float time)
     {
         StartCoroutine(SmoothTimeTransition(time));
     }
     
-    /// <summary>
-    /// 平滑时间过渡协程
-    /// </summary>
-    /// <param name="targetTime">目标时间（秒）</param>
-    /// <returns></returns>
+    // 平滑时间过渡协程
     private IEnumerator SmoothTimeTransition(float targetTime)
     {
         // 设置标志，表示正在进行时间过渡
@@ -305,18 +283,13 @@ public class BossUI : MonoBehaviour
         countdownSoundIndex = 5;
     }
     
-    /// <summary>
-    /// 时间结束处理
-    /// </summary>
+    // 时间结束处理
     public void TimeOver()
     {
         // 时间归零的处理逻辑
     }
     
-    /// <summary>
-    /// 更新时间文本
-    /// </summary>
-    /// <param name="timeLeft">剩余时间（秒）</param>
+    // 更新时间文本
     public void UpdateTimeText(float timeLeft)
     {
         if (timeTextComponent != null)

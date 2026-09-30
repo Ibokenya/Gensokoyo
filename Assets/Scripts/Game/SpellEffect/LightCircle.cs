@@ -1,12 +1,10 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ReplaySystem;
 
-/// <summary>
-/// 光圈管理器脚本
-/// 管理4个光圈的动画和移动
-/// </summary>
+// 光圈管理器脚本
+// 管理4个光圈的动画和移动
 public class LightCircle : MonoBehaviour
 {
     [Header("基本设置")]
@@ -23,9 +21,7 @@ public class LightCircle : MonoBehaviour
     private bool[] isCircleActive; // 记录每个光圈是否已激活
     private Dictionary<GameObject, Coroutine> rotatingCoroutines = new Dictionary<GameObject, Coroutine>(); // 存储每个光圈的旋转协程
     
-    /// <summary>
-    /// 光圈配置类
-    /// </summary>
+    // 光圈配置类
     [System.Serializable]
     public class CircleConfig
     {
@@ -55,9 +51,7 @@ public class LightCircle : MonoBehaviour
         SyncPositionsToPlayer();
     }
     
-    /// <summary>
-    /// 同步位置到玩家
-    /// </summary>
+    // 同步位置到玩家
     private void SyncPositionsToPlayer()
     {
         if (player == null)
@@ -82,10 +76,8 @@ public class LightCircle : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 激活光圈
-    /// 由动画事件调用
-    /// </summary>
+    // 激活光圈
+    // 由动画事件调用
     public void ActivateCircle()
     {
         if (lightCircles == null || circleConfigs == null)
@@ -112,11 +104,7 @@ public class LightCircle : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 开始旋转动画
-    /// </summary>
-    /// <param name="circle">光圈物体</param>
-    /// <param name="index">光圈索引</param>
+    // 开始旋转动画
     private void StartRotateAnimation(GameObject circle, int index)
     {
         if (circleSprites == null || circleSprites.Count == 0)
@@ -134,11 +122,7 @@ public class LightCircle : MonoBehaviour
         rotatingCoroutines[circle] = coroutine;
     }
     
-    /// <summary>
-    /// 旋转动画协程
-    /// </summary>
-    /// <param name="circle">光圈物体</param>
-    /// <param name="index">光圈索引</param>
+    // 旋转动画协程
     private IEnumerator RotateAnimation(GameObject circle, int index)
     {
         if (circle == null || circleConfigs == null || index >= circleConfigs.Count)
@@ -164,10 +148,7 @@ public class LightCircle : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 移动光圈
-    /// </summary>
-    /// <param name="index">光圈索引</param>
+    // 移动光圈
     private IEnumerator MoveCircle(int index)
     {
         if (lightCircles == null || circleConfigs == null || index >= lightCircles.Count || index >= circleConfigs.Count)
@@ -220,9 +201,7 @@ public class LightCircle : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 重置所有光圈
-    /// </summary>
+    // 重置所有光圈
     public void ResetCircles()
     {
         // 停止所有旋转协程

@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using ReplaySystem;
@@ -7,19 +7,17 @@ using UnityEngine.SceneManagement;
 
 public class ButtonEvent : MonoBehaviour
 {
-    /// <summary>
-    /// 序列化该场景内不同按钮对应的分支的大物体
-    /// 0，开始菜单（默认）
-    /// 1，选择难度（Start）
-    /// 2，选择人物 (Start)
-    /// 3，历史战绩（Result）
-    /// 4，手册（Manual）
-    /// 5，音乐室（MusicRoom）
-    /// 6，设置（Option）
-    /// <相关状态机>
-    /// 本场景中存在————Menu,CharacterChoose，ModeChoose，Replay，Option，MusicRoom，Manual这些状态
-    /// </相关状态机>
-    /// </summary>
+    // 序列化该场景内不同按钮对应的分支的大物体
+    // 0，开始菜单（默认）
+    // 1，选择难度（Start）
+    // 2，选择人物 (Start)
+    // 3，历史战绩（Result）
+    // 4，手册（Manual）
+    // 5，音乐室（MusicRoom）
+    // 6，设置（Option）
+    // <相关状态机>
+    // 本场景中存在————Menu,CharacterChoose，ModeChoose，Replay，Option，MusicRoom，Manual这些状态
+    // </相关状态机>
     [Header("0-菜单,1-难度选择,2-人物选择,3-历史战绩,4-手册,5-音乐室,6-设置")]
     public List<GameObject> SceneObjects;
 
@@ -213,10 +211,8 @@ public class ButtonEvent : MonoBehaviour
 
     private List<string> replayFiles = new();
 
-    /// <summary>
-    /// 旧回放面板入口 —— 已由 ReplayMenu.cs 接管。
-    /// 此方法留空，避免与 ReplayMenu 抢按键边沿。
-    /// </summary>
+    // 旧回放面板入口 —— 已由 ReplayMenu.cs 接管。
+    // 此方法留空，避免与 ReplayMenu 抢按键边沿。
     private void Replay()
     {
         // ReplayMenu 组件（绑定在 SceneObjects[3] 上）负责全部 UI 和输入。

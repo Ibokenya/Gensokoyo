@@ -1,9 +1,7 @@
 ﻿using UnityEngine;
 
-/// <summary>
-/// Unity MonoBehaviour通用单例基类
-/// 特点：全局唯一、跨场景存活、外部可通过 Instance 访问
-/// </summary>
+// Unity MonoBehaviour通用单例基类
+// 特点：全局唯一、跨场景存活、外部可通过 Instance 访问
 public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
 {
     // 静态实例（核心：外部通过 Instance 访问）

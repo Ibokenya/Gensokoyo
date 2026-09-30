@@ -1,11 +1,9 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace ReplaySystem
 {
-    /// <summary>
-    /// Unity KeyCode → 设置面板显示文本映射表（单行，不换行）。
-    /// 方向键用符号，修饰键缩写（L-Shift / R-Ctrl），其他键直接显示枚举名缩写。
-    /// </summary>
+    // Unity KeyCode → 设置面板显示文本映射表（单行，不换行）。
+    // 方向键用符号，修饰键缩写（L-Shift / R-Ctrl），其他键直接显示枚举名缩写。
     public static class KeyCodeDisplayTable
     {
         public static string GetDisplayText(KeyCode code)

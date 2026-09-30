@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using TMPro;
 using ReplaySystem;
@@ -35,7 +35,6 @@ public class GameOver : MonoBehaviour
     // Canvas 缩放缓存（EnterSaveConfirm 中用偏移量移动 Really 面板时需要乘以 scaleFactor）
     private Canvas _parentCanvas;
 
-    /// <summary>获取 Canvas scaleFactor，若 Canvas 未找到则报错并返回 1（等价于无缩放）</summary>
     private float GetCanvasScaleFactor()
     {
         if (_parentCanvas == null)
@@ -90,7 +89,6 @@ public class GameOver : MonoBehaviour
         }
     }
 
-    /// <summary>非确认环节：Continue/ReStart/Exit 三选一</summary>
     private void HandleMenuStep()
     {
         //  meta 层 UI（菜单导航）直接读 Unity Input，不走 ReplayManager.Input
@@ -136,7 +134,6 @@ public class GameOver : MonoBehaviour
         }
     }
 
-    /// <summary>确认环节：YesOrNo 切换保存/丢弃 → Z 确认 → 执行 → X/Esc 回退</summary>
     private void HandleConfirmStep()
     {
         if (Input.GetKeyDown(PhysicalKeyMapping.Left) || Input.GetKeyDown(PhysicalKeyMapping.Right))
@@ -157,11 +154,9 @@ public class GameOver : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 是否存在"可以保存"的正在录制的回放。
-    /// 如果玩家已经续过关（HasContinued=true），回放文件从重生节点开始，
-    /// 后半段是残缺的，回放时会当作从头放导致确定性错位 —— 直接丢弃不询问。
-    /// </summary>
+    // 是否存在"可以保存"的正在录制的回放。
+    // 如果玩家已经续过关（HasContinued=true），回放文件从重生节点开始，
+    // 后半段是残缺的，回放时会当作从头放导致确定性错位 —— 直接丢弃不询问。
     private static bool IsRecording()
     {
         return ReplayManager.Instance != null &&
@@ -169,7 +164,6 @@ public class GameOver : MonoBehaviour
                !ReplayManager.Instance.HasContinued;
     }
 
-    /// <summary>进入"是否保存回放"确认</summary>
     private void EnterSaveConfirm()
     {
         // 隐藏当前选中的选项文本
@@ -191,7 +185,6 @@ public class GameOver : MonoBehaviour
         IsReally = true;
     }
 
-    /// <summary>退出保存确认，恢复主菜单三选一显示</summary>
     private void ExitSaveConfirm()
     {
         if (Really != null) Really.SetActive(false);
@@ -204,7 +197,6 @@ public class GameOver : MonoBehaviour
         IsReally = false;
     }
 
-    /// <summary>根据 YesOrNo 高亮 Yes/No 按钮</summary>
     private void UpdateConfirmColor()
     {
         if (YesOrNo)
@@ -219,7 +211,6 @@ public class GameOver : MonoBehaviour
         }
     }
 
-    /// <summary>保存或丢弃回放（根据 YesOrNo），无论如何关闭录制模式</summary>
     private void CommitSaveOrDiscard()
     {
         if (!IsRecording()) return;
@@ -236,7 +227,6 @@ public class GameOver : MonoBehaviour
         }
     }
 
-    /// <summary>根据 CurrentIndex 执行 Continue/ReStart/Exit —— 保存/丢弃回放后才走这里</summary>
     private void ExecuteChosenAction()
     {
         // 确认面板已经可以关掉了
@@ -273,8 +263,6 @@ public class GameOver : MonoBehaviour
         }
     }
 
-    // ---- 辅助 ----
-
     private void SelectOption(int index)
     {
         Global_AudioManager.Instance.PlaySFX(SelectSound);
@@ -302,20 +290,21 @@ public class GameOver : MonoBehaviour
         };
     }
 
-    /// <summary>续关功能：恢复玩家状态并继续游戏</summary>
     private void ContinueGame()
     {
         //  重置所有暂停/缩放状态 —— 续关等于重新开始游戏
         TimeScaleController.ResetAll();
 
-        // ✅ 关键修复：CommitSaveOrDiscard() 里 DiscardRecording() 把 ReplayManager 切到了 Mode.Idle，
-        // ReplayManager.LateUpdate 第一行 if (Mode.Idle) return —— SimClock 永远不推进！
-        // 不能调用 BeginRecord() —— 它会 SimClock.Reset() 把游戏时间归零，
-        // 续关应该从死亡时刻继续计时。
+        // ✅ CommitSaveOrDiscard 已经处理好了：
+        //   - 选保存 → SaveRecording() 序列化死前录像 → recordBuffer 清 → Mode=Idle
+        //   - 选丢弃 → DiscardRecording() 清缓存 → Mode=Idle
+        // 现在把 Mode 切回 Record：让 LateUpdate 不再 return → SimClock 继续推进（敌人波次、对话框按时间节点走）
+        // 绝对不能调 BeginRecord() —— 它会 SimClock.Reset() 把敌人波次时间清零！
+        // 也绝对不能 SimClock.Reset() / SimTimer.CancelAll() —— 会清掉已注册的波次定时器
         if (ReplayManager.Instance != null)
         {
             ReplayManager.Instance.CurrentMode = ReplayManager.Mode.Record;
-            ReplayManager.Instance.MarkContinued(); // ← 标记已续关，后续退出不再询问保存回放
+            ReplayManager.Instance.MarkContinued();
         }
 
         Global_GameManager.Instance.state = State.Gaming;

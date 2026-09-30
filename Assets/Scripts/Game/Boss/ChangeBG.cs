@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using ReplaySystem;
 using UnityEngine;
 using UnityEngine.UI;
@@ -22,7 +22,6 @@ public class ChangeBG : MonoBehaviour
     public Image freezeUI; // 冻结效果Image对象
 
     private GameObject currentBG;// 当前符卡对应的背景
-
 
     public void ShowBg(string bgName,float finalAlpha)
     {
@@ -99,18 +98,13 @@ public class ChangeBG : MonoBehaviour
         DeadStar_effect.SetBool("IsAnime", true);
     }
     
-    /// <summary>
-    /// 在指定时间内将冻结效果的透明度平滑增长到1
-    /// </summary>
-    /// <param name="duration">过渡时间（秒）</param>
+    // 在指定时间内将冻结效果的透明度平滑增长到1
     public void FreezeAll(float duration = 1f)
     {
         StartCoroutine(FreezeAllCoroutine(duration));
     }
     
-    /// <summary>
-    /// 冻结效果协程
-    /// </summary>
+    // 冻结效果协程
     private IEnumerator FreezeAllCoroutine(float duration)
     {
         float elapsedTime = 0f;

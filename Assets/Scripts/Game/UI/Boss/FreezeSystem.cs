@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -22,6 +22,8 @@ public class FreezeSystem : MonoBehaviour
 
     private float FrozenDegree;//冻结进度 0-1
     public bool IsFrozen;//是否冻结（公开供外部检测）
+
+    public float CurrentFrozenDegree => FrozenDegree;
 
     public float FrozenScale = 1f;//冻结缩放比例(默认1，有的符卡程度会加快冻结速度)
 
@@ -58,9 +60,7 @@ public class FreezeSystem : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 更新冻结相关UI
-    /// </summary>
+    // 更新冻结相关UI
     private void UpdateUI()
     {
         // 更新冻结进度条
@@ -89,10 +89,7 @@ public class FreezeSystem : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 减少冻结进度（擦弹时调用）
-    /// </summary>
-    /// <param name="amount">减少的量（默认0.01即1%）</param>
+    // 减少冻结进度（擦弹时调用）
     public void ReduceFrozenDegree(float amount = 0.01f)
     {
         if (!IsFrozen)
@@ -103,10 +100,7 @@ public class FreezeSystem : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 增加冻结进度（冰云碰撞时调用）
-    /// </summary>
-    /// <param name="amount">增加的量</param>
+    // 增加冻结进度（冰云碰撞时调用）
     public void IncreaseFrozenDegree(float amount)
     {
         if (!IsFrozen)
@@ -123,9 +117,7 @@ public class FreezeSystem : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 冻结方法
-    /// </summary>
+    // 冻结方法
     private void Freeze()
     {
         IsFrozen = true;
@@ -168,28 +160,38 @@ public class FreezeSystem : MonoBehaviour
         Global_GameManager.Instance.state = State.Frozen;
     }
 
-    /// <summary>
-    /// 重置冻结系统
-    /// </summary>
+    // 正常释放冻结（QTE完成后）的重置：
+    // FrozenDegree 设为 0.3f 作为擦弹恢复的基线，IsStop/pendingStopAfterQTE 不动。
+    // 也供 CompleteQTE 之后的外部系统（如 BossBeheve）读取 pendingStopAfterQTE 再手动设 IsStop。
     public void ResetFreeze()
     {
+        StopAllCoroutines();
         FrozenDegree = 0.3f;
         IsFrozen = false;
         UpdateUI();
     }
 
-    /// <summary>
-    /// 设置冻结缩放比例
-    /// </summary>
-    /// <param name="scale">缩放比例值</param>
+    // 重生时的**完整清理**：
+    // FrozenDegree 直接归零 → UpdateUI 把 FrozenEffect 和 FrozenSprite 的 alpha 都清零，
+    // IsStop/pendingStopAfterQTE 全重置 → 不会在非 Boss 场景意外启动冻结累积。
+    // 和 ResetFreeze 的区别：FrozenDegree=0（不是 0.3）+ 清 IsStop/pendingStopAfterQTE。
+    public void FullResetForReincarnation()
+    {
+        StopAllCoroutines();
+        FrozenDegree = 0f;
+        IsFrozen = false;
+        IsStop = false;
+        pendingStopAfterQTE = false;
+        UpdateUI();
+    }
+
+    // 设置冻结缩放比例
     public void SetFrozenScale(float scale)
     {
         FrozenScale = scale;
     }
 
-    /// <summary>
-    /// 重置冻结缩放比例为默认值1
-    /// </summary>
+    // 重置冻结缩放比例为默认值1
     public void ResetFrozenScale()
     {
         FrozenScale = 1f;

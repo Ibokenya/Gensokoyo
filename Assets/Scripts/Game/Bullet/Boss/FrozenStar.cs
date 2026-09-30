@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ReplaySystem;
@@ -48,9 +48,7 @@ public class FrozenStar : MonoBehaviour
         CheckBounds();
     }
     
-    /// <summary>
-    /// 检查速度变更点
-    /// </summary>
+    // 检查速度变更点
     private void CheckSpeedChangePoints()
     {
         float currentY = transform.position.y;
@@ -69,9 +67,7 @@ public class FrozenStar : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 边界检测
-    /// </summary>
+    // 边界检测
     private void CheckBounds()
     {
         Vector2 position = transform.position;
@@ -81,9 +77,7 @@ public class FrozenStar : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 回收彗星
-    /// </summary>
+    // 回收彗星
     private void Recycle()
     {
         if (Global_ObjectPool.Instance != null)
